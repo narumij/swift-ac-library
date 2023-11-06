@@ -107,7 +107,7 @@ struct segtree<Parameter: SegtreeParameter> {
         return 0;
     }
     
-    private var _n, size, log: Int
+    private let _n, size, log: Int
     private var d: [S]
     
     mutating func update(_ k: Int) {

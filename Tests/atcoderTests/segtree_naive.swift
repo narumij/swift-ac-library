@@ -7,7 +7,7 @@ struct segtree_naive<T: SegtreeParameter> {
     func op(_ l: S,_ r: S) -> S { T.op(l,r) }
     func e() -> S { T.e() }
     
-    var n: Int
+    let n: Int
     var d: [S]
     init() { self.init(0) }
     init(_ _n: Int) {
