@@ -1,10 +1,23 @@
 import Foundation
 
+protocol LazySegtreeParameter: SegtreeParameter {
+    associatedtype F
+    static func mapping(_:F,_:S) -> S
+    static func composition(_:F,_:F) -> F
+    static func `id`() -> F
+}
+
+// 残念ながらSwift固有の事情で速度不十分
 // from https://github.com/atcoder/ac-library/blob/master/atcoder/lazysegtree.hpp
-struct lazy_segtree<Property: LazySegtreeParameter> {
+struct lazy_segtree_v0<Property: LazySegtreeParameter> {
     typealias S = Property.S
+    var op: (S,S) -> S { Property.op }
+    var e: () -> S { Property.e }
     typealias F = Property.F
-    
+    var mapping: (F,S) -> S { Property.mapping }
+    var composition: (F,F) -> F { Property.composition }
+    var `id`: () -> F { Property.id }
+
     init() { self.init(0) }
     init(_ n: Int) { self.init([S](repeating: Property.e(), count: n)) }
     init(_ v: [S]) {
@@ -16,24 +29,12 @@ struct lazy_segtree<Property: LazySegtreeParameter> {
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         for i in 0..<_n { d[size + i] = v[i]; }
         // for (int i = size - 1; i >= 1; i--) {
-        d.withUnsafeMutableBufferPointer { d in
-            lz.withUnsafeMutableBufferPointer { lz in
-                let c = Impl(_n: _n, size: size, log: log, d: d, lz: lz)
-                for i in (size - 1)..>=1 {
-                    c.update(i);
-                }
-            }
+        for i in (size - 1)..>=1 {
+            update(i);
         }
     }
-    
-    let _n, size, log: Int;
-    var d: ContiguousArray<S>;
-    var lz: ContiguousArray<F>;
-}
 
-extension lazy_segtree.Impl {
-    
-    func set(_ p: Int,_ x: S) {
+    mutating func set(_ p: Int,_ x: S) {
         var p = p
         assert(0 <= p && p < _n);
         p += size;
@@ -43,8 +44,8 @@ extension lazy_segtree.Impl {
         // for (int i = 1; i <= log; i++) update(p >> i);
         for i in 1..<=log { update(p >> i); }
     }
-    
-    func get(_ p: Int) -> S {
+
+    mutating func get(_ p: Int) -> S {
         var p = p
         assert(0 <= p && p < _n);
         p += size;
@@ -52,22 +53,22 @@ extension lazy_segtree.Impl {
         for i in log..>=1 { push(p >> i); }
         return d[p];
     }
-    
-    func prod(_ l: Int,_ r: Int) -> S{
+
+    mutating func prod(_ l: Int,_ r: Int) -> S{
         var l = l
         var r = r
         assert(0 <= l && l <= r && r <= _n);
         if (l == r) { return e(); }
-        
+
         l += size;
         r += size;
-        
-        //        for (int i = log; i >= 1; i--) {
+
+//        for (int i = log; i >= 1; i--) {
         for i in log..>=1 {
             if (((l >> i) << i) != l) { push(l >> i); }
             if (((r >> i) << i) != r) { push((r - 1) >> i); }
         }
-        
+
         var sml = e(), smr = e();
         while (l < r) {
             if (l & 1 != 0) { sml = op(sml, d[l]); l += 1 }
@@ -75,18 +76,13 @@ extension lazy_segtree.Impl {
             l >>= 1;
             r >>= 1;
         }
-        
+
         return op(sml, smr);
     }
-}
 
-extension lazy_segtree {
     func all_prod() -> S { return d[1]; }
-}
 
-extension lazy_segtree.Impl {
-
-    func apply(_ p: Int,_ f: F) {
+    mutating func apply(_ p: Int,_ f: F) {
         var p = p
         assert(0 <= p && p < _n);
         p += size;
@@ -97,7 +93,7 @@ extension lazy_segtree.Impl {
         for i in 1..<=log { update(p >> i); }
     }
 
-    func apply(_ l: Int,_ r: Int,_ f: F) {
+    mutating func apply(_ l: Int,_ r: Int,_ f: F) {
         var l = l
         var r = r
         assert(0 <= l && l <= r && r <= _n);
@@ -134,7 +130,7 @@ extension lazy_segtree.Impl {
 //    template <bool (*g)(S)> int max_right(int l) {
 //        return max_right(l, [](S x) { return g(x); });
 //    }
-    func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
+    mutating func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
         var l = l
         assert(0 <= l && l <= _n);
         assert(g(e()));
@@ -165,7 +161,7 @@ extension lazy_segtree.Impl {
 //    template <bool (*g)(S)> int min_left(int r) {
 //        return min_left(r, [](S x) { return g(x); });
 //    }
-    func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
+    mutating func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
         var r = r
         assert(0 <= r && r <= _n);
         assert(g(e()));
@@ -194,91 +190,19 @@ extension lazy_segtree.Impl {
     }
     
     
-    func update(_ k: Int) { d[k] = op(d[2 * k], d[2 * k + 1]); }
-    
-    func all_apply(_ k: Int,_ f: F) {
+    let _n, size, log: Int;
+    var d: ContiguousArray<S>;
+    var lz: ContiguousArray<F>;
+
+    mutating func update(_ k: Int) { d[k] = op(d[2 * k], d[2 * k + 1]); }
+    mutating func all_apply(_ k: Int,_ f: F) {
         d[k] = mapping(f, d[k]);
         if (k < size) { lz[k] = composition(f, lz[k]); }
     }
-    func push(_ k: Int) {
+    mutating func push(_ k: Int) {
         all_apply(2 * k, lz[k]);
         all_apply(2 * k + 1, lz[k]);
         lz[k] = id();
     }
 }
 
-extension lazy_segtree {
-    
-    struct Impl {
-        let _n, size, log: Int
-        let d: UnsafeMutableBufferPointer<S>
-        let lz: UnsafeMutableBufferPointer<F>
-        
-        typealias S = Property.S
-        var op: (S,S) -> S { Property.op }
-        var e: () -> S { Property.e }
-        typealias F = Property.F
-        var mapping: (F,S) -> S { Property.mapping }
-        var composition: (F,F) -> F { Property.composition }
-        var `id`: () -> F { Property.id }
-    }
-}
-
-extension lazy_segtree {
-    
-    mutating func set(_ p: Int,_ x: S) {
-        d.withUnsafeMutableBufferPointer { d in
-            lz.withUnsafeMutableBufferPointer { lz in
-                Impl(_n: _n, size: size, log: log, d: d, lz: lz).set(p, x)
-            }
-        }
-    }
-    
-    mutating func get(_ p: Int) -> S {
-        d.withUnsafeMutableBufferPointer { d in
-            lz.withUnsafeMutableBufferPointer { lz in
-                Impl(_n: _n, size: size, log: log, d: d, lz: lz).get(p)
-            }
-        }
-    }
-    
-    mutating func prod(_ l: Int,_ r: Int) -> S {
-        d.withUnsafeMutableBufferPointer { d in
-            lz.withUnsafeMutableBufferPointer { lz in
-                Impl(_n: _n, size: size, log: log, d: d, lz: lz).prod(l, r)
-            }
-        }
-    }
-    
-    mutating func apply(_ p: Int,_ f: F) {
-        d.withUnsafeMutableBufferPointer { d in
-            lz.withUnsafeMutableBufferPointer { lz in
-                Impl(_n: _n, size: size, log: log, d: d, lz: lz).apply(p, f)
-            }
-        }
-    }
-    
-    mutating func apply(_ l: Int,_ r: Int,_ f: F) {
-        d.withUnsafeMutableBufferPointer { d in
-            lz.withUnsafeMutableBufferPointer { lz in
-                Impl(_n: _n, size: size, log: log, d: d, lz: lz).apply(l,r,f)
-            }
-        }
-    }
-    
-    mutating func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
-        d.withUnsafeMutableBufferPointer { d in
-            lz.withUnsafeMutableBufferPointer { lz in
-                Impl(_n: _n, size: size, log: log, d: d, lz: lz).max_right(l, g)
-            }
-        }
-    }
-    
-    mutating func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
-        d.withUnsafeMutableBufferPointer { d in
-            lz.withUnsafeMutableBufferPointer { lz in
-                Impl(_n: _n, size: size, log: log, d: d, lz: lz).min_left(r, g)
-            }
-        }
-    }
-}
