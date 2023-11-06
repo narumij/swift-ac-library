@@ -19,16 +19,14 @@ final class SegtreeTests: XCTestCase {
     }
 
     enum fixture: SegtreeParameter {
-        static var op: (String, String) -> String {
-            { a, b in
-                assert(a == "$" || b == "$" || a <= b);
-                if (a == "$") { return b; }
-                if (b == "$") { return a; }
-                return a + b;
-            }
+        static func op(_ a: String,_ b: String) -> String {
+            assert(a == "$" || b == "$" || a <= b);
+            if (a == "$") { return b; }
+            if (b == "$") { return a; }
+            return a + b;
         }
-        static var e: () -> String {
-            { return "$"; }
+        static func e() -> String {
+            return "$";
         }
         typealias S = String
     }

@@ -65,8 +65,8 @@ enum stress_fixture {
 
 extension stress_fixture: LazySegtreeParameter, SegtreeParameter {
     typealias F = T
-    static let op: (S,S) -> S = op_ss
-    static let e: () -> S = e_s
+    static func op(_ l: S,_ r: S) -> S { op_ss(l,r) }
+    static func e() -> S { e_s() }
     static func mapping(_ a:F,_ b:S) -> S { op_ts(a,b) }
     static func composition(_ a:F,_ b:F) -> F { op_tt(a,b) }
     static func `id`() -> F { e_t() }

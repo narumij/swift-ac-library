@@ -12,8 +12,8 @@ struct starry {
 
 extension starry: LazySegtreeParameter, SegtreeParameter {
     typealias S = Int
-    static let op: (S,S) -> S = starry.op_ss
-    static let e: () -> S = starry.e_s
+    static func op(_ l: S,_ r: S) -> S { starry.op_ss(l,r) }
+    static func e() -> S { starry.e_s() }
     typealias F = Int
     static func mapping(_ a:F,_ b:S) -> S { starry.op_ts(a,b) }
     static func composition(_ a:F,_ b:F) -> F { starry.op_tt(a,b) }
