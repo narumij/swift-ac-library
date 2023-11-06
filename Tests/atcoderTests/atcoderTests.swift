@@ -15,22 +15,25 @@ final class atcoderTests: XCTestCase {
         do {
             let log = 0
             XCTAssertEqual([], (1..<=log).map{$0})
-            XCTAssertEqual([], (1..<=log).reversed().map{$0})
-            XCTAssertEqual([], (1..<=(log - 1)).reversed().map{$0})
+            XCTAssertEqual([], (log..>=1).map{$0})
+            XCTAssertEqual([], ((log - 1)..>=1).map{$0})
+            XCTAssertEqual([], (log..>0).map{$0})
         }
 
         do {
             let log = 1
             XCTAssertEqual([1], (1..<=log).map{$0})
-            XCTAssertEqual([1], (1..<=log).reversed().map{$0})
-            XCTAssertEqual([], (1..<=(log - 1)).reversed().map{$0})
+            XCTAssertEqual([1], (log..>=1).map{$0})
+            XCTAssertEqual([], ((log - 1)..>=1).map{$0})
+            XCTAssertEqual([1], (log..>0).map{$0})
         }
 
         do {
             let log = 2
             XCTAssertEqual([1,2], (1..<=log).map{$0})
-            XCTAssertEqual([2,1], (1..<=log).reversed().map{$0})
-            XCTAssertEqual([1], (1..<=(log - 1)).reversed().map{$0})
+            XCTAssertEqual([2,1], (log..>=1).map{$0})
+            XCTAssertEqual([1], ((log - 1)..>=1).map{$0})
+            XCTAssertEqual([2,1], (log..>0).map{$0})
         }
     }
 }
