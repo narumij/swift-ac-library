@@ -7,18 +7,18 @@ protocol SegtreeParameter {
 }
 
 // from https://github.com/atcoder/ac-library/blob/master/atcoder/segtree.hpp
-struct segtree<Property: SegtreeParameter> {
-    typealias S = Property.S
-    var op: (S,S) -> S { Property.op }
-    var e: () -> S { Property.e }
+struct segtree<Parameter: SegtreeParameter> {
+    typealias S = Parameter.S
+    var op: (S,S) -> S { Parameter.op }
+    var e: () -> S { Parameter.e }
 
     init() { self.init(0) }
-    init(_ n: Int) { self.init([S](repeating: Property.e(), count: n)) }
+    init(_ n: Int) { self.init([S](repeating: Parameter.e(), count: n)) }
     init(_ v: [S]) {
         _n = v.count
         size = Int(`internal`.bit_ceil(UInt(_n)))
         log = `internal`.countr_zero(UInt(size))
-        d = [S](repeating: Property.e(), count: 2 * size)
+        d = [S](repeating: Parameter.e(), count: 2 * size)
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         for i in 0..<_n { d[size + i] = v[i] }
         // for (int i = size - 1; i >= 1; i--) {

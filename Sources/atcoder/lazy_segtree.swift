@@ -1,18 +1,18 @@
 import Foundation
 
 // from https://github.com/atcoder/ac-library/blob/master/atcoder/lazysegtree.hpp
-struct lazy_segtree<Property: LazySegtreeParameter> {
-    typealias S = Property.S
-    typealias F = Property.F
+struct lazy_segtree<Parameter: LazySegtreeParameter> {
+    typealias S = Parameter.S
+    typealias F = Parameter.F
     
     init() { self.init(0) }
-    init(_ n: Int) { self.init([S](repeating: Property.e(), count: n)) }
+    init(_ n: Int) { self.init([S](repeating: Parameter.e(), count: n)) }
     init(_ v: [S]) {
         _n = v.count
         size = Int(`internal`.bit_ceil(UInt(_n)))
         log = `internal`.countr_zero(UInt(size))
-        d = ContiguousArray<S>(repeating: Property.e(), count: 2 * size)
-        lz = ContiguousArray<F>(repeating: Property.id(), count: size)
+        d = ContiguousArray<S>(repeating: Parameter.e(), count: 2 * size)
+        lz = ContiguousArray<F>(repeating: Parameter.id(), count: size)
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         for i in 0..<_n { d[size + i] = v[i]; }
         // for (int i = size - 1; i >= 1; i--) {
@@ -214,13 +214,13 @@ extension lazy_segtree {
         let d: UnsafeMutableBufferPointer<S>
         let lz: UnsafeMutableBufferPointer<F>
         
-        typealias S = Property.S
-        func op(_ l: S,_ r: S) -> S { Property.op(l,r) }
-        func e() -> S { Property.e() }
-        typealias F = Property.F
-        func mapping(_ l: F,_ r: S) -> S { Property.mapping(l,r) }
-        func composition(_ l: F,_ r: F) -> F { Property.composition(l,r) }
-        func `id`() -> F { Property.id() }
+        typealias S = Parameter.S
+        func op(_ l: S,_ r: S) -> S { Parameter.op(l,r) }
+        func e() -> S { Parameter.e() }
+        typealias F = Parameter.F
+        func mapping(_ l: F,_ r: S) -> S { Parameter.mapping(l,r) }
+        func composition(_ l: F,_ r: F) -> F { Parameter.composition(l,r) }
+        func `id`() -> F { Parameter.id() }
     }
 }
 
