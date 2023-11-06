@@ -4,8 +4,8 @@ import Foundation
 // from https://github.com/atcoder/ac-library/blob/master/test/unittest/segtree_test.cpp
 struct segtree_naive<T: SegtreeParameter> {
     typealias S = T.S
-    var op: (S,S) -> S { T.op }
-    var e: () -> S { T.e }
+    func op(_ l: S,_ r: S) -> S { T.op(l,r) }
+    func e() -> S { T.e() }
     
     var n: Int
     var d: [S]
