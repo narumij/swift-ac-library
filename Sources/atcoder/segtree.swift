@@ -22,7 +22,7 @@ struct segtree<Property: SegtreeParameter> {
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         for i in 0..<_n { d[size + i] = v[i] }
         // for (int i = size - 1; i >= 1; i--) {
-        for i in (1..<=(size - 1)).reversed() { update(i) }
+        for i in (size - 1)..>=1 { update(i) }
     }
     
     mutating func set(_ p: Int,_ x: S) {
