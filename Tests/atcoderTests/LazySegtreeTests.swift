@@ -1,5 +1,6 @@
 import XCTest
 @testable import atcoder
+import Fortify
 
 struct starry {
     static func op_ss(_ a: Int,_ b: Int) -> Int { return Swift.max(a, b); }
@@ -9,15 +10,17 @@ struct starry {
     static func e_t() -> Int { return 0; }
 };
 
-extension starry: LazySegtreeProperty, SegtreeProperty {
+extension starry: LazySegtreeParameter, SegtreeParameter {
     typealias S = Int
     static let op: (S,S) -> S = starry.op_ss
     static let e: () -> S = starry.e_s
     typealias F = Int
-    static var mapping: (F,S) -> S = starry.op_ts
-    static var composition: (F,F) -> F = starry.op_tt
-    static var `id`: () -> F = starry.e_t
+    static func mapping(_ a:F,_ b:S) -> S { starry.op_ts(a,b) }
+    static func composition(_ a:F,_ b:F) -> F { starry.op_tt(a,b) }
+    static func `id`() -> F { starry.e_t() }
 }
+
+typealias starry_seg = lazy_segtree<starry>
 
 final class LazySegtreeTests: XCTestCase {
 
@@ -29,26 +32,80 @@ final class LazySegtreeTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
+    func test0() throws {
+        do {
+            let s = starry_seg(0);
+            XCTAssertEqual(-1_000_000_000, s.all_prod());
+        }
+        do {
+            let s = starry_seg();
+            XCTAssertEqual(-1_000_000_000, s.all_prod());
+        }
+        do {
+            let s = starry_seg(10);
+            XCTAssertEqual(-1_000_000_000, s.all_prod());
+        }
     }
     
-    func testZero() throws {
-        do {
-            let s = lazy_segtree<starry>(0);
-            XCTAssertEqual(-1_000_000_000, s.all_prod());
-        }
-        do {
-            let s = lazy_segtree<starry>();
-            XCTAssertEqual(-1_000_000_000, s.all_prod());
-        }
-        do {
-            let s = lazy_segtree<starry>(10);
-            XCTAssertEqual(-1_000_000_000, s.all_prod());
+    func testAssign() throws {
+        var seg0 = starry_seg();
+        XCTAssertNoThrow(seg0 = lazy_segtree<starry>(10));
+    }
+
+    func testInvalid() throws {
+        
+        throw XCTSkip("配列のfatalをSwiftのみでハンドリングする方法が、まだない。SE-0403以後に、テストするように切り替えます。")
+        
+        XCTAssertThrowsError(try Fortify.exec {
+            starry_seg(-1)
+        })
+        
+        var s = starry_seg(10)
+        
+        XCTAssertThrowsError(s.get(-1))
+        XCTAssertThrowsError(s.get(10))
+        
+        XCTAssertThrowsError(s.prod(-1,-1))
+        
+        XCTAssertThrowsError(s.prod(3,2))
+        XCTAssertThrowsError(s.prod(0,11))
+        XCTAssertThrowsError(s.prod(-1,11))
+    }
+    
+    func testOne() throws {
+        var s = segtree<SegtreeTests.fixture>(1)
+        XCTAssertEqual("$", s.all_prod());
+        XCTAssertEqual("$", s.get(0));
+        XCTAssertEqual("$", s.prod(0, 1));
+        s.set(0, "dummy");
+        XCTAssertEqual("dummy", s.get(0));
+        XCTAssertEqual("$", s.prod(0, 0));
+        XCTAssertEqual("dummy", s.prod(0, 1));
+        XCTAssertEqual("$", s.prod(1, 1));
+    }
+
+    func testNaiveProd() throws {
+//        for (int n = 0; n <= 50; n++) {
+        for n in 0...50 {
+            var seg = starry_seg(n);
+            var p = [Int](repeating: 0, count: n)
+//            for (int i = 0; i < n; i++) {
+            for i in 0..<n {
+                p[i] = (i * i + 100) % 31;
+                seg.set(i, p[i]);
+            }
+//            for (int l = 0; l <= n; l++) {
+            for l in 0...n {
+//                for (int r = l; r <= n; r++) {
+                for r in l...n {
+                    var e = -1_000_000_000;
+//                    for (int i = l; i < r; i++) {
+                    for i in l..<r {
+                        e = max(e, p[i]);
+                    }
+                    XCTAssertEqual(e, seg.prod(l, r));
+                }
+            }
         }
     }
     

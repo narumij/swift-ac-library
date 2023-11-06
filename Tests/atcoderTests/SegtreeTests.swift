@@ -1,5 +1,6 @@
 import XCTest
 @testable import atcoder
+import Fortify
 
 extension CChar: ExpressibleByStringLiteral {
     public init(stringLiteral s: String) {
@@ -17,15 +18,7 @@ final class SegtreeTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-    
-    enum propery: SegtreeProperty {
+    enum fixture: SegtreeParameter {
         static var op: (String, String) -> String {
             { a, b in
                 assert(a == "$" || b == "$" || a <= b);
@@ -41,30 +34,36 @@ final class SegtreeTests: XCTestCase {
     }
     
     func test0() {
-        XCTAssertEqual("$", segtree<propery>(0).all_prod())
-        XCTAssertEqual("$", segtree<propery>().all_prod())
+        XCTAssertEqual("$", segtree<fixture>(0).all_prod())
+        XCTAssertEqual("$", segtree<fixture>().all_prod())
     }
     
-    func testInvalid() {
-//        XCTAssertThrowsError(segtree_naive<Config>(-1))
-        var s = segtree<propery>(10)
+    func testInvalid() throws {
         
-//        XCTAssertThrowsError(s.get(-1))
-//        XCTAssertThrowsError(s.get(10))
+        throw XCTSkip("配列のfatalをSwiftのみでハンドリングする方法が、まだない。SE-0403以後に、テストするように切り替えます。")
         
-//        XCTAssertThrowsError(s.prod(-1,-1))
+        XCTAssertThrowsError(try Fortify.exec {
+            segtree_naive<fixture>(-1)
+        })
         
-//        XCTAssertThrowsError(s.prod(3,2))
-//        XCTAssertThrowsError(s.prod(0,11))
-//        XCTAssertThrowsError(s.prod(-1,11))
+        var s = segtree<fixture>(10)
+        
+        XCTAssertThrowsError(s.get(-1))
+        XCTAssertThrowsError(s.get(10))
+        
+        XCTAssertThrowsError(s.prod(-1,-1))
+        
+        XCTAssertThrowsError(s.prod(3,2))
+        XCTAssertThrowsError(s.prod(0,11))
+        XCTAssertThrowsError(s.prod(-1,11))
 
-//        XCTAssertThrowsError(s.max_right(11, { _ in true }))
-//        XCTAssertThrowsError(s.min_left(-1, { _ in true }))
-//        XCTAssertThrowsError(s.max_right(0, { _ in false }))
+        XCTAssertThrowsError(s.max_right(11, { _ in true }))
+        XCTAssertThrowsError(s.min_left(-1, { _ in true }))
+        XCTAssertThrowsError(s.max_right(0, { _ in false }))
     }
     
     func testOne() throws {
-        var s = segtree<propery>(1)
+        var s = segtree<fixture>(1)
         XCTAssertEqual("$", s.all_prod());
         XCTAssertEqual("$", s.get(0));
         XCTAssertEqual("$", s.prod(0, 1));
@@ -81,11 +80,10 @@ final class SegtreeTests: XCTestCase {
 
 //        for (int n = 0; n < 30; n++) {
         for n in 0..<30 {
-            var seg0 = segtree_naive<propery>(n);
-            var seg1 = segtree<propery>(n);
+            var seg0 = segtree_naive<fixture>(n);
+            var seg1 = segtree<fixture>(n);
 //            for (int i = 0; i < n; i++) {
             for i in 0..<n {
-//                std::string s = "";
                 var s = ""
                 s.append(String(cString:["a" + CChar(i),0]))
                 seg0.set(i, s);
@@ -129,8 +127,8 @@ final class SegtreeTests: XCTestCase {
     }
     
     func testAssign() throws {
-        var seg0 = segtree<propery>();
-        XCTAssertNoThrow(seg0 = segtree<propery>(10));
+        var seg0 = segtree<fixture>();
+        XCTAssertNoThrow(seg0 = segtree<fixture>(10));
     }
     
     func testPerformanceExample() throws {

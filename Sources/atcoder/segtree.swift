@@ -1,13 +1,13 @@
 import Foundation
 
-protocol SegtreeProperty {
+protocol SegtreeParameter {
     associatedtype S
     static var op: (S,S) -> S { get }
     static var e: () -> S { get }
 }
 
 // from https://github.com/atcoder/ac-library/blob/master/atcoder/segtree.hpp
-struct segtree<Property: SegtreeProperty> {
+struct segtree<Property: SegtreeParameter> {
     typealias S = Property.S
     var op: (S,S) -> S { Property.op }
     var e: () -> S { Property.e }
@@ -19,8 +19,10 @@ struct segtree<Property: SegtreeProperty> {
         size = Int(`internal`.bit_ceil(UInt(_n)))
         log = `internal`.countr_zero(UInt(size))
         d = [S](repeating: Property.e(), count: 2 * size)
+        // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         for i in 0..<_n { d[size + i] = v[i] }
-        for i in 1 <= size ? (1..<size).reversed() : [] { update(i) }
+        // for (int i = size - 1; i >= 1; i--) {
+        for i in (1..<=(size - 1)).reversed() { update(i) }
     }
     
     mutating func set(_ p: Int,_ x: S) {
@@ -28,7 +30,8 @@ struct segtree<Property: SegtreeProperty> {
         assert(0 <= p && p < _n);
         p += size;
         d[p] = x;
-        for i in 1...max(1,log) { update(p >> i); }
+        // for (int i = 1; i <= log; i++) update(p >> i);
+        for i in 1..<=log { update(p >> i); }
     }
     
     func get(_ p: Int) -> S {

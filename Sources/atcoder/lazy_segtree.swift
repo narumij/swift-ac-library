@@ -1,14 +1,15 @@
 import Foundation
 
-protocol LazySegtreeProperty: SegtreeProperty {
+
+protocol LazySegtreeParameter: SegtreeParameter {
     associatedtype F
-    static var mapping: (F,S) -> S { get }
-    static var composition: (F,F) -> F { get }
-    static var `id`: () -> F { get }
+    static func mapping(_:F,_:S) -> S
+    static func composition(_:F,_:F) -> F
+    static func `id`() -> F
 }
 
 // from https://github.com/atcoder/ac-library/blob/master/atcoder/lazysegtree.hpp
-struct lazy_segtree<Property: LazySegtreeProperty> {
+struct lazy_segtree<Property: LazySegtreeParameter> {
     typealias S = Property.S
     var op: (S,S) -> S { Property.op }
     var e: () -> S { Property.e }
@@ -25,8 +26,10 @@ struct lazy_segtree<Property: LazySegtreeProperty> {
         log = `internal`.countr_zero(UInt(size))
         d = [S](repeating: Property.e(), count: 2 * size)
         lz = [F](repeating: Property.id(), count: size)
+        // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         for i in 0..<_n { d[size + i] = v[i]; }
-        for i in 1 <= size ? (1..<size).reversed() : [] {
+        // for (int i = size - 1; i >= 1; i--) {
+        for i in (size - 1)..>=1 {
             update(i);
         }
     }
@@ -36,10 +39,10 @@ struct lazy_segtree<Property: LazySegtreeProperty> {
         assert(0 <= p && p < _n);
         p += size;
         // for (int i = log; i >= 1; i--) push(p >> i);
-        for i in (1...log).reversed() { push(p >> i); }
+        for i in log..>=1 { push(p >> i); }
         d[p] = x;
         // for (int i = 1; i <= log; i++) update(p >> i);
-        for i in (1...log) { update(p >> i); }
+        for i in 1..<=log { update(p >> i); }
     }
 
     mutating func get(_ p: Int) -> S {
@@ -47,7 +50,7 @@ struct lazy_segtree<Property: LazySegtreeProperty> {
         assert(0 <= p && p < _n);
         p += size;
         // for (int i = log; i >= 1; i--) push(p >> i);
-        for i in (1...log).reversed() { push(p >> i); }
+        for i in log..>=1 { push(p >> i); }
         return d[p];
     }
 
@@ -61,7 +64,7 @@ struct lazy_segtree<Property: LazySegtreeProperty> {
         r += size;
 
 //        for (int i = log; i >= 1; i--) {
-        for i in (1...log).reversed() {
+        for i in log..>=1 {
             if (((l >> i) << i) != l) { push(l >> i); }
             if (((r >> i) << i) != r) { push((r - 1) >> i); }
         }
@@ -84,10 +87,10 @@ struct lazy_segtree<Property: LazySegtreeProperty> {
         assert(0 <= p && p < _n);
         p += size;
         // for (int i = log; i >= 1; i--) push(p >> i);
-        for i in (1...log).reversed() { push(p >> i); }
+        for i in log..>=1 { push(p >> i); }
         d[p] = mapping(f, d[p]);
         // for (int i = 1; i <= log; i++) update(p >> i);
-        for i in 1...log { update(p >> i); }
+        for i in 1..<=log { update(p >> i); }
     }
 
     mutating func apply(_ l: Int,_ r: Int,_ f: F) {
@@ -99,8 +102,8 @@ struct lazy_segtree<Property: LazySegtreeProperty> {
         l += size;
         r += size;
 
-//        for (int i = log; i >= 1; i--) {
-        for i in (1...log).reversed() {
+        // for (int i = log; i >= 1; i--) {
+        for i in log..>=1 {
             if (((l >> i) << i) != l) { push(l >> i); }
             if (((r >> i) << i) != r) { push((r - 1) >> i); }
         }
@@ -117,8 +120,8 @@ struct lazy_segtree<Property: LazySegtreeProperty> {
             r = r2;
         }
 
-//        for (int i = 1; i <= log; i++) {
-        for i in (1...log) {
+        // for (int i = 1; i <= log; i++) {
+        for i in 1..<=log {
             if (((l >> i) << i) != l) { update(l >> i); }
             if (((r >> i) << i) != r) { update((r - 1) >> i); }
         }
@@ -133,7 +136,8 @@ struct lazy_segtree<Property: LazySegtreeProperty> {
         assert(g(e()));
         if (l == _n) { return _n; }
         l += size;
-        for i in (1...log).reversed() { push(l >> i); }
+        // for (int i = log; i >= 1; i--) push(l >> i);
+        for i in log..>=1 { push(l >> i); }
         var sm: S = e();
         repeat {
             while (l % 2 == 0) { l >>= 1; }
@@ -164,7 +168,7 @@ struct lazy_segtree<Property: LazySegtreeProperty> {
         if (r == 0) { return 0; }
         r += size;
         // for (int i = log; i >= 1; i--) push((r - 1) >> i);
-        for i in (1...log).reversed() { push((r - 1) >> i); }
+        for i in log..>=1 { push((r - 1) >> i); }
         var sm: S = e();
         repeat {
             r -= 1;
