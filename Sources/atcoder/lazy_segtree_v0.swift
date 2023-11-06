@@ -1,12 +1,5 @@
 import Foundation
 
-protocol LazySegtreeParameter: SegtreeParameter {
-    associatedtype F
-    static func mapping(_:F,_:S) -> S
-    static func composition(_:F,_:F) -> F
-    static func `id`() -> F
-}
-
 // 残念ながらSwift固有の事情で速度不十分
 // from https://github.com/atcoder/ac-library/blob/master/atcoder/lazysegtree.hpp
 struct lazy_segtree_v0<Property: LazySegtreeParameter> {

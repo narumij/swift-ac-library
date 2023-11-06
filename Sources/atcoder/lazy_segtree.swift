@@ -1,5 +1,12 @@
 import Foundation
 
+protocol LazySegtreeParameter: SegtreeParameter {
+    associatedtype F
+    static func mapping(_:F,_:S) -> S
+    static func composition(_:F,_:F) -> F
+    static func `id`() -> F
+}
+
 // from https://github.com/atcoder/ac-library/blob/master/atcoder/lazysegtree.hpp
 struct lazy_segtree<Parameter: LazySegtreeParameter> {
     typealias S = Parameter.S
