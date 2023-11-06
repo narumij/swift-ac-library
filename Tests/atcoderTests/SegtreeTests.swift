@@ -89,17 +89,17 @@ final class SegtreeTests: XCTestCase {
             }
 
 //            for (int l = 0; l <= n; l++) {
-            for l in 0...n {
+            for l in 0..<=n {
 //                for (int r = l; r <= n; r++) {
-                for r in l...n {
+                for r in l..<=n {
                     XCTAssertEqual(seg0.prod(l, r), seg1.prod(l, r));
                 }
             }
 
 //            for (int l = 0; l <= n; l++) {
-            for l in 0...n {
+            for l in 0..<=n {
 //                for (int r = l; r <= n; r++) {
-                for r in l...n {
+                for r in l..<=n {
                     y = seg1.prod(l, r);
                     XCTAssertEqual(seg0.max_right(l, leq_y), seg1.max_right(l,leq_y));
                     XCTAssertEqual(seg0.max_right(l, leq_y),
@@ -110,9 +110,9 @@ final class SegtreeTests: XCTestCase {
             }
 
 //            for (int r = 0; r <= n; r++) {
-            for r in 0...n {
+            for r in 0..<=n {
 //                for (int l = 0; l <= r; l++) {
-                for l in 0...r {
+                for l in 0..<=r {
                     y = seg1.prod(l, r);
                     XCTAssertEqual(seg0.min_left(r,leq_y), seg1.min_left(r,leq_y));
                     XCTAssertEqual(seg0.min_left(r,leq_y),

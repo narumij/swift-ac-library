@@ -95,9 +95,9 @@ final class LazySegtreeTests: XCTestCase {
                 seg.set(i, p[i]);
             }
 //            for (int l = 0; l <= n; l++) {
-            for l in 0...n {
+            for l in 0..<=n {
 //                for (int r = l; r <= n; r++) {
-                for r in l...n {
+                for r in l..<=n {
                     var e = -1_000_000_000;
 //                    for (int i = l; i < r; i++) {
                     for i in l..<r {
