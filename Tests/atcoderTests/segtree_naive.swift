@@ -41,7 +41,7 @@ struct segtree_naive<T: SegtreeParameter> {
         var sum: S = e();
         assert(f(sum));
         // for (int i = r - 1; i >= 0; i--) {
-        for i in (0..<=(r - 1)).reversed() {
+        for i in (r - 1)..>=0 {
             sum = op(d[i], sum);
             if (!f(sum)) { return i + 1; }
         }
