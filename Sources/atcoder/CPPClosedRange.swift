@@ -26,21 +26,21 @@ import Foundation
 /// for n in 1..<=r { }
 /// ```
 struct CPPClosedRange<Bound> where Bound: Comparable & Numeric {
-    var start: Bound
-    var end: Bound
+    let start: Bound
+    let end: Bound
 }
 
 extension CPPClosedRange: Sequence {
     typealias Element = Bound
-    func makeIterator() -> Iterator {
-        return Iterator(start: start, end: end, current: start)
-    }
+    func makeIterator() -> Iterator { Iterator(start: start, end: end) }
     struct Iterator: IteratorProtocol {
-        var start: Bound
-        var end: Bound
-        var current: Bound
+        init(start current: Bound, end: Bound) {
+            self.end = end; self.current = current
+        }
+        private let end: Bound
+        private var current: Bound
         mutating func next() -> Bound? {
-            guard start <= end, current <= end else { return nil }
+            guard current <= end else { return nil }
             defer { current += 1 }
             return current
         }
@@ -54,21 +54,21 @@ func ..<= <Bound: Comparable>(lhs: Bound, rhs: Bound) -> CPPClosedRange<Bound> {
 }
 
 struct CPPClosedRangeReversed<Bound> where Bound: Comparable & Numeric {
-    var start: Bound
-    var end: Bound
+    let start: Bound
+    let end: Bound
 }
 
 extension CPPClosedRangeReversed: Sequence {
     typealias Element = Bound
-    func makeIterator() -> Iterator {
-        return Iterator(start: start, end: end, current: start)
-    }
+    func makeIterator() -> Iterator { Iterator(start: start, end: end) }
     struct Iterator: IteratorProtocol {
-        var start: Bound
-        var end: Bound
-        var current: Bound
+        init(start current: Bound, end: Bound) {
+            self.end = end; self.current = current
+        }
+        private let end: Bound
+        private var current: Bound
         mutating func next() -> Bound? {
-            guard start >= end, current >= end else { return nil }
+            guard current >= end else { return nil }
             defer { current -= 1 }
             return current
         }

@@ -215,12 +215,12 @@ extension lazy_segtree {
         let lz: UnsafeMutableBufferPointer<F>
         
         typealias S = Property.S
-        var op: (S,S) -> S { Property.op }
-        var e: () -> S { Property.e }
+        func op(_ l: S,_ r: S) -> S { Property.op(l,r) }
+        func e() -> S { Property.e() }
         typealias F = Property.F
-        var mapping: (F,S) -> S { Property.mapping }
-        var composition: (F,F) -> F { Property.composition }
-        var `id`: () -> F { Property.id }
+        func mapping(_ l: F,_ r: S) -> S { Property.mapping(l,r) }
+        func composition(_ l: F,_ r: F) -> F { Property.composition(l,r) }
+        func `id`() -> F { Property.id() }
     }
 }
 
