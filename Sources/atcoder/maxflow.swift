@@ -1,5 +1,4 @@
 import Foundation
-import Collections
 
 protocol NumericLimit {
     static var max: Self { get }
@@ -9,9 +8,10 @@ extension Int: NumericLimit { }
 
 struct mf_graph<Cap: Comparable & Numeric & NumericLimit> {
 //  public:
-    init() { _n = 0; g = [[_edge]].init(repeating: [], count: 0) }
+    init() { _n = 0; g = [] }
     init(_ n: Int) { _n = n; g = [[_edge]].init(repeating: [], count: n) }
 
+    @discardableResult
     mutating func add_edge(_ from: Int,_ to: Int,_ cap: Cap) -> Int {
         assert(0 <= from && from < _n);
         assert(0 <= to && to < _n);
@@ -77,20 +77,22 @@ struct mf_graph<Cap: Comparable & Numeric & NumericLimit> {
         assert(s != t);
 
         var level = [Int](repeating: 0, count:_n), iter = [Int](repeating: 0, count:_n);
-        var que = Deque<Int>();
+        var que = `internal`.simple_queue<Int>(payload: [])
 
         func bfs() {
 //            std::fill(level.begin(), level.end(), -1);
-            iter.withUnsafeMutableBufferPointer { $0.update(repeating: -1) }
+            level.withUnsafeMutableBufferPointer{ $0.update(repeating: -1) }
             level[s] = 0;
-            que.removeAll();
-            que.append(s);
-            while let v = que.popFirst() {
+            que.clear();
+            que.push(s);
+            while (!que.empty()) {
+                let v = que.front();
+                que.pop();
                 for e in g[v] {
                     if (e.cap == 0 || level[e.to] >= 0) { continue; }
                     level[e.to] = level[v] + 1;
                     if (e.to == t) { return; }
-                    que.append(e.to);
+                    que.push(e.to);
                 }
             }
         };
@@ -108,7 +110,10 @@ struct mf_graph<Cap: Comparable & Numeric & NumericLimit> {
                     dfs(e.to, min(up - res, g[e.to][e.rev].cap));
                 if (d <= 0) { continue; }
                 g[v][i].cap += d;
-                g[e.to][e.rev].cap -= d;
+                do {
+                    let e = g[v][i];
+                    g[e.to][e.rev].cap -= d;
+                }
                 res += d;
                 if (res == up) { return res; }
             }
@@ -121,7 +126,7 @@ struct mf_graph<Cap: Comparable & Numeric & NumericLimit> {
             bfs();
             if (level[t] == -1) { break; }
 //            std::fill(iter.begin(), iter.end(), 0);
-            iter.withUnsafeMutableBufferPointer { $0.update(repeating: 0) }
+            iter.withUnsafeMutableBufferPointer{ $0.update(repeating: 0) }
             let f = dfs(t, flow_limit - flow);
             if (!(f != 0)) { break; }
             flow += f;
@@ -131,14 +136,16 @@ struct mf_graph<Cap: Comparable & Numeric & NumericLimit> {
 
     func min_cut(_ s: Int) -> [Bool] {
         var visited = [Bool](repeating: false, count:_n);
-        var que = Deque<Int>();
-        que.append(s);
-        while let p = que.popFirst() {
+        var que = `internal`.simple_queue<Int>(payload: [])
+        que.push(s);
+        while (!que.empty()) {
+            let p = que.front();
+            que.pop();
             visited[p] = true;
             for e in g[p] {
                 if (e.cap != 0 && !visited[e.to]) {
                     visited[e.to] = true;
-                    que.append(e.to);
+                    que.push(e.to);
                 }
             }
         }
@@ -162,8 +169,3 @@ struct mf_graph<Cap: Comparable & Numeric & NumericLimit> {
     var g: [[_edge]]
 };
 
-extension mf_graph.edge: ExpressibleByArrayLiteral where Cap == Int {
-    init(arrayLiteral elements: Int...) {
-        self.init(elements[0], elements[1], elements[2], elements[3])
-    }
-}

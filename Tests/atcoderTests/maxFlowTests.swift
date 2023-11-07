@@ -8,6 +8,20 @@
 import XCTest
 @testable import atcoder
 
+extension mf_graph.edge: ExpressibleByArrayLiteral where Cap == Int {
+    public init(arrayLiteral elements: Int...) {
+        self.init(elements[0], elements[1], elements[2], elements[3])
+    }
+}
+
+extension mf_graph._edge: ExpressibleByArrayLiteral where Cap == Int {
+    public init(arrayLiteral elements: Int...) {
+        self.init(elements[0],elements[1],elements[2])
+    }
+}
+
+
+
 final class maxFlowTests: XCTestCase {
 
     override func setUpWithError() throws {
@@ -35,7 +49,7 @@ final class maxFlowTests: XCTestCase {
     }
     
     func testSimple() throws {
-        throw XCTSkip()
+//        throw XCTSkip()
         var g = mf_graph<Int>(4);
         XCTAssertEqual(0, g.add_edge(0, 1, 1));
         XCTAssertEqual(1, g.add_edge(0, 2, 1));
@@ -60,7 +74,6 @@ final class maxFlowTests: XCTestCase {
     }
     
     func testNotSimple() throws {
-        throw XCTSkip()
         var g = mf_graph<Int>(2);
         XCTAssertEqual(0, g.add_edge(0, 1, 1));
         XCTAssertEqual(1, g.add_edge(0, 1, 2));
@@ -87,7 +100,6 @@ final class maxFlowTests: XCTestCase {
     }
     
     func testCut() throws {
-        throw XCTSkip()
         var g = mf_graph<Int>(3);
         XCTAssertEqual(0, g.add_edge(0, 1, 2));
         XCTAssertEqual(1, g.add_edge(1, 2, 1));
@@ -103,6 +115,7 @@ final class maxFlowTests: XCTestCase {
     }
     
     func testTwice() throws {
+
         var e = mf_graph<Int>.edge();
 
         var g = mf_graph<Int>(3);
@@ -142,7 +155,97 @@ final class maxFlowTests: XCTestCase {
         e = [1, 2, 1, 0];
         edge_eq(e, g.get_edge(2));
     }
+    
+    func testBound() throws {
+        var e = mf_graph<Int>.edge();
 
+        let INF = Int.max;
+        var g = mf_graph<Int>(3);
+        XCTAssertEqual(0, g.add_edge(0, 1, INF));
+        XCTAssertEqual(1, g.add_edge(1, 0, INF));
+        XCTAssertEqual(2, g.add_edge(0, 2, INF));
+
+        XCTAssertEqual(INF, g.flow(0, 2));
+
+        e = [0, 1, INF, 0];
+        edge_eq(e, g.get_edge(0));
+        e = [1, 0, INF, 0];
+        edge_eq(e, g.get_edge(1));
+        e = [0, 2, INF, INF];
+        edge_eq(e, g.get_edge(2));
+    }
+    
+    func testBoundUnit() throws {
+        var e = mf_graph<Int>.edge();
+
+        let INF = Int.max;
+        var g = mf_graph<Int>(3);
+        XCTAssertEqual(0, g.add_edge(0, 1, INF));
+        XCTAssertEqual(1, g.add_edge(1, 0, INF));
+        XCTAssertEqual(2, g.add_edge(0, 2, INF));
+
+        XCTAssertEqual(INF, g.flow(0, 2));
+
+        e = [0, 1, INF, 0];
+        edge_eq(e, g.get_edge(0));
+        e = [1, 0, INF, 0];
+        edge_eq(e, g.get_edge(1));
+        e = [0, 2, INF, INF];
+        edge_eq(e, g.get_edge(2));
+    }
+    
+    func testSelfLoop() throws {
+        var g = mf_graph<Int>(3);
+        XCTAssertEqual(0, g.add_edge(0, 0, 100));
+
+        let e: mf_graph<Int>.edge = [0, 0, 100, 0];
+        edge_eq(e, g.get_edge(0));
+    }
+    
+    func testInvalid() throws {
+        throw XCTSkip()
+        var g = mf_graph<Int>(2);
+        XCTAssertThrowsError(g.flow(0, 0), ".*");
+        XCTAssertThrowsError(g.flow(0, 0, 0), ".*");
+    }
+    
+    func testStress() throws {
+//        for (int phase = 0; phase < 10000; phase++) {
+        for phase in 0..<10000 {
+            var n = randint(2, 20);
+            var m = randint(1, 100);
+            var s, t: Int;
+            (s, t) = randpair(0, n - 1);
+            if (randbool()) { swap(&s, &t); }
+
+            var g = mf_graph<Int>(n);
+//            for (int i = 0; i < m; i++) {
+            for i in 0..<m {
+                let u = randint(0, n - 1);
+                let v = randint(0, n - 1);
+                let c = randint(0, 10000);
+                g.add_edge(u, v, c);
+            }
+            let flow = g.flow(s, t);
+            var dual = 0;
+            let cut = g.min_cut(s);
+            var v_flow = [Int](repeating:0, count: n);
+//            for (auto e: g.edges()) {
+            for e in g.edges() {
+                v_flow[e.from] -= e.flow;
+                v_flow[e.to] += e.flow;
+                if (cut[e.from] && !cut[e.to]) { dual += e.cap; }
+            }
+            XCTAssertEqual(flow, dual);
+            XCTAssertEqual(-flow, v_flow[s]);
+            XCTAssertEqual(flow, v_flow[t]);
+//            for (int i = 0; i < n; i++) {
+            for i in 0..<n {
+                if (i == s || i == t) { continue; }
+                XCTAssertEqual(0, v_flow[i]);
+            }
+        }
+    }
 
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
