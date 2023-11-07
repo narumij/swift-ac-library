@@ -69,7 +69,7 @@ extension lazy_segtree.Impl {
         l += size;
         r += size;
         
-        //        for (int i = log; i >= 1; i--) {
+        // for (int i = log; i >= 1; i--) {
         for i in log..>=1 {
             if (((l >> i) << i) != l) { push(l >> i); }
             if (((r >> i) << i) != r) { push((r - 1) >> i); }
