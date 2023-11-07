@@ -65,7 +65,7 @@ extension Array where Element: Comparable {
         guard !isEmpty else { return nil }
         let count = count
         withUnsafeMutableBufferPointer { buffer in
-            buffer.pop(count, >)
+            buffer.pop_heap(count, >)
         }
         defer { assert(isHeap(startIndex, endIndex)) }
         return removeLast()
@@ -196,7 +196,7 @@ final class HeapTests: XCTestCase {
         
         var b = (1...20).map{ $0 }
         b.withUnsafeMutableBufferPointer { buffer in
-            buffer.build_heap(buffer.count, >)
+            buffer.make_heap(buffer.count, >)
         }
         XCTAssertEqual(heaped, b)
         b = b.sorted()
@@ -233,13 +233,13 @@ final class HeapTests: XCTestCase {
         var c = [2]
         c.append(1)
         c.withUnsafeMutableBufferPointer { buffer in
-            buffer.push(buffer.count, >)
+            buffer.push_heap(buffer.count, >)
         }
         
         var d = [1]
         d.append(2)
         d.withUnsafeMutableBufferPointer { buffer in
-            buffer.push(buffer.count, >)
+            buffer.push_heap(buffer.count, >)
         }
     }
     

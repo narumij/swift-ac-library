@@ -280,16 +280,15 @@ extension Array where Element: Comparable {
     
     mutating func push_heap(_ start: Int, _ end: Int, using comparator: (Element, Element) -> Bool = { $0 >= $1 }) {
         withUnsafeMutableBufferPointer { buffer in
-            buffer.push(end, comparator)
+            buffer.push_heap(end, comparator)
         }
     }
     
     @discardableResult
     mutating func pop_heap(using comparator: (Element, Element) -> Bool = { $0 >= $1 }) -> Element? {
         guard !isEmpty else { return nil }
-        let count = count
         withUnsafeMutableBufferPointer { buffer in
-            buffer.pop(count, comparator)
+            buffer.pop_heap(buffer.count, comparator)
         }
         return removeLast()
     }
@@ -307,16 +306,16 @@ extension Int {
     }
 }
 
-extension UnsafeMutableBufferPointer where Element: Comparable {
-    func push(_ limit: Int,_ condition: (Element, Element) -> Bool) {
+extension UnsafeMutableBufferPointer {
+    func push_heap(_ limit: Int,_ condition: (Element, Element) -> Bool) {
         guard isHeap(limit - 1, condition) else {
-            build_heap(limit, condition)
+            make_heap(limit, condition)
             return
         }
         heapifyUp(limit, limit - 1, condition)
         assert(isHeap(limit, condition))
     }
-    func pop(_ limit: Int,_ condition: (Element, Element) -> Bool) {
+    func pop_heap(_ limit: Int,_ condition: (Element, Element) -> Bool) {
         swapAt(0, limit - 1)
         heapifyDown(limit, 0, condition)
     }
@@ -346,10 +345,11 @@ extension UnsafeMutableBufferPointer where Element: Comparable {
     func isHeap(_ limit: Int,_ condition: (Element, Element) -> Bool) -> Bool {
         (0..<limit).allSatisfy{ heapipyIndex(limit, $0, condition) == nil }
     }
-    func build_heap(_ limit: Int,_ condition: (Element, Element) -> Bool) {
+    func make_heap(_ limit: Int,_ condition: (Element, Element) -> Bool) {
         for i in stride(from: limit / 2, through: 0, by: -1) {
             heapifyDown(limit, i, condition)
         }
         assert(isHeap(limit, condition))
     }
 }
+
