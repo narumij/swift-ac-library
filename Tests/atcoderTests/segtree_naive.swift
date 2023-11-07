@@ -5,14 +5,14 @@ import Foundation
 struct segtree_naive<T: SegtreeParameter> {
     typealias S = T.S
     func op(_ l: S,_ r: S) -> S { T.op(l,r) }
-    func e() -> S { T.e() }
+    func e() -> S { T.e }
     
     let n: Int
     var d: [S]
     init() { self.init(0) }
     init(_ _n: Int) {
         n = _n
-        d = [S](repeating: T.e(), count: n)
+        d = [S](repeating: T.e, count: n)
     }
     mutating func set(_ p: Int,_ x: S) { d[p] = x; }
     func get(_ p: Int) -> S { return d[p]; }

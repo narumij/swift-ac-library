@@ -2,23 +2,23 @@ import Foundation
 
 protocol SegtreeParameter {
     associatedtype S
-    static func op(_:S,_:S) -> S
-    static func e() -> S
+    static var op: (S,S) -> S { get }
+    static var e: S { get }
 }
 
 // from https://github.com/atcoder/ac-library/blob/master/atcoder/segtree.hpp
 struct segtree<Parameter: SegtreeParameter> {
     typealias S = Parameter.S
     func op(_ l: S,_ r: S) -> S { Parameter.op(l,r) }
-    func e() -> S { Parameter.e() }
+    func e() -> S { Parameter.e }
 
     init() { self.init(0) }
-    init(_ n: Int) { self.init([S](repeating: Parameter.e(), count: n)) }
+    init(_ n: Int) { self.init([S](repeating: Parameter.e, count: n)) }
     init(_ v: [S]) {
         _n = v.count
         size = Int(`internal`.bit_ceil(UInt(_n)))
         log = `internal`.countr_zero(UInt(size))
-        d = [S](repeating: Parameter.e(), count: 2 * size)
+        d = [S](repeating: Parameter.e, count: 2 * size)
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         for i in 0..<_n { d[size + i] = v[i] }
         // for (int i = size - 1; i >= 1; i--) {

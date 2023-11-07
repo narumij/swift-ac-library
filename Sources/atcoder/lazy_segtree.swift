@@ -2,9 +2,9 @@ import Foundation
 
 protocol LazySegtreeParameter: SegtreeParameter {
     associatedtype F
-    static func mapping(_:F,_:S) -> S
-    static func composition(_:F,_:F) -> F
-    static func `id`() -> F
+    static var mapping: (F,S) -> S { get }
+    static var composition: (F,F) -> F { get }
+    static var `id`: F { get }
 }
 
 // from https://github.com/atcoder/ac-library/blob/master/atcoder/lazysegtree.hpp
@@ -13,13 +13,13 @@ struct lazy_segtree<Parameter: LazySegtreeParameter> {
     typealias F = Parameter.F
     
     init() { self.init(0) }
-    init(_ n: Int) { self.init([S](repeating: Parameter.e(), count: n)) }
+    init(_ n: Int) { self.init([S](repeating: Parameter.e, count: n)) }
     init(_ v: [S]) {
         _n = v.count
         size = Int(`internal`.bit_ceil(UInt(_n)))
         log = `internal`.countr_zero(UInt(size))
-        d = ContiguousArray<S>(repeating: Parameter.e(), count: 2 * size)
-        lz = ContiguousArray<F>(repeating: Parameter.id(), count: size)
+        d = ContiguousArray<S>(repeating: Parameter.e, count: 2 * size)
+        lz = ContiguousArray<F>(repeating: Parameter.id, count: size)
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         for i in 0..<_n { d[size + i] = v[i]; }
         // for (int i = size - 1; i >= 1; i--) {
@@ -223,11 +223,11 @@ extension lazy_segtree {
         
         typealias S = Parameter.S
         func op(_ l: S,_ r: S) -> S { Parameter.op(l,r) }
-        func e() -> S { Parameter.e() }
+        func e() -> S { Parameter.e }
         typealias F = Parameter.F
         func mapping(_ l: F,_ r: S) -> S { Parameter.mapping(l,r) }
         func composition(_ l: F,_ r: F) -> F { Parameter.composition(l,r) }
-        func `id`() -> F { Parameter.id() }
+        func `id`() -> F { Parameter.id }
     }
 }
 

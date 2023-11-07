@@ -5,20 +5,20 @@ import Foundation
 struct lazy_segtree_v0<Property: LazySegtreeParameter> {
     typealias S = Property.S
     var op: (S,S) -> S { Property.op }
-    var e: () -> S { Property.e }
+    var e: () -> S { { Property.e } }
     typealias F = Property.F
     var mapping: (F,S) -> S { Property.mapping }
     var composition: (F,F) -> F { Property.composition }
-    var `id`: () -> F { Property.id }
+    var `id`: () -> F { { Property.id } }
 
     init() { self.init(0) }
-    init(_ n: Int) { self.init([S](repeating: Property.e(), count: n)) }
+    init(_ n: Int) { self.init([S](repeating: Property.e, count: n)) }
     init(_ v: [S]) {
         _n = v.count
         size = Int(`internal`.bit_ceil(UInt(_n)))
         log = `internal`.countr_zero(UInt(size))
-        d = ContiguousArray<S>(repeating: Property.e(), count: 2 * size)
-        lz = ContiguousArray<F>(repeating: Property.id(), count: size)
+        d = ContiguousArray<S>(repeating: Property.e, count: 2 * size)
+        lz = ContiguousArray<F>(repeating: Property.id, count: size)
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         for i in 0..<_n { d[size + i] = v[i]; }
         // for (int i = size - 1; i >= 1; i--) {
