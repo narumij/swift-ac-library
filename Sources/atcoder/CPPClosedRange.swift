@@ -25,6 +25,12 @@ import Foundation
 /// var r = 0
 /// for n in 1..<=r { }
 /// ```
+///
+/// 以下も追加してある。
+/// ```
+/// var r = 0
+/// for n in r..>=1 { }
+/// ```
 struct CPPClosedRange<Bound> where Bound: Comparable & Numeric {
     let start: Bound
     let end: Bound

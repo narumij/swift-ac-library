@@ -18,8 +18,8 @@ struct lazy_segtree<Parameter: LazySegtreeParameter> {
         _n = v.count
         size = Int(`internal`.bit_ceil(UInt(_n)))
         log = `internal`.countr_zero(UInt(size))
-        d = ContiguousArray<S>(repeating: Parameter.e, count: 2 * size)
-        lz = ContiguousArray<F>(repeating: Parameter.id, count: size)
+        d = .init(repeating: Parameter.e, count: 2 * size)
+        lz = .init(repeating: Parameter.id, count: size)
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         for i in 0..<_n { d[size + i] = v[i]; }
         // for (int i = size - 1; i >= 1; i--) {
@@ -224,6 +224,7 @@ extension lazy_segtree {
         typealias S = Parameter.S
         func op(_ l: S,_ r: S) -> S { Parameter.op(l,r) }
         func e() -> S { Parameter.e }
+        
         typealias F = Parameter.F
         func mapping(_ l: F,_ r: S) -> S { Parameter.mapping(l,r) }
         func composition(_ l: F,_ r: F) -> F { Parameter.composition(l,r) }

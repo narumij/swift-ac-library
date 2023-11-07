@@ -63,7 +63,7 @@ enum stress_fixture {
     static func e_t() -> T { return T(-1); }
 }
 
-extension stress_fixture: LazySegtreeParameter, SegtreeParameter {
+extension stress_fixture: LazySegtreeParameter {
     typealias F = T
     static let op: (S,S) -> S = op_ss
     static let e: S = e_s()
@@ -179,7 +179,7 @@ final class LazySegtreeStressTests: XCTestCase {
                 var now = 0;
                 // for (int q = 0; q < 1000; q++) {
                 for q in 0..<1000 {
-                    var ty = randint(0, 2);
+                    let ty = randint(0, 2);
                     var l, r: Int;
                     (l, r) = randpair(0, n);
                     if (ty == 0) {
@@ -199,10 +199,21 @@ final class LazySegtreeStressTests: XCTestCase {
         }
     }
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
+    func testPerformanceNaive() throws {
         self.measure {
-            // Put the code you want to measure the time of here.
+            try! testNaive()
+        }
+    }
+
+    func testPerformanceMaxRight() throws {
+        self.measure {
+            try! testMaxRightTest()
+        }
+    }
+
+    func testPerformanceMinLeft() throws {
+        self.measure {
+            try! testMinLeftTest()
         }
     }
 }

@@ -42,7 +42,7 @@ final class SegtreeTests: XCTestCase {
             segtree_naive<fixture>(-1)
         })
         
-        var s = segtree<fixture>(10)
+        let s = segtree<fixture>(10)
         
         XCTAssertThrowsError(s.get(-1))
         XCTAssertThrowsError(s.get(10))
