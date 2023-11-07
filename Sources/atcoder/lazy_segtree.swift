@@ -4,7 +4,7 @@ protocol LazySegtreeParameter: SegtreeParameter {
     associatedtype F
     static var mapping: (F,S) -> S { get }
     static var composition: (F,F) -> F { get }
-    static var `id`: F { get }
+    static var id: F { get }
 }
 
 // from https://github.com/atcoder/ac-library/blob/master/atcoder/lazysegtree.hpp
@@ -227,7 +227,7 @@ extension lazy_segtree {
         typealias F = Parameter.F
         func mapping(_ l: F,_ r: S) -> S { Parameter.mapping(l,r) }
         func composition(_ l: F,_ r: F) -> F { Parameter.composition(l,r) }
-        func `id`() -> F { Parameter.id }
+        func id() -> F { Parameter.id }
     }
 }
 

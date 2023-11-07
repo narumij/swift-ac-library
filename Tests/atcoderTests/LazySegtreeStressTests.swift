@@ -69,7 +69,7 @@ extension stress_fixture: LazySegtreeParameter, SegtreeParameter {
     static let e: S = e_s()
     static let mapping: (F,S) -> S = op_ts
     static let composition: (F,F) -> F = op_tt
-    static let `id`: F = e_t()
+    static let id: F = e_t()
 }
 
 final class LazySegtreeStressTests: XCTestCase {

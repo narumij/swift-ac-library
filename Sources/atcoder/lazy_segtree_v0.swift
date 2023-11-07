@@ -9,7 +9,7 @@ struct lazy_segtree_v0<Property: LazySegtreeParameter> {
     typealias F = Property.F
     var mapping: (F,S) -> S { Property.mapping }
     var composition: (F,F) -> F { Property.composition }
-    var `id`: () -> F { { Property.id } }
+    var id: () -> F { { Property.id } }
 
     init() { self.init(0) }
     init(_ n: Int) { self.init([S](repeating: Property.e, count: n)) }

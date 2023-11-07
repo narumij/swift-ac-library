@@ -17,7 +17,7 @@ extension starry: LazySegtreeParameter, SegtreeParameter {
     typealias F = Int
     static var mapping: (F,S) -> S = { a, b in starry.op_ts(a,b) }
     static var composition: (F,F) -> F = { a, b in starry.op_tt(a,b) }
-    static let `id`: F = e_t()
+    static let id: F = e_t()
 }
 
 typealias starry_seg = lazy_segtree<starry>
