@@ -30,12 +30,12 @@ extension `internal` {
     };
 }
 
-
 struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & FixedWidthInteger> where Cap == Cost {
 //  public:
-    init() { }
+    init() { _n = 0 }
     init(_ n: Int) { _n = n }
 
+    @discardableResult
     mutating func add_edge(_ from: Int,_ to: Int,_ cap: Cap,_ cost: Cost) -> Int {
         assert(0 <= from && from < _n);
         assert(0 <= to && to < _n);
@@ -47,6 +47,9 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
     }
 
     struct edge {
+        init() {
+            from = 0; to = 0; cap = 0; flow = 0; cost = 0
+        }
         internal init(_ from: Int,_ to: Int,_ cap: Cap,_ flow: Cap,_ cost: Cost) {
             self.from = from
             self.to = to
@@ -142,7 +145,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
         var cost: Cost;
     };
 
-    struct Q {
+    struct Q: Comparable {
         internal init(_ key: Cost,_ to: Int) {
             self.key = key
             self.to = to
@@ -195,12 +198,11 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
                 } else {
                     while (heap_r < que.count) {
                         heap_r += 1;
-                        std::push_heap(que.begin(), que.begin() + heap_r);
+                        que.push_heap(que.startIndex, que.startIndex + heap_r);
                     }
-                    v = que.front().to;
-                    std::pop_heap(que.begin(), que.end());
-                    que.pop_back();
-                    heap_r--;
+                    v = que.first!.to;
+                    que.pop_heap();
+                    heap_r -= 1;
                 }
                 if (vis[v]) { continue; }
                 vis[v] = true;
@@ -212,7 +214,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
 //                for (int i = g.start[v]; i < g.start[v + 1]; i++) {
                 for i in g.start[v]..<g.start[v + 1] {
                     var e = g.elist[i];
-                    if (!e.cap) { continue; }
+                    if ((e.cap == 0)) { continue; }
                     // |-dual[e.to] + dual[v]| <= (n-1)C
                     // cost <= C - -(n-1)C + 0 = nC
                     var cost = e.cost - dual_dist[e.to].first + dual_v;
@@ -273,3 +275,48 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
         return result;
     }
 };
+
+extension Array where Element: Comparable {
+    mutating func push_heap(_ start: Int, _ end: Int, using comparator: (Element, Element) -> Bool = { $0 >= $1 }) {
+        // 新しい要素を範囲の末尾に追加
+        var currentIndex = (end - 1)
+        var parentIndex = (currentIndex - 1) / 2
+        // ヒープ条件を維持
+        while currentIndex > start && !comparator(self[parentIndex], self[currentIndex]) {
+            swapAt(currentIndex, parentIndex)
+            currentIndex = parentIndex
+            parentIndex = (currentIndex - 1) / 2
+        }
+    }
+}
+
+extension Array where Element: Comparable {
+    mutating func pop_heap(using comparator: (Element, Element) -> Bool = { $0 >= $1 }) {
+        guard !isEmpty else { return }
+
+        // 最大の要素をルートから削除
+        let lastIndex = count - 1
+        swapAt(0, lastIndex)
+        removeLast()
+
+        // ヒープ条件を維持
+        var currentIndex = 0
+        var childIndex = 2 * currentIndex + 1
+
+        while childIndex < count {
+            let rightChild = childIndex + 1
+
+            if rightChild < count && comparator(self[rightChild], self[childIndex]) {
+                childIndex = rightChild
+            }
+
+            if comparator(self[childIndex], self[currentIndex]) {
+                swapAt(childIndex, currentIndex)
+                currentIndex = childIndex
+                childIndex = 2 * currentIndex + 1
+            } else {
+                break
+            }
+        }
+    }
+}
