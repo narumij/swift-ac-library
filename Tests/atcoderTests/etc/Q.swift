@@ -7,48 +7,78 @@
 
 import Foundation
 
-// 指定された範囲の配列をヒープ化する関数
-func heapify<T: Comparable>(array: inout [T], from startIndex: Int, to endIndex: Int) {
-    var currentIndex = startIndex
-    var leftChildIndex = 2 * currentIndex + 1
-
-    while leftChildIndex <= endIndex {
-        let rightChildIndex = min(leftChildIndex + 1, endIndex)
-        var largestChildIndex = leftChildIndex
-
-        if rightChildIndex <= endIndex && array[rightChildIndex] > array[leftChildIndex] {
-            largestChildIndex = rightChildIndex
-        }
-
-        if array[largestChildIndex] > array[currentIndex] {
-            array.swapAt(currentIndex, largestChildIndex)
-            currentIndex = largestChildIndex
-            leftChildIndex = 2 * currentIndex + 1
-        } else {
-            break
-        }
+extension Int {
+#if true
+    var parent: Int {
+        ((self + 1) >> 1) - 1
     }
+    var leftChild: Int {
+        ((self + 1) << 1) - 1
+    }
+    var rightChild: Int {
+        ((self + 1) << 1)
+    }
+#elseif false
+    var parent: Int {
+        (self + 1) / 2 - 1
+    }
+    var leftChild: Int {
+        2 * (self + 1) - 1
+    }
+    var rightChild: Int {
+        2 * (self + 1) + 1 - 1
+    }
+#else
+    var parent: Int {
+        self / 2
+    }
+    var leftChild: Int {
+        2 * self
+    }
+    var rightChild: Int {
+        2 * self + 1
+    }
+#endif
 }
 
-// ヒープ化された配列を表示する関数
-func printHeap<T>(_ array: [T]) {
-    for (index, element) in array.enumerated() {
-        print("Heap[\(index)]: \(element)")
+extension UnsafeMutableBufferPointer where Element: Comparable {
+    func push(_ limit: Int,_ condition: (Element, Element) -> Bool) {
+        heapifyUp(limit, limit - 1, condition)
+        assert(isHeap(limit, condition))
     }
-}
-
-// テスト用の配列
-var heapArray = [4, 10, 3, 5, 1, 2, 6]
-
-// 特定の範囲をヒープ化（例：インデックス2から4までの範囲をヒープ化）
-let startIndex = 2
-let endIndex = 4
-
-func hoge() {
-    for i in (startIndex...endIndex).reversed() {
-        heapify(array: &heapArray, from: i, to: endIndex)
+    func pop(_ limit: Int,_ condition: (Element, Element) -> Bool) {
+        swapAt(0, limit - 1)
+        heapifyDown(limit, 0, condition)
     }
-    
-    // ヒープ化された配列を表示
-    printHeap(heapArray)
+    func heapifyUp(_ limit: Int,_ i: Index,_ condition: (Element, Element) -> Bool) {
+        var pos = i
+        while pos > 0 {
+            guard !condition(self[pos.parent], self[pos]) else { break }
+            swapAt(pos, pos.parent)
+            pos = pos.parent
+        }
+    }
+    func heapifyDown(_ limit: Int,_ i: Index,_ condition: (Element, Element) -> Bool) {
+        guard let index = heapipyIndex(limit, i, condition) else { return }
+        swapAt(i, index)
+        heapifyDown(limit, index, condition)
+    }
+    func heapipyIndex(_ limit: Int,_ current: Index,_ condition: (Element, Element) -> Bool) -> Index? {
+        var next = current
+        if current.leftChild < limit, condition(self[current.leftChild], self[next]) {
+            next = current.leftChild
+        }
+        if current.rightChild < limit, condition(self[current.rightChild], self[next]) {
+            next = current.rightChild
+        }
+        return next == current ? nil : next
+    }
+    func isHeap(_ limit: Int,_ condition: (Element, Element) -> Bool) -> Bool {
+        (0..<limit).allSatisfy{ heapipyIndex(limit, $0, condition) == nil }
+    }
+    func build_heap(_ limit: Int,_ condition: (Element, Element) -> Bool) {
+        for i in stride(from: limit / 2, through: 0, by: -1) {
+            heapifyDown(limit, i, condition)
+        }
+    }
 }

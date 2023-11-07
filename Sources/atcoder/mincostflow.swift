@@ -83,16 +83,16 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
         assert(0 <= t && t < _n);
         assert(s != t);
 
-        var m = _edges.count;
+        let m = _edges.count;
         var edge_idx = [Int](repeating:0, count:m);
 
-        var g = {
+        let g = {
             var degree = [Int](repeating:0,count:_n), redge_idx = [Int](repeating: 0, count: m);
             var elist: [(Int,_edge)] = [];
             elist.reserveCapacity(2 * m);
 //            for (int i = 0; i < m; i++) {
             for i in 0..<m {
-                var e = _edges[i];
+                let e = _edges[i];
                 edge_idx[i] = degree[e.from]; degree[e.from] += 1
                 redge_idx[i] = degree[e.to]; degree[e.to] += 1
                 elist.append((e.from, .init(e.to, -1, e.cap - e.flow, e.cost)));
@@ -101,7 +101,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
             var _g = `internal`.csr<_edge>(_n, elist);
 //            for (int i = 0; i < m; i++) {
             for i in 0..<m {
-                var e = _edges[i];
+                let e = _edges[i];
                 edge_idx[i] += _g.start[e.from];
                 redge_idx[i] += _g.start[e.to];
                 _g.elist[edge_idx[i]].rev = redge_idx[i];
@@ -110,11 +110,11 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
             return _g;
         }();
 
-        var result = slope(g, s, t, flow_limit);
+        let result = slope(g, s, t, flow_limit);
 
 //        for (int i = 0; i < m; i++) {
         for i in 0..<m {
-            var e = g.elist[edge_idx[i]];
+            let e = g.elist[edge_idx[i]];
             _edges[i].flow = _edges[i].cap - e.cap;
         }
 
@@ -152,7 +152,8 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
         }
         var key: Cost;
         var to: Int;
-        static func <(lhs: Q, rhs: Q) -> Bool { return lhs.key > rhs.key; }
+        static func ==(lhs: Q, rhs: Q) -> Bool { return lhs.key == rhs.key && lhs.to == rhs.to }
+        static func <(lhs: Q, rhs: Q) -> Bool { return lhs.key > rhs.key || (lhs.key == rhs.to && lhs.to > rhs.to) }
     };
 
     func slope(_ g: `internal`.csr<_edge>,
@@ -175,7 +176,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
 //        };
         var que_min = [Int]();
         var que = [Q]();
-        var dual_ref = {
+        let dual_ref = {
 //            for (int i = 0; i < _n; i++) {
             for i in 0..<_n {
                 dual_dist[i].second = Cost.max;
@@ -193,8 +194,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
             while (!que_min.isEmpty || !que.isEmpty) {
                 var v: Int;
                 if (!que_min.isEmpty) {
-                    v = que_min.last!;
-                    que_min.popLast();
+                    v = que_min.popLast()!;
                 } else {
                     while (heap_r < que.count) {
                         heap_r += 1;
@@ -210,16 +210,16 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
                 // dist[v] = shortest(s, v) + dual[s] - dual[v]
                 // dist[v] >= 0 (all reduced cost are positive)
                 // dist[v] <= (n-1)C
-                var dual_v = dual_dist[v].first, dist_v = dual_dist[v].second;
+                let dual_v = dual_dist[v].first, dist_v = dual_dist[v].second;
 //                for (int i = g.start[v]; i < g.start[v + 1]; i++) {
                 for i in g.start[v]..<g.start[v + 1] {
-                    var e = g.elist[i];
+                    let e = g.elist[i];
                     if ((e.cap == 0)) { continue; }
                     // |-dual[e.to] + dual[v]| <= (n-1)C
                     // cost <= C - -(n-1)C + 0 = nC
-                    var cost = e.cost - dual_dist[e.to].first + dual_v;
+                    let cost = e.cost - dual_dist[e.to].first + dual_v;
                     if (dual_dist[e.to].second - dist_v > cost) {
-                        var dist_to = dist_v + cost;
+                        let dist_to = dist_v + cost;
                         dual_dist[e.to].second = dist_to;
                         prev_e[e.to] = e.rev;
                         if (dist_to == dist_v) {
@@ -263,7 +263,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
                 e.cap += c;
                 g.elist[e.rev].cap -= c;
             }
-            var d = -dual_dist[s].first;
+            let d = -dual_dist[s].first;
             flow += c;
             cost += c * d;
             if (prev_cost_per_flow == d) {
@@ -277,46 +277,79 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
 };
 
 extension Array where Element: Comparable {
+    
     mutating func push_heap(_ start: Int, _ end: Int, using comparator: (Element, Element) -> Bool = { $0 >= $1 }) {
-        // 新しい要素を範囲の末尾に追加
-        var currentIndex = (end - 1)
-        var parentIndex = (currentIndex - 1) / 2
-        // ヒープ条件を維持
-        while currentIndex > start && !comparator(self[parentIndex], self[currentIndex]) {
-            swapAt(currentIndex, parentIndex)
-            currentIndex = parentIndex
-            parentIndex = (currentIndex - 1) / 2
+        withUnsafeMutableBufferPointer { buffer in
+            buffer.push(end, comparator)
         }
+    }
+    
+    @discardableResult
+    mutating func pop_heap(using comparator: (Element, Element) -> Bool = { $0 >= $1 }) -> Element? {
+        guard !isEmpty else { return nil }
+        let count = count
+        withUnsafeMutableBufferPointer { buffer in
+            buffer.pop(count, comparator)
+        }
+        return removeLast()
     }
 }
 
-extension Array where Element: Comparable {
-    mutating func pop_heap(using comparator: (Element, Element) -> Bool = { $0 >= $1 }) {
-        guard !isEmpty else { return }
+extension Int {
+    var parent: Int {
+        ((self + 1) >> 1) - 1
+    }
+    var leftChild: Int {
+        ((self + 1) << 1) - 1
+    }
+    var rightChild: Int {
+        ((self + 1) << 1)
+    }
+}
 
-        // 最大の要素をルートから削除
-        let lastIndex = count - 1
-        swapAt(0, lastIndex)
-        removeLast()
-
-        // ヒープ条件を維持
-        var currentIndex = 0
-        var childIndex = 2 * currentIndex + 1
-
-        while childIndex < count {
-            let rightChild = childIndex + 1
-
-            if rightChild < count && comparator(self[rightChild], self[childIndex]) {
-                childIndex = rightChild
-            }
-
-            if comparator(self[childIndex], self[currentIndex]) {
-                swapAt(childIndex, currentIndex)
-                currentIndex = childIndex
-                childIndex = 2 * currentIndex + 1
-            } else {
-                break
-            }
+extension UnsafeMutableBufferPointer where Element: Comparable {
+    func push(_ limit: Int,_ condition: (Element, Element) -> Bool) {
+        guard isHeap(limit - 1, condition) else {
+            build_heap(limit, condition)
+            return
         }
+        heapifyUp(limit, limit - 1, condition)
+        assert(isHeap(limit, condition))
+    }
+    func pop(_ limit: Int,_ condition: (Element, Element) -> Bool) {
+        swapAt(0, limit - 1)
+        heapifyDown(limit, 0, condition)
+    }
+    func heapifyUp(_ limit: Int,_ i: Index,_ condition: (Element, Element) -> Bool) {
+        var pos = i
+        while pos > 0 {
+            guard !condition(self[pos.parent], self[pos]) else { break }
+            swapAt(pos, pos.parent)
+            pos = pos.parent
+        }
+    }
+    func heapifyDown(_ limit: Int,_ i: Index,_ condition: (Element, Element) -> Bool) {
+        guard let index = heapipyIndex(limit, i, condition) else { return }
+        swapAt(i, index)
+        heapifyDown(limit, index, condition)
+    }
+    func heapipyIndex(_ limit: Int,_ current: Index,_ condition: (Element, Element) -> Bool) -> Index? {
+        var next = current
+        if current.leftChild < limit, condition(self[current.leftChild], self[next]) {
+            next = current.leftChild
+        }
+        if current.rightChild < limit, condition(self[current.rightChild], self[next]) {
+            next = current.rightChild
+        }
+        return next == current ? nil : next
+    }
+    func isHeap(_ limit: Int,_ condition: (Element, Element) -> Bool) -> Bool {
+        (0..<limit).allSatisfy{ heapipyIndex(limit, $0, condition) == nil }
+    }
+    func build_heap(_ limit: Int,_ condition: (Element, Element) -> Bool) {
+        for i in stride(from: limit / 2, through: 0, by: -1) {
+            heapifyDown(limit, i, condition)
+        }
+        assert(isHeap(limit, condition))
     }
 }

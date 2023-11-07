@@ -59,6 +59,18 @@ extension Array where Element: Comparable {
 }
 
 extension Array where Element: Comparable {
+    
+    @discardableResult
+    mutating func pop_heap(using comparator: (Element, Element) -> Bool = { $0 >= $1 }) -> Element? {
+        guard !isEmpty else { return nil }
+        let count = count
+        withUnsafeMutableBufferPointer { buffer in
+            buffer.pop(count, >)
+        }
+        defer { assert(isHeap(startIndex, endIndex)) }
+        return removeLast()
+    }
+
     mutating func popHeap(using comparator: (Element, Element) -> Bool = { $0 >= $1 }) {
         guard !isEmpty else { return }
 
@@ -177,28 +189,81 @@ final class HeapTests: XCTestCase {
         // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
         // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
         
-        throw XCTSkip()
+//        throw XCTSkip()
         
         XCTAssertTrue(heaped.isHeap(inRange: heaped.indices, using: >=))
         XCTAssertTrue(heaped.isHeap(heaped.startIndex, heaped.endIndex, using: >=))
         
         var b = (1...20).map{ $0 }
-        for i in 0...20 {
-            b.pushHeap(from: 0, to: i, using: >=)
+        b.withUnsafeMutableBufferPointer { buffer in
+            buffer.build_heap(buffer.count, >)
         }
-//        b.heapify(index: 0, endIndex: 20)
         XCTAssertEqual(heaped, b)
+        b = b.sorted()
+        b.withUnsafeMutableBufferPointer { buffer in
+            for i in 0..<20 {
+                buffer.heapifyUp(buffer.count, i, >)
+            }
+        }
+//        XCTAssertEqual(heaped, b)
+        XCTAssertTrue(b.isHeap(b.startIndex, b.endIndex))
+        b.withUnsafeMutableBufferPointer { buffer in
+            XCTAssertTrue(buffer.isHeap(buffer.count, >))
+        }
 
         var a = heaped
-        a.popHeap()
+        a.pop_heap()
         XCTAssertEqual(poped.dropLast(), a)
-        a.popHeap()
+        XCTAssertTrue(a.isHeap(a.startIndex, a.endIndex))
+        a.withUnsafeMutableBufferPointer { buffer in
+            XCTAssertTrue(buffer.isHeap(buffer.count, >))
+        }
+        a.pop_heap()
         XCTAssertEqual(poped2.dropLast().dropLast(), a)
+        XCTAssertTrue(a.isHeap(a.startIndex, a.endIndex))
+        a.withUnsafeMutableBufferPointer { buffer in
+            XCTAssertTrue(buffer.isHeap(buffer.count, >))
+        }
 
-        var heapArray: [Int] = [16, 14, 15, 10, 11, 13, 12, 5, 8, 9, 4, 6, 2, 7, 3, 1, 20, 18, 19, 17]
+        let heapArray: [Int] = [16, 14, 15, 10, 11, 13, 12, 5, 8, 9, 4, 6, 2, 7, 3, 1, 20, 18, 19, 17]
 
         XCTAssertFalse(heapArray.isHeap(inRange: heaped.indices, using: >=))
         XCTAssertFalse(heapArray.isHeap(heaped.startIndex, heaped.endIndex, using: >=))
+        
+        var c = [2]
+        c.append(1)
+        c.withUnsafeMutableBufferPointer { buffer in
+            buffer.push(buffer.count, >)
+        }
+        
+        var d = [1]
+        d.append(2)
+        d.withUnsafeMutableBufferPointer { buffer in
+            buffer.push(buffer.count, >)
+        }
+    }
+    
+    func testIndex() throws {
+        XCTAssertEqual(1, 0.leftChild)
+        XCTAssertEqual(2, 0.rightChild)
+        XCTAssertEqual(0, 1.parent)
+        XCTAssertEqual(3, 1.leftChild)
+        XCTAssertEqual(4, 1.rightChild)
+        XCTAssertEqual(0, 2.parent)
+        XCTAssertEqual(5, 2.leftChild)
+        XCTAssertEqual(6, 2.rightChild)
+        XCTAssertEqual(1, 3.parent)
+        XCTAssertEqual(7, 3.leftChild)
+        XCTAssertEqual(8, 3.rightChild)
+        XCTAssertEqual(1, 4.parent)
+        XCTAssertEqual(9, 4.leftChild)
+        XCTAssertEqual(10, 4.rightChild)
+        XCTAssertEqual(2, 5.parent)
+        XCTAssertEqual(11, 5.leftChild)
+        XCTAssertEqual(12, 5.rightChild)
+        XCTAssertEqual(2, 6.parent)
+        XCTAssertEqual(13, 6.leftChild)
+        XCTAssertEqual(14, 6.rightChild)
     }
 
     func testPerformanceExample() throws {
