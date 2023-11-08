@@ -124,8 +124,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
         }
         var key: Cost;
         var to: Int;
-        static func ==(lhs: Q, rhs: Q) -> Bool { return lhs.key == rhs.key && lhs.to == rhs.to }
-        static func <(lhs: Q, rhs: Q) -> Bool { return lhs.key > rhs.key || (lhs.key == rhs.to && lhs.to > rhs.to) }
+        static func <(lhs: Q, rhs: Q) -> Bool { return lhs.key > rhs.key }
     };
 
     func slope(_ g: `internal`.csr<_edge>,
@@ -138,7 +137,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
         // reduced cost (= e.cost + dual[e.from] - dual[e.to]) >= 0 for all edge
 
         // dual_dist[i] = (dual[i], dist[i])
-        var dual_dist = [(first: Cost,second: Cost)](repeating: (.init(),.init()), count: _n);
+        var dual_dist = [(first: Cost,second: Cost)](repeating: (0,0), count: _n);
         var prev_e = [Int](repeating: 0, count:_n);
         var vis = [Bool](repeating: false, count: _n);
 //        struct Q {
@@ -172,8 +171,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
                         heap_r += 1;
                         que.push_heap(que.startIndex, que.startIndex + heap_r);
                     }
-                    v = que.first!.to;
-                    que.pop_heap();
+                    v = que.pop_heap()!.to;
                     heap_r -= 1;
                 }
                 if (vis[v]) { continue; }
@@ -225,16 +223,15 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
             if (!dual_ref()) { break; }
             var c = flow_limit - flow;
 //            for (int v = t; v != s; v = g.elist[prev_e[v]].to) {
-            var v = t
-            while v != s { v = g.elist[prev_e[v]].to;
+            do { var v = t; while v != s { defer { v = g.elist[prev_e[v]].to; }
                 c = min(c, g.elist[g.elist[prev_e[v]].rev].cap);
-            }
+            } }
 //            for (int v = t; v != s; v = g.elist[prev_e[v]].to) {
-            while v != s { v = g.elist[prev_e[v]].to;
+            do { var v = t; while v != s { defer { v = g.elist[prev_e[v]].to; }
                 var e = g.elist[prev_e[v]];
                 e.cap += c;
                 g.elist[e.rev].cap -= c;
-            }
+            } }
             let d = -dual_dist[s].first;
             flow += c;
             cost += c * d;
