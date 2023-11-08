@@ -25,13 +25,8 @@ public struct lazy_segtree<Parameter: LazySegtreeParameter> {
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         for i in 0..<_n { d[size + i] = v[i]; }
         // for (int i = size - 1; i >= 1; i--) {
-        d.withUnsafeMutableBufferPointer { d in
-            lz.withUnsafeMutableBufferPointer { lz in
-                let c = _UnsafeHandle(_n: _n, size: size, log: log, d: d, lz: lz)
-                for i in (size - 1)..>=1 {
-                    c.update(i);
-                }
-            }
+        for i in (size - 1)..>=1 {
+            _update { $0.update(i); }
         }
     }
     
