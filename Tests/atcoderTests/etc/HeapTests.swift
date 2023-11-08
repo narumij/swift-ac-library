@@ -63,11 +63,10 @@ extension Array where Element: Comparable {
     @discardableResult
     mutating func pop_heap(using comparator: (Element, Element) -> Bool = { $0 >= $1 }) -> Element? {
         guard !isEmpty else { return nil }
-        let count = count
         withUnsafeMutableBufferPointer { buffer in
-            buffer.pop_heap(count, >)
+            buffer.pop_heap(buffer.count, >)
         }
-        defer { assert(isHeap(startIndex, endIndex)) }
+//        defer { assert(isHeap(startIndex, endIndex)) }
         return removeLast()
     }
 
@@ -201,8 +200,8 @@ final class HeapTests: XCTestCase {
         XCTAssertEqual(heaped, b)
         b = b.sorted()
         b.withUnsafeMutableBufferPointer { buffer in
-            for i in 0..<20 {
-                buffer.heapifyUp(buffer.count, i, >)
+            for i in 1...20 {
+                buffer.push_heap(i, >)
             }
         }
 //        XCTAssertEqual(heaped, b)
@@ -212,17 +211,20 @@ final class HeapTests: XCTestCase {
         }
 
         var a = heaped
-        a.pop_heap()
+        XCTAssertEqual(20, a.pop_heap())
         XCTAssertEqual(poped.dropLast(), a)
         XCTAssertTrue(a.isHeap(a.startIndex, a.endIndex))
         a.withUnsafeMutableBufferPointer { buffer in
             XCTAssertTrue(buffer.isHeap(buffer.count, >))
         }
-        a.pop_heap()
+        XCTAssertEqual(19, a.pop_heap())
         XCTAssertEqual(poped2.dropLast().dropLast(), a)
         XCTAssertTrue(a.isHeap(a.startIndex, a.endIndex))
         a.withUnsafeMutableBufferPointer { buffer in
             XCTAssertTrue(buffer.isHeap(buffer.count, >))
+        }
+        for i in stride(from: 18, through: 1, by: -1) {
+            XCTAssertEqual(i, a.pop_heap())
         }
 
         let heapArray: [Int] = [16, 14, 15, 10, 11, 13, 12, 5, 8, 9, 4, 6, 2, 7, 3, 1, 20, 18, 19, 17]
@@ -267,10 +269,24 @@ final class HeapTests: XCTestCase {
     }
 
     func testPerformanceExample() throws {
+        // throw XCTSkip()
+        var pq = priority_queue<Int>(condition: >)
         // This is an example of a performance test case.
         self.measure {
             // Put the code you want to measure the time of here.
+            (0..<200000).forEach{ pq.push($0) }
+            while let p = pq.pop() { }
         }
     }
+
+//    func testPerformanceExample2() throws {
+//        // throw XCTSkip()
+//        var pq = priority_queue<Int>(condition: >)
+//        // This is an example of a performance test case.
+//        self.measure {
+//            // Put the code you want to measure the time of here.
+//            (0..<200000).forEach{ pq.push($0) }
+//        }
+//    }
 
 }

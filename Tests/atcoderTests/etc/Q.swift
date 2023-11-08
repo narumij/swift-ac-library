@@ -9,6 +9,11 @@ import Foundation
 
 extension Int {
 #if true
+    // https://en.wikipedia.org/wiki/Binary_heap
+    var parent:     Int { (self - 1) >> 1 }
+    var leftChild:  Int { (self << 1) + 1 }
+    var rightChild: Int { (self << 1) + 2 }
+#elseif false
     var parent: Int {
         ((self + 1) >> 1) - 1
     }
@@ -43,46 +48,69 @@ extension Int {
 
 extension UnsafeMutableBufferPointer {
     func push_heap(_ limit: Int,_ condition: (Element, Element) -> Bool) {
-        guard isHeap(limit - 1, condition) else {
-            make_heap(limit, condition)
-            return
-        }
         heapifyUp(limit, limit - 1, condition)
-        assert(isHeap(limit, condition))
     }
     func pop_heap(_ limit: Int,_ condition: (Element, Element) -> Bool) {
-        swapAt(0, limit - 1)
-        heapifyDown(limit, 0, condition)
+        guard limit > 0 else { return }
+        swapAt(startIndex, limit - 1)
+        heapifyDown(limit - 1, startIndex, condition)
     }
-    func heapifyUp(_ limit: Int,_ i: Index,_ condition: (Element, Element) -> Bool) {
-        var pos = i
-        while pos > 0 {
-            guard !condition(self[pos.parent], self[pos]) else { break }
-            swapAt(pos, pos.parent)
-            pos = pos.parent
+    private func heapifyUp(_ limit: Int,_ i: Int,_ condition: (Element, Element) -> Bool) {
+        let element = self[i]
+        var current = i
+        while current > startIndex {
+            let parent = current.parent
+            guard !condition(self[parent], element) else { break }
+            (self[current], current) = (self[parent], parent)
         }
+        self[current] = element
     }
-    func heapifyDown(_ limit: Int,_ i: Index,_ condition: (Element, Element) -> Bool) {
-        guard let index = heapipyIndex(limit, i, condition) else { return }
+    private func heapifyDown(_ limit: Int,_ i: Int,_ condition: (Element, Element) -> Bool) {
+        let element = self[i]
+        var (current, selected) = (i,i)
+        while current < limit {
+            let leftChild = current.leftChild
+            let rightChild = leftChild + 1
+            if leftChild < limit,
+               condition(self[leftChild], element)
+            {
+                selected = leftChild
+            }
+            if rightChild < limit,
+               condition(self[rightChild], current == selected ? element : self[selected])
+            {
+                selected = rightChild
+            }
+            if selected == current { break }
+            (self[current], current) = (self[selected], selected)
+        }
+        self[current] = element
+    }
+    private func heapify(_ limit: Int,_ i: Int,_ condition: (Element, Element) -> Bool) {
+        guard let index = heapifyIndex(limit, i, condition) else { return }
         swapAt(i, index)
-        heapifyDown(limit, index, condition)
+        heapify(limit, index, condition)
     }
-    func heapipyIndex(_ limit: Int,_ current: Index,_ condition: (Element, Element) -> Bool) -> Index? {
+    private func heapifyIndex(_ limit: Int,_ current: Int,_ condition: (Element, Element) -> Bool) -> Index? {
         var next = current
-        if current.leftChild < limit, condition(self[current.leftChild], self[next]) {
+        if current.leftChild < limit,
+           condition(self[current.leftChild], self[next])
+        {
             next = current.leftChild
         }
-        if current.rightChild < limit, condition(self[current.rightChild], self[next]) {
+        if current.rightChild < limit,
+           condition(self[current.rightChild], self[next])
+        {
             next = current.rightChild
         }
         return next == current ? nil : next
     }
     func isHeap(_ limit: Int,_ condition: (Element, Element) -> Bool) -> Bool {
-        (0..<limit).allSatisfy{ heapipyIndex(limit, $0, condition) == nil }
+        (startIndex..<limit).allSatisfy{ heapifyIndex(limit, $0, condition) == nil }
     }
     func make_heap(_ limit: Int,_ condition: (Element, Element) -> Bool) {
-        for i in stride(from: limit / 2, through: 0, by: -1) {
-            heapifyDown(limit, i, condition)
+        for i in stride(from: limit / 2, through: startIndex, by: -1) {
+            heapify(limit, i, condition)
         }
         assert(isHeap(limit, condition))
     }

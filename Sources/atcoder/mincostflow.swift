@@ -306,7 +306,7 @@ extension Int {
     }
 }
 
-extension UnsafeMutableBufferPointer {
+fileprivate extension UnsafeMutableBufferPointer {
     func push_heap(_ limit: Int,_ condition: (Element, Element) -> Bool) {
         guard isHeap(limit - 1, condition) else {
             make_heap(limit, condition)
@@ -316,12 +316,12 @@ extension UnsafeMutableBufferPointer {
         assert(isHeap(limit, condition))
     }
     func pop_heap(_ limit: Int,_ condition: (Element, Element) -> Bool) {
-        swapAt(0, limit - 1)
-        heapifyDown(limit, 0, condition)
+        swapAt(startIndex, limit - 1)
+        heapifyDown(limit - 1, startIndex, condition)
     }
     func heapifyUp(_ limit: Int,_ i: Index,_ condition: (Element, Element) -> Bool) {
         var pos = i
-        while pos > 0 {
+        while pos > startIndex {
             guard !condition(self[pos.parent], self[pos]) else { break }
             swapAt(pos, pos.parent)
             pos = pos.parent
@@ -343,10 +343,10 @@ extension UnsafeMutableBufferPointer {
         return next == current ? nil : next
     }
     func isHeap(_ limit: Int,_ condition: (Element, Element) -> Bool) -> Bool {
-        (0..<limit).allSatisfy{ heapipyIndex(limit, $0, condition) == nil }
+        (startIndex..<limit).allSatisfy{ heapipyIndex(limit, $0, condition) == nil }
     }
     func make_heap(_ limit: Int,_ condition: (Element, Element) -> Bool) {
-        for i in stride(from: limit / 2, through: 0, by: -1) {
+        for i in stride(from: limit / 2, through: startIndex, by: -1) {
             heapifyDown(limit, i, condition)
         }
         assert(isHeap(limit, condition))
