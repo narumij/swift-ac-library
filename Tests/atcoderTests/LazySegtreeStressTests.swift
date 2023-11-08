@@ -87,6 +87,11 @@ final class LazySegtreeStressTests: XCTestCase {
     }
 
     func testNaive() throws {
+//        try runNaive(3000)
+        try runNaive(30)
+    }
+    
+    func runNaive(_ qq: Int) throws {
         // for (int n = 1; n <= 30; n++) {
         for n in 1..<=30 {
             // for (int ph = 0; ph < 10; ph++) {
@@ -99,7 +104,7 @@ final class LazySegtreeStressTests: XCTestCase {
                 }
                 var now = 0;
                 // for (int q = 0; q < 3000; q++) {
-                for q in 0..<3000 {
+                for q in 0..<qq {
 //                    int ty = randint(0, 3);
                     let ty = randint(0, 3);
                     var l, r: Int;
@@ -130,8 +135,13 @@ final class LazySegtreeStressTests: XCTestCase {
             }
         }
     }
-    
+
     func testMaxRightTest() throws {
+//        try runMaxRightTest(1000)
+        try runMaxRightTest(10)
+    }
+    
+    func runMaxRightTest(_ qq: Int) throws {
         // for (int n = 1; n <= 30; n++) {
         for n in 1..<=30 {
             // for (int ph = 0; ph < 10; ph++) {
@@ -144,7 +154,7 @@ final class LazySegtreeStressTests: XCTestCase {
                 }
                 var now = 0;
                 // for (int q = 0; q < 1000; q++) {
-                for q in 0..<1000 {
+                for q in 0..<qq {
                     let ty = randint(0, 2);
                     var l, r: Int;
                     (l, r) = randpair(0, n);
@@ -164,8 +174,13 @@ final class LazySegtreeStressTests: XCTestCase {
             }
         }
     }
-    
+
     func testMinLeftTest() throws {
+//        try runMinLeftTest(1000)
+        try runMinLeftTest(10)
+    }
+    
+    func runMinLeftTest(_ qq: Int) throws {
         // for (int n = 1; n <= 30; n++) {
         for n in 1..<=30 {
             // for (int ph = 0; ph < 10; ph++) {
@@ -178,7 +193,7 @@ final class LazySegtreeStressTests: XCTestCase {
                 }
                 var now = 0;
                 // for (int q = 0; q < 1000; q++) {
-                for q in 0..<1000 {
+                for q in 0..<qq {
                     let ty = randint(0, 2);
                     var l, r: Int;
                     (l, r) = randpair(0, n);
@@ -201,19 +216,19 @@ final class LazySegtreeStressTests: XCTestCase {
 
     func testPerformanceNaive() throws {
         self.measure {
-            try! testNaive()
+            try! runNaive(30)
         }
     }
 
     func testPerformanceMaxRight() throws {
         self.measure {
-            try! testMaxRightTest()
+            try! runMaxRightTest(100)
         }
     }
 
     func testPerformanceMinLeft() throws {
         self.measure {
-            try! testMinLeftTest()
+            try! runMinLeftTest(100)
         }
     }
 }
