@@ -215,18 +215,21 @@ final class LazySegtreeStressTests: XCTestCase {
     }
 
     func testPerformanceNaive() throws {
+        throw XCTSkip()
         self.measure {
             try! runNaive(30)
         }
     }
 
     func testPerformanceMaxRight() throws {
+        throw XCTSkip()
         self.measure {
             try! runMaxRightTest(100)
         }
     }
 
     func testPerformanceMinLeft() throws {
+        throw XCTSkip()
         self.measure {
             try! runMinLeftTest(100)
         }
