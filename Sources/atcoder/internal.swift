@@ -10,6 +10,10 @@ extension `internal` {
         return x;
     }
 
+    static func bit_ceil(_ n: Int) -> Int {
+        Int(bit_ceil(UInt(n)))
+    }
+
     static func countr_zero(_ x: UInt) -> Int {
         if x == 0 { return 64 }
         var n: UInt = 1

@@ -18,7 +18,7 @@ public struct lazy_segtree<Parameter: LazySegtreeParameter> {
     init(_ n: Int) { self.init([S](repeating: Parameter.e, count: n)) }
     init(_ v: [S]) {
         _n = v.count
-        size = Int(`internal`.bit_ceil(UInt(_n)))
+        size = `internal`.bit_ceil(_n)
         log = `internal`.countr_zero(UInt(size))
         d = .init(repeating: Parameter.e, count: 2 * size)
         lz = .init(repeating: Parameter.id, count: size)
@@ -227,11 +227,13 @@ extension lazy_segtree {
     struct _UnsafeHandle {
         
         @inlinable @inline(__always)
-        internal init(_n: Int,
-                      size: Int,
-                      log: Int,
-                      d: UnsafeMutableBufferPointer<S>,
-                      lz: UnsafeMutableBufferPointer<F>) {
+        internal init(
+            _n: Int,
+            size: Int,
+            log: Int,
+            d: UnsafeMutableBufferPointer<S>,
+            lz: UnsafeMutableBufferPointer<F>)
+        {
             self._n = _n
             self.size = size
             self.log = log
