@@ -1,47 +1,43 @@
 import Foundation
 
-protocol LazySegtreeParameter: SegtreeParameter {
+// AC - https://atcoder.jp/contests/abc327/submissions/47358679
+
+public protocol LazySegtreeParameter: SegtreeParameter {
     associatedtype F
     static var mapping: (F,S) -> S { get }
     static var composition: (F,F) -> F { get }
     static var id: F { get }
 }
 
-// AC - https://atcoder.jp/contests/abc327/submissions/47358679
-
 // from https://github.com/atcoder/ac-library/blob/master/atcoder/lazysegtree.hpp
-struct lazy_segtree<Parameter: LazySegtreeParameter> {
-    typealias S = Parameter.S
-    typealias F = Parameter.F
+public struct lazy_segtree<Parameter: LazySegtreeParameter> {
+    @usableFromInline typealias S = Parameter.S
+    @usableFromInline typealias F = Parameter.F
     
     init() { self.init(0) }
     init(_ n: Int) { self.init([S](repeating: Parameter.e, count: n)) }
     init(_ v: [S]) {
         _n = v.count
-        size = Int(`internal`.bit_ceil(UInt(_n)))
+        size = `internal`.bit_ceil(_n)
         log = `internal`.countr_zero(UInt(size))
         d = .init(repeating: Parameter.e, count: 2 * size)
         lz = .init(repeating: Parameter.id, count: size)
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         for i in 0..<_n { d[size + i] = v[i]; }
         // for (int i = size - 1; i >= 1; i--) {
-        d.withUnsafeMutableBufferPointer { d in
-            lz.withUnsafeMutableBufferPointer { lz in
-                let c = Impl(_n: _n, size: size, log: log, d: d, lz: lz)
-                for i in (size - 1)..>=1 {
-                    c.update(i);
-                }
-            }
+        for i in (size - 1)..>=1 {
+            _update { $0.update(i); }
         }
     }
     
-    let _n, size, log: Int;
-    var d: ContiguousArray<S>;
-    var lz: ContiguousArray<F>;
+    @usableFromInline let _n, size, log: Int;
+    @usableFromInline var d: ContiguousArray<S>;
+    @usableFromInline var lz: ContiguousArray<F>;
 }
 
-extension lazy_segtree.Impl {
+extension lazy_segtree._UnsafeHandle {
     
+    @inlinable @inline(__always)
     func set(_ p: Int,_ x: S) {
         var p = p
         assert(0 <= p && p < _n);
@@ -53,6 +49,7 @@ extension lazy_segtree.Impl {
         for i in 1..<=log { update(p >> i); }
     }
     
+    @inlinable @inline(__always)
     func get(_ p: Int) -> S {
         var p = p
         assert(0 <= p && p < _n);
@@ -62,6 +59,7 @@ extension lazy_segtree.Impl {
         return d[p];
     }
     
+    @inlinable @inline(__always)
     func prod(_ l: Int,_ r: Int) -> S{
         var l = l
         var r = r
@@ -93,8 +91,9 @@ extension lazy_segtree {
     func all_prod() -> S { return d[1]; }
 }
 
-extension lazy_segtree.Impl {
+extension lazy_segtree._UnsafeHandle {
 
+    @inlinable @inline(__always)
     func apply(_ p: Int,_ f: F) {
         var p = p
         assert(0 <= p && p < _n);
@@ -106,6 +105,7 @@ extension lazy_segtree.Impl {
         for i in 1..<=log { update(p >> i); }
     }
 
+    @inlinable @inline(__always)
     func apply(_ l: Int,_ r: Int,_ f: F) {
         var l = l
         var r = r
@@ -143,6 +143,7 @@ extension lazy_segtree.Impl {
 //    template <bool (*g)(S)> int max_right(int l) {
 //        return max_right(l, [](S x) { return g(x); });
 //    }
+    @inlinable @inline(__always)
     func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
         var l = l
         assert(0 <= l && l <= _n);
@@ -174,6 +175,7 @@ extension lazy_segtree.Impl {
 //    template <bool (*g)(S)> int min_left(int r) {
 //        return min_left(r, [](S x) { return g(x); });
 //    }
+    @inlinable @inline(__always)
     func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
         var r = r
         assert(0 <= r && r <= _n);
@@ -202,13 +204,16 @@ extension lazy_segtree.Impl {
         return 0;
     }
     
+    @inlinable @inline(__always)
+    public func update(_ k: Int) { d[k] = op(d[2 * k], d[2 * k + 1]); }
     
-    func update(_ k: Int) { d[k] = op(d[2 * k], d[2 * k + 1]); }
-    
+    @inlinable @inline(__always)
     func all_apply(_ k: Int,_ f: F) {
         d[k] = mapping(f, d[k]);
         if (k < size) { lz[k] = composition(f, lz[k]); }
     }
+    
+    @inlinable @inline(__always)
     func push(_ k: Int) {
         all_apply(2 * k, lz[k]);
         all_apply(2 * k + 1, lz[k]);
@@ -218,77 +223,54 @@ extension lazy_segtree.Impl {
 
 extension lazy_segtree {
     
-    struct Impl {
-        let _n, size, log: Int
-        let d: UnsafeMutableBufferPointer<S>
-        let lz: UnsafeMutableBufferPointer<F>
+    @usableFromInline
+    struct _UnsafeHandle {
         
-        typealias S = Parameter.S
-        func op(_ l: S,_ r: S) -> S { Parameter.op(l,r) }
-        func e() -> S { Parameter.e }
+        @inlinable @inline(__always)
+        internal init(
+            _n: Int,
+            size: Int,
+            log: Int,
+            d: UnsafeMutableBufferPointer<S>,
+            lz: UnsafeMutableBufferPointer<F>)
+        {
+            self._n = _n
+            self.size = size
+            self.log = log
+            self.d = d
+            self.lz = lz
+        }
         
-        typealias F = Parameter.F
-        func mapping(_ l: F,_ r: S) -> S { Parameter.mapping(l,r) }
-        func composition(_ l: F,_ r: F) -> F { Parameter.composition(l,r) }
-        func id() -> F { Parameter.id }
+        @usableFromInline let _n, size, log: Int
+        @usableFromInline let d: UnsafeMutableBufferPointer<S>
+        @usableFromInline let lz: UnsafeMutableBufferPointer<F>
+        
+        @usableFromInline typealias S = Parameter.S
+        @usableFromInline func op(_ l: S,_ r: S) -> S { Parameter.op(l,r) }
+        @usableFromInline func e() -> S { Parameter.e }
+        
+        @usableFromInline typealias F = Parameter.F
+        @usableFromInline func mapping(_ l: F,_ r: S) -> S { Parameter.mapping(l,r) }
+        @usableFromInline func composition(_ l: F,_ r: F) -> F { Parameter.composition(l,r) }
+        @usableFromInline func id() -> F { Parameter.id }
+    }
+    
+    @inlinable @inline(__always)
+    mutating func _update<R>(_ body: (_UnsafeHandle) -> R) -> R {
+        d.withUnsafeMutableBufferPointer { d in
+            lz.withUnsafeMutableBufferPointer { lz in
+                body(_UnsafeHandle(_n: _n, size: size, log: log, d: d, lz: lz))
+            }
+        }
     }
 }
 
 extension lazy_segtree {
-    
-    mutating func set(_ p: Int,_ x: S) {
-        d.withUnsafeMutableBufferPointer { d in
-            lz.withUnsafeMutableBufferPointer { lz in
-                Impl(_n: _n, size: size, log: log, d: d, lz: lz).set(p, x)
-            }
-        }
-    }
-    
-    mutating func get(_ p: Int) -> S {
-        d.withUnsafeMutableBufferPointer { d in
-            lz.withUnsafeMutableBufferPointer { lz in
-                Impl(_n: _n, size: size, log: log, d: d, lz: lz).get(p)
-            }
-        }
-    }
-    
-    mutating func prod(_ l: Int,_ r: Int) -> S {
-        d.withUnsafeMutableBufferPointer { d in
-            lz.withUnsafeMutableBufferPointer { lz in
-                Impl(_n: _n, size: size, log: log, d: d, lz: lz).prod(l, r)
-            }
-        }
-    }
-    
-    mutating func apply(_ p: Int,_ f: F) {
-        d.withUnsafeMutableBufferPointer { d in
-            lz.withUnsafeMutableBufferPointer { lz in
-                Impl(_n: _n, size: size, log: log, d: d, lz: lz).apply(p, f)
-            }
-        }
-    }
-    
-    mutating func apply(_ l: Int,_ r: Int,_ f: F) {
-        d.withUnsafeMutableBufferPointer { d in
-            lz.withUnsafeMutableBufferPointer { lz in
-                Impl(_n: _n, size: size, log: log, d: d, lz: lz).apply(l,r,f)
-            }
-        }
-    }
-    
-    mutating func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
-        d.withUnsafeMutableBufferPointer { d in
-            lz.withUnsafeMutableBufferPointer { lz in
-                Impl(_n: _n, size: size, log: log, d: d, lz: lz).max_right(l, g)
-            }
-        }
-    }
-    
-    mutating func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
-        d.withUnsafeMutableBufferPointer { d in
-            lz.withUnsafeMutableBufferPointer { lz in
-                Impl(_n: _n, size: size, log: log, d: d, lz: lz).min_left(r, g)
-            }
-        }
-    }
+    mutating func set(_ p: Int,_ x: S)                        { _update{ $0.set(p,x) } }
+    mutating func get(_ p: Int) -> S                          { _update{ $0.get(p) } }
+    mutating func prod(_ l: Int,_ r: Int) -> S                { _update{ $0.prod(l, r) } }
+    mutating func apply(_ p: Int,_ f: F)                      { _update{ $0.apply(p, f) } }
+    mutating func apply(_ l: Int,_ r: Int,_ f: F)             { _update{ $0.apply(l, r, f) } }
+    mutating func max_right(_ l: Int,_ g: (S) -> Bool) -> Int { _update{ $0.max_right(l, g) } }
+    mutating func min_left(_ r: Int,_ g: (S) -> Bool) -> Int  { _update{ $0.min_left(r, g) } }
 }
