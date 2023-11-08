@@ -7,6 +7,8 @@ protocol LazySegtreeParameter: SegtreeParameter {
     static var id: F { get }
 }
 
+// AC - https://atcoder.jp/contests/abc327/submissions/47358679
+
 // from https://github.com/atcoder/ac-library/blob/master/atcoder/lazysegtree.hpp
 struct lazy_segtree<Parameter: LazySegtreeParameter> {
     typealias S = Parameter.S

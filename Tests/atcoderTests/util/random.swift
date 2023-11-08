@@ -4,6 +4,10 @@ func randint(_ a: Int,_ b: Int) -> Int {
     (a...b).randomElement()!
 }
 
+func randbool() -> Bool {
+    [false,true].randomElement()!
+}
+
 func randpair(_ lower: Int,_ upper: Int) -> (Int,Int) {
     assert(upper - lower >= 1);
     while true {
