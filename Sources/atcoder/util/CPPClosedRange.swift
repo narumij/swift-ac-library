@@ -34,13 +34,13 @@ import Foundation
 
 infix operator ..<=: RangeFormationPrecedence
 
-func ..<= <Bound: Comparable>(lhs: Bound, rhs: Bound) -> StrideThrough<Bound> {
+public func ..<= <Bound: Comparable>(lhs: Bound, rhs: Bound) -> StrideThrough<Bound> {
     stride(from: lhs, through: rhs, by: 1)
 }
 
 infix operator ..>=: RangeFormationPrecedence
 
-func ..>= <Bound: Comparable>(lhs: Bound, rhs: Bound) -> StrideThrough<Bound> {
+public func ..>= <Bound: Comparable>(lhs: Bound, rhs: Bound) -> StrideThrough<Bound> {
     stride(from: lhs, through: rhs, by: -1)
 }
 

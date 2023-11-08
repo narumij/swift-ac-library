@@ -1,6 +1,6 @@
 import Foundation
 
-protocol SegtreeParameter {
+public protocol SegtreeParameter {
     associatedtype S
     static var op: (S,S) -> S { get }
     static var e: S { get }
