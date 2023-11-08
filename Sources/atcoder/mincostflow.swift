@@ -4,32 +4,6 @@ protocol DefaultInitialize {
     init()
 }
 
-extension `internal` {
-    
-    struct csr<E: DefaultInitialize> {
-        var start: [Int];
-        var elist: [E];
-        init(_ n: Int,_ edges: [(first: Int,second: E)]) {
-            start = [Int](repeating:0, count:n + 1)
-            elist = [E](repeating: .init(), count: edges.count)
-//            for (auto e : edges) {
-            for e in edges {
-                start[e.first + 1] += 1;
-            }
-//            for (int i = 1; i <= n; i++) {
-            for i in 1..<=n {
-                start[i] += start[i - 1];
-            }
-            var counter = start;
-//            for (auto e : edges) {
-            for e in edges {
-                elist[counter[e.first]] = e.second;
-                counter[e.first] += 1
-            }
-        }
-    };
-}
-
 struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & FixedWidthInteger> where Cap == Cost {
 //  public:
     init() { _n = 0 }
@@ -47,9 +21,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
     }
 
     struct edge {
-        init() {
-            from = 0; to = 0; cap = 0; flow = 0; cost = 0
-        }
+        init() { from = 0; to = 0; cap = 0; flow = 0; cost = 0 }
         internal init(_ from: Int,_ to: Int,_ cap: Cap,_ flow: Cap,_ cost: Cost) {
             self.from = from
             self.to = to
@@ -295,61 +267,78 @@ extension Array where Element: Comparable {
 }
 
 extension Int {
-    var parent: Int {
-        ((self + 1) >> 1) - 1
-    }
-    var leftChild: Int {
-        ((self + 1) << 1) - 1
-    }
-    var rightChild: Int {
-        ((self + 1) << 1)
-    }
+    // https://en.wikipedia.org/wiki/Binary_heap
+    var parent:     Int { (self - 1) >> 1 }
+    var leftChild:  Int { (self << 1) + 1 }
+    var rightChild: Int { (self << 1) + 2 }
 }
 
-fileprivate extension UnsafeMutableBufferPointer {
+extension UnsafeMutableBufferPointer {
     func push_heap(_ limit: Int,_ condition: (Element, Element) -> Bool) {
-        guard isHeap(limit - 1, condition) else {
-            make_heap(limit, condition)
-            return
-        }
         heapifyUp(limit, limit - 1, condition)
-        assert(isHeap(limit, condition))
     }
     func pop_heap(_ limit: Int,_ condition: (Element, Element) -> Bool) {
+        guard limit > 0 else { return }
         swapAt(startIndex, limit - 1)
         heapifyDown(limit - 1, startIndex, condition)
     }
-    func heapifyUp(_ limit: Int,_ i: Index,_ condition: (Element, Element) -> Bool) {
-        var pos = i
-        while pos > startIndex {
-            guard !condition(self[pos.parent], self[pos]) else { break }
-            swapAt(pos, pos.parent)
-            pos = pos.parent
+    private func heapifyUp(_ limit: Int,_ i: Int,_ condition: (Element, Element) -> Bool) {
+        let element = self[i]
+        var current = i
+        while current > startIndex {
+            let parent = current.parent
+            guard !condition(self[parent], element) else { break }
+            (self[current], current) = (self[parent], parent)
         }
+        self[current] = element
     }
-    func heapifyDown(_ limit: Int,_ i: Index,_ condition: (Element, Element) -> Bool) {
-        guard let index = heapipyIndex(limit, i, condition) else { return }
+    private func heapifyDown(_ limit: Int,_ i: Int,_ condition: (Element, Element) -> Bool) {
+        let element = self[i]
+        var (current, selected) = (i,i)
+        while current < limit {
+            let leftChild = current.leftChild
+            let rightChild = leftChild + 1
+            if leftChild < limit,
+               condition(self[leftChild], element)
+            {
+                selected = leftChild
+            }
+            if rightChild < limit,
+               condition(self[rightChild], current == selected ? element : self[selected])
+            {
+                selected = rightChild
+            }
+            if selected == current { break }
+            (self[current], current) = (self[selected], selected)
+        }
+        self[current] = element
+    }
+    private func heapify(_ limit: Int,_ i: Int,_ condition: (Element, Element) -> Bool) {
+        guard let index = heapifyIndex(limit, i, condition) else { return }
         swapAt(i, index)
-        heapifyDown(limit, index, condition)
+        heapify(limit, index, condition)
     }
-    func heapipyIndex(_ limit: Int,_ current: Index,_ condition: (Element, Element) -> Bool) -> Index? {
+    private func heapifyIndex(_ limit: Int,_ current: Int,_ condition: (Element, Element) -> Bool) -> Index? {
         var next = current
-        if current.leftChild < limit, condition(self[current.leftChild], self[next]) {
+        if current.leftChild < limit,
+           condition(self[current.leftChild], self[next])
+        {
             next = current.leftChild
         }
-        if current.rightChild < limit, condition(self[current.rightChild], self[next]) {
+        if current.rightChild < limit,
+           condition(self[current.rightChild], self[next])
+        {
             next = current.rightChild
         }
         return next == current ? nil : next
     }
     func isHeap(_ limit: Int,_ condition: (Element, Element) -> Bool) -> Bool {
-        (startIndex..<limit).allSatisfy{ heapipyIndex(limit, $0, condition) == nil }
+        (startIndex..<limit).allSatisfy{ heapifyIndex(limit, $0, condition) == nil }
     }
     func make_heap(_ limit: Int,_ condition: (Element, Element) -> Bool) {
         for i in stride(from: limit / 2, through: startIndex, by: -1) {
-            heapifyDown(limit, i, condition)
+            heapify(limit, i, condition)
         }
         assert(isHeap(limit, condition))
     }
 }
-

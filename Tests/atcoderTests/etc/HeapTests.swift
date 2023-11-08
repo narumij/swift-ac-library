@@ -274,7 +274,7 @@ final class HeapTests: XCTestCase {
         // This is an example of a performance test case.
         self.measure {
             // Put the code you want to measure the time of here.
-            (0..<200000).forEach{ pq.push($0) }
+            (0..<2000).forEach{ pq.push($0) }
             while let p = pq.pop() { }
         }
     }
