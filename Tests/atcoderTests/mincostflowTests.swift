@@ -79,6 +79,138 @@ final class mincostflowTests: XCTestCase {
         e = [1, 2, 1, 0, 1];
         edge_eq(e, g.get_edge(4));
     }
+    
+    func testUsage() throws {
+        do {
+            var g = mcf_graph<Int, Int>(2);
+            g.add_edge(0, 1, 1, 2);
+            tupleEqual((1, 2), g.flow(0, 1));
+        }
+        do {
+            var g = mcf_graph<Int, Int>(2);
+            g.add_edge(0, 1, 1, 2);
+            let expect = [(0, 0), (1, 2)];
+            tuplesEqual(expect, g.slope(0, 1));
+        }
+    }
+    
+    func testAssign() throws {
+        // TODO: implement this
+//        TEST(MincostflowTest, Assign) {
+//            mcf_graph<int, int> g;
+//            g = mcf_graph<int, int>(10);
+//        }
+    }
+    
+    func testOutrange() throws {
+        
+        var g = mcf_graph<Int, Int>(10);
+
+//        XCTAssertThrowsError(g.slope(-1, 3), ".*");
+//        XCTAssertThrowsError(g.slope(3, 3), ".*");
+    }
+    
+    func testSelfLoop() throws {
+        
+        var g = mcf_graph<Int, Int>(3);
+        XCTAssertEqual(0, g.add_edge(0, 0, 100, 123));
+
+        let e: mcf_graph<Int, Int>.edge = [0, 0, 100, 0, 123];
+        edge_eq(e, g.get_edge(0));
+    }
+    
+    func testSameCostPath() throws {
+        var g = mcf_graph<Int, Int>(3);
+        XCTAssertEqual(0, g.add_edge(0, 1, 1, 1));
+        XCTAssertEqual(1, g.add_edge(1, 2, 1, 0));
+        XCTAssertEqual(2, g.add_edge(0, 2, 2, 1));
+        let expected = [(0, 0), (3, 3)];
+        tuplesEqual(expected, g.slope(0, 2));
+    }
+    
+    func testInvalid() throws {
+        
+        var g = mcf_graph<Int, Int>(2);
+        // https://github.com/atcoder/ac-library/issues/51
+//        XCTAssertThrowsError(g.add_edge(0, 0, -1, 0), ".*");
+//        XCTAssertThrowsError(g.add_edge(0, 0, 0, -1), ".*");
+    }
+    
+    func testStress() throws {
+        try runStress(1000)
+    }
+    
+    func runStress(_ phases:Int) throws {
+//        for (int phase = 0; phase < 1000; phase++) {
+        for phase in 0..<phases {
+            let n = randint(2, 20);
+            let m = randint(1, 100);
+            var s, t: Int;
+            (s, t) = randpair(0, n - 1);
+            if (randbool()) { swap(&s, &t); }
+
+            var g_mf = mf_graph<Int>(n);
+            var g = mcf_graph<Int, Int>(n);
+//            for (int i = 0; i < m; i++) {
+            for i in 0..<m {
+                let u = randint(0, n - 1);
+                let v = randint(0, n - 1);
+                let cap = randint(0, 10);
+                let cost = randint(0, 10000);
+                g.add_edge(u, v, cap, cost);
+                g_mf.add_edge(u, v, cap);
+            }
+            var flow, cost: Int;
+            (flow, cost) = g.flow(s, t);
+            XCTAssertEqual(g_mf.flow(s, t), flow);
+
+            var cost2 = 0;
+            var v_cap = [Int](repeating:0, count: n);
+//            for (auto e : g.edges()) {
+            for e in g.edges() {
+                v_cap[e.from] -= e.flow;
+                v_cap[e.to] += e.flow;
+                cost2 += e.flow * e.cost;
+            }
+            XCTAssertEqual(cost, cost2);
+
+//            for (int i = 0; i < n; i++) {
+            for i in 0..<n {
+                if (i == s) {
+                    XCTAssertEqual(-flow, v_cap[i]);
+                } else if (i == t) {
+                    XCTAssertEqual(flow, v_cap[i]);
+                } else {
+                    XCTAssertEqual(0, v_cap[i]);
+                }
+            }
+
+            // check: there is no negative-cycle
+            var dist = [Int](repeating: 0, count: n);
+            while (true) {
+                var update = false;
+//                for (auto e : g.edges()) {
+                for e in g.edges() {
+                    if (e.flow < e.cap) {
+                        let ndist = dist[e.from] + e.cost;
+                        if (ndist < dist[e.to]) {
+                            update = true;
+                            dist[e.to] = ndist;
+                        }
+                    }
+                    if ((e.flow) != 0) {
+                        let ndist = dist[e.to] - e.cost;
+                        if (ndist < dist[e.from]) {
+                            update = true;
+                            dist[e.from] = ndist;
+                        }
+                    }
+                }
+                if (!update) { break; }
+            }
+        }
+    }
+
 
     func testPerformanceExample() throws {
         // This is an example of a performance test case.

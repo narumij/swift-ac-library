@@ -71,8 +71,6 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
                 elist.append((e.to, .init(e.from, -1, e.flow, -e.cost)));
             }
             var _g = `internal`.csr<_edge>(_n, elist);
-            let ecap = _g.elist.map{ $0.cap }
-            assert([1,1,0,1,1,0,1,0,0,0] == ecap)
 //            for (int i = 0; i < m; i++) {
             for i in 0..<m {
                 let e = _edges[i];
@@ -92,10 +90,6 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
             _edges[i].flow = _edges[i].cap - e.cap;
         }
         
-        assert([0,1,3,6,4] == edge_idx)
-        let ecap = (0..<m).map{ g.elist[edge_idx[$0]].cap }
-        assert([0,0,0,0,1] == ecap)
-
         return result;
     }
 
@@ -278,6 +272,9 @@ extension Int {
 
 extension UnsafeMutableBufferPointer {
     func push_heap(_ limit: Int,_ condition: (Element, Element) -> Bool) {
+        if isHeap(limit - 1, condition) {
+            make_heap(limit - 1, condition)
+        }
         heapifyUp(limit, limit - 1, condition)
     }
     func pop_heap(_ limit: Int,_ condition: (Element, Element) -> Bool) {
