@@ -59,7 +59,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
         var edge_idx = [Int](repeating:0, count:m);
 
         var g = {
-            var degree = [Int](repeating:0,count:_n), redge_idx = [Int](repeating: 0, count: m);
+            var degree = [Int](repeating:0, count:_n), redge_idx = [Int](repeating: 0, count: m);
             var elist: [(Int,_edge)] = [];
             elist.reserveCapacity(2 * m);
 //            for (int i = 0; i < m; i++) {
@@ -71,7 +71,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
                 elist.append((e.to, .init(e.from, -1, e.flow, -e.cost)));
             }
             var _g = `internal`.csr<_edge>(_n, elist);
-//            for (int i = 0; i < m; i++) {
+            // for (int i = 0; i < m; i++) {
             for i in 0..<m {
                 let e = _edges[i];
                 edge_idx[i] += _g.start[e.from];
@@ -124,7 +124,6 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
         }
         var key: Cost;
         var to: Int;
-        static func ==(lhs: Q, rhs: Q) -> Bool { return lhs.key == rhs.key }
         static func <(lhs: Q, rhs: Q) -> Bool { return lhs.key > rhs.key }
     };
 
@@ -182,7 +181,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
                 // dist[v] <= (n-1)C
                 let dual_v = dual_dist[v].first, dist_v = dual_dist[v].second;
 //                for (int i = g.start[v]; i < g.start[v + 1]; i++) {
-                for i in g.start[v]..<g.start[v + 1] {
+                do { var i = g.start[v]; while i < g.start[v + 1] { defer { i += 1 }
                     let e = g.elist[i];
                     if ((e.cap == 0)) { continue; }
                     // |-dual[e.to] + dual[v]| <= (n-1)C
@@ -198,7 +197,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
                             que.append(Q(dist_to, e.to));
                         }
                     }
-                }
+                } }
             }
             if (!vis[t]) {
                 return false;
@@ -229,9 +228,11 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
             } }
 //            for (int v = t; v != s; v = g.elist[prev_e[v]].to) {
             do { var v = t; while v != s { defer { v = g.elist[prev_e[v]].to; }
-                var e = g.elist[prev_e[v]];
-                e.cap += c;
-                g.elist[e.rev].cap -= c;
+//                var e = g.elist[prev_e[v]];
+//                e.cap += c;
+                g.elist[prev_e[v]].cap += c
+//                g.elist[e.rev].cap -= c;
+                g.elist[g.elist[prev_e[v]].rev].cap -= c;
             } }
             let d = -dual_dist[s].first;
             flow += c;
@@ -273,9 +274,6 @@ extension Int {
 
 extension UnsafeMutableBufferPointer {
     func push_heap(_ limit: Int,_ condition: (Element, Element) -> Bool) {
-        if isHeap(limit - 1, condition) {
-            make_heap(limit - 1, condition)
-        }
         heapifyUp(limit, limit - 1, condition)
     }
     func pop_heap(_ limit: Int,_ condition: (Element, Element) -> Bool) {
