@@ -58,7 +58,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
         let m = _edges.count;
         var edge_idx = [Int](repeating:0, count:m);
 
-        let g = {
+        var g = {
             var degree = [Int](repeating:0,count:_n), redge_idx = [Int](repeating: 0, count: m);
             var elist: [(Int,_edge)] = [];
             elist.reserveCapacity(2 * m);
@@ -71,6 +71,8 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
                 elist.append((e.to, .init(e.from, -1, e.flow, -e.cost)));
             }
             var _g = `internal`.csr<_edge>(_n, elist);
+            let ecap = _g.elist.map{ $0.cap }
+            assert([1,1,0,1,1,0,1,0,0,0] == ecap)
 //            for (int i = 0; i < m; i++) {
             for i in 0..<m {
                 let e = _edges[i];
@@ -82,13 +84,17 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
             return _g;
         }();
 
-        let result = slope(g, s, t, flow_limit);
+        let result = slope(&g, s, t, flow_limit);
 
 //        for (int i = 0; i < m; i++) {
         for i in 0..<m {
             let e = g.elist[edge_idx[i]];
             _edges[i].flow = _edges[i].cap - e.cap;
         }
+        
+        assert([0,1,3,6,4] == edge_idx)
+        let ecap = (0..<m).map{ g.elist[edge_idx[$0]].cap }
+        assert([0,0,0,0,1] == ecap)
 
         return result;
     }
@@ -127,11 +133,10 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
         static func <(lhs: Q, rhs: Q) -> Bool { return lhs.key > rhs.key }
     };
 
-    func slope(_ g: `internal`.csr<_edge>,
+    func slope(_ g: inout `internal`.csr<_edge>,
                _ s: Int,
                _ t: Int,
                _ flow_limit: Cap) -> [(Cap, Cost)] {
-        var g = g
         // variants (C = maxcost):
         // -(n-1)C <= dual[s] <= dual[i] <= dual[t] = 0
         // reduced cost (= e.cost + dual[e.from] - dual[e.to]) >= 0 for all edge
@@ -147,7 +152,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
 //        };
         var que_min = [Int]();
         var que = [Q]();
-        let dual_ref = {
+        func dual_ref() -> Bool {
 //            for (int i = 0; i < _n; i++) {
             for i in 0..<_n {
                 dual_dist[i].second = Cost.max;
@@ -216,6 +221,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
             }
             return true;
         };
+        
         var flow: Cap = 0;
         var cost: Cost = 0, prev_cost_per_flow: Cost = -1;
         var result: [(Cap,Cost)] = [(0, 0)];

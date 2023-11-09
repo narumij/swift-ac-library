@@ -12,6 +12,7 @@ extension mcf_graph.edge: ExpressibleByArrayLiteral where Cost == Int, Cap == In
     public init(arrayLiteral elements: Int...) {
         self.init(elements[0], elements[1], elements[2], elements[3], elements[4])
     }
+    var values: (Int,Int,Cap,Cap,Cost) { (from,to,cap,flow,cost) }
 }
 
 final class mincostflowTests: XCTestCase {
@@ -38,11 +39,11 @@ final class mincostflowTests: XCTestCase {
     }
     
     func edge_eq(_ expect: mcf_graph<Int, Int>.edge,_ actual: mcf_graph<Int, Int>.edge) {
-        XCTAssertEqual(expect.from, actual.from);
-        XCTAssertEqual(expect.to, actual.to);
-        XCTAssertEqual(expect.cap, actual.cap);
-        XCTAssertEqual(expect.flow, actual.flow);
-        XCTAssertEqual(expect.cost, actual.cost);
+        XCTAssertEqual(expect.from, actual.from, "expect \(expect.values) but \(actual.values)");
+        XCTAssertEqual(expect.to, actual.to, "expect \(expect.values) but \(actual.values)");
+        XCTAssertEqual(expect.cap, actual.cap, "expect \(expect.values) but \(actual.values)");
+        XCTAssertEqual(expect.flow, actual.flow, "expect \(expect.values) but \(actual.values)");
+        XCTAssertEqual(expect.cost, actual.cost, "expect \(expect.values) but \(actual.values)");
     }
     
     func tupleEqual<A: Equatable, B: Equatable>(_ a:(A,B),_ b:(A,B)) {
@@ -65,12 +66,8 @@ final class mincostflowTests: XCTestCase {
         
         let expect = [(0, 0), (2, 4)];
         tuplesEqual(expect, g.slope(0, 3, 10));
-        
-        return
-        //throw XCTSkip()
-        
+                
         var e = mcf_graph<Int, Int>.edge();
-
         e = [0, 1, 1, 1, 1];
         edge_eq(e, g.get_edge(0));
         e = [0, 2, 1, 1, 1];
