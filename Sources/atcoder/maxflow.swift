@@ -1,6 +1,7 @@
 import Foundation
 import Collections
 
+// AC - https://atcoder.jp/contests/practice2/submissions/47411466
 // AC - https://atcoder.jp/contests/abc318/submissions/47384972
 
 // https://github.com/atcoder/ac-library/blob/master/atcoder/maxflow.hpp

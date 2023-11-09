@@ -1,5 +1,7 @@
 import Foundation
 
+// AC - https://atcoder.jp/contests/practice2/submissions/47411631
+
 protocol DefaultInitialize {
     init()
 }
@@ -62,7 +64,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
             var degree = [Int](repeating:0, count:_n), redge_idx = [Int](repeating: 0, count: m);
             var elist: [(Int,_edge)] = [];
             elist.reserveCapacity(2 * m);
-//            for (int i = 0; i < m; i++) {
+            // for (int i = 0; i < m; i++) {
             for i in 0..<m {
                 let e = _edges[i];
                 edge_idx[i] = degree[e.from]; degree[e.from] += 1
@@ -84,7 +86,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
 
         let result = slope(&g, s, t, flow_limit);
 
-//        for (int i = 0; i < m; i++) {
+        // for (int i = 0; i < m; i++) {
         for i in 0..<m {
             let e = g.elist[edge_idx[i]];
             _edges[i].flow = _edges[i].cap - e.cap;
@@ -147,11 +149,11 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
         var que_min = ContiguousArray<Int>();
         var que = ContiguousArray<Q>();
         func dual_ref() -> Bool {
-//            for (int i = 0; i < _n; i++) {
+            // for (int i = 0; i < _n; i++) {
             for i in 0..<_n {
                 dual_dist[i].second = Cost.max;
             }
-//            std::fill(vis.begin(), vis.end(), false);
+            // std::fill(vis.begin(), vis.end(), false);
             vis.withUnsafeMutableBufferPointer{ $0.update(repeating: false) }
             que_min.removeAll();
             que.removeAll();
@@ -180,7 +182,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
                 // dist[v] >= 0 (all reduced cost are positive)
                 // dist[v] <= (n-1)C
                 let dual_v = dual_dist[v].first, dist_v = dual_dist[v].second;
-//                for (int i = g.start[v]; i < g.start[v + 1]; i++) {
+                // for (int i = g.start[v]; i < g.start[v + 1]; i++) {
                 do { var i = g.start[v]; while i < g.start[v + 1] { defer { i += 1 }
                     let e = g.elist[i];
                     if ((e.cap == 0)) { continue; }
@@ -203,7 +205,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
                 return false;
             }
 
-//            for (int v = 0; v < _n; v++) {
+            // for (int v = 0; v < _n; v++) {
             for v in 0..<_n {
                 if (!vis[v]) { continue; }
                 // dual[v] = dual[v] - dist[t] + dist[v]
@@ -222,16 +224,16 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
         while (flow < flow_limit) {
             if (!dual_ref()) { break; }
             var c = flow_limit - flow;
-//            for (int v = t; v != s; v = g.elist[prev_e[v]].to) {
+            // for (int v = t; v != s; v = g.elist[prev_e[v]].to) {
             do { var v = t; while v != s { defer { v = g.elist[prev_e[v]].to; }
                 c = min(c, g.elist[g.elist[prev_e[v]].rev].cap);
             } }
-//            for (int v = t; v != s; v = g.elist[prev_e[v]].to) {
+            // for (int v = t; v != s; v = g.elist[prev_e[v]].to) {
             do { var v = t; while v != s { defer { v = g.elist[prev_e[v]].to; }
-//                var e = g.elist[prev_e[v]];
-//                e.cap += c;
+                // auto& e = g.elist[prev_e[v]];
+                // e.cap += c;
                 g.elist[prev_e[v]].cap += c
-//                g.elist[e.rev].cap -= c;
+                // g.elist[e.rev].cap -= c;
                 g.elist[g.elist[prev_e[v]].rev].cap -= c;
             } }
             let d = -dual_dist[s].first;
@@ -250,17 +252,12 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
 extension ContiguousArray where Element: Comparable {
     
     mutating func push_heap(_ start: Int, _ end: Int) {
-        withUnsafeMutableBufferPointer { buffer in
-            buffer.push_heap(end, >)
-        }
+        push_heap(end, >)
     }
     
     @discardableResult
     mutating func pop_heap() -> Element? {
-        guard !isEmpty else { return nil }
-        withUnsafeMutableBufferPointer { buffer in
-            buffer.pop_heap(buffer.count, >)
-        }
+        pop_heap(>)
         return removeLast()
     }
 }

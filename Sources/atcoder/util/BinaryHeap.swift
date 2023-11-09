@@ -7,7 +7,8 @@
 
 import Foundation
 
-protocol BinaryHeap: Collection {
+protocol BinaryHeap: Sequence {
+    @inlinable @inline(__always)
     mutating func _update<R>(_ body: (UnsafeMutableBufferPointer<Element>) -> R) -> R
 }
 
@@ -33,20 +34,13 @@ extension BinaryHeap {
     mutating func push_heap(_ end: Int,_ condition: (Element, Element) -> Bool) {
         _update { $0.push_heap(end, condition) }
     }
-}
-
-extension BinaryHeap where Self: BidirectionalCollection, Self == Self.SubSequence {
     
-    @discardableResult
-    mutating func pop_heap(_ condition: (Element, Element) -> Bool) -> Element? {
-        guard !isEmpty else { return nil }
+    mutating func pop_heap(_ condition: (Element, Element) -> Bool) {
         _update { $0.pop_heap($0.endIndex, condition) }
-        return removeLast()
     }
 }
 
-
-extension Int {
+public extension Int {
     // https://en.wikipedia.org/wiki/Binary_heap
     var parent:     Int { (self - 1) >> 1 }
     var leftChild:  Int { (self << 1) + 1 }
@@ -54,15 +48,18 @@ extension Int {
 }
 
 extension UnsafeMutableBufferPointer {
+    @inlinable @inline(__always)
     func push_heap(_ limit: Int,_ condition: (Element, Element) -> Bool) {
         heapifyUp(limit, limit - 1, condition)
     }
+    @inlinable @inline(__always)
     func pop_heap(_ limit: Int,_ condition: (Element, Element) -> Bool) {
         guard limit > 0 else { return }
         swapAt(startIndex, limit - 1)
         heapifyDown(limit - 1, startIndex, condition)
     }
-    private func heapifyUp(_ limit: Int,_ i: Int,_ condition: (Element, Element) -> Bool) {
+    @inlinable @inline(__always)
+    func heapifyUp(_ limit: Int,_ i: Int,_ condition: (Element, Element) -> Bool) {
         guard i >= startIndex else { return }
         let element = self[i]
         var current = i
@@ -73,7 +70,8 @@ extension UnsafeMutableBufferPointer {
         }
         self[current] = element
     }
-    private func heapifyDown(_ limit: Int,_ i: Int,_ condition: (Element, Element) -> Bool) {
+    @inlinable @inline(__always)
+    func heapifyDown(_ limit: Int,_ i: Int,_ condition: (Element, Element) -> Bool) {
         let element = self[i]
         var (current, selected) = (i,i)
         while current < limit {

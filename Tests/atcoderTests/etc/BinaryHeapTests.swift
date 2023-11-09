@@ -197,7 +197,8 @@ final class BinaryHeapTests: XCTestCase {
         var actual: [Int] = (0..<10) + []
         actual.make_heap(actual.endIndex, >)
         for i in 0..<10 {
-            _ = actual.pop_heap()
+            actual.pop_heap(>)
+            _ = actual.removeLast()
             XCTAssertEqual(expects[i], actual)
         }
     }
