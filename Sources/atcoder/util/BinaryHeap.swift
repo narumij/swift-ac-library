@@ -2,48 +2,55 @@
 //  File.swift
 //  
 //
-//  Created by narumij on 2023/11/07.
+//  Created by narumij on 2023/11/09.
 //
 
 import Foundation
 
+protocol BinaryHeap: Collection {
+    mutating func _update<R>(_ body: (UnsafeMutableBufferPointer<Element>) -> R) -> R
+}
+
+extension Array: BinaryHeap {
+    @inlinable @inline(__always)
+    mutating func _update<R>(_ body: (UnsafeMutableBufferPointer<Element>) -> R) -> R {
+        withUnsafeMutableBufferPointer { body($0) }
+    }
+}
+
+extension ContiguousArray: BinaryHeap {
+    @inlinable @inline(__always)
+    mutating func _update<R>(_ body: (UnsafeMutableBufferPointer<Element>) -> R) -> R {
+        withUnsafeMutableBufferPointer { body($0) }
+    }
+}
+
+extension BinaryHeap {
+    mutating func make_heap(_ end: Int,_ condition: (Element, Element) -> Bool) {
+        _update { $0.make_heap(end, condition) }
+    }
+
+    mutating func push_heap(_ end: Int,_ condition: (Element, Element) -> Bool) {
+        _update { $0.push_heap(end, condition) }
+    }
+}
+
+extension BinaryHeap where Self: BidirectionalCollection, Self == Self.SubSequence {
+    
+    @discardableResult
+    mutating func pop_heap(_ condition: (Element, Element) -> Bool) -> Element? {
+        guard !isEmpty else { return nil }
+        _update { $0.pop_heap($0.endIndex, condition) }
+        return removeLast()
+    }
+}
+
+
 extension Int {
-#if true
     // https://en.wikipedia.org/wiki/Binary_heap
     var parent:     Int { (self - 1) >> 1 }
     var leftChild:  Int { (self << 1) + 1 }
     var rightChild: Int { (self << 1) + 2 }
-#elseif false
-    var parent: Int {
-        ((self + 1) >> 1) - 1
-    }
-    var leftChild: Int {
-        ((self + 1) << 1) - 1
-    }
-    var rightChild: Int {
-        ((self + 1) << 1)
-    }
-#elseif false
-    var parent: Int {
-        (self + 1) / 2 - 1
-    }
-    var leftChild: Int {
-        2 * (self + 1) - 1
-    }
-    var rightChild: Int {
-        2 * (self + 1) + 1 - 1
-    }
-#else
-    var parent: Int {
-        self / 2
-    }
-    var leftChild: Int {
-        2 * self
-    }
-    var rightChild: Int {
-        2 * self + 1
-    }
-#endif
 }
 
 extension UnsafeMutableBufferPointer {
@@ -56,6 +63,7 @@ extension UnsafeMutableBufferPointer {
         heapifyDown(limit - 1, startIndex, condition)
     }
     private func heapifyUp(_ limit: Int,_ i: Int,_ condition: (Element, Element) -> Bool) {
+        guard i >= startIndex else { return }
         let element = self[i]
         var current = i
         while current > startIndex {
