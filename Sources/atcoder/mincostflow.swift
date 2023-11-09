@@ -124,6 +124,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
         }
         var key: Cost;
         var to: Int;
+        static func ==(lhs: Q, rhs: Q) -> Bool { return lhs.key == rhs.key }
         static func <(lhs: Q, rhs: Q) -> Bool { return lhs.key > rhs.key }
     };
 
@@ -144,8 +145,8 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
 //            int to;
 //            bool operator<(Q r) const { return key > r.key; }
 //        };
-        var que_min = [Int]();
-        var que = [Q]();
+        var que_min = ContiguousArray<Int>();
+        var que = ContiguousArray<Q>();
         func dual_ref() -> Bool {
 //            for (int i = 0; i < _n; i++) {
             for i in 0..<_n {
@@ -245,19 +246,19 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
     }
 };
 
-extension Array where Element: Comparable {
+extension ContiguousArray where Element: Comparable {
     
-    mutating func push_heap(_ start: Int, _ end: Int, using comparator: (Element, Element) -> Bool = { $0 >= $1 }) {
+    mutating func push_heap(_ start: Int, _ end: Int) {
         withUnsafeMutableBufferPointer { buffer in
-            buffer.push_heap(end, comparator)
+            buffer.push_heap(end, >)
         }
     }
     
     @discardableResult
-    mutating func pop_heap(using comparator: (Element, Element) -> Bool = { $0 >= $1 }) -> Element? {
+    mutating func pop_heap() -> Element? {
         guard !isEmpty else { return nil }
         withUnsafeMutableBufferPointer { buffer in
-            buffer.pop_heap(buffer.count, comparator)
+            buffer.pop_heap(buffer.count, >)
         }
         return removeLast()
     }
