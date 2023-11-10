@@ -9,6 +9,7 @@ import XCTest
 @testable import atcoder
 
 /*
+ 
 // fixture source code
  
 #include<bits/stdc++.h>
@@ -63,6 +64,18 @@ int main() {
     {
         vector<int> heap = {0,1,2,3,4,5,6,7,8,9};
         vector<int>::iterator iter;
+        push_heap(heap.begin(), heap.end());
+        cout <<"let pushHeapResult10: [Int] = [";
+        for (iter=heap.begin(); iter!=heap.end(); iter++) {
+            if (iter != heap.begin()) cout <<", ";
+            cout << *iter;
+        }
+        cout << "]" << endl;
+    }
+
+    {
+        vector<int> heap = {0,1,2,3,4,5,6,7,8,9};
+        vector<int>::iterator iter;
         make_heap(heap.begin(), heap.end());
 
         for(int i = 0; i < 10; ++i) {
@@ -103,6 +116,7 @@ final class BinaryHeapTests: XCTestCase {
     let pushHeapEachResult_8: [Int] = [9, 8, 6, 7, 8, 5, 2, 0, 3, 1, 4]
     let pushHeapEachResult_9: [Int] = [9, 9, 6, 7, 8, 5, 2, 0, 3, 1, 4]
     let pushHeapEachResult_10: [Int] = [10, 9, 6, 7, 8, 5, 2, 0, 3, 1, 4]
+    let pushHeapResult10: [Int] = [9, 0, 2, 3, 1, 5, 6, 7, 8, 4]
     let popHeapResult_0: [Int] = [8, 7, 6, 3, 4, 5, 2, 0, 1]
     let popHeapResult_1: [Int] = [7, 4, 6, 3, 1, 5, 2, 0]
     let popHeapResult_2: [Int] = [6, 4, 5, 3, 1, 0, 2]
@@ -123,14 +137,6 @@ final class BinaryHeapTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-    
     func testMake() throws {
         var actual: [Int] = (0..<10) + []
         actual.make_heap(actual.endIndex, >)
@@ -179,6 +185,13 @@ final class BinaryHeapTests: XCTestCase {
             actual.push_heap(actual.endIndex, >)
             XCTAssertEqual(expects[i - 1], actual)
         }
+    }
+
+    func testPushAll() throws {
+        // 使い方としては正しくない。stlとの挙動の近さを確認するだけのもの。
+        var actual: [Int] = (0..<10) + []
+        actual.push_heap(actual.endIndex, >)
+        XCTAssertEqual(pushHeapResult10, actual)
     }
 
     func testPop() throws {
