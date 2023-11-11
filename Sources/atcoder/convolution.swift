@@ -15,10 +15,11 @@ struct fft_info<mint: modint_protocol> {
 //
 //    std::array<mint, std::max(0, rank2 - 3 + 1)> rate3;
 //    std::array<mint, std::max(0, rank2 - 3 + 1)> irate3;
-    static var g: Int { 0 }
-    static var rank2: Int { 0 }
+    static var g: Int { Int(`internal`.primitive_root(mint.mod())) }
+    static var rank2: Int { Int(`internal`.countr_zero(UInt32(mint.mod()) - 1)) }
     var g: Int { Self.g }
     var rank2: Int { Self.rank2 }
+    
     var root = [mint](repeating: .init(), count: rank2 + 1)
     var iroot = [mint](repeating: .init(), count: rank2 + 1)
     
@@ -69,6 +70,8 @@ func butterfly<mint: modint_protocol>(_ a: [mint]) {
 
 //    static const fft_info<mint> info;
     let info = fft_info<mint>(); // 挙動に関して注意
+    
+    typealias ULL = CUnsignedLongLong
 
     var len = 0;  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
     while (len < h) {
@@ -100,13 +103,13 @@ func butterfly<mint: modint_protocol>(_ a: [mint]) {
                 let offset = s << (h - len);
 //                for (int i = 0; i < p; i++) {
                 for i in 0..<p {
-                    let mod2 = CUnsignedInt(1 * mint.mod() * mint.mod());
-                    let a0 = 1 * a[i + offset].val();
-                    let a1 = 1 * a[i + offset + p].val() * rot.val();
-                    let a2 = 1 * a[i + offset + 2 * p].val() * rot2.val();
-                    let a3 = 1 * a[i + offset + 3 * p].val() * rot3.val();
+                    let mod2: ULL = 1 * ULL(mint.mod()) * ULL(mint.mod());
+                    let a0: ULL = 1 * ULL(a[i + offset].val());
+                    let a1: ULL = 1 * ULL(a[i + offset + p].val()) * ULL(rot.val());
+                    let a2: ULL = 1 * ULL(a[i + offset + 2 * p].val()) * ULL(rot2.val());
+                    let a3: ULL = 1 * ULL(a[i + offset + 3 * p].val()) * ULL(rot3.val());
                     let a1na3imag =
-                    1 * mint(a1 + UInt32(mod2) - a3).val() * imag.val();
+                    1 * ULL(mint(a1 + ULL(mod2) - a3).val()) * ULL(imag.val());
                     let na2 = mod2 - a2;
                     a[i + offset] = mint(a0 + a2 + a1 + a3);
                     a[i + offset + 1 * p] = mint(a0 + a2 + (2 * mod2 - (a1 + a3)));
@@ -129,6 +132,8 @@ func butterfly_inv<mint: modint_protocol>(_ a: [mint]) {
 
 //    static const fft_info<mint> info;
     let info = fft_info<mint>(); // 挙動に関して注意
+
+    typealias ULL = CUnsignedLongLong
 
     var len = h;  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
     while ((len) != 0) {
@@ -162,24 +167,23 @@ func butterfly_inv<mint: modint_protocol>(_ a: [mint]) {
                 let offset = s << (h - len + 2);
 //                for (int i = 0; i < p; i++) {
                 for i in 0..<p {
-                    let a0 = 1 * a[i + offset + 0 * p].val();
-                    let a1 = 1 * a[i + offset + 1 * p].val();
-                    let a2 = 1 * a[i + offset + 2 * p].val();
-                    let a3 = 1 * a[i + offset + 3 * p].val();
+                    let a0: ULL = 1 * ULL(a[i + offset + 0 * p].val());
+                    let a1: ULL = 1 * ULL(a[i + offset + 1 * p].val());
+                    let a2: ULL = 1 * ULL(a[i + offset + 2 * p].val());
+                    let a3: ULL = 1 * ULL(a[i + offset + 3 * p].val());
 
-                    let a2na3iimag =
+                    let a2na3iimag: ULL =
                         1 *
-                    mint((UInt32(mint.mod()) + a2 - a3) * iimag.val()).val();
-
+                    ULL(mint((ULL(mint.mod()) + a2 - a3) * ULL(iimag.val())).val());
                     a[i + offset] = mint(a0 + a1 + a2 + a3);
                     a[i + offset + 1 * p] =
-                    mint((a0 + (UInt32(mint.mod()) - a1) + a2na3iimag) * irot.val());
+                    mint((a0 + (ULL(mint.mod()) - a1) + a2na3iimag) * ULL(irot.val()));
                     a[i + offset + 2 * p] =
-                    mint((a0 + a1 + (UInt32(mint.mod()) - a2) + (UInt32(mint.mod()) - a3)) *
-                        irot2.val());
+                    mint((a0 + a1 + (ULL(mint.mod()) - a2) + (ULL(mint.mod()) - a3)) *
+                        ULL(irot2.val()));
                     a[i + offset + 3 * p] =
-                    mint((a0 + (UInt32(mint.mod()) - a1) + (UInt32(mint.mod()) - a2na3iimag)) *
-                        irot3.val());
+                    mint((a0 + (ULL(mint.mod()) - a1) + (ULL(mint.mod()) - a2na3iimag)) *
+                        ULL(irot3.val()));
                 }
                 if (s + 1 != (1 << (len - 2)))
                     { irot *= info.irate3[Int(`internal`.countr_zero(~(CUnsignedInt(s))))]; }
@@ -219,8 +223,8 @@ extension Array where Element: modint_protocol {
         if count > n {
             removeLast(count - n)
         } else {
-            while count == n {
-                append(.init())
+            while count != n {
+                append(0)
             }
         }
     }
