@@ -1,14 +1,18 @@
 import Foundation
 
-func pow_mod(_ x: Int,_ n: Int,_ m: Int) -> Int {
+//typealias uint = CUnsignedInt;
+//typealias ll = CLongLong;
+//typealias ull = CUnsignedLongLong;
+
+func pow_mod(_ x: Int,_ n: Int,_ m: Int32) -> Int {
     var n = n
     assert(0 <= n && 1 <= m);
     if (m == 1) { return 0; }
-    let bt = `internal`.barrett(UInt(m));
-    var r: UInt = 1, y = UInt(`internal`.safe_mod(x, m));
+    let bt = `internal`.barrett(UInt32(m));
+    var r: UInt32 = 1, y = UInt32(`internal`.safe_mod(x, Int(m)));
     while ((n) != 0) {
-        if ((n & 1) != 0) { r = UInt(bt.mul(r, y)); }
-        y = UInt(bt.mul(y, y));
+        if ((n & 1) != 0) { r = bt.mul(r, y); }
+        y = bt.mul(y, y);
         n >>= 1;
     }
     return Int(r);
