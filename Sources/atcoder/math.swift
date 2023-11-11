@@ -1,24 +1,20 @@
 import Foundation
 
-//typealias uint = CUnsignedInt;
-//typealias ll = CLongLong;
-//typealias ull = CUnsignedLongLong;
-
-func pow_mod(_ x: Int,_ n: Int,_ m: Int32) -> Int {
+func pow_mod(_ x: CLongLong,_ n: CLongLong,_ m: CInt) -> CLongLong {
     var n = n
     assert(0 <= n && 1 <= m);
     if (m == 1) { return 0; }
-    let bt = `internal`.barrett(UInt32(m));
-    var r: UInt32 = 1, y = UInt32(`internal`.safe_mod(x, Int(m)));
+    let bt = `internal`.barrett(CUnsignedInt(m));
+    var r: CUnsignedInt = 1, y = CUnsignedInt(`internal`.safe_mod(x, CLongLong(m)));
     while ((n) != 0) {
         if ((n & 1) != 0) { r = bt.mul(r, y); }
         y = bt.mul(y, y);
         n >>= 1;
     }
-    return Int(r);
+    return CLongLong(r);
 }
 
-func inv_mod(_ x: Int,_ m: Int) -> Int {
+func inv_mod(_ x: CLongLong,_ m: CLongLong) -> CLongLong {
     assert(1 <= m);
     let z = `internal`.inv_gcd(x, m);
     assert(z.first == 1);
@@ -26,12 +22,12 @@ func inv_mod(_ x: Int,_ m: Int) -> Int {
 }
 
 // (rem, mod)
-func crt(_ r: [Int],
-         _ m: [Int]) -> (first: Int, second: Int) {
+func crt(_ r: [CLongLong],
+         _ m: [CLongLong]) -> (first: CLongLong, second: CLongLong) {
     assert(r.count == m.count);
-    var n = r.count;
+    let n = r.count;
     // Contracts: 0 <= r0 < m0
-    var r0 = 0, m0 = 1;
+    var r0 = 0 as CLongLong, m0 = 1 as CLongLong;
 //    for (int i = 0; i < n; i++) {
     for i in 0..<n {
         assert(1 <= m[i]);
@@ -54,15 +50,15 @@ func crt(_ r: [Int],
         // -> x = (r1 - r0) / g * inv(u0) (mod u1)
 
         // im = inv(u0) (mod u1) (0 <= im < u1)
-        var g, im: Int;
+        var g, im: CLongLong;
         (g, im) = `internal`.inv_gcd(m0, m1);
 
-        var u1 = (m1 / g);
+        let u1 = (m1 / g);
         // |r1 - r0| < (m0 + m1) <= lcm(m0, m1)
         if (((r1 - r0) % g) != 0) { return (0, 0); }
 
         // u1 * u1 <= m1 * m1 / g / g <= m0 * m1 / g = lcm(m0, m1)
-        var x = (r1 - r0) / g % u1 * im % u1;
+        let x = (r1 - r0) / g % u1 * im % u1;
 
         // |r0| + |m0 * x|
         // < m0 + m0 * (u1 - 1)
@@ -75,20 +71,20 @@ func crt(_ r: [Int],
     return (r0, m0);
 }
 
-func floor_sum(_ n: Int,_ m: Int,_ a: Int,_ b: Int) -> Int {
-    var a = a, b = b, n = n, m = m
-    assert(0 <= n && n < (1 << 32));
-    assert(1 <= m && m < (1 << 32));
-    var ans: UInt = 0;
+func floor_sum(_ n: CLongLong,_ m: CLongLong,_ a: CLongLong,_ b: CLongLong) -> CLongLong {
+    var a = a, b = b
+    assert(0 <= n && n < ((1 as CLongLong) << 32));
+    assert(1 <= m && m < ((1 as CLongLong) << 32));
+    var ans: CLongLong = 0;
     if (a < 0) {
-        let a2: UInt = UInt(`internal`.safe_mod(a, m));
-        ans -= UInt(1) * UInt(n) * (UInt(n) - UInt(1)) / UInt(2) * ((a2 - UInt(a)) / UInt(m));
-        a = Int(a2);
+        let a2 = `internal`.safe_mod(a, m);
+        ans -= 1 * n * (n &- 1) / 2 * ((a2 - a) / m);
+        a = a2;
     }
     if (b < 0) {
-        let b2: UInt = UInt(`internal`.safe_mod(b, m));
-        ans -= UInt(1) * UInt(n) * ((b2 - UInt(b)) / UInt(m));
-        b = Int(b2);
+        let b2 = `internal`.safe_mod(b, m);
+        ans -= 1 * n * ((b2 - b) / m);
+        b = b2;
     }
-    return Int(ans + `internal`.floor_sum_unsigned(UInt(n), UInt(m), UInt(a), UInt(b)));
+    return ans + `internal`.floor_sum_unsigned(n, m, a, b);
 }
