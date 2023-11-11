@@ -147,11 +147,12 @@ struct static_modint : internal::static_modint_base {
 };
 */
 
-protocol modint_protocol: modint_base, AdditiveArithmetic, Equatable {
+protocol modint_protocol: modint_base, AdditiveArithmetic, Equatable, ExpressibleByIntegerLiteral {
     static func mod() -> CInt
     static func set_mod(_ m: CInt)
     static func raw(_ v: CInt) -> mint
     init()
+    init(_ v: Int)
     init(_ v: CInt)
     init(_ v: CUnsignedInt)
     func val() -> CUnsignedInt
@@ -159,6 +160,10 @@ protocol modint_protocol: modint_base, AdditiveArithmetic, Equatable {
     static func -(lhs: mint, rhs: mint) -> mint
     static func *(lhs: mint, rhs: mint) -> mint
     static func /(lhs: mint, rhs: mint) -> mint
+    static func +=(lhs: inout mint, rhs: mint)
+    static func -=(lhs: inout mint, rhs: mint)
+    static func *=(lhs: inout mint, rhs: mint)
+    static func /=(lhs: inout mint, rhs: mint)
     func pow(_ n: CLongLong) -> mint
     func inv() -> mint
 }
@@ -196,6 +201,9 @@ struct dynamic_modint: modint_protocol {
         _v = CUnsignedInt(x);
     }
     init(_ v: CLongLong) {
+        self.init(CInt(v))
+    }
+    init(_ v: Int) {
         self.init(CInt(v))
     }
     init(_ v: CUnsignedInt) {
