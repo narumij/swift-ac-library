@@ -155,6 +155,8 @@ protocol modint_protocol: modint_base, AdditiveArithmetic, Equatable, Expressibl
     init(_ v: Int)
     init(_ v: CInt)
     init(_ v: CUnsignedInt)
+    init(_ v: CUnsignedLongLong)
+    init<T: FixedWidthInteger>(_ v: T)
     func val() -> CUnsignedInt
     static func +(lhs: mint, rhs: mint) -> mint
     static func -(lhs: mint, rhs: mint) -> mint
@@ -211,6 +213,9 @@ struct dynamic_modint: modint_protocol {
     }
     init(_ v: CUnsignedLongLong) {
         _v = CUnsignedInt(v % CUnsignedLongLong(Self.mod()));
+    }
+    init<T: FixedWidthInteger>(_ v: T) {
+        fatalError("未実装")
     }
 
     func val() -> CUnsignedInt { return _v; }

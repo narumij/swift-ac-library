@@ -24,6 +24,7 @@ extension `internal` {
         return CInt(n - x & 1)
     }
 
+    /*
     static func countr_zero(_ x: UInt) -> Int {
         if x == 0 { return 64 }
         var n: UInt = 1
@@ -35,6 +36,7 @@ extension `internal` {
         if x & 0x00000003 == 0 { n = n + 2;  x = x >> 2  }
         return Int(n - x & 1)
     }
+     */
 }
 
 extension segtree {

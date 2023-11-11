@@ -60,139 +60,153 @@ struct fft_info<mint: modint_protocol> {
     }
 };
 
-/*
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
 func butterfly<mint: modint_protocol>(_ a: [mint]) {
+    var a = a
     let n = a.count;
 //    int h = internal::countr_zero((unsigned int)n);
-    let h = `internal`.countr_zero(CUnsignedInt(n))
+    let h = Int(`internal`.countr_zero(CUnsignedInt(n)))
 
-    static const fft_info<mint> info;
+//    static const fft_info<mint> info;
+    let info = fft_info<mint>(); // 挙動に関して注意
 
-    int len = 0;  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
+    var len = 0;  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
     while (len < h) {
         if (h - len == 1) {
-            int p = 1 << (h - len - 1);
-            mint rot = 1;
-            for (int s = 0; s < (1 << len); s++) {
-                int offset = s << (h - len);
-                for (int i = 0; i < p; i++) {
-                    auto l = a[i + offset];
-                    auto r = a[i + offset + p] * rot;
+            let p = 1 << (h - len - 1);
+            var rot: mint = 1;
+//            for (int s = 0; s < (1 << len); s++) {
+            for s in 0..<(1 << len) {
+                let offset = s << (h - len);
+//                for (int i = 0; i < p; i++) {
+                for i in 0..<p {
+                    let l = a[i + offset];
+                    let r = a[i + offset + p] * rot;
                     a[i + offset] = l + r;
                     a[i + offset + p] = l - r;
                 }
                 if (s + 1 != (1 << len))
-                    rot *= info.rate2[countr_zero(~(unsigned int)(s))];
+                    { rot *= info.rate2[Int(`internal`.countr_zero(~CUnsignedInt(s)))]; }
             }
-            len++;
+            len += 1;
         } else {
             // 4-base
-            int p = 1 << (h - len - 2);
-            mint rot = 1, imag = info.root[2];
-            for (int s = 0; s < (1 << len); s++) {
-                mint rot2 = rot * rot;
-                mint rot3 = rot2 * rot;
-                int offset = s << (h - len);
-                for (int i = 0; i < p; i++) {
-                    auto mod2 = 1ULL * mint::mod() * mint::mod();
-                    auto a0 = 1ULL * a[i + offset].val();
-                    auto a1 = 1ULL * a[i + offset + p].val() * rot.val();
-                    auto a2 = 1ULL * a[i + offset + 2 * p].val() * rot2.val();
-                    auto a3 = 1ULL * a[i + offset + 3 * p].val() * rot3.val();
-                    auto a1na3imag =
-                        1ULL * mint(a1 + mod2 - a3).val() * imag.val();
-                    auto na2 = mod2 - a2;
-                    a[i + offset] = a0 + a2 + a1 + a3;
-                    a[i + offset + 1 * p] = a0 + a2 + (2 * mod2 - (a1 + a3));
-                    a[i + offset + 2 * p] = a0 + na2 + a1na3imag;
-                    a[i + offset + 3 * p] = a0 + na2 + (mod2 - a1na3imag);
+            let p = 1 << (h - len - 2);
+            var rot: mint = 1; let imag = info.root[2];
+//            for (int s = 0; s < (1 << len); s++) {
+            for s in 0..<(1 << len) {
+                let rot2 = rot * rot;
+                let rot3 = rot2 * rot;
+                let offset = s << (h - len);
+//                for (int i = 0; i < p; i++) {
+                for i in 0..<p {
+                    let mod2 = CUnsignedInt(1 * mint.mod() * mint.mod());
+                    let a0 = 1 * a[i + offset].val();
+                    let a1 = 1 * a[i + offset + p].val() * rot.val();
+                    let a2 = 1 * a[i + offset + 2 * p].val() * rot2.val();
+                    let a3 = 1 * a[i + offset + 3 * p].val() * rot3.val();
+                    let a1na3imag =
+                    1 * mint(a1 + UInt32(mod2) - a3).val() * imag.val();
+                    let na2 = mod2 - a2;
+                    a[i + offset] = mint(a0 + a2 + a1 + a3);
+                    a[i + offset + 1 * p] = mint(a0 + a2 + (2 * mod2 - (a1 + a3)));
+                    a[i + offset + 2 * p] = mint(a0 + na2 + a1na3imag);
+                    a[i + offset + 3 * p] = mint(a0 + na2 + (mod2 - a1na3imag));
                 }
                 if (s + 1 != (1 << len))
-                    rot *= info.rate3[countr_zero(~(unsigned int)(s))];
+                    { rot *= info.rate3[Int(`internal`.countr_zero(~(CUnsignedInt(s))))]; }
             }
             len += 2;
         }
     }
 }
 
-template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-void butterfly_inv(std::vector<mint>& a) {
-    int n = int(a.size());
-    int h = internal::countr_zero((unsigned int)n);
+//template <class mint, internal::is_static_modint_t<mint>* = nullptr>
+func butterfly_inv<mint: modint_protocol>(_ a: [mint]) {
+    var a = a
+    let n = a.count;
+    let h = Int(`internal`.countr_zero(CUnsignedInt(n)));
 
-    static const fft_info<mint> info;
+//    static const fft_info<mint> info;
+    let info = fft_info<mint>(); // 挙動に関して注意
 
-    int len = h;  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
-    while (len) {
+    var len = h;  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
+    while ((len) != 0) {
         if (len == 1) {
-            int p = 1 << (h - len);
-            mint irot = 1;
-            for (int s = 0; s < (1 << (len - 1)); s++) {
-                int offset = s << (h - len + 1);
-                for (int i = 0; i < p; i++) {
-                    auto l = a[i + offset];
-                    auto r = a[i + offset + p];
+            let p = 1 << (h - len);
+            var irot: mint = 1;
+//            for (int s = 0; s < (1 << (len - 1)); s++) {
+            for s in 0..<(1 << (len - 1)) {
+                let offset = s << (h - len + 1);
+//                for (int i = 0; i < p; i++) {
+                for i in 0..<p {
+                    let l = a[i + offset];
+                    let r = a[i + offset + p];
                     a[i + offset] = l + r;
-                    a[i + offset + p] =
-                        (unsigned long long)(mint::mod() + l.val() - r.val()) *
-                        irot.val();
-                    ;
+                    a[i + offset + p] = mint(
+                        CUnsignedLongLong(UInt32(mint.mod()) + l.val() - r.val()) *
+                    CUnsignedLongLong(irot.val()));
                 }
                 if (s + 1 != (1 << (len - 1)))
-                    irot *= info.irate2[countr_zero(~(unsigned int)(s))];
+                    { irot *= info.irate2[Int(`internal`.countr_zero(~CUnsignedInt(s)))]; }
             }
-            len--;
+            len -= 1;
         } else {
             // 4-base
-            int p = 1 << (h - len);
-            mint irot = 1, iimag = info.iroot[2];
-            for (int s = 0; s < (1 << (len - 2)); s++) {
-                mint irot2 = irot * irot;
-                mint irot3 = irot2 * irot;
-                int offset = s << (h - len + 2);
-                for (int i = 0; i < p; i++) {
-                    auto a0 = 1ULL * a[i + offset + 0 * p].val();
-                    auto a1 = 1ULL * a[i + offset + 1 * p].val();
-                    auto a2 = 1ULL * a[i + offset + 2 * p].val();
-                    auto a3 = 1ULL * a[i + offset + 3 * p].val();
+            let p = 1 << (h - len);
+            var irot: mint = 1; let iimag = info.iroot[2];
+//            for (int s = 0; s < (1 << (len - 2)); s++) {
+            for s in 0..<(1 << (len - 2)) {
+                let irot2 = irot * irot;
+                let irot3 = irot2 * irot;
+                let offset = s << (h - len + 2);
+//                for (int i = 0; i < p; i++) {
+                for i in 0..<p {
+                    let a0 = 1 * a[i + offset + 0 * p].val();
+                    let a1 = 1 * a[i + offset + 1 * p].val();
+                    let a2 = 1 * a[i + offset + 2 * p].val();
+                    let a3 = 1 * a[i + offset + 3 * p].val();
 
-                    auto a2na3iimag =
-                        1ULL *
-                        mint((mint::mod() + a2 - a3) * iimag.val()).val();
+                    let a2na3iimag =
+                        1 *
+                    mint((UInt32(mint.mod()) + a2 - a3) * iimag.val()).val();
 
-                    a[i + offset] = a0 + a1 + a2 + a3;
+                    a[i + offset] = mint(a0 + a1 + a2 + a3);
                     a[i + offset + 1 * p] =
-                        (a0 + (mint::mod() - a1) + a2na3iimag) * irot.val();
+                    mint((a0 + (UInt32(mint.mod()) - a1) + a2na3iimag) * irot.val());
                     a[i + offset + 2 * p] =
-                        (a0 + a1 + (mint::mod() - a2) + (mint::mod() - a3)) *
-                        irot2.val();
+                    mint((a0 + a1 + (UInt32(mint.mod()) - a2) + (UInt32(mint.mod()) - a3)) *
+                        irot2.val());
                     a[i + offset + 3 * p] =
-                        (a0 + (mint::mod() - a1) + (mint::mod() - a2na3iimag)) *
-                        irot3.val();
+                    mint((a0 + (UInt32(mint.mod()) - a1) + (UInt32(mint.mod()) - a2na3iimag)) *
+                        irot3.val());
                 }
                 if (s + 1 != (1 << (len - 2)))
-                    irot *= info.irate3[countr_zero(~(unsigned int)(s))];
+                    { irot *= info.irate3[Int(`internal`.countr_zero(~(CUnsignedInt(s))))]; }
             }
             len -= 2;
         }
     }
 }
 
-template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-std::vector<mint> convolution_naive(const std::vector<mint>& a,
-                                    const std::vector<mint>& b) {
-    int n = int(a.size()), m = int(b.size());
-    std::vector<mint> ans(n + m - 1);
+//template <class mint, internal::is_static_modint_t<mint>* = nullptr>
+func convolution_naive<mint: modint_protocol>(_ a: [mint],
+                                              _ b: [mint]) -> [mint] {
+    let n = a.count, m = b.count;
+    var ans = [mint](repeating: .init(), count: n + m - 1);
     if (n < m) {
-        for (int j = 0; j < m; j++) {
-            for (int i = 0; i < n; i++) {
+//        for (int j = 0; j < m; j++) {
+        for j in 0..<m {
+//            for (int i = 0; i < n; i++) {
+            for i in 0..<n {
                 ans[i + j] += a[i] * b[j];
             }
         }
     } else {
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < m; j++) {
+//        for (int i = 0; i < n; i++) {
+        for i in 0..<n {
+//            for (int j = 0; j < m; j++) {
+            for j in 0..<m {
                 ans[i + j] += a[i] * b[j];
             }
         }
@@ -200,77 +214,99 @@ std::vector<mint> convolution_naive(const std::vector<mint>& a,
     return ans;
 }
 
-template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-std::vector<mint> convolution_fft(std::vector<mint> a, std::vector<mint> b) {
-    int n = int(a.size()), m = int(b.size());
-    int z = (int)internal::bit_ceil((unsigned int)(n + m - 1));
+extension Array where Element: modint_protocol {
+    mutating func resize(_ n: Int) {
+        if count > n {
+            removeLast(count - n)
+        } else {
+            while count == n {
+                append(.init())
+            }
+        }
+    }
+}
+
+//template <class mint, internal::is_static_modint_t<mint>* = nullptr>
+func convolution_fft<mint: modint_protocol>(_ a: [mint],_ b: [mint]) -> [mint] {
+    var a = a
+    var b = b
+    let n = a.count, m = b.count;
+    let z = Int(`internal`.bit_ceil(CUnsignedInt(n + m - 1)));
     a.resize(z);
-    internal::butterfly(a);
+    butterfly(a);
     b.resize(z);
-    internal::butterfly(b);
-    for (int i = 0; i < z; i++) {
+    butterfly(b);
+//    for (int i = 0; i < z; i++) {
+    for i in 0..<z {
         a[i] *= b[i];
     }
-    internal::butterfly_inv(a);
+    butterfly_inv(a);
     a.resize(n + m - 1);
-    mint iz = mint(z).inv();
-    for (int i = 0; i < n + m - 1; i++) a[i] *= iz;
+    let iz = mint(z).inv();
+//    for (int i = 0; i < n + m - 1; i++) a[i] *= iz;
+    for i in 0..<(n + m - 1) { a[i] *= iz; }
     return a;
 }
 
-}  // namespace internal
 
-template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-std::vector<mint> convolution(std::vector<mint>&& a, std::vector<mint>&& b) {
-    int n = int(a.size()), m = int(b.size());
-    if (!n || !m) return {};
 
-    int z = (int)internal::bit_ceil((unsigned int)(n + m - 1));
-    assert((mint::mod() - 1) % z == 0);
+//}  // namespace internal
 
-    if (std::min(n, m) <= 60) return convolution_naive(a, b);
-    return internal::convolution_fft(a, b);
+//template <class mint, internal::is_static_modint_t<mint>* = nullptr>
+func convolution<mint: modint_protocol>(_ a: [mint],_ b: [mint]) -> [mint] {
+    let n = a.count, m = b.count;
+    if ((n == 0) || (m == 0)) { return []; }
+
+    let z = Int(`internal`.bit_ceil(CUnsignedInt(n + m - 1)));
+    assert((Int(mint.mod()) - 1) % z == 0);
+
+    if (min(n, m) <= 60) { return convolution_naive(a, b); }
+    return convolution_fft(a, b);
 }
-template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-std::vector<mint> convolution(const std::vector<mint>& a,
-                              const std::vector<mint>& b) {
-    int n = int(a.size()), m = int(b.size());
-    if (!n || !m) return {};
+//template <class mint, internal::is_static_modint_t<mint>* = nullptr>
+//func convolution<mint: modint_protocol>(_ a: [mint],
+//                                        _ b: [mint]) -> [mint] {
+//    let n = a.count, m = b.count;
+//    if ((n == 0) || (m == 0)) { return []; }
+//
+//    let z = Int(`internal`.bit_ceil(CUnsignedInt(n + m - 1)));
+//    assert((Int(mint.mod()) - 1) % z == 0);
+//
+//    if (min(n, m) <= 60) { return convolution_naive(a, b); }
+//    return convolution_fft(a, b);
+//}
 
-    int z = (int)internal::bit_ceil((unsigned int)(n + m - 1));
-    assert((mint::mod() - 1) % z == 0);
+//template <unsigned int mod = 998244353,
+//          class T,
+//          std::enable_if_t<internal::is_integral<T>::value>* = nullptr>
+func convolution<T: FixedWidthInteger,mint: modint_protocol>(_ t: mint.Type,_ a: [T],_ b: [T]) -> [T] {
+    let n = a.count, m = b.count;
+    if ((n == 0) || (m == 0)) { return []; }
 
-    if (std::min(n, m) <= 60) return convolution_naive(a, b);
-    return internal::convolution_fft(a, b);
-}
+//    typ mint = static_modint<mod>;
 
-template <unsigned int mod = 998244353,
-          class T,
-          std::enable_if_t<internal::is_integral<T>::value>* = nullptr>
-std::vector<T> convolution(const std::vector<T>& a, const std::vector<T>& b) {
-    int n = int(a.size()), m = int(b.size());
-    if (!n || !m) return {};
+    let z = Int(`internal`.bit_ceil(CUnsignedInt(n + m - 1)));
+    assert((Int(mint.mod()) - 1) % z == 0);
 
-    using mint = static_modint<mod>;
-
-    int z = (int)internal::bit_ceil((unsigned int)(n + m - 1));
-    assert((mint::mod() - 1) % z == 0);
-
-    std::vector<mint> a2(n), b2(m);
-    for (int i = 0; i < n; i++) {
+    var a2 = [mint](repeating: .init(), count: n), b2 = [mint](repeating: .init(), count: m);
+//    for (int i = 0; i < n; i++) {
+    for i in 0..<n {
         a2[i] = mint(a[i]);
     }
-    for (int i = 0; i < m; i++) {
+//    for (int i = 0; i < m; i++) {
+    for i in 0..<m {
         b2[i] = mint(b[i]);
     }
-    auto c2 = convolution(std::move(a2), std::move(b2));
-    std::vector<T> c(n + m - 1);
-    for (int i = 0; i < n + m - 1; i++) {
-        c[i] = c2[i].val();
+    let c2 = convolution(a2, b2);
+    var c = [T](repeating: 0, count: n + m - 1);
+//    for (int i = 0; i < n + m - 1; i++) {
+    for i in 0..<(n + m - 1) {
+        c[i] = T(c2[i].val());
     }
     return c;
 }
 
+/*
 std::vector<long long> convolution_ll(const std::vector<long long>& a,
                                       const std::vector<long long>& b) {
     int n = int(a.size()), m = int(b.size());
