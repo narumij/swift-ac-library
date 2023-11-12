@@ -8,28 +8,19 @@ import Foundation
 //          int g = internal::primitive_root<mint::mod()>,
 //          internal::is_static_modint_t<mint>* = nullptr>
 struct fft_info<mint: modint_base_protocol> {
-//    static constexpr int rank2 = countr_zero_constexpr(mint::mod() - 1);
-//    std::array<mint, rank2 + 1> root;   // root[i]^(2^i) == 1
-//    std::array<mint, rank2 + 1> iroot;  // root[i] * iroot[i] == 1
-//
-//    std::array<mint, std::max(0, rank2 - 2 + 1)> rate2;
-//    std::array<mint, std::max(0, rank2 - 2 + 1)> irate2;
-//
-//    std::array<mint, std::max(0, rank2 - 3 + 1)> rate3;
-//    std::array<mint, std::max(0, rank2 - 3 + 1)> irate3;
     static var g: CInt { `internal`.primitive_root(mint.mod()) }
     static var rank2: CInt { `internal`.countr_zero(UInt32(mint.mod()) - 1) }
     var g: CInt { Self.g }
     var rank2: CInt { Self.rank2 }
     
-    var root = [mint](repeating: .init(), count: Int(rank2 + 1))
-    var iroot = [mint](repeating: .init(), count: Int(rank2 + 1))
+    var root = [mint](repeating: .init(), count: Int(rank2 + 1)) // root[i]^(2^i) == 1
+    var iroot = [mint](repeating: .init(), count: Int(rank2 + 1)) // root[i] * iroot[i] == 1
     
-    var rate2 = [mint](repeating: .init(), count: Int(rank2 - 2 + 1))
-    var irate2 = [mint](repeating: .init(), count: Int(rank2 - 2 + 1))
+    var rate2 = [mint](repeating: .init(), count: Int(max(0, rank2 - 2 + 1)))
+    var irate2 = [mint](repeating: .init(), count: Int(max(0, rank2 - 2 + 1)))
 
-    var rate3 = [mint](repeating: .init(), count: Int(rank2 - 3 + 1))
-    var irate3 = [mint](repeating: .init(), count: Int(rank2 - 3 + 1))
+    var rate3 = [mint](repeating: .init(), count: Int(max(0, rank2 - 3 + 1)))
+    var irate3 = [mint](repeating: .init(), count: Int(max(0, rank2 - 3 + 1)))
 
     init() {
         root[Int(rank2)] = mint(g).pow(CLongLong((mint.mod() - 1) >> rank2));
