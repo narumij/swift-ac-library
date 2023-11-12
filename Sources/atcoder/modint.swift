@@ -2,7 +2,7 @@ import Foundation
 
 // AC - https://atcoder.jp/contests/practice2/submissions/47530743
 
-struct modint_base<bt: barrett>: modint_implementation {
+struct modint_base_static<bt: static_barrett>: modint_implementation {
     init() {
         self.init(0)
     }
@@ -12,7 +12,7 @@ struct modint_base<bt: barrett>: modint_implementation {
     var _v: CUnsignedInt
 }
 
-extension modint_base: ExpressibleByIntegerLiteral {
+extension modint_base_static: ExpressibleByIntegerLiteral {
     init(integerLiteral value: CInt) {
         self.init(value)
     }
@@ -159,10 +159,26 @@ extension modint_base_dynamic: ExpressibleByIntegerLiteral {
     }
 }
 
-typealias modint998244353 = modint_base<mod_998244353>
-typealias modint1000000007 = modint_base<mod_1000000007>
+struct modint_base<bt: barrett>: modint_implementation {
+    init() {
+        self.init(0)
+    }
+    init<T: FixedWidthInteger>(_ v: T) {
+        _v = Self.value(v)
+    }
+    var _v: CUnsignedInt
+}
 
-typealias static_modint = modint_base
+extension modint_base: ExpressibleByIntegerLiteral {
+    init(integerLiteral value: CInt) {
+        self.init(value)
+    }
+}
+
+typealias modint998244353 = modint_base_static<mod_998244353>
+typealias modint1000000007 = modint_base_static<mod_1000000007>
+
+typealias static_modint = modint_base_static
 typealias dynamic_modint = modint_base_dynamic<mod_dynamic>
 
 typealias modint = dynamic_modint
