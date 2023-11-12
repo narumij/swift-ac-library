@@ -309,21 +309,41 @@ func convolution_ll(_ a: [CLongLong],
 
     typealias ULL = CUnsignedLongLong
     typealias LL = CLongLong
+    
+    enum const {
+        static let MOD1: LL = 754974721;  // 2^24
+        static let MOD2: LL = 167772161;  // 2^25
+        static let MOD3: LL = 469762049;  // 2^26
+        static let M2M3: LL = MOD2 &* MOD3;
+        static let M1M3: LL = MOD1 &* MOD3;
+        static let M1M2: LL = MOD1 &* MOD2;
+        static let M1M2M3: LL = MOD1 &* MOD2 &* MOD3;
+        enum barrett1: static_barrett { static let modulus = static_mod(MOD1) }
+        enum barrett2: static_barrett { static let modulus = static_mod(MOD2) }
+        enum barrett3: static_barrett { static let modulus = static_mod(MOD3) }
+        static let i1: ULL =
+        ULL(`internal`.inv_gcd(MOD2 * MOD3, MOD1).second);
+        static let i2: ULL =
+        ULL(`internal`.inv_gcd(MOD1 * MOD3, MOD2).second);
+        static let i3: ULL =
+        ULL(`internal`.inv_gcd(MOD1 * MOD2, MOD3).second);
+    }
 
-    let MOD1: LL = 754974721;  // 2^24
-    let MOD2: LL = 167772161;  // 2^25
-    let MOD3: LL = 469762049;  // 2^26
-    let M2M3: LL = MOD2 &* MOD3;
-    let M1M3: LL = MOD1 &* MOD3;
-    let M1M2: LL = MOD1 &* MOD2;
-    let M1M2M3: LL = MOD1 &* MOD2 &* MOD3;
+    typealias modintMOD1 = static_modint<const.barrett1>
+    typealias modintMOD2 = static_modint<const.barrett2>
+    typealias modintMOD3 = static_modint<const.barrett3>
 
-    let i1: ULL =
-    ULL(`internal`.inv_gcd(MOD2 * MOD3, MOD1).second);
-    let i2: ULL =
-    ULL(`internal`.inv_gcd(MOD1 * MOD3, MOD2).second);
-    let i3: ULL =
-    ULL(`internal`.inv_gcd(MOD1 * MOD2, MOD3).second);
+    let MOD1: LL = const.MOD1;
+    let MOD2: LL = const.MOD2;
+    let MOD3: LL = const.MOD3;
+    let M2M3: LL = const.M2M3;
+    let M1M3: LL = const.M1M3;
+    let M1M2: LL = const.M1M2;
+    let M1M2M3: LL = const.M1M2M3;
+
+    let i1: ULL = const.i1
+    let i2: ULL = const.i2
+    let i3: ULL = const.i3
 
     let MAX_AB_BIT: CInt = 24;
     assert(ULL(MOD1) % (ULL(1) << MAX_AB_BIT) == 1, "MOD1 isn't enough to support an array length of 2^24.");
@@ -331,16 +351,9 @@ func convolution_ll(_ a: [CLongLong],
     assert(ULL(MOD3) % (ULL(1) << MAX_AB_BIT) == 1, "MOD3 isn't enough to support an array length of 2^24.");
     assert(n + m - 1 <= (1 << MAX_AB_BIT));
     
-    enum MOD1barrett: new_barrett { static var modulus: dynamic_mod = -1 }
-    MOD1barrett.set_mod(CInt(MOD1))
-    enum MOD2barrett: new_barrett { static var modulus: dynamic_mod = -1 }
-    MOD2barrett.set_mod(CInt(MOD2))
-    enum MOD3barrett: new_barrett { static var modulus: dynamic_mod = -1 }
-    MOD3barrett.set_mod(CInt(MOD3))
-
-    let c1 = convolution(modint_base<MOD1barrett>.self, a, b);
-    let c2 = convolution(modint_base<MOD2barrett>.self, a, b);
-    let c3 = convolution(modint_base<MOD3barrett>.self, a, b);
+    let c1 = convolution(modintMOD1.self, a, b);
+    let c2 = convolution(modintMOD2.self, a, b);
+    let c3 = convolution(modintMOD3.self, a, b);
 
     var c = [LL](repeating: 0, count: n + m - 1);
 //    for (int i = 0; i < n + m - 1; i++) {

@@ -19,6 +19,12 @@ fileprivate func gcd(_ a: ll,_ b: ll) -> ll{
 
 final class modintTests: XCTestCase {
 
+    enum mod_1:             static_barrett { static let modulus: static_mod = 1 }
+    enum mod_11:            static_barrett { static let modulus: static_mod = 11 }
+    enum mod_1_000_000_007: static_barrett { static let modulus: static_mod = 1_000_000_007 }
+    enum mod_1_000_000_008: static_barrett { static let modulus: static_mod = 1_000_000_008 }
+    enum INT32_MAX:         static_barrett { static let modulus = static_mod(Int32.max) }
+
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
     }
@@ -137,21 +143,21 @@ final class modintTests: XCTestCase {
 
         XCTAssertEqual(0, modint(true).val());
 
-        /*
-        using mint = static_modint<1>;
-        for (int i = 0; i < 100; i++) {
-            for (int j = 0; j < 100; j++) {
-                ASSERT_EQ((mint(i) * mint(j)).val(), 0);
+        typealias mint = static_modint<mod_1>;
+//        for (int i = 0; i < 100; i++) {
+        for i in 0..<100 {
+//            for (int j = 0; j < 100; j++) {
+            for j in 0..<100 {
+                XCTAssertEqual((mint(i) * mint(j)).val(), 0);
             }
         }
-        ASSERT_EQ((mint(1234) + mint(5678)).val(), 0);
-        ASSERT_EQ((mint(1234) - mint(5678)).val(), 0);
-        ASSERT_EQ((mint(1234) * mint(5678)).val(), 0);
-        ASSERT_EQ((mint(1234).pow(5678)), 0);
-        ASSERT_EQ(0, modint(0).inv());
+        XCTAssertEqual((mint(1234) + mint(5678)).val(), 0);
+        XCTAssertEqual((mint(1234) - mint(5678)).val(), 0);
+        XCTAssertEqual((mint(1234) * mint(5678)).val(), 0);
+        XCTAssertEqual((mint(1234).pow(5678)), 0);
+        XCTAssertEqual(0, modint(0).inv());
 
-        ASSERT_EQ(0, mint(true).val());
-         */
+        XCTAssertEqual(0, mint(true).val());
     }
     
     func testModIntMax() throws {
@@ -166,18 +172,19 @@ final class modintTests: XCTestCase {
         XCTAssertEqual((modint(1234) + modint(5678)).val(), 1234 + 5678);
         XCTAssertEqual((modint(1234) - modint(5678)).val(), uint(CInt.max - 5678 + 1234));
         XCTAssertEqual((modint(1234) * modint(5678)).val(), 1234 * 5678);
-        /*
-        using mint = static_modint<INT32_MAX>;
-        for (int i = 0; i < 100; i++) {
-            for (int j = 0; j < 100; j++) {
-                ASSERT_EQ((mint(i) * mint(j)).val(), i * j);
+        
+        typealias mint = static_modint<INT32_MAX>;
+//        for (int i = 0; i < 100; i++) {
+        for i in uint(0)..<100 {
+//            for (int j = 0; j < 100; j++) {
+            for j in uint(0)..<100 {
+                XCTAssertEqual((mint(i) * mint(j)).val(), i * j);
             }
         }
-        ASSERT_EQ((mint(1234) + mint(5678)).val(), 1234 + 5678);
-        ASSERT_EQ((mint(1234) - mint(5678)).val(), INT32_MAX - 5678 + 1234);
-        ASSERT_EQ((mint(1234) * mint(5678)).val(), 1234 * 5678);
-        ASSERT_EQ((mint(INT32_MAX) + mint(INT32_MAX)).val(), 0);
-         */
+        XCTAssertEqual((mint(1234) + mint(5678)).val(), 1234 + 5678);
+        XCTAssertEqual((mint(1234) - mint(5678)).val(), uint(Int32.max - 5678 + 1234));
+        XCTAssertEqual((mint(1234) * mint(5678)).val(), 1234 * 5678);
+        XCTAssertEqual((mint(Int32.max) + mint(Int32.max)).val(), 0);
     }
     
     func testInt128() throws {
@@ -251,16 +258,13 @@ final class modintTests: XCTestCase {
     }
     
     func testConstUsage() throws {
-        throw XCTSkip("よくわからない")
-        /*
-         using sint = static_modint<11>;
-         const sint a = 9;
-         ASSERT_EQ(9, a.val());
-         using dint = modint;
-         dint::set_mod(11);
-         const dint b = 9;
-         ASSERT_EQ(9, b.val());
-         */
+        typealias sint = static_modint<mod_11>;
+        let a: sint  = 9;
+        XCTAssertEqual(9, a.val());
+        typealias dint = modint;
+        dint.set_mod(11);
+        let b: dint = 9;
+        XCTAssertEqual(9, b.val());
     }
     
     func testIncrement() throws {
@@ -324,20 +328,17 @@ final class modintTests: XCTestCase {
     }
     
     func testStaticUsage() throws {
-        throw XCTSkip("いつかやる")
-        /*
-         using mint = static_modint<11>;
-         ASSERT_EQ(11, mint::mod());
-         ASSERT_EQ(4, +mint(4));
-         ASSERT_EQ(7, -mint(4));
+        typealias mint = static_modint<mod_11>;
+        XCTAssertEqual(11, mint.mod());
+        XCTAssertEqual(4, +mint(4));
+        XCTAssertEqual(7, -mint(4));
 
-         ASSERT_FALSE(mint(1) == mint(3));
-         ASSERT_TRUE(mint(1) != mint(3));
-         ASSERT_TRUE(mint(1) == mint(12));
-         ASSERT_FALSE(mint(1) != mint(12));
+        XCTAssertFalse(mint(1) == mint(3));
+        XCTAssertTrue(mint(1) != mint(3));
+        XCTAssertTrue(mint(1) == mint(12));
+        XCTAssertFalse(mint(1) != mint(12));
 
-         EXPECT_DEATH(mint(3).pow(-1), ".*");
-         */
+//        XCTAssertThrowsError(mint(3).pow(-1), ".*");
     }
     
     func testDynamicUsage() throws {

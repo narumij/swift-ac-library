@@ -124,7 +124,7 @@ extension modint_implementation {
     var description: String { val().description }
 }
 
-protocol modint_dynamic_implementation: modint_implementation where bt: new_barrett { }
+protocol modint_dynamic_implementation: modint_implementation where bt: dynamic_barrett { }
 
 extension modint_dynamic_implementation {
     static func set_mod(_ m: CInt) {
@@ -143,7 +143,7 @@ extension modint_implementation {
     }
 }
 
-struct modint_base_dynamic<bt: new_barrett>: modint_dynamic_implementation {
+struct modint_base_dynamic<bt: dynamic_barrett>: modint_dynamic_implementation {
     init() {
         self.init(0)
     }
@@ -162,6 +162,7 @@ extension modint_base_dynamic: ExpressibleByIntegerLiteral {
 typealias modint998244353 = modint_base<mod_998244353>
 typealias modint1000000007 = modint_base<mod_1000000007>
 
+typealias static_modint = modint_base
 typealias dynamic_modint = modint_base_dynamic<mod_dynamic>
 
 typealias modint = dynamic_modint
