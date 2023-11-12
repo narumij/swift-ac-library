@@ -49,7 +49,7 @@ struct barrett {
 // @param n `0 <= n`
 // @param m `1 <= m`
 // @return `(x ** n) % m`
-static func pow_mod_constexpr_(_ x: CLongLong,_ n: CLongLong,_ m: CInt) -> CLongLong {
+static func pow_mod_constexpr(_ x: CLongLong,_ n: CLongLong,_ m: CInt) -> CLongLong {
     var n = n
     if (m == 1) { return 0; }
     let _m = CLongLong(CUnsignedInt(m));
@@ -63,21 +63,11 @@ static func pow_mod_constexpr_(_ x: CLongLong,_ n: CLongLong,_ m: CInt) -> CLong
     return r;
 }
 
-static func pow_mod_constexpr(_ x: CLongLong,_ n: CLongLong,_ m: CInt) -> CLongLong {
-    let arg = pow_mod_memo_arg(x: x, n: n, m: m)
-    if let result = pow_mod_constexpr_memo[arg] {
-        return result
-    }
-    let result = pow_mod_constexpr_(x,n,m)
-    pow_mod_constexpr_memo[arg] = result
-    return result
-}
-
 // Reference:
 // M. Forisek and J. Jancina,
 // Fast Primality Testing for Integers That Fit into a Machine Word
 // @param n `0 <= n`
-static func is_prime_constexpr_(_ n: CInt) -> Bool {
+static func is_prime_constexpr(_ n: CInt) -> Bool {
     if (n <= 1) { return false; }
     if (((1 << n) & (1 << 2 | 1 << 7 | 1 << 61)) != 0) { return true; }
     if (1 & n == 0) { return false; }
@@ -97,15 +87,6 @@ static func is_prime_constexpr_(_ n: CInt) -> Bool {
         }
     }
     return true;
-}
-
-static func is_prime_constexpr(_ n: CInt) -> Bool {
-    if let result = is_prime_constexpr_memo[n] {
-        return result
-    }
-    let result = is_prime_constexpr_(n)
-    is_prime_constexpr_memo[n] = result
-    return result
 }
 
 static func is_prime(_ n: CInt) -> Bool { is_prime_constexpr(n); }
@@ -149,7 +130,7 @@ static func inv_gcd(_ a: CLongLong,_ b: CLongLong) -> (first: CLongLong, second:
 // Compile time primitive root
 // @param m must be prime
 // @return primitive root (and minimum in now)
-static func primitive_root_constexpr_(_ m: CInt) -> CInt {
+static func primitive_root_constexpr(_ m: CInt) -> CInt {
     if (m == 2) { return 1; }
     if (m == 167772161) { return 3; }
     if (m == 469762049) { return 3; }
@@ -186,15 +167,6 @@ static func primitive_root_constexpr_(_ m: CInt) -> CInt {
     } }
 }
 
-static func primitive_root_constexpr(_ m: CInt) -> CInt {
-    if let result = primitive_root_constexpr_memo[m] {
-        return result
-    }
-    let result = primitive_root_constexpr_(m)
-    primitive_root_constexpr_memo[m] = result
-    return result
-}
-
 static func primitive_root(_ m: CInt) -> CInt { primitive_root_constexpr(m); }
 
 // @param n `n < 2^32`
@@ -228,11 +200,3 @@ static func floor_sum_unsigned(_ n: CLongLong,
 }
 }
 
-fileprivate var is_prime_constexpr_memo: [CInt:Bool] = [:]
-fileprivate var primitive_root_constexpr_memo: [CInt:CInt] = [:]
-struct pow_mod_memo_arg: Hashable {
-    var x: CLongLong
-    var n: CLongLong
-    var m: CInt
-}
-fileprivate var pow_mod_constexpr_memo: [pow_mod_memo_arg:CLongLong] = [:]

@@ -152,11 +152,6 @@ protocol modint_protocol: modint_base, AdditiveArithmetic, Equatable, Expressibl
     static func set_mod(_ m: CInt)
     static func raw(_ v: CInt) -> mint
     init()
-    init(_ v: Int)
-    init(_ v: CInt)
-    init(_ v: CLongLong)
-    init(_ v: CUnsignedInt)
-    init(_ v: CUnsignedLongLong)
     init<T: FixedWidthInteger>(_ v: T)
     func val() -> CUnsignedInt
     static func +(lhs: mint, rhs: mint) -> mint
@@ -197,28 +192,18 @@ struct dynamic_modint: modint_protocol {
 
     init() { _v = 0 }
 
-    init(_ v: Bool) { self.init(CInt(v ? 1 : 0)) }
-    init(_ v: CInt) {
-        var x = v % Self.mod();
-        if (x < 0) { x += Self.mod(); }
-        _v = CUnsignedInt(x);
+    init(_ v: Bool) {
+        self.init(CInt(v ? 1 : 0))
     }
-    init(_ v: CLongLong) {
-        var x = v % CLongLong(Self.mod());
-        if (x < 0) { x += CLongLong(Self.mod()); }
-        _v = CUnsignedInt(x);
+    
+    init<T: FixedWidthInteger>(_ v: T) where T.Magnitude == T {
+        _v = CUnsignedInt(v % T(Self.mod()));
     }
-    init(_ v: Int) {
-        self.init(CInt(v))
-    }
-    init(_ v: CUnsignedInt) {
-        _v = v % CUnsignedInt(Self.mod());
-    }
-    init(_ v: CUnsignedLongLong) {
-        _v = CUnsignedInt(v % CUnsignedLongLong(Self.mod()));
-    }
+
     init<T: FixedWidthInteger>(_ v: T) {
-        fatalError("未実装")
+        var x = v % T(Self.mod());
+        if (x < 0) { x += T(Self.mod()); }
+        _v = CUnsignedInt(x);
     }
 
     func val() -> CUnsignedInt { return _v; }
