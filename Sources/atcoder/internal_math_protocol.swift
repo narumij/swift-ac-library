@@ -12,6 +12,14 @@ protocol barret_modulus {
     var im: CUnsignedLongLong { get }
 }
 
+func imValue(_ _m: CUnsignedInt) -> CUnsignedLongLong {
+    CUnsignedLongLong(bitPattern: -1) / CUnsignedLongLong( _m) &+ 1
+}
+
+func imValue(_ _m: CInt) -> CUnsignedLongLong {
+    imValue(CUnsignedInt(bitPattern: _m))
+}
+
 protocol barret_modulus_dynamic: barret_modulus {
     var m: CUnsignedInt { get set }
     var im: CUnsignedLongLong { get set }
@@ -20,7 +28,8 @@ protocol barret_modulus_dynamic: barret_modulus {
 
 extension barret_modulus_dynamic {
     mutating func set_mod(_ _m: CUnsignedInt) {
-        m = _m; im = CUnsignedLongLong(bitPattern: -1) / CUnsignedLongLong(_m) &+ 1
+        m = _m
+        im = imValue(_m)
     }
 }
 
@@ -30,7 +39,7 @@ struct static_mod: barret_modulus {
     init() { self.init(-1) }
     init(_ _m: CInt) {
         m = CUnsignedInt(bitPattern: _m)
-        im = CUnsignedLongLong(bitPattern: -1) / CUnsignedLongLong(_m) &+ 1
+        im = imValue(_m)
     }
 }
 
@@ -40,7 +49,7 @@ struct dynamic_mod: barret_modulus_dynamic {
     init() { self.init(-1) }
     init(_ _m: CInt) {
         m = CUnsignedInt(bitPattern: _m)
-        im = CUnsignedLongLong(bitPattern: -1) / CUnsignedLongLong(CUnsignedInt(bitPattern: _m)) &+ 1
+        im = imValue(_m)
     }
 }
 
@@ -65,6 +74,9 @@ extension static_mod {
 
 // MARK: -
 
+// Fast modular multiplication by barrett reduction
+// Reference: https://en.wikipedia.org/wiki/Barrett_reduction
+// NOTE: reconsider after Ice Lake
 protocol barrett {
     associatedtype mod_type: barret_modulus
     static var modulus: mod_type { get }
@@ -121,14 +133,7 @@ protocol static_barrett: barrett { }
 enum mod_998244353: static_barrett {
     static let modulus: static_mod = .mod_998244353
 }
+
 enum mod_1000000007: static_barrett {
     static let modulus: static_mod = static_mod.mod_1000000007
 }
-enum mod_2147483647: static_barrett {
-    static let modulus: static_mod = static_mod.mod_2147483647
-}
-enum mod_4294967295: static_barrett { 
-    static let modulus: static_mod = static_mod.mod_4294967295
-}
-
-

@@ -1,8 +1,20 @@
 import Foundation
 
-typealias modint = dynamic_modint_struct<mod_dynamic>
+struct modint_base<bt: barrett>: modint_implementation {
+    init() {
+        self.init(0)
+    }
+    init<T: FixedWidthInteger>(_ v: T) {
+        _v = Self.value(v)
+    }
+    var _v: CUnsignedInt
+}
 
-// MARK: - modint
+extension modint_base: ExpressibleByIntegerLiteral {
+    init(integerLiteral value: CInt) {
+        self.init(value)
+    }
+}
 
 protocol modint_base_protocol: AdditiveArithmetic, Equatable, ExpressibleByIntegerLiteral {
     static func mod() -> CInt
@@ -108,9 +120,9 @@ extension modint_implementation {
     static func umod() -> CUnsignedInt { return bt.umod(); }
 }
 
-protocol dynamic_modint_implementation: modint_implementation where bt: new_barrett { }
+protocol modint_dynamic_implementation: modint_implementation where bt: new_barrett { }
 
-extension dynamic_modint_implementation {
+extension modint_dynamic_implementation {
     static func set_mod(_ m: CInt) {
         bt.set_mod(m)
     }
@@ -127,7 +139,7 @@ extension modint_implementation {
     }
 }
 
-struct modint_struct<bt: barrett>: modint_implementation {
+struct modint_base_dynamic<bt: new_barrett>: modint_dynamic_implementation {
     init() {
         self.init(0)
     }
@@ -137,47 +149,16 @@ struct modint_struct<bt: barrett>: modint_implementation {
     var _v: CUnsignedInt
 }
 
-extension modint_struct: ExpressibleByIntegerLiteral {
+extension modint_base_dynamic: ExpressibleByIntegerLiteral {
     init(integerLiteral value: CInt) {
         self.init(value)
     }
 }
 
-struct dynamic_modint_struct<bt: new_barrett>: dynamic_modint_implementation {
-    init() {
-        self.init(0)
-    }
-    init<T: FixedWidthInteger>(_ v: T) {
-        _v = Self.value(v)
-    }
-    var _v: CUnsignedInt
-}
+typealias modint998244353 = modint_base<mod_998244353>
+typealias modint1000000007 = modint_base<mod_1000000007>
 
-extension dynamic_modint_struct: ExpressibleByIntegerLiteral {
-    init(integerLiteral value: CInt) {
-        self.init(value)
-    }
-}
+typealias dynamic_modint = modint_base_dynamic<mod_dynamic>
 
-fileprivate func test() {
-    
-    enum barret1: new_barrett { static var modulus: dynamic_mod = -1 }
-    barret1.set_mod(2)
-    typealias modint1 = modint_struct<barret1>
-    
-    enum barret2: new_barrett { static var modulus: dynamic_mod = -1 }
-    barret2.set_mod(5)
-    typealias modint2 = modint_struct<barret2>
-    
-    enum barret3: new_barrett { static var modulus: dynamic_mod = -1 }
-    barret3.set_mod(7)
-    typealias modint3 = modint_struct<barret3>
+typealias modint = dynamic_modint
 
-    typealias modint998244353 = modint_struct<mod_998244353>
-    typealias modint1000000007 = modint_struct<mod_1000000007>
-    typealias modint2147483647 = modint_struct<mod_2147483647>
-    typealias modint4294967295 = modint_struct<mod_4294967295>
-    
-}
-
-typealias dynamic_modint = dynamic_modint_struct<mod_dynamic>

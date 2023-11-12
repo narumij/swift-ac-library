@@ -12,6 +12,22 @@ fileprivate typealias uint = CUnsignedInt;
 fileprivate typealias ll = CLongLong;
 fileprivate typealias ull = CUnsignedLongLong;
 
+fileprivate func test() {
+    
+    enum barret1: new_barrett { static var modulus: dynamic_mod = -1 }
+    barret1.set_mod(2)
+    typealias modint1 = modint_base<barret1>
+    
+    enum barret2: new_barrett { static var modulus: dynamic_mod = -1 }
+    barret2.set_mod(5)
+    typealias modint2 = modint_base<barret2>
+    
+    enum barret3: new_barrett { static var modulus: dynamic_mod = -1 }
+    barret3.set_mod(7)
+    typealias modint3 = modint_base<barret3>
+}
+
+
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
 func conv_naive<mint: modint_base_protocol>(_ a: [mint],_ b: [mint]) -> [mint] {
     let n = a.count, m = b.count;
