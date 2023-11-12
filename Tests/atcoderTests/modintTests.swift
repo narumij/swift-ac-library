@@ -112,11 +112,12 @@ final class modintTests: XCTestCase {
         XCTAssertEqual(ne1.1, modint(CUnsignedLongLong(bitPattern: CLongLong(-1))).val());
         let ne2: (CUnsignedInt,CUnsignedInt) = (0,932051910)
         XCTAssertEqual(ne2.1, (modint(CUnsignedLongLong(bitPattern: CLongLong(-1))) + modint(1)).val());
-        /*
-        using mint = static_modint<998244353>;
-        XCTAssertNotEqual(mint::mod() - 1, modint((unsigned long long)(-1)).val());
-        XCTAssertNotEqual(0, ((unsigned long long)(-1) + mint(1)).val());
-         */
+        
+        do {
+            typealias mint = modint998244353;
+            XCTAssertNotEqual(UInt32(mint.mod()) - 1, mint(CUnsignedLongLong(bitPattern: CLongLong(-1))).val());
+            XCTAssertNotEqual(0, (mint(CUnsignedLongLong(bitPattern: CLongLong(-1))) + mint(1)).val());
+        }
     }
     
     func testMod1() throws {
@@ -426,6 +427,15 @@ final class modintTests: XCTestCase {
          mint m;
          ASSERT_EQ(0, m.val());
          */
+    }
+    
+    func testSome() throws {
+        typealias mint = modint998244353
+        XCTAssertEqual(1, (mint(3) / 2).val() - CUnsignedInt((mint.mod() + 1) / 2))
+        
+        XCTAssertEqual(4, (mint(9) / 2).val() - CUnsignedInt((mint.mod() + 1) / 2))
+        
+        XCTAssertEqual(18, (mint(36) / 2).val())
     }
     
     func testPerformanceExample() throws {

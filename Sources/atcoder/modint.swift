@@ -1,5 +1,7 @@
 import Foundation
 
+// AC - https://atcoder.jp/contests/practice2/submissions/47530743
+
 struct modint_base<bt: barrett>: modint_implementation {
     init() {
         self.init(0)
@@ -38,7 +40,7 @@ extension modint_base_protocol {
     typealias mint = Self
 }
 
-protocol modint_implementation: modint_base_protocol {
+protocol modint_implementation: modint_base_protocol, CustomStringConvertible {
     associatedtype bt: barrett
     init()
     init<T: FixedWidthInteger>(_ v: T)
@@ -118,6 +120,8 @@ extension modint_implementation {
     }
     
     static func umod() -> CUnsignedInt { return bt.umod(); }
+    
+    var description: String { val().description }
 }
 
 protocol modint_dynamic_implementation: modint_implementation where bt: new_barrett { }

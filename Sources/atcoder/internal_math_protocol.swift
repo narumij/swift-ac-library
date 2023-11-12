@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by narumij on 2023/11/12.
-//
-
 import Foundation
 
 protocol barret_modulus {
