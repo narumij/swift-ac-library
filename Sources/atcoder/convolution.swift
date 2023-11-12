@@ -7,7 +7,7 @@ import Foundation
 //template <class mint,
 //          int g = internal::primitive_root<mint::mod()>,
 //          internal::is_static_modint_t<mint>* = nullptr>
-struct fft_info<mint: modint_protocol> {
+struct fft_info<mint: modint_base_protocol> {
 //    static constexpr int rank2 = countr_zero_constexpr(mint::mod() - 1);
 //    std::array<mint, rank2 + 1> root;   // root[i]^(2^i) == 1
 //    std::array<mint, rank2 + 1> iroot;  // root[i] * iroot[i] == 1
@@ -64,7 +64,7 @@ struct fft_info<mint: modint_protocol> {
 };
 
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-func butterfly<mint: modint_protocol>(_ a: inout [mint]) {
+func butterfly<mint: modint_base_protocol>(_ a: inout [mint]) {
     let n = CInt(a.count);
 //    int h = internal::countr_zero((unsigned int)n);
     let h = `internal`.countr_zero(CUnsignedInt(n))
@@ -126,7 +126,7 @@ func butterfly<mint: modint_protocol>(_ a: inout [mint]) {
 }
 
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-func butterfly_inv<mint: modint_protocol>(_ a: inout [mint]) {
+func butterfly_inv<mint: modint_base_protocol>(_ a: inout [mint]) {
     let n = CInt(a.count);
     let h = `internal`.countr_zero(CUnsignedInt(n));
 
@@ -194,7 +194,7 @@ func butterfly_inv<mint: modint_protocol>(_ a: inout [mint]) {
 }
 
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-func convolution_naive<mint: modint_protocol>(_ a: [mint],
+func convolution_naive<mint: modint_base_protocol>(_ a: [mint],
                                               _ b: [mint]) -> [mint] {
     let n = a.count, m = b.count;
     var ans = [mint](repeating: .init(), count: n + m - 1);
@@ -218,7 +218,7 @@ func convolution_naive<mint: modint_protocol>(_ a: [mint],
     return ans;
 }
 
-extension Array where Element: modint_protocol {
+extension Array where Element: modint_base_protocol {
     mutating func resize(_ n: Int) {
         if count > n {
             removeLast(count - n)
@@ -229,7 +229,7 @@ extension Array where Element: modint_protocol {
 }
 
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-func convolution_fft<mint: modint_protocol>(_ a: [mint],_ b: [mint]) -> [mint] {
+func convolution_fft<mint: modint_base_protocol>(_ a: [mint],_ b: [mint]) -> [mint] {
     var a = a
     var b = b
     let n = CInt(a.count), m = CInt(b.count);
@@ -255,7 +255,7 @@ func convolution_fft<mint: modint_protocol>(_ a: [mint],_ b: [mint]) -> [mint] {
 //}  // namespace internal
 
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-func convolution<mint: modint_protocol>(_ a: [mint],_ b: [mint]) -> [mint] {
+func convolution<mint: modint_base_protocol>(_ a: [mint],_ b: [mint]) -> [mint] {
     let n = a.count, m = b.count;
     if ((n == 0) || (m == 0)) { return []; }
 

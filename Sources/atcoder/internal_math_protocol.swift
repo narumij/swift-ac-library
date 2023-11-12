@@ -40,7 +40,7 @@ struct dynamic_mod: barret_modulus_dynamic {
     init() { self.init(-1) }
     init(_ _m: CInt) {
         m = CUnsignedInt(bitPattern: _m)
-        im = CUnsignedLongLong(bitPattern: -1) / CUnsignedLongLong( _m) &+ 1
+        im = CUnsignedLongLong(bitPattern: -1) / CUnsignedLongLong(CUnsignedInt(bitPattern: _m)) &+ 1
     }
 }
 
@@ -57,10 +57,10 @@ extension dynamic_mod: ExpressibleByIntegerLiteral {
 }
 
 extension static_mod {
-    static let mod_998244353: static_mod = 998244353 as static_mod
-    static let mod_1000000007: static_mod = 1000000007 as static_mod
-    static let mod_2147483647: static_mod = 2147483647 as static_mod
-    static let mod_4294967295: static_mod = -1 as static_mod
+    static let mod_998244353: static_mod = 998244353
+    static let mod_1000000007: static_mod = 1000000007
+    static let mod_2147483647: static_mod = 2147483647
+    static let mod_4294967295: static_mod = -1
 }
 
 // MARK: -
@@ -100,16 +100,20 @@ extension barrett {
     }
 }
 
-protocol dynamic_barret: barrett where mod_type: barret_modulus_dynamic {
+protocol new_barrett: barrett where mod_type: barret_modulus_dynamic {
     static var modulus: mod_type { get set }
     static func set_mod(_ m: CInt)
 }
 
-extension dynamic_barret {
+extension new_barrett {
     static func set_mod(_ m: CInt) {
         assert(1 <= m);
         modulus.set_mod(CUnsignedInt(m))
     }
+}
+
+enum mod_dynamic: new_barrett { 
+    static var modulus: dynamic_mod = -1
 }
 
 protocol static_barrett: barrett { }
@@ -130,7 +134,7 @@ enum mod_4294967295: static_barrett {
 
 // MARK: - modint
 
-protocol modint_implementation {
+protocol modint_implementation: modint_base_protocol {
     associatedtype bt: barrett
     init()
     init<T: FixedWidthInteger>(_ v: T)
@@ -212,7 +216,7 @@ extension modint_implementation {
     static func umod() -> CUnsignedInt { return bt.umod(); }
 }
 
-protocol dynamic_modint_implementation: modint_implementation where bt: dynamic_barret { }
+protocol dynamic_modint_implementation: modint_implementation where bt: new_barrett { }
 
 extension dynamic_modint_implementation {
     static func set_mod(_ m: CInt) {
@@ -241,17 +245,39 @@ struct modint_struct<bt: barrett>: modint_implementation {
     var _v: CUnsignedInt
 }
 
+extension modint_struct: ExpressibleByIntegerLiteral {
+    init(integerLiteral value: CInt) {
+        self.init(value)
+    }
+}
+
+struct dynamic_modint_struct<bt: new_barrett>: dynamic_modint_implementation {
+    init() {
+        self.init(0)
+    }
+    init<T: FixedWidthInteger>(_ v: T) {
+        _v = Self.value(v)
+    }
+    var _v: CUnsignedInt
+}
+
+extension dynamic_modint_struct: ExpressibleByIntegerLiteral {
+    init(integerLiteral value: CInt) {
+        self.init(value)
+    }
+}
+
 fileprivate func test() {
     
-    enum barret1: dynamic_barret { static var modulus: dynamic_mod = -1 }
+    enum barret1: new_barrett { static var modulus: dynamic_mod = -1 }
     barret1.set_mod(2)
     typealias modint1 = modint_struct<barret1>
     
-    enum barret2: dynamic_barret { static var modulus: dynamic_mod = -1 }
+    enum barret2: new_barrett { static var modulus: dynamic_mod = -1 }
     barret2.set_mod(5)
     typealias modint2 = modint_struct<barret2>
     
-    enum barret3: dynamic_barret { static var modulus: dynamic_mod = -1 }
+    enum barret3: new_barrett { static var modulus: dynamic_mod = -1 }
     barret3.set_mod(7)
     typealias modint3 = modint_struct<barret3>
 
@@ -259,4 +285,6 @@ fileprivate func test() {
     typealias modint1000000007 = modint_struct<mod_1000000007>
     typealias modint2147483647 = modint_struct<mod_2147483647>
     typealias modint4294967295 = modint_struct<mod_4294967295>
+    
+    typealias dynamic_modint = modint_struct<mod_dynamic>
 }

@@ -1,9 +1,10 @@
 import Foundation
 
-protocol modint_base { }
-protocol static_modint_base: modint_base { }
+//protocol modint_base { }
+protocol static_modint_base { }
 
-typealias modint = dynamic_modint;
+//typealias modint = dynamic_modint;
+typealias modint = dynamic_modint_struct<mod_dynamic>
 
 /*
 #ifndef ATCODER_MODINT_HPP
@@ -147,9 +148,8 @@ struct static_modint : internal::static_modint_base {
 };
 */
 
-protocol modint_protocol: modint_base, AdditiveArithmetic, Equatable, ExpressibleByIntegerLiteral {
+protocol modint_base_protocol: AdditiveArithmetic, Equatable, ExpressibleByIntegerLiteral {
     static func mod() -> CInt
-    static func set_mod(_ m: CInt)
     static func raw(_ v: CInt) -> mint
     init()
     init<T: FixedWidthInteger>(_ v: T)
@@ -164,6 +164,14 @@ protocol modint_protocol: modint_base, AdditiveArithmetic, Equatable, Expressibl
     static func /=(lhs: inout mint, rhs: mint)
     func pow(_ n: CLongLong) -> mint
     func inv() -> mint
+}
+
+extension modint_base_protocol {
+    typealias mint = Self
+}
+
+protocol modint_protocol: modint_base_protocol {
+    static func set_mod(_ m: CInt)
 }
 
 extension modint_protocol {
