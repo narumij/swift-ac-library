@@ -62,8 +62,7 @@ struct fft_info<mint: modint_protocol> {
 };
 
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-func butterfly<mint: modint_protocol>(_ a: [mint]) {
-    var a = a
+func butterfly<mint: modint_protocol>(_ a: inout [mint]) {
     let n = CInt(a.count);
 //    int h = internal::countr_zero((unsigned int)n);
     let h = `internal`.countr_zero(CUnsignedInt(n))
@@ -125,8 +124,7 @@ func butterfly<mint: modint_protocol>(_ a: [mint]) {
 }
 
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-func butterfly_inv<mint: modint_protocol>(_ a: [mint]) {
-    var a = a
+func butterfly_inv<mint: modint_protocol>(_ a: inout [mint]) {
     let n = CInt(a.count);
     let h = `internal`.countr_zero(CUnsignedInt(n));
 
@@ -149,8 +147,8 @@ func butterfly_inv<mint: modint_protocol>(_ a: [mint]) {
                     let r = a[i + offset + p];
                     a[i + offset] = l + r;
                     a[i + offset + p] = mint(
-                        CUnsignedLongLong(UInt32(mint.mod()) + l.val() - r.val()) *
-                    CUnsignedLongLong(irot.val()));
+                        (ULL(mint.mod()) + ULL(l.val()) - ULL(r.val())) *
+                    ULL(irot.val()));
                 }
                 if (s + 1 != (1 << (len - 1)))
                     { irot *= info.irate2[Int(`internal`.countr_zero(~CUnsignedInt(s)))]; }
@@ -235,14 +233,14 @@ func convolution_fft<mint: modint_protocol>(_ a: [mint],_ b: [mint]) -> [mint] {
     let n = CInt(a.count), m = CInt(b.count);
     let z = CInt(`internal`.bit_ceil(CUnsignedInt(n + m - 1)));
     a.resize(Int(z));
-    butterfly(a);
+    butterfly(&a);
     b.resize(Int(z));
-    butterfly(b);
+    butterfly(&b);
 //    for (int i = 0; i < z; i++) {
     for i in 0..<Int(z) {
         a[i] *= b[i];
     }
-    butterfly_inv(a);
+    butterfly_inv(&a);
     a.resize(Int(n + m - 1));
     let iz = mint(z).inv();
 //    for (int i = 0; i < n + m - 1; i++) a[i] *= iz;

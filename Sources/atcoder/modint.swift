@@ -154,6 +154,7 @@ protocol modint_protocol: modint_base, AdditiveArithmetic, Equatable, Expressibl
     init()
     init(_ v: Int)
     init(_ v: CInt)
+    init(_ v: CLongLong)
     init(_ v: CUnsignedInt)
     init(_ v: CUnsignedLongLong)
     init<T: FixedWidthInteger>(_ v: T)
@@ -198,12 +199,14 @@ struct dynamic_modint: modint_protocol {
 
     init(_ v: Bool) { self.init(CInt(v ? 1 : 0)) }
     init(_ v: CInt) {
-        var x = CInt(v % Self.mod());
-        if (x < 0) { x += CInt(Self.mod()); }
+        var x = v % Self.mod();
+        if (x < 0) { x += Self.mod(); }
         _v = CUnsignedInt(x);
     }
     init(_ v: CLongLong) {
-        self.init(CInt(v))
+        var x = v % CLongLong(Self.mod());
+        if (x < 0) { x += CLongLong(Self.mod()); }
+        _v = CUnsignedInt(x);
     }
     init(_ v: Int) {
         self.init(CInt(v))
@@ -279,18 +282,16 @@ struct dynamic_modint: modint_protocol {
         lhs * rhs.inv()
     }
     static func +=(lhs: inout Self, rhs: Self) {
-        lhs._v &+= rhs._v
-        if (lhs._v >= umod()) { lhs._v -= umod(); }
+        lhs = lhs + rhs
     }
     static func -=(lhs: inout Self, rhs: Self) {
-        lhs._v &+= CUnsignedInt(mod()) + rhs._v
-        if (lhs._v >= umod()) { lhs._v -= umod(); }
-    }
+        lhs = lhs - rhs
+   }
     static func *=(lhs: inout Self, rhs: Self) {
-        lhs._v = bt.mul(lhs._v, rhs._v);
+        lhs = lhs * rhs
     }
     static func /=(lhs: inout Self, rhs: Self) {
-        lhs._v = bt.mul(lhs._v, rhs.inv()._v);
+        lhs = lhs / rhs
     }
     static prefix func + (_ m: Self) -> Self {
         return m

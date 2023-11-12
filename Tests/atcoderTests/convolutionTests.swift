@@ -70,11 +70,11 @@ final class convolutionTests: XCTestCase {
         
 //        for (int i = 0; i < n; i++) {
         for i in 0..<n {
-            a[i] = mint(CInt.random(in: 0...CInt.max));
+            a[i] = mint(CInt.random(in: CInt.min...CInt.max));
         }
 //        for (int i = 0; i < m; i++) {
         for i in 0..<m {
-            b[i] = mint(CInt.random(in: 0...CInt.max));
+            b[i] = mint(CInt.random(in: CInt.min...CInt.max));
         }
         XCTAssertEqual(conv_naive(a, b), convolution(a, b));
     }
