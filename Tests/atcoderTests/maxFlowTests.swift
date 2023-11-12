@@ -38,7 +38,7 @@ final class maxFlowTests: XCTestCase {
     }
     
     func testAssign() throws {
-        // TODO: implement this
+        throw XCTSkip("C++固有のオーバーロードに関するテストなので、実施しない")
     }
     
     func edge_eq<T: Equatable>(_ expect: mf_graph<T>.edge,_ actual: mf_graph<T>.edge) {

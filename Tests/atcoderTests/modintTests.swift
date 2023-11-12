@@ -324,7 +324,7 @@ final class modintTests: XCTestCase {
     }
     
     func testStaticUsage() throws {
-        throw XCTSkip("未実装")
+        throw XCTSkip("いつかやる")
         /*
          using mint = static_modint<11>;
          ASSERT_EQ(11, mint::mod());
@@ -400,7 +400,7 @@ final class modintTests: XCTestCase {
     }
     
     func testConstructorStatic() throws {
-        throw XCTSkip("未実装")
+        throw XCTSkip("いつかやる")
         /*
          using mint = static_modint<11>;
          ASSERT_EQ(1, mint(true).val());

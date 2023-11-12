@@ -95,7 +95,7 @@ final class mincostflowTests: XCTestCase {
     }
     
     func testAssign() throws {
-        // TODO: implement this
+        throw XCTSkip("C++固有のオーバーロードに関するテストなので、実施しない")
 //        TEST(MincostflowTest, Assign) {
 //            mcf_graph<int, int> g;
 //            g = mcf_graph<int, int>(10);

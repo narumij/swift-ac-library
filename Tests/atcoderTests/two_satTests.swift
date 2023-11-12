@@ -52,8 +52,7 @@ final class two_satTests: XCTestCase {
     }
     
     func testAssign() throws {
-        // いつかやる
-        
+        throw XCTSkip("C++固有のオーバーロードに関するテストなので、実施しない")
         /*
          two_sat ts;
          ts = two_sat(10);
