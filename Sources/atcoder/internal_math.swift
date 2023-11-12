@@ -18,7 +18,7 @@ struct barrett {
     let im: CUnsignedLongLong;
 
     // @param m `1 <= m`
-    init(_ m: CUnsignedInt) { _m = m; im = CUnsignedLongLong.max / CUnsignedLongLong(m) &+ 1 }
+    init(_ m: CUnsignedInt) { _m = m; im = CUnsignedLongLong(bitPattern: -1) / CUnsignedLongLong(m) &+ 1 }
 //    init(_ m: UInt) { self.init(UInt32(m)) }
 
     // @return m
