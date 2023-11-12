@@ -65,7 +65,7 @@ struct fft_info<mint: modint_base_protocol> {
 
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
 func butterfly<mint: modint_base_protocol>(_ a: inout [mint]) {
-    let n = CInt(a.count);
+    let n = a.count;
 //    int h = internal::countr_zero((unsigned int)n);
     let h = `internal`.countr_zero(CUnsignedInt(n))
 
@@ -127,7 +127,7 @@ func butterfly<mint: modint_base_protocol>(_ a: inout [mint]) {
 
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
 func butterfly_inv<mint: modint_base_protocol>(_ a: inout [mint]) {
-    let n = CInt(a.count);
+    let n = a.count;
     let h = `internal`.countr_zero(CUnsignedInt(n));
 
 //    static const fft_info<mint> info;
@@ -283,6 +283,7 @@ func convolution<mint: modint_base_protocol>(_ a: [mint],_ b: [mint]) -> [mint] 
 //          class T,
 //          std::enable_if_t<internal::is_integral<T>::value>* = nullptr>
 func convolution<T: FixedWidthInteger, mint: modint_base_protocol>(_ t: mint.Type,_ a: [T],_ b: [T]) -> [T] {
+    
     let n = a.count, m = b.count;
     if ((n == 0) || (m == 0)) { return []; }
 
@@ -309,43 +310,53 @@ func convolution<T: FixedWidthInteger, mint: modint_base_protocol>(_ t: mint.Typ
     return c;
 }
 
-/*
-std::vector<long long> convolution_ll(const std::vector<long long>& a,
-                                      const std::vector<long long>& b) {
-    int n = int(a.size()), m = int(b.size());
-    if (!n || !m) return {};
+func convolution_ll(_ a: [CLongLong],
+                    _ b: [CLongLong]) -> [CLongLong] {
+    let n = a.count, m = b.count;
+    if ((n == 0) || (m == 0)) { return []; }
 
-    static constexpr unsigned long long MOD1 = 754974721;  // 2^24
-    static constexpr unsigned long long MOD2 = 167772161;  // 2^25
-    static constexpr unsigned long long MOD3 = 469762049;  // 2^26
-    static constexpr unsigned long long M2M3 = MOD2 * MOD3;
-    static constexpr unsigned long long M1M3 = MOD1 * MOD3;
-    static constexpr unsigned long long M1M2 = MOD1 * MOD2;
-    static constexpr unsigned long long M1M2M3 = MOD1 * MOD2 * MOD3;
+    typealias ULL = CUnsignedLongLong
+    typealias LL = CLongLong
 
-    static constexpr unsigned long long i1 =
-        internal::inv_gcd(MOD2 * MOD3, MOD1).second;
-    static constexpr unsigned long long i2 =
-        internal::inv_gcd(MOD1 * MOD3, MOD2).second;
-    static constexpr unsigned long long i3 =
-        internal::inv_gcd(MOD1 * MOD2, MOD3).second;
-        
-    static constexpr int MAX_AB_BIT = 24;
-    static_assert(MOD1 % (1ull << MAX_AB_BIT) == 1, "MOD1 isn't enough to support an array length of 2^24.");
-    static_assert(MOD2 % (1ull << MAX_AB_BIT) == 1, "MOD2 isn't enough to support an array length of 2^24.");
-    static_assert(MOD3 % (1ull << MAX_AB_BIT) == 1, "MOD3 isn't enough to support an array length of 2^24.");
+    let MOD1: LL = 754974721;  // 2^24
+    let MOD2: LL = 167772161;  // 2^25
+    let MOD3: LL = 469762049;  // 2^26
+    let M2M3: LL = MOD2 &* MOD3;
+    let M1M3: LL = MOD1 &* MOD3;
+    let M1M2: LL = MOD1 &* MOD2;
+    let M1M2M3: LL = MOD1 &* MOD2 &* MOD3;
+
+    let i1: ULL =
+    ULL(`internal`.inv_gcd(MOD2 * MOD3, MOD1).second);
+    let i2: ULL =
+    ULL(`internal`.inv_gcd(MOD1 * MOD3, MOD2).second);
+    let i3: ULL =
+    ULL(`internal`.inv_gcd(MOD1 * MOD2, MOD3).second);
+
+    let MAX_AB_BIT: CInt = 24;
+    assert(ULL(MOD1) % (ULL(1) << MAX_AB_BIT) == 1, "MOD1 isn't enough to support an array length of 2^24.");
+    assert(ULL(MOD2) % (ULL(1) << MAX_AB_BIT) == 1, "MOD2 isn't enough to support an array length of 2^24.");
+    assert(ULL(MOD3) % (ULL(1) << MAX_AB_BIT) == 1, "MOD3 isn't enough to support an array length of 2^24.");
     assert(n + m - 1 <= (1 << MAX_AB_BIT));
+    
+    enum MOD1barrett: new_barrett { static var modulus: dynamic_mod = -1 }
+    MOD1barrett.set_mod(CInt(MOD1))
+    enum MOD2barrett: new_barrett { static var modulus: dynamic_mod = -1 }
+    MOD2barrett.set_mod(CInt(MOD2))
+    enum MOD3barrett: new_barrett { static var modulus: dynamic_mod = -1 }
+    MOD3barrett.set_mod(CInt(MOD3))
 
-    auto c1 = convolution<MOD1>(a, b);
-    auto c2 = convolution<MOD2>(a, b);
-    auto c3 = convolution<MOD3>(a, b);
+    let c1 = convolution(modint_base<MOD1barrett>.self, a, b);
+    let c2 = convolution(modint_base<MOD2barrett>.self, a, b);
+    let c3 = convolution(modint_base<MOD3barrett>.self, a, b);
 
-    std::vector<long long> c(n + m - 1);
-    for (int i = 0; i < n + m - 1; i++) {
-        unsigned long long x = 0;
-        x += (c1[i] * i1) % MOD1 * M2M3;
-        x += (c2[i] * i2) % MOD2 * M1M3;
-        x += (c3[i] * i3) % MOD3 * M1M2;
+    var c = [LL](repeating: 0, count: n + m - 1);
+//    for (int i = 0; i < n + m - 1; i++) {
+    for i in 0..<(n + m - 1) {
+        var x: ULL = 0;
+        x += ULL((c1[i] * LL(i1)) % MOD1 * M2M3);
+        x += ULL((c2[i] * LL(i2)) % MOD2 * M1M3);
+        x += ULL((c3[i] * LL(i3)) % MOD3 * M1M2);
         // B = 2^63, -B <= x, r(real value) < B
         // (x, x - M, x - 2M, or x - 3M) = r (mod 2B)
         // r = c1[i] (mod MOD1)
@@ -363,17 +374,19 @@ std::vector<long long> convolution_ll(const std::vector<long long>& a,
         //   ((1) mod MOD1) mod 5 = 2
         //   ((2) mod MOD1) mod 5 = 3
         //   ((3) mod MOD1) mod 5 = 4
-        long long diff =
-            c1[i] - internal::safe_mod((long long)(x), (long long)(MOD1));
-        if (diff < 0) diff += MOD1;
-        static constexpr unsigned long long offset[5] = {
-            0, 0, M1M2M3, 2 * M1M2M3, 3 * M1M2M3};
-        x -= offset[diff % 5];
-        c[i] = x;
+        var diff: LL =
+        c1[i] - `internal`.safe_mod(LL(x), LL(MOD1));
+        if (diff < 0) { diff += MOD1; }
+        let offset: [ULL] = [
+            0, 0, ULL(M1M2M3), ULL(2 * M1M2M3), ULL(3 * M1M2M3)];
+        x -= offset[Int(diff) % 5];
+        c[i] = LL(x);
     }
 
     return c;
 }
+
+/*
 
 }  // namespace atcoder
 
