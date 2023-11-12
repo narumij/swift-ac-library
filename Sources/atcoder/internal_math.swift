@@ -14,8 +14,8 @@ static func safe_mod(_ x: CLongLong,_ m: CLongLong) -> CLongLong {
 // Reference: https://en.wikipedia.org/wiki/Barrett_reduction
 // NOTE: reconsider after Ice Lake
 struct barrett {
-    var _m: CUnsignedInt;
-    var im: CUnsignedLongLong;
+    let _m: CUnsignedInt;
+    let im: CUnsignedLongLong;
 
     // @param m `1 <= m`
     init(_ m: CUnsignedInt) { _m = m; im = CUnsignedLongLong.max / CUnsignedLongLong(m) &+ 1 }
