@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by narumij on 2023/11/11.
-//
-
 import Foundation
 
 struct scc_graph {
