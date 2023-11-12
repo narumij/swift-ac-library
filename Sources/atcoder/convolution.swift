@@ -15,25 +15,25 @@ struct fft_info<mint: modint_protocol> {
 //
 //    std::array<mint, std::max(0, rank2 - 3 + 1)> rate3;
 //    std::array<mint, std::max(0, rank2 - 3 + 1)> irate3;
-    static var g: Int { Int(`internal`.primitive_root(mint.mod())) }
-    static var rank2: Int { Int(`internal`.countr_zero(UInt32(mint.mod()) - 1)) }
-    var g: Int { Self.g }
-    var rank2: Int { Self.rank2 }
+    static var g: CInt { `internal`.primitive_root(mint.mod()) }
+    static var rank2: CInt { `internal`.countr_zero(UInt32(mint.mod()) - 1) }
+    var g: CInt { Self.g }
+    var rank2: CInt { Self.rank2 }
     
-    var root = [mint](repeating: .init(), count: rank2 + 1)
-    var iroot = [mint](repeating: .init(), count: rank2 + 1)
+    var root = [mint](repeating: .init(), count: Int(rank2 + 1))
+    var iroot = [mint](repeating: .init(), count: Int(rank2 + 1))
     
-    var rate2 = [mint](repeating: .init(), count: rank2 - 2 + 1)
-    var irate2 = [mint](repeating: .init(), count: rank2 - 2 + 1)
+    var rate2 = [mint](repeating: .init(), count: Int(rank2 - 2 + 1))
+    var irate2 = [mint](repeating: .init(), count: Int(rank2 - 2 + 1))
 
-    var rate3 = [mint](repeating: .init(), count: rank2 - 3 + 1)
-    var irate3 = [mint](repeating: .init(), count: rank2 - 3 + 1)
+    var rate3 = [mint](repeating: .init(), count: Int(rank2 - 3 + 1))
+    var irate3 = [mint](repeating: .init(), count: Int(rank2 - 3 + 1))
 
     init() {
-        root[rank2] = mint(g).pow(CLongLong((mint.mod() - CInt(1))) >> rank2);
-        iroot[rank2] = root[rank2].inv();
+        root[Int(rank2)] = mint(g).pow(CLongLong((mint.mod() - 1) >> rank2));
+        iroot[Int(rank2)] = root[Int(rank2)].inv();
 //        for (int i = rank2 - 1; i >= 0; i--) {
-        for i in (rank2 - 1)..>=0 {
+        for i in Int(rank2 - 1)..>=0 {
             root[i] = root[i + 1] * root[i + 1];
             iroot[i] = iroot[i + 1] * iroot[i + 1];
         }
@@ -41,7 +41,7 @@ struct fft_info<mint: modint_protocol> {
         do {
             var prod: mint = 1; var iprod: mint = 1;
 //            for (int i = 0; i <= rank2 - 2; i++) {
-            for i in 0..<=(rank2 - 2) {
+            for i in 0..<=Int(rank2 - 2) {
                 rate2[i] = root[i + 2] * prod;
                 irate2[i] = iroot[i + 2] * iprod;
                 prod *= iroot[i + 2];
@@ -51,7 +51,7 @@ struct fft_info<mint: modint_protocol> {
         do {
             var prod: mint = 1; var iprod: mint = 1;
 //            for (int i = 0; i <= rank2 - 3; i++) {
-            for i in 0..<=(rank2 - 3) {
+            for i in 0..<=Int(rank2 - 3) {
                 rate3[i] = root[i + 3] * prod;
                 irate3[i] = iroot[i + 3] * iprod;
                 prod *= iroot[i + 3];
@@ -64,16 +64,16 @@ struct fft_info<mint: modint_protocol> {
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
 func butterfly<mint: modint_protocol>(_ a: [mint]) {
     var a = a
-    let n = a.count;
+    let n = CInt(a.count);
 //    int h = internal::countr_zero((unsigned int)n);
-    let h = Int(`internal`.countr_zero(CUnsignedInt(n)))
+    let h = `internal`.countr_zero(CUnsignedInt(n))
 
 //    static const fft_info<mint> info;
     let info = fft_info<mint>(); // 挙動に関して注意
     
     typealias ULL = CUnsignedLongLong
 
-    var len = 0;  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
+    var len: CInt = 0;  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
     while (len < h) {
         if (h - len == 1) {
             let p = 1 << (h - len - 1);
@@ -127,8 +127,8 @@ func butterfly<mint: modint_protocol>(_ a: [mint]) {
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
 func butterfly_inv<mint: modint_protocol>(_ a: [mint]) {
     var a = a
-    let n = a.count;
-    let h = Int(`internal`.countr_zero(CUnsignedInt(n)));
+    let n = CInt(a.count);
+    let h = `internal`.countr_zero(CUnsignedInt(n));
 
 //    static const fft_info<mint> info;
     let info = fft_info<mint>(); // 挙動に関して注意
@@ -223,9 +223,7 @@ extension Array where Element: modint_protocol {
         if count > n {
             removeLast(count - n)
         } else {
-            while count != n {
-                append(0)
-            }
+            append(contentsOf: [Element](repeating: 0, count: n - count))
         }
     }
 }
@@ -234,21 +232,21 @@ extension Array where Element: modint_protocol {
 func convolution_fft<mint: modint_protocol>(_ a: [mint],_ b: [mint]) -> [mint] {
     var a = a
     var b = b
-    let n = a.count, m = b.count;
-    let z = Int(`internal`.bit_ceil(CUnsignedInt(n + m - 1)));
-    a.resize(z);
+    let n = CInt(a.count), m = CInt(b.count);
+    let z = CInt(`internal`.bit_ceil(CUnsignedInt(n + m - 1)));
+    a.resize(Int(z));
     butterfly(a);
-    b.resize(z);
+    b.resize(Int(z));
     butterfly(b);
 //    for (int i = 0; i < z; i++) {
-    for i in 0..<z {
+    for i in 0..<Int(z) {
         a[i] *= b[i];
     }
     butterfly_inv(a);
-    a.resize(n + m - 1);
+    a.resize(Int(n + m - 1));
     let iz = mint(z).inv();
 //    for (int i = 0; i < n + m - 1; i++) a[i] *= iz;
-    for i in 0..<(n + m - 1) { a[i] *= iz; }
+    for i in 0..<Int(n + m - 1) { a[i] *= iz; }
     return a;
 }
 
@@ -267,6 +265,7 @@ func convolution<mint: modint_protocol>(_ a: [mint],_ b: [mint]) -> [mint] {
     if (min(n, m) <= 60) { return convolution_naive(a, b); }
     return convolution_fft(a, b);
 }
+
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
 //func convolution<mint: modint_protocol>(_ a: [mint],
 //                                        _ b: [mint]) -> [mint] {
