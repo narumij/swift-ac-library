@@ -282,7 +282,7 @@ func convolution<mint: modint_base_protocol>(_ a: [mint],_ b: [mint]) -> [mint] 
 //template <unsigned int mod = 998244353,
 //          class T,
 //          std::enable_if_t<internal::is_integral<T>::value>* = nullptr>
-func convolution<T: FixedWidthInteger,mint: modint_protocol>(_ t: mint.Type,_ a: [T],_ b: [T]) -> [T] {
+func convolution<T: FixedWidthInteger, mint: modint_base_protocol>(_ t: mint.Type,_ a: [T],_ b: [T]) -> [T] {
     let n = a.count, m = b.count;
     if ((n == 0) || (m == 0)) { return []; }
 
