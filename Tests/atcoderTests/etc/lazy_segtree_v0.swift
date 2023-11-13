@@ -16,8 +16,8 @@ struct lazy_segtree_v0<Property: LazySegtreeParameter> {
     init(_ n: Int) { self.init([S](repeating: Property.e, count: n)) }
     init(_ v: [S]) {
         _n = v.count
-        size = Int(lazy_segtree<Property>.`internal`.bit_ceil(UInt(_n)))
-        log = lazy_segtree<Property>.`internal`.countr_zero(UInt(size))
+        size = Int(_internal.bit_ceil(CUnsignedInt(_n)))
+        log = Int(_internal.countr_zero(CUnsignedInt(size)))
         d = ContiguousArray<S>(repeating: Property.e, count: 2 * size)
         lz = ContiguousArray<F>(repeating: Property.id, count: size)
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];

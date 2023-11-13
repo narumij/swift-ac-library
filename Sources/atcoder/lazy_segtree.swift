@@ -15,8 +15,8 @@ public struct lazy_segtree<Parameter: LazySegtreeParameter> {
     init(_ n: Int) { self.init([S](repeating: Parameter.e, count: n)) }
     init(_ v: [S]) {
         _n = v.count
-        size = `internal`.bit_ceil(_n)
-        log = `internal`.countr_zero(UInt(size))
+        size = Int(_internal.bit_ceil(CUnsignedInt(_n)))
+        log = Int(_internal.countr_zero(CUnsignedInt(size)))
         d = .init(repeating: Parameter.e, count: 2 * size)
         lz = .init(repeating: Parameter.id, count: size)
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];

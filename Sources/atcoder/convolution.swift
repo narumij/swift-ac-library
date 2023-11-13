@@ -6,8 +6,8 @@ import Foundation
 //          int g = internal::primitive_root<mint::mod()>,
 //          internal::is_static_modint_t<mint>* = nullptr>
 struct fft_info<mint: modint_base_protocol> {
-    static var g: CInt { `internal`.primitive_root(mint.mod()) }
-    static var rank2: CInt { `internal`.countr_zero(UInt32(mint.mod()) - 1) }
+    static var g: CInt { _internal.primitive_root(mint.mod()) }
+    static var rank2: CInt { _internal.countr_zero(UInt32(mint.mod()) - 1) }
     var g: CInt { Self.g }
     var rank2: CInt { Self.rank2 }
     
@@ -56,7 +56,7 @@ struct fft_info<mint: modint_base_protocol> {
 func butterfly<mint: modint_base_protocol>(_ a: inout [mint]) {
     let n = a.count;
 //    int h = internal::countr_zero((unsigned int)n);
-    let h = `internal`.countr_zero(CUnsignedInt(n))
+    let h = _internal.countr_zero(CUnsignedInt(n))
 
 //    static const fft_info<mint> info;
     let info = fft_info<mint>(); // 挙動に関して注意
@@ -79,7 +79,7 @@ func butterfly<mint: modint_base_protocol>(_ a: inout [mint]) {
                     a[i + offset + p] = l - r;
                 }
                 if (s + 1 != (1 << len))
-                    { rot *= info.rate2[Int(`internal`.countr_zero(~CUnsignedInt(s)))]; }
+                    { rot *= info.rate2[Int(_internal.countr_zero(~CUnsignedInt(s)))]; }
             }
             len += 1;
         } else {
@@ -107,7 +107,7 @@ func butterfly<mint: modint_base_protocol>(_ a: inout [mint]) {
                     a[i + offset + 3 * p] = mint(a0 + na2 + (mod2 - a1na3imag));
                 }
                 if (s + 1 != (1 << len))
-                    { rot *= info.rate3[Int(`internal`.countr_zero(~(CUnsignedInt(s))))]; }
+                    { rot *= info.rate3[Int(_internal.countr_zero(~(CUnsignedInt(s))))]; }
             }
             len += 2;
         }
@@ -117,7 +117,7 @@ func butterfly<mint: modint_base_protocol>(_ a: inout [mint]) {
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
 func butterfly_inv<mint: modint_base_protocol>(_ a: inout [mint]) {
     let n = a.count;
-    let h = `internal`.countr_zero(CUnsignedInt(n));
+    let h = _internal.countr_zero(CUnsignedInt(n));
 
 //    static const fft_info<mint> info;
     let info = fft_info<mint>(); // 挙動に関して注意
@@ -142,7 +142,7 @@ func butterfly_inv<mint: modint_base_protocol>(_ a: inout [mint]) {
                     ULL(irot.val()));
                 }
                 if (s + 1 != (1 << (len - 1)))
-                    { irot *= info.irate2[Int(`internal`.countr_zero(~CUnsignedInt(s)))]; }
+                    { irot *= info.irate2[Int(_internal.countr_zero(~CUnsignedInt(s)))]; }
             }
             len -= 1;
         } else {
@@ -175,7 +175,7 @@ func butterfly_inv<mint: modint_base_protocol>(_ a: inout [mint]) {
                         ULL(irot3.val()));
                 }
                 if (s + 1 != (1 << (len - 2)))
-                    { irot *= info.irate3[Int(`internal`.countr_zero(~(CUnsignedInt(s))))]; }
+                    { irot *= info.irate3[Int(_internal.countr_zero(~(CUnsignedInt(s))))]; }
             }
             len -= 2;
         }
@@ -222,7 +222,7 @@ func convolution_fft<mint: modint_base_protocol>(_ a: [mint],_ b: [mint]) -> [mi
     var a = a
     var b = b
     let n = CInt(a.count), m = CInt(b.count);
-    let z = CInt(`internal`.bit_ceil(CUnsignedInt(n + m - 1)));
+    let z = CInt(_internal.bit_ceil(CUnsignedInt(n + m - 1)));
     a.resize(Int(z));
     butterfly(&a);
     b.resize(Int(z));
@@ -248,7 +248,7 @@ func convolution<mint: modint_base_protocol>(_ a: [mint],_ b: [mint]) -> [mint] 
     let n = a.count, m = b.count;
     if ((n == 0) || (m == 0)) { return []; }
 
-    let z = `internal`.bit_ceil(CUnsignedInt(n + m - 1));
+    let z = _internal.bit_ceil(CUnsignedInt(n + m - 1));
     assert((mint.mod() - 1) % CInt(z) == 0);
 
     if (min(n, m) <= 60) { return convolution_naive(a, b); }
@@ -271,14 +271,14 @@ func convolution<mint: modint_base_protocol>(_ a: [mint],_ b: [mint]) -> [mint] 
 //template <unsigned int mod = 998244353,
 //          class T,
 //          std::enable_if_t<internal::is_integral<T>::value>* = nullptr>
-func convolution<T: FixedWidthInteger, mod: barrett>(_ t: mod.Type,_ a: [T],_ b: [T]) -> [T] {
+func convolution<T: FixedWidthInteger, mod: barrett_wrapper>(_ t: mod.Type,_ a: [T],_ b: [T]) -> [T] {
     
     let n = a.count, m = b.count;
     if ((n == 0) || (m == 0)) { return []; }
 
     typealias mint = modint_base<mod>;
 
-    let z = Int(`internal`.bit_ceil(CUnsignedInt(n + m - 1)));
+    let z = Int(_internal.bit_ceil(CUnsignedInt(n + m - 1)));
     assert((Int(mint.mod()) - 1) % z == 0);
 
     var a2 = [mint](repeating: 0, count: n), b2 = [mint](repeating: 0, count: m);
@@ -319,12 +319,12 @@ func convolution_ll(_ a: [CLongLong],
         static let M1M3: LL = MOD1 &* MOD3;
         static let M1M2: LL = MOD1 &* MOD2;
         static let M1M2M3: LL = MOD1 &* MOD2 &* MOD3;
-        enum barrett1: static_barrett { static let modulus = static_mod(MOD1) }
-        enum barrett2: static_barrett { static let modulus = static_mod(MOD2) }
-        enum barrett3: static_barrett { static let modulus = static_mod(MOD3) }
-        static let i1 = ULL(`internal`.inv_gcd(MOD2 * MOD3, MOD1).second);
-        static let i2 = ULL(`internal`.inv_gcd(MOD1 * MOD3, MOD2).second);
-        static let i3 = ULL(`internal`.inv_gcd(MOD1 * MOD2, MOD3).second);
+        enum barrett1: static_barrett { static let modulus = barrett(MOD1) }
+        enum barrett2: static_barrett { static let modulus = barrett(MOD2) }
+        enum barrett3: static_barrett { static let modulus = barrett(MOD3) }
+        static let i1 = ULL(_internal.inv_gcd(MOD2 * MOD3, MOD1).second);
+        static let i2 = ULL(_internal.inv_gcd(MOD1 * MOD3, MOD2).second);
+        static let i3 = ULL(_internal.inv_gcd(MOD1 * MOD2, MOD3).second);
     }
     
     typealias mod1 = const.barrett1
@@ -378,7 +378,7 @@ func convolution_ll(_ a: [CLongLong],
         //   ((2) mod MOD1) mod 5 = 3
         //   ((3) mod MOD1) mod 5 = 4
         var diff: LL =
-        c1[i] - `internal`.safe_mod(LL(x), LL(MOD1));
+        c1[i] - _internal.safe_mod(LL(x), LL(MOD1));
         if (diff < 0) { diff += MOD1; }
         let offset: [ULL] = [
             0, 0, ULL(M1M2M3), ULL(2 * M1M2M3), ULL(3 * M1M2M3)];

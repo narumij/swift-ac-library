@@ -19,36 +19,36 @@ final class bitTests: XCTestCase {
     }
 
     func testBitCeil() throws {
-        XCTAssertEqual(1, `internal`.bit_ceil(0));
-        XCTAssertEqual(1, `internal`.bit_ceil(1));
-        XCTAssertEqual(2, `internal`.bit_ceil(2));
-        XCTAssertEqual(4, `internal`.bit_ceil(3));
-        XCTAssertEqual(4, `internal`.bit_ceil(4));
-        XCTAssertEqual(8, `internal`.bit_ceil(5));
-        XCTAssertEqual(8, `internal`.bit_ceil(6));
-        XCTAssertEqual(8, `internal`.bit_ceil(7));
-        XCTAssertEqual(8, `internal`.bit_ceil(8));
-        XCTAssertEqual(16, `internal`.bit_ceil(9));
-        XCTAssertEqual(1 << 30, `internal`.bit_ceil(1 << 30));
-        XCTAssertEqual(1 << 31, `internal`.bit_ceil((1 << 30) + 1));
-        XCTAssertEqual(1 << 31, `internal`.bit_ceil((1 << 31) - 1));
-        XCTAssertEqual(1 << 31, `internal`.bit_ceil(1 << 31));
+        XCTAssertEqual(1, _internal.bit_ceil(0));
+        XCTAssertEqual(1, _internal.bit_ceil(1));
+        XCTAssertEqual(2, _internal.bit_ceil(2));
+        XCTAssertEqual(4, _internal.bit_ceil(3));
+        XCTAssertEqual(4, _internal.bit_ceil(4));
+        XCTAssertEqual(8, _internal.bit_ceil(5));
+        XCTAssertEqual(8, _internal.bit_ceil(6));
+        XCTAssertEqual(8, _internal.bit_ceil(7));
+        XCTAssertEqual(8, _internal.bit_ceil(8));
+        XCTAssertEqual(16, _internal.bit_ceil(9));
+        XCTAssertEqual(1 << 30, _internal.bit_ceil(1 << 30));
+        XCTAssertEqual(1 << 31, _internal.bit_ceil((1 << 30) + 1));
+        XCTAssertEqual(1 << 31, _internal.bit_ceil((1 << 31) - 1));
+        XCTAssertEqual(1 << 31, _internal.bit_ceil(1 << 31));
     }
     
     func testCountrZero() throws {
-        XCTAssertEqual(0, `internal`.countr_zero(1));
-        XCTAssertEqual(1, `internal`.countr_zero(2));
-        XCTAssertEqual(0, `internal`.countr_zero(3));
-        XCTAssertEqual(2, `internal`.countr_zero(4));
-        XCTAssertEqual(0, `internal`.countr_zero(5));
-        XCTAssertEqual(1, `internal`.countr_zero(6));
-        XCTAssertEqual(0, `internal`.countr_zero(7));
-        XCTAssertEqual(3, `internal`.countr_zero(8));
-        XCTAssertEqual(0, `internal`.countr_zero(9));
-        XCTAssertEqual(30, `internal`.countr_zero(1 << 30));
-        XCTAssertEqual(0, `internal`.countr_zero((1 << 31) - 1));
-        XCTAssertEqual(31, `internal`.countr_zero(1 << 31));
-        XCTAssertEqual(0, `internal`.countr_zero(CUnsignedInt(CInt.max)));
+        XCTAssertEqual(0, _internal.countr_zero(1));
+        XCTAssertEqual(1, _internal.countr_zero(2));
+        XCTAssertEqual(0, _internal.countr_zero(3));
+        XCTAssertEqual(2, _internal.countr_zero(4));
+        XCTAssertEqual(0, _internal.countr_zero(5));
+        XCTAssertEqual(1, _internal.countr_zero(6));
+        XCTAssertEqual(0, _internal.countr_zero(7));
+        XCTAssertEqual(3, _internal.countr_zero(8));
+        XCTAssertEqual(0, _internal.countr_zero(9));
+        XCTAssertEqual(30, _internal.countr_zero(1 << 30));
+        XCTAssertEqual(0, _internal.countr_zero((1 << 31) - 1));
+        XCTAssertEqual(31, _internal.countr_zero(1 << 31));
+        XCTAssertEqual(0, _internal.countr_zero(CUnsignedInt(CInt.max)));
     }
     
     func testCountrZeroConstexpr() throws {

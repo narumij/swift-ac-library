@@ -169,7 +169,7 @@ struct dynamic_modint_v0: modint_protocol_v0 {
     static func mod() -> CInt { return CInt(bitPattern: bt.umod()); }
     static func set_mod(_ m: CInt) {
         assert(1 <= m);
-        bt = `internal`.barrett(CUnsignedInt(m));
+        bt = barrett(CUnsignedInt(m));
     }
     static func raw(_ v: CInt) -> mint {
         var x = mint();
@@ -284,7 +284,7 @@ struct dynamic_modint_v0: modint_protocol_v0 {
         return r;
     }
     func inv() -> mint {
-        let eg = `internal`.inv_gcd(CLongLong(_v), CLongLong(Self.mod()));
+        let eg = _internal.inv_gcd(CLongLong(_v), CLongLong(Self.mod()));
         assert(eg.first == 1);
         return Self.init(CInt(eg.second));
     }
@@ -312,7 +312,7 @@ struct dynamic_modint_v0: modint_protocol_v0 {
     
 //  private:
     var _v: CUnsignedInt;
-    static var bt: `internal`.barrett = .init(CUnsignedInt.max);
+    static var bt: barrett = barrett(CUnsignedInt.max);
     static func umod() -> CUnsignedInt { return bt.umod(); }
 };
 /*

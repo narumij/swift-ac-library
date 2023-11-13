@@ -1,6 +1,6 @@
 import Foundation
 
-extension `internal` {
+extension _internal {
 
 static func sa_naive(_ s: [Int]) -> [Int] {
     let n = s.count;
@@ -188,7 +188,7 @@ func suffix_array(_ s: [Int],_ upper: Int) -> [Int] {
     for d in s {
         assert(0 <= d && d <= upper);
     }
-    let sa = `internal`.sa_is(s, upper);
+    let sa = _internal.sa_is(s, upper);
     return sa;
 }
 
@@ -204,7 +204,7 @@ func suffix_array<T: Comparable>(_ s: [T]) -> [Int] {
         if ((i != 0) && s[idx[i - 1]] != s[idx[i]]) { now += 1; }
         s2[idx[i]] = now;
     }
-    return `internal`.sa_is(s2, now);
+    return _internal.sa_is(s2, now);
 }
 
 func suffix_array(_ s: String) -> [Int] {
@@ -214,7 +214,7 @@ func suffix_array(_ s: String) -> [Int] {
     for i in 0..<n {
         s2[i] = Int(s[s.index(s.startIndex, offsetBy: i)].asciiValue!);
     }
-    return `internal`.sa_is(s2, 255);
+    return _internal.sa_is(s2, 255);
 }
 
 // Reference:

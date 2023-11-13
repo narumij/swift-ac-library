@@ -2,8 +2,8 @@ import Foundation
 
 struct scc_graph {
 //  public:
-    init() { `internal` = atcoder.`internal`.scc_graph.init(0) }
-    init(_ n: Int) { `internal` = atcoder.`internal`.scc_graph.init(n) }
+    init() { `internal` = atcoder._internal.scc_graph.init(0) }
+    init(_ n: Int) { `internal` = atcoder._internal.scc_graph.init(n) }
 
     mutating func add_edge(_ from: Int,_ to: Int) {
         let n = `internal`.num_vertices();
@@ -15,5 +15,5 @@ struct scc_graph {
     func scc() -> [[Int]] { return `internal`.scc(); }
 
 //  private:
-    var `internal`: `internal`.scc_graph;
+    var `internal`: _internal.scc_graph;
 };

@@ -14,15 +14,15 @@ fileprivate typealias ull = CUnsignedLongLong;
 
 fileprivate func test() {
     
-    enum barret1: dynamic_barrett { static var modulus: static_mod = -1 }
+    enum barret1: dynamic_barrett { static var modulus: barrett = -1 }
     barret1.set_mod(2)
     typealias modint1 = modint_base<barret1>
     
-    enum barret2: dynamic_barrett { static var modulus: static_mod = -1 }
+    enum barret2: dynamic_barrett { static var modulus: barrett = -1 }
     barret2.set_mod(5)
     typealias modint2 = modint_base<barret2>
     
-    enum barret3: dynamic_barrett { static var modulus: static_mod = -1 }
+    enum barret3: dynamic_barrett { static var modulus: barrett = -1 }
     barret3.set_mod(7)
     typealias modint3 = modint_base<barret3>
 }

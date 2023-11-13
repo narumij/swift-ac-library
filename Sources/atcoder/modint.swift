@@ -39,7 +39,7 @@ extension modint_base_protocol {
 }
 
 protocol modint_implementation: modint_base_protocol, CustomStringConvertible {
-    associatedtype bt: barrett
+    associatedtype bt: barrett_wrapper
     init()
     init<T: FixedWidthInteger>(_ v: T)
     var _v: CUnsignedInt { get set }
@@ -112,7 +112,7 @@ extension modint_implementation {
     }
     
     func inv() -> mint {
-        let eg = `internal`.inv_gcd(CLongLong(_v), CLongLong(Self.mod()));
+        let eg = _internal.inv_gcd(CLongLong(_v), CLongLong(Self.mod()));
         assert(eg.first == 1);
         return Self.init(CInt(eg.second));
     }
@@ -154,7 +154,7 @@ extension modint_base_dynamic: ExpressibleByIntegerLiteral {
     }
 }
 
-struct modint_base<bt: barrett>: modint_implementation {
+struct modint_base<bt: barrett_wrapper>: modint_implementation {
     init() {
         self.init(0)
     }
