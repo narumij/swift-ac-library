@@ -54,7 +54,6 @@ final class convolutionTests: XCTestCase {
     }
     
     func testEmpty() throws {
-        /*
         XCTAssertEqual([] as [CInt],
                   convolution([] as [CInt], [] as [CInt]));
         XCTAssertEqual([] as [CInt],
@@ -67,7 +66,6 @@ final class convolutionTests: XCTestCase {
                   convolution([] as [ll], [] as [ll]));
         XCTAssertEqual([] as [ll],
                   convolution([] as [ll], [1, 2]));
-         */
 
         XCTAssertEqual([] as [dynamic_modint],
                   convolution([] as [dynamic_modint],

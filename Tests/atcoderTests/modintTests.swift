@@ -189,7 +189,7 @@ final class modintTests: XCTestCase {
     }
     
     func testInt128() throws {
-        throw XCTSkip("わからない")
+        throw XCTSkip("該当する型がない？")
         /*
          modint::set_mod(998244353);
          ASSERT_EQ(12345678, modint(__int128_t(12345678)).val());
@@ -376,63 +376,57 @@ final class modintTests: XCTestCase {
     }
     
     func testConstructor() throws {
-        throw XCTSkip("いつかやる")
-        /*
-         modint::set_mod(11);
-         ASSERT_EQ(1, modint(true).val());
-         ASSERT_EQ(3, modint((char)(3)).val());
-         ASSERT_EQ(3, modint((signed char)(3)).val());
-         ASSERT_EQ(3, modint((unsigned char)(3)).val());
-         ASSERT_EQ(3, modint((short)(3)).val());
-         ASSERT_EQ(3, modint((unsigned short)(3)).val());
-         ASSERT_EQ(3, modint((int)(3)).val());
-         ASSERT_EQ(3, modint((unsigned int)(3)).val());
-         ASSERT_EQ(3, modint((long)(3)).val());
-         ASSERT_EQ(3, modint((unsigned long)(3)).val());
-         ASSERT_EQ(3, modint((long long)(3)).val());
-         ASSERT_EQ(3, modint((unsigned long long)(3)).val());
-         ASSERT_EQ(1, modint((signed char)(-10)).val());
-         ASSERT_EQ(1, modint((short)(-10)).val());
-         ASSERT_EQ(1, modint((int)(-10)).val());
-         ASSERT_EQ(1, modint((long)(-10)).val());
-         ASSERT_EQ(1, modint((long long)(-10)).val());
+        modint.set_mod(11);
+        XCTAssertEqual(1, modint(true).val());
+        XCTAssertEqual(3, modint((CChar)(3)).val());
+        XCTAssertEqual(3, modint((CSignedChar)(3)).val());
+        XCTAssertEqual(3, modint((CUnsignedChar)(3)).val());
+        XCTAssertEqual(3, modint((CShort)(3)).val());
+        XCTAssertEqual(3, modint((CUnsignedShort)(3)).val());
+        XCTAssertEqual(3, modint((CInt)(3)).val());
+        XCTAssertEqual(3, modint((CUnsignedInt)(3)).val());
+        XCTAssertEqual(3, modint((CLong)(3)).val());
+        XCTAssertEqual(3, modint((CUnsignedLong)(3)).val());
+        XCTAssertEqual(3, modint((CLongLong)(3)).val());
+        XCTAssertEqual(3, modint((CUnsignedLongLong)(3)).val());
+        XCTAssertEqual(1, modint((CSignedChar)(-10)).val());
+        XCTAssertEqual(1, modint((CShort)(-10)).val());
+        XCTAssertEqual(1, modint((CInt)(-10)).val());
+        XCTAssertEqual(1, modint((CLong)(-10)).val());
+        XCTAssertEqual(1, modint((CLongLong)(-10)).val());
 
-         ASSERT_EQ(2, (int(1) + modint(1)).val());
-         ASSERT_EQ(2, (short(1) + modint(1)).val());
-
-         modint m;
-         ASSERT_EQ(0, m.val());
-         */
+//        XCTAssertEqual(2, (CInt(1) + modint(1)).val());
+//        XCTAssertEqual(2, (CShort(1) + modint(1)).val());
+        
+        let m = modint();
+        XCTAssertEqual(0, m.val());
     }
     
     func testConstructorStatic() throws {
-        throw XCTSkip("いつかやる")
-        /*
-         using mint = static_modint<11>;
-         ASSERT_EQ(1, mint(true).val());
-         ASSERT_EQ(3, mint((char)(3)).val());
-         ASSERT_EQ(3, mint((signed char)(3)).val());
-         ASSERT_EQ(3, mint((unsigned char)(3)).val());
-         ASSERT_EQ(3, mint((short)(3)).val());
-         ASSERT_EQ(3, mint((unsigned short)(3)).val());
-         ASSERT_EQ(3, mint((int)(3)).val());
-         ASSERT_EQ(3, mint((unsigned int)(3)).val());
-         ASSERT_EQ(3, mint((long)(3)).val());
-         ASSERT_EQ(3, mint((unsigned long)(3)).val());
-         ASSERT_EQ(3, mint((long long)(3)).val());
-         ASSERT_EQ(3, mint((unsigned long long)(3)).val());
-         ASSERT_EQ(1, mint((signed char)(-10)).val());
-         ASSERT_EQ(1, mint((short)(-10)).val());
-         ASSERT_EQ(1, mint((int)(-10)).val());
-         ASSERT_EQ(1, mint((long)(-10)).val());
-         ASSERT_EQ(1, mint((long long)(-10)).val());
+        typealias mint = static_modint<mod_11>;
+        XCTAssertEqual(1, mint(true).val());
+        XCTAssertEqual(3, mint((CChar)(3)).val());
+        XCTAssertEqual(3, mint((CSignedChar)(3)).val());
+        XCTAssertEqual(3, mint((CUnsignedChar)(3)).val());
+        XCTAssertEqual(3, mint((CShort)(3)).val());
+        XCTAssertEqual(3, mint((CUnsignedShort)(3)).val());
+        XCTAssertEqual(3, mint((CInt)(3)).val());
+        XCTAssertEqual(3, mint((CUnsignedInt)(3)).val());
+        XCTAssertEqual(3, mint((CLong)(3)).val());
+        XCTAssertEqual(3, mint((CUnsignedLong)(3)).val());
+        XCTAssertEqual(3, mint((CLongLong)(3)).val());
+        XCTAssertEqual(3, mint((CUnsignedLongLong)(3)).val());
+        XCTAssertEqual(1, mint((CSignedChar)(-10)).val());
+        XCTAssertEqual(1, mint((CShort)(-10)).val());
+        XCTAssertEqual(1, mint((CInt)(-10)).val());
+        XCTAssertEqual(1, mint((CLong)(-10)).val());
+        XCTAssertEqual(1, mint((CLongLong)(-10)).val());
 
-         ASSERT_EQ(2, (int(1) + mint(1)).val());
-         ASSERT_EQ(2, (short(1) + mint(1)).val());
+//        XCTAssertEqual(2, (CInt(1) + mint(1)).val());
+//        XCTAssertEqual(2, (CShort(1) + mint(1)).val());
 
-         mint m;
-         ASSERT_EQ(0, m.val());
-         */
+        let m = mint();
+        XCTAssertEqual(0, m.val());
     }
     
     func testSome() throws {
