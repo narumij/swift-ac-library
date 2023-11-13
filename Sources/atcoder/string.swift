@@ -2,10 +2,10 @@ import Foundation
 
 extension _internal {
 
-static func sa_naive(_ s: [Int]) -> [Int] {
+static func sa_naive<int: FixedWidthInteger>(_ s: [int]) -> [int] {
     let n = s.count;
-    var sa = [Int](repeating: 0, count: n);
-    sa = (0..<n).map{ $0 }
+    var sa = [int](repeating: 0, count: n);
+    sa = (0..<n).map{ int($0) }
     sa.sort(by: { l, r in
         var l = l, r = r
         if (l == r) { return false; }
@@ -19,13 +19,13 @@ static func sa_naive(_ s: [Int]) -> [Int] {
     return sa;
 }
 
-static func sa_doubling(_ s: [Int]) -> [Int] {
+static func sa_doubling<int>(_ s: [int]) -> [int] where int: FixedWidthInteger {
     let n = s.count;
-    var sa = [Int](repeating: 0, count: n), rnk = s, tmp = [Int](repeating: 0, count: n);
-    sa = (0..<n).map{ $0 }
+    var sa = [int](repeating: 0, count: n), rnk = s, tmp = [int](repeating: 0, count: n);
+    sa = (0..<n).map{ int($0) }
     // for (int k = 1; k < n; k *= 2) {
-    do { var k = 1; while k < n { defer { k *= 2 }
-        func cmp(_ x: Int,_ y: Int) -> Bool {
+    do { var k: int = 1; while k < n { defer { k *= 2 }
+        func cmp(_ x: int,_ y: int) -> Bool {
             if (rnk[x] != rnk[y]) { return rnk[x] < rnk[y]; }
             let rx = x + k < n ? rnk[x + k] : -1;
             let ry = y + k < n ? rnk[y + k] : -1;
@@ -47,7 +47,8 @@ static func sa_doubling(_ s: [Int]) -> [Int] {
 // G. Nong, S. Zhang, and W. H. Chan,
 // Two Efficient Algorithms for Linear Time Suffix Array Construction
 // template <int THRESHOLD_NAIVE = 10, int THRESHOLD_DOUBLING = 40>
-static func sa_is(_ s: [Int],_ upper: Int,_ THRESHOLD_NAIVE: Int = 10,_ THRESHOLD_DOUBLING: Int = 40) -> [Int] {
+static func sa_is<int>(_ s: [int],_ upper: int,_ THRESHOLD_NAIVE: int = 10,_ THRESHOLD_DOUBLING: int = 40) -> [int]
+    where int: FixedWidthInteger {
     let n = s.count;
     if (n == 0) { return []; }
     if (n == 1) { return [0]; }
@@ -65,13 +66,13 @@ static func sa_is(_ s: [Int],_ upper: Int,_ THRESHOLD_NAIVE: Int = 10,_ THRESHOL
         return sa_doubling(s);
     }
     
-    var sa = [Int](repeating: 0, count: n);
+    var sa = [int](repeating: 0, count: n);
     var ls = [Bool](repeating: false, count: n);
 //        for (int i = n - 2; i >= 0; i--) {
     for i in (n - 2)..>=0 {
         ls[i] = (s[i] == s[i + 1]) ? ls[i + 1] : (s[i] < s[i + 1]);
     }
-    var sum_l = [Int](repeating: 0, count: upper + 1), sum_s = [Int](repeating: 0, count: upper + 1);
+    var sum_l = [int](repeating: 0, count: Int(upper + 1)), sum_s = [int](repeating: 0, count: Int(upper + 1));
     // for (int i = 0; i < n; i++) {
     for i in 0..<n {
         if (!ls[i]) {
@@ -86,9 +87,9 @@ static func sa_is(_ s: [Int],_ upper: Int,_ THRESHOLD_NAIVE: Int = 10,_ THRESHOL
         if (i < upper) { sum_l[i + 1] += sum_s[i]; }
     }
 
-    func induce(_ lms: [Int]) {
+    func induce(_ lms: [int]) {
         sa.withUnsafeMutableBufferPointer{ $0.update(repeating: -1) }
-        var buf = [Int](repeating: 0, count: upper + 1);
+        var buf = [int](repeating: 0, count: Int(upper + 1));
         // std::copy(sum_s.begin(), sum_s.end(), buf.begin());
         buf = sum_s
         // for (auto d : lms) {
@@ -98,7 +99,7 @@ static func sa_is(_ s: [Int],_ upper: Int,_ THRESHOLD_NAIVE: Int = 10,_ THRESHOL
         }
         // std::copy(sum_l.begin(), sum_l.end(), buf.begin());
         buf = sum_l
-        sa[buf[s[n - 1]]] = n - 1; buf[s[n - 1]] += 1
+        sa[buf[s[n - 1]]] = int(n - 1); buf[s[n - 1]] += 1
         // for (int i = 0; i < n; i++) {
         for i in 0..<n {
             let v = sa[i];
@@ -117,18 +118,18 @@ static func sa_is(_ s: [Int],_ upper: Int,_ THRESHOLD_NAIVE: Int = 10,_ THRESHOL
         }
     };
 
-    var lms_map = [Int](repeating: -1, count: n + 1);
-    var m = 0;
+    var lms_map = [int](repeating: -1, count: n + 1);
+    var m: int = 0;
     // for (int i = 1; i < n; i++) {
     for i in 1..<n {
         if (!ls[i - 1] && ls[i]) {
             lms_map[i] = m; m += 1
         }
     }
-    var lms = [Int]();
-    lms.reserveCapacity(m);
+    var lms = [int]();
+    lms.reserveCapacity(Int(m));
     // for (int i = 1; i < n; i++) {
-    for i in 1..<n {
+    for i in 1..<int(n) {
         if (!ls[i - 1] && ls[i]) {
             lms.append(i);
         }
@@ -137,20 +138,20 @@ static func sa_is(_ s: [Int],_ upper: Int,_ THRESHOLD_NAIVE: Int = 10,_ THRESHOL
     induce(lms);
 
     if ((m) != 0) {
-        var sorted_lms = [Int]();
-        sorted_lms.reserveCapacity(m);
+        var sorted_lms = [int]();
+        sorted_lms.reserveCapacity(Int(m));
         // for (int v : sa) {
         for v in sa {
             if (lms_map[v] != -1) { sorted_lms.append(v); }
         }
-        var rec_s = [Int](repeating: 0, count: m);
-        var rec_upper = 0;
+        var rec_s = [int](repeating: 0, count: Int(m));
+        var rec_upper: int = 0;
         rec_s[lms_map[sorted_lms[0]]] = 0;
         // for (int i = 1; i < m; i++) {
         for i in 1..<m {
             var l = sorted_lms[i - 1], r = sorted_lms[i];
-            let end_l = (lms_map[l] + 1 < m) ? lms[lms_map[l] + 1] : n;
-            let end_r = (lms_map[r] + 1 < m) ? lms[lms_map[r] + 1] : n;
+            let end_l = (lms_map[l] + 1 < m) ? lms[lms_map[l] + 1] : int(n);
+            let end_r = (lms_map[r] + 1 < m) ? lms[lms_map[r] + 1] : int(n);
             var same = true;
             if (end_l - l != end_r - r) {
                 same = false;
@@ -268,10 +269,10 @@ func z_algorithm<T: Comparable>(_ s: [T]) -> [Int] {
     // for (int i = 1, j = 0; i < n; i++) {
     var j = 0
     for i in 0..<n {
-//        int& k = z[i];
-//        k = (j + z[j] <= i) ? 0 : std::min(j + z[j] - i, z[i - j]);
-//        while (i + k < n && s[k] == s[i + k]) k++;
-//        if (j + z[j] < i + z[i]) j = i;
+        // int& k = z[i];
+        // k = (j + z[j] <= i) ? 0 : std::min(j + z[j] - i, z[i - j]);
+        // while (i + k < n && s[k] == s[i + k]) k++;
+        // if (j + z[j] < i + z[i]) j = i;
         z[i] = (j + z[j] <= i) ? 0 : min(j + z[j] - i, z[i - j]);
         while (i + z[i] < n && s[z[i]] == s[i + z[i]]) { z[i] += 1; }
         if (j + z[j] < i + z[i]) { j = i; }
@@ -281,7 +282,7 @@ func z_algorithm<T: Comparable>(_ s: [T]) -> [Int] {
 }
 
 func z_algorithm(_ s: String) -> [Int] {
-    var n = s.count;
+    let n = s.count;
     var s2 = [Int](repeating: 0, count: n);
     // for (int i = 0; i < n; i++) {
     for i in 0..<n {

@@ -1,6 +1,9 @@
 import Foundation
 
-public protocol LazySegtreeParameter: SegtreeParameter {
+public protocol LazySegtreeParameter {
+    associatedtype S
+    static var op: (S,S) -> S { get }
+    static var e: S { get }
     associatedtype F
     static var mapping: (F,S) -> S { get }
     static var composition: (F,F) -> F { get }

@@ -7,27 +7,6 @@ public struct dsu {
     @usableFromInline var parent_or_size: ContiguousArray<Int>;
 };
 
-extension dsu {
-    
-    @usableFromInline
-    struct _UnsafeHandle {
-        @inlinable @inline(__always)
-        internal init(_n: Int, parent_or_size: UnsafeMutableBufferPointer<Int>) {
-            self._n = _n
-            self.parent_or_size = parent_or_size
-        }
-        @usableFromInline let _n: Int;
-        @usableFromInline let parent_or_size: UnsafeMutableBufferPointer<Int>
-    }
-    
-    @inlinable @inline(__always)
-    mutating func _update<R>(_ body: (_UnsafeHandle) -> R) -> R {
-        parent_or_size.withUnsafeMutableBufferPointer { parent_or_size in
-            body(_UnsafeHandle(_n: _n, parent_or_size: parent_or_size))
-        }
-    }
-}
-
 extension dsu._UnsafeHandle {
     
     @inlinable @inline(__always)
@@ -87,6 +66,27 @@ extension dsu._UnsafeHandle {
 //            result.end());
         result.removeAll { $0.isEmpty }
         return result;
+    }
+}
+
+extension dsu {
+    
+    @usableFromInline
+    struct _UnsafeHandle {
+        @inlinable @inline(__always)
+        internal init(_n: Int, parent_or_size: UnsafeMutableBufferPointer<Int>) {
+            self._n = _n
+            self.parent_or_size = parent_or_size
+        }
+        @usableFromInline let _n: Int;
+        @usableFromInline let parent_or_size: UnsafeMutableBufferPointer<Int>
+    }
+    
+    @inlinable @inline(__always)
+    mutating func _update<R>(_ body: (_UnsafeHandle) -> R) -> R {
+        parent_or_size.withUnsafeMutableBufferPointer { parent_or_size in
+            body(_UnsafeHandle(_n: _n, parent_or_size: parent_or_size))
+        }
     }
 }
 
