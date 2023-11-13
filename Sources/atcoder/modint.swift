@@ -1,6 +1,6 @@
 import Foundation
 
-struct modint_base_static<bt: static_barrett>: modint_implementation {
+struct modint_base_static<bt: static_mod>: modint_implementation {
     init() {
         self.init(0)
     }
@@ -39,7 +39,7 @@ extension modint_base_protocol {
 }
 
 protocol modint_implementation: modint_base_protocol, CustomStringConvertible {
-    associatedtype bt: barrett_wrapper
+    associatedtype bt: mod_type
     init()
     init<T: FixedWidthInteger>(_ v: T)
     var _v: CUnsignedInt { get set }
@@ -122,7 +122,7 @@ extension modint_implementation {
     var description: String { val().description }
 }
 
-protocol modint_dynamic_implementation: modint_implementation where bt: dynamic_barrett { }
+protocol modint_dynamic_implementation: modint_implementation where bt: dynamic_mod { }
 
 extension modint_dynamic_implementation {
     static func set_mod(_ m: CInt) {
@@ -138,7 +138,7 @@ extension modint_implementation {
     }
 }
 
-struct modint_base_dynamic<bt: dynamic_barrett>: modint_dynamic_implementation {
+struct modint_base_dynamic<bt: dynamic_mod>: modint_dynamic_implementation {
     init() {
         self.init(0)
     }
@@ -154,7 +154,7 @@ extension modint_base_dynamic: ExpressibleByIntegerLiteral {
     }
 }
 
-struct modint_base<bt: barrett_wrapper>: modint_implementation {
+struct modint_base<bt: mod_type>: modint_implementation {
     init() {
         self.init(0)
     }
@@ -174,6 +174,7 @@ typealias modint998244353 = modint_base_static<mod_998244353>
 typealias modint1000000007 = modint_base_static<mod_1000000007>
 
 typealias static_modint = modint_base_static
+
 typealias dynamic_modint = modint_base_dynamic<mod_dynamic>
 
 typealias modint = dynamic_modint

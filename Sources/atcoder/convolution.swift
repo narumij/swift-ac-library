@@ -271,7 +271,7 @@ func convolution<mint: modint_base_protocol>(_ a: [mint],_ b: [mint]) -> [mint] 
 //template <unsigned int mod = 998244353,
 //          class T,
 //          std::enable_if_t<internal::is_integral<T>::value>* = nullptr>
-func convolution<T: FixedWidthInteger, mod: barrett_wrapper>(_ t: mod.Type,_ a: [T],_ b: [T]) -> [T] {
+func convolution<T: FixedWidthInteger, mod: mod_type>(_ t: mod.Type,_ a: [T],_ b: [T]) -> [T] {
     
     let n = a.count, m = b.count;
     if ((n == 0) || (m == 0)) { return []; }
@@ -319,17 +319,17 @@ func convolution_ll(_ a: [CLongLong],
         static let M1M3: LL = MOD1 &* MOD3;
         static let M1M2: LL = MOD1 &* MOD2;
         static let M1M2M3: LL = MOD1 &* MOD2 &* MOD3;
-        enum barrett1: static_barrett { static let modulus = barrett(MOD1) }
-        enum barrett2: static_barrett { static let modulus = barrett(MOD2) }
-        enum barrett3: static_barrett { static let modulus = barrett(MOD3) }
+        enum mod1: static_mod { static let modValue = barrett(MOD1) }
+        enum mod2: static_mod { static let modValue = barrett(MOD2) }
+        enum mod3: static_mod { static let modValue = barrett(MOD3) }
         static let i1 = ULL(_internal.inv_gcd(MOD2 * MOD3, MOD1).second);
         static let i2 = ULL(_internal.inv_gcd(MOD1 * MOD3, MOD2).second);
         static let i3 = ULL(_internal.inv_gcd(MOD1 * MOD2, MOD3).second);
     }
     
-    typealias mod1 = const.barrett1
-    typealias mod2 = const.barrett2
-    typealias mod3 = const.barrett3
+    typealias mod1 = const.mod1
+    typealias mod2 = const.mod2
+    typealias mod3 = const.mod3
 
     let MOD1: LL = const.MOD1;
     let MOD2: LL = const.MOD2;
