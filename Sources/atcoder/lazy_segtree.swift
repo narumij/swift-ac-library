@@ -1,7 +1,5 @@
 import Foundation
 
-// AC - https://atcoder.jp/contests/abc327/submissions/47358679
-
 public protocol LazySegtreeParameter: SegtreeParameter {
     associatedtype F
     static var mapping: (F,S) -> S { get }
@@ -9,7 +7,6 @@ public protocol LazySegtreeParameter: SegtreeParameter {
     static var id: F { get }
 }
 
-// from https://github.com/atcoder/ac-library/blob/master/atcoder/lazysegtree.hpp
 public struct lazy_segtree<Parameter: LazySegtreeParameter> {
     @usableFromInline typealias S = Parameter.S
     @usableFromInline typealias F = Parameter.F

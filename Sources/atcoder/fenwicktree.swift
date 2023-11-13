@@ -1,8 +1,7 @@
 import Foundation
 
-// Reference: https://en.wikipedia.org/wiki/Fenwick_tree
-struct fenwick_tree<T: FixedWidthInteger> {
-    typealias U = T.Magnitude
+public struct fenwick_tree<T: FixedWidthInteger> {
+    @usableFromInline typealias U = T.Magnitude
 
     init() { _n = 0; data = [] }
     init(_ n: Int) { _n = n; data = .init(repeating: 0, count: n) }
@@ -21,6 +20,7 @@ struct fenwick_tree<T: FixedWidthInteger> {
 
 extension fenwick_tree {
     
+    @usableFromInline
     struct _UnsafeHandle {
         @usableFromInline @inline(__always)
         internal init(_n: Int, data: UnsafeMutableBufferPointer<fenwick_tree<T>.U>) {

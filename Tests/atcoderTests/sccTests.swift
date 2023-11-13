@@ -55,8 +55,12 @@ final class sccTests: XCTestCase {
 
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
+        
+//        let to = (0..<1_000_000).map{ _ in (Int.random(in: 0..<3000), `internal`.scc_graph.edge(to: Int.random(in: 0..<3000))) }
+        
         self.measure {
             // Put the code you want to measure the time of here.
+//            `internal`.csr(3000, to)
         }
     }
 

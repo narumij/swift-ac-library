@@ -1,7 +1,5 @@
 import Foundation
 
-// AC - https://atcoder.jp/contests/practice2/submissions/47411631
-
 struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
     typealias Cap = Value
     typealias Cost = Value

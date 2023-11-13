@@ -6,9 +6,6 @@ public protocol SegtreeParameter {
     static var e: S { get }
 }
 
-// AC - https://atcoder.jp/contests/abc327/submissions/47318112
-
-// from https://github.com/atcoder/ac-library/blob/master/atcoder/segtree.hpp
 struct segtree<Parameter: SegtreeParameter> {
     typealias S = Parameter.S
     func op(_ l: S,_ r: S) -> S { Parameter.op(l,r) }

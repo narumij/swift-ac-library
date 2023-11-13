@@ -1,8 +1,5 @@
 import Foundation
 
-// AC - https://atcoder.jp/contests/practice2/submissions/47521141
-// AC - https://atcoder.jp/contests/practice2/submissions/47530743
-
 //extension `internal` {
 
 //template <class mint,

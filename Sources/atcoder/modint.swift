@@ -1,7 +1,5 @@
 import Foundation
 
-// AC - https://atcoder.jp/contests/practice2/submissions/47530743
-
 struct modint_base_static<bt: static_barrett>: modint_implementation {
     init() {
         self.init(0)
