@@ -1,77 +1,40 @@
 import Foundation
 
-protocol barret_modulus {
-    var m: CUnsignedInt { get }
-    var im: CUnsignedLongLong { get }
-}
-
 func imValue(_ _m: CUnsignedInt) -> CUnsignedLongLong {
-    CUnsignedLongLong(bitPattern: -1) / CUnsignedLongLong( _m) &+ 1
+    CUnsignedLongLong(bitPattern: -1) / CUnsignedLongLong(_m) &+ 1
 }
 
 func imValue(_ _m: CInt) -> CUnsignedLongLong {
     imValue(CUnsignedInt(bitPattern: _m))
 }
 
-protocol barret_modulus_dynamic: barret_modulus {
-    var m: CUnsignedInt { get set }
-    var im: CUnsignedLongLong { get set }
-    mutating func set_mod(_ _m: CUnsignedInt)
-}
-
-extension barret_modulus_dynamic {
-    mutating func set_mod(_ _m: CUnsignedInt) {
-        m = _m
-        im = imValue(_m)
-    }
-}
-
-struct static_mod: barret_modulus {
+struct barret_modulus {
     let m: CUnsignedInt
     let im: CUnsignedLongLong
-    init() { self.init(-1) }
-    init<Unsigned: FixedWidthInteger>(_ _m: Unsigned) where Unsigned == Unsigned.Magnitude {
+    init<Unsigned: UnsignedInteger>(_ _m: Unsigned) {
         m = CUnsignedInt(_m)
         im = imValue(CUnsignedInt(_m))
     }
-    init<Signed: FixedWidthInteger>(_ _m: Signed) {
+    init<Signed: SignedInteger>(_ _m: Signed) {
         m = CUnsignedInt(bitPattern: CInt(_m))
         im = imValue(CInt(_m))
     }
 }
 
-struct dynamic_mod: barret_modulus_dynamic {
-    var m: CUnsignedInt
-    var im: CUnsignedLongLong
-    init() { self.init(-1) }
-    init<Unsigned: FixedWidthInteger>(_ _m: Unsigned) where Unsigned == Unsigned.Magnitude {
-        m = CUnsignedInt(_m)
-        im = imValue(CUnsignedInt(_m))
-    }
-    init<Signed: FixedWidthInteger>(_ _m: Signed) {
-        m = CUnsignedInt(bitPattern: CInt(_m))
-        im = imValue(CInt(_m))
-    }
-}
-
-extension static_mod: ExpressibleByIntegerLiteral {
+extension barret_modulus: ExpressibleByIntegerLiteral {
     init(integerLiteral value: CInt) {
         self.init(value)
     }
 }
 
-extension dynamic_mod: ExpressibleByIntegerLiteral {
-    init(integerLiteral value: CInt) {
-        self.init(value)
-    }
+extension barret_modulus {
+    static let mod_998_244_353:   barret_modulus =   998_244_353
+    static let mod_1_000_000_007: barret_modulus = 1_000_000_007
+    static let mod_INT32_MAX:     barret_modulus = 2_147_483_647
+    static let mod_UINT32_MAX:    barret_modulus =            -1
 }
 
-extension static_mod {
-    static let mod_998244353: static_mod = 998244353
-    static let mod_1000000007: static_mod = 1000000007
-    static let mod_2147483647: static_mod = 2147483647
-    static let mod_4294967295: static_mod = -1
-}
+typealias static_mod = barret_modulus
 
 // MARK: -
 
@@ -79,8 +42,8 @@ extension static_mod {
 // Reference: https://en.wikipedia.org/wiki/Barrett_reduction
 // NOTE: reconsider after Ice Lake
 protocol barrett {
-    associatedtype mod_type: barret_modulus
-    static var modulus: mod_type { get }
+//    associatedtype mod_type: barret_modulus
+    static var modulus: barret_modulus { get }
 }
 
 extension barrett {
@@ -113,28 +76,28 @@ extension barrett {
     }
 }
 
-protocol dynamic_barrett: barrett where mod_type: barret_modulus_dynamic {
-    static var modulus: mod_type { get set }
+protocol static_barrett: barrett { }
+
+protocol dynamic_barrett: barrett {
+    static var modulus: barret_modulus { get set }
     static func set_mod(_ m: CInt)
 }
 
 extension dynamic_barrett {
     static func set_mod(_ m: CInt) {
         assert(1 <= m);
-        modulus.set_mod(CUnsignedInt(m))
+        modulus = .init(m)
     }
 }
 
 enum mod_dynamic: dynamic_barrett { 
-    static var modulus: dynamic_mod = -1
+    static var modulus: barret_modulus = -1
 }
 
-protocol static_barrett: barrett { }
-
 enum mod_998244353: static_barrett {
-    static let modulus: static_mod = .mod_998244353
+    static let modulus: barret_modulus = .mod_998_244_353
 }
 
 enum mod_1000000007: static_barrett {
-    static let modulus: static_mod = static_mod.mod_1000000007
+    static let modulus: barret_modulus = .mod_1_000_000_007
 }

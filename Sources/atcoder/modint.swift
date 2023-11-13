@@ -133,9 +133,6 @@ extension modint_dynamic_implementation {
 }
 
 extension modint_implementation {
-    static func value<T: FixedWidthInteger>(_ v: T) -> CUnsignedInt where T.Magnitude == T {
-        CUnsignedInt(v % T(Self.mod()));
-    }
     static func value<T: FixedWidthInteger>(_ v: T) -> CUnsignedInt {
         var x = v % T(Self.mod());
         if (x < 0) { x += T(Self.mod()); }

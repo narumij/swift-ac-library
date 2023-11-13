@@ -2,11 +2,9 @@ import Foundation
 
 // AC - https://atcoder.jp/contests/practice2/submissions/47411631
 
-protocol DefaultInitialize {
-    init()
-}
-
-struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & FixedWidthInteger> where Cap == Cost {
+struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
+    typealias Cap = Value
+    typealias Cost = Value
 //  public:
     init() { _n = 0 }
     init(_ n: Int) { _n = n }
@@ -69,8 +67,8 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
                 let e = _edges[i];
                 edge_idx[i] = degree[e.from]; degree[e.from] += 1
                 redge_idx[i] = degree[e.to]; degree[e.to] += 1
-                elist.append((e.from, .init(e.to, -1, e.cap - e.flow, e.cost)));
-                elist.append((e.to, .init(e.from, -1, e.flow, -e.cost)));
+                elist.append((e.from, .init(to: e.to, rev: -1, cap: e.cap - e.flow, cost: e.cost)));
+                elist.append((e.to, .init(to: e.from, rev: -1, cap: e.flow, cost: -e.cost)));
             }
             var _g = `internal`.csr<_edge>(_n, elist);
             // for (int i = 0; i < m; i++) {
@@ -100,30 +98,14 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
     var _edges: [edge] = [];
 
     // inside edge
-    struct _edge: DefaultInitialize {
-        internal init() {
-            to = 0
-            rev = 0
-            cap = 0
-            cost = 0
-        }
-        internal init(_ to: Int,_ rev: Int,_ cap: Cap,_ cost: Cost) {
-            self.to = to
-            self.rev = rev
-            self.cap = cap
-            self.cost = cost
-        }
-        
+    struct _edge: Zero {
         var to, rev: Int;
         var cap: Cap;
         var cost: Cost;
+        static var zero: Self { Self.init(to: 0, rev: 0, cap: 0, cost: 0) }
     };
 
     struct Q: Comparable {
-        internal init(_ key: Cost,_ to: Int) {
-            self.key = key
-            self.to = to
-        }
         var key: Cost;
         var to: Int;
         static func <(lhs: Q, rhs: Q) -> Bool { return lhs.key > rhs.key }
@@ -196,7 +178,7 @@ struct mcf_graph<Cap: SignedInteger & FixedWidthInteger, Cost: SignedInteger & F
                         if (dist_to == dist_v) {
                             que_min.append(e.to);
                         } else {
-                            que.append(Q(dist_to, e.to));
+                            que.append(Q(key: dist_to, to: e.to));
                         }
                     }
                 } }

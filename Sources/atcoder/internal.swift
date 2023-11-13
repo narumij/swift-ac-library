@@ -127,14 +127,18 @@ extension mcf_graph {
     enum `internal` { }
 }
 
+protocol Zero {
+    static var zero: Self { get }
+}
+
 extension mcf_graph.`internal` {
     
-    struct csr<E: DefaultInitialize> {
+    struct csr<E: Zero> {
         var start: [Int];
         var elist: [E];
         init(_ n: Int,_ edges: [(first: Int,second: E)]) {
             start = [Int](repeating:0, count:n + 1)
-            elist = [E](repeating: .init(), count: edges.count)
+            elist = [E](repeating: .zero, count: edges.count)
 //            for (auto e : edges) {
             for e in edges {
                 start[e.first + 1] += 1;

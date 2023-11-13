@@ -8,11 +8,11 @@
 import XCTest
 @testable import atcoder
 
-extension mcf_graph.edge: ExpressibleByArrayLiteral where Cost == Int, Cap == Int {
+extension mcf_graph.edge: ExpressibleByArrayLiteral where Value == Int {
     public init(arrayLiteral elements: Int...) {
         self.init(elements[0], elements[1], elements[2], elements[3], elements[4])
     }
-    var values: (Int,Int,Cap,Cap,Cost) { (from,to,cap,flow,cost) }
+    var values: (Int,Int,mcf_graph.Cap,mcf_graph.Cap,mcf_graph.Cost) { (from,to,cap,flow,cost) }
 }
 
 final class mincostflowTests: XCTestCase {
@@ -34,11 +34,11 @@ final class mincostflowTests: XCTestCase {
     }
     
     func test0() throws {
-        var g1 = mcf_graph<Int, Int>();
-        var g2 = mcf_graph<Int, Int>(0);
+        var g1 = mcf_graph<Int>();
+        var g2 = mcf_graph<Int>(0);
     }
     
-    func edge_eq(_ expect: mcf_graph<Int, Int>.edge,_ actual: mcf_graph<Int, Int>.edge) {
+    func edge_eq(_ expect: mcf_graph<Int>.edge,_ actual: mcf_graph<Int>.edge) {
         XCTAssertEqual(expect.from, actual.from, "expect \(expect.values) but \(actual.values)");
         XCTAssertEqual(expect.to, actual.to, "expect \(expect.values) but \(actual.values)");
         XCTAssertEqual(expect.cap, actual.cap, "expect \(expect.values) but \(actual.values)");
@@ -57,7 +57,7 @@ final class mincostflowTests: XCTestCase {
     
     func testSimple() throws {
         
-        var g = mcf_graph<Int, Int>(4);
+        var g = mcf_graph<Int>(4);
         g.add_edge(0, 1, 1, 1);
         g.add_edge(0, 2, 1, 1);
         g.add_edge(1, 3, 1, 1);
@@ -67,7 +67,7 @@ final class mincostflowTests: XCTestCase {
         let expect = [(0, 0), (2, 4)];
         tuplesEqual(expect, g.slope(0, 3, 10));
                 
-        var e = mcf_graph<Int, Int>.edge();
+        var e = mcf_graph<Int>.edge();
         e = [0, 1, 1, 1, 1];
         edge_eq(e, g.get_edge(0));
         e = [0, 2, 1, 1, 1];
@@ -82,12 +82,12 @@ final class mincostflowTests: XCTestCase {
     
     func testUsage() throws {
         do {
-            var g = mcf_graph<Int, Int>(2);
+            var g = mcf_graph<Int>(2);
             g.add_edge(0, 1, 1, 2);
             tupleEqual((1, 2), g.flow(0, 1));
         }
         do {
-            var g = mcf_graph<Int, Int>(2);
+            var g = mcf_graph<Int>(2);
             g.add_edge(0, 1, 1, 2);
             let expect = [(0, 0), (1, 2)];
             tuplesEqual(expect, g.slope(0, 1));
@@ -104,22 +104,22 @@ final class mincostflowTests: XCTestCase {
     
     func testOutrange() throws {
         throw XCTSkip()
-        var g = mcf_graph<Int, Int>(10);
+        var g = mcf_graph<Int>(10);
         XCTAssertThrowsError(g.slope(-1, 3), ".*");
         XCTAssertThrowsError(g.slope(3, 3), ".*");
     }
     
     func testSelfLoop() throws {
         
-        var g = mcf_graph<Int, Int>(3);
+        var g = mcf_graph<Int>(3);
         XCTAssertEqual(0, g.add_edge(0, 0, 100, 123));
 
-        let e: mcf_graph<Int, Int>.edge = [0, 0, 100, 0, 123];
+        let e: mcf_graph<Int>.edge = [0, 0, 100, 0, 123];
         edge_eq(e, g.get_edge(0));
     }
     
     func testSameCostPath() throws {
-        var g = mcf_graph<Int, Int>(3);
+        var g = mcf_graph<Int>(3);
         XCTAssertEqual(0, g.add_edge(0, 1, 1, 1));
         XCTAssertEqual(1, g.add_edge(1, 2, 1, 0));
         XCTAssertEqual(2, g.add_edge(0, 2, 2, 1));
@@ -129,7 +129,7 @@ final class mincostflowTests: XCTestCase {
     
     func testInvalid() throws {
         
-        var g = mcf_graph<Int, Int>(2);
+        var g = mcf_graph<Int>(2);
         // https://github.com/atcoder/ac-library/issues/51
 //        XCTAssertThrowsError(g.add_edge(0, 0, -1, 0), ".*");
 //        XCTAssertThrowsError(g.add_edge(0, 0, 0, -1), ".*");
@@ -151,7 +151,7 @@ final class mincostflowTests: XCTestCase {
             if (randbool()) { swap(&s, &t); }
 
             var g_mf = mf_graph<Int>(n);
-            var g = mcf_graph<Int, Int>(n);
+            var g = mcf_graph<Int>(n);
 //            for (int i = 0; i < m; i++) {
             var data: [(Int,Int,Int,Int,Int)] = []
             for i in 0..<m {

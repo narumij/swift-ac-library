@@ -2,12 +2,12 @@ import Foundation
 
 extension `internal` {
     
-    struct csr<E: DefaultInitialize> {
+    struct csr<E: Zero> {
         var start: [Int];
         var elist: [E];
-        init(_ n: Int,_ edges: [(first: Int,second: E)]) {
-            start = [Int](repeating:0, count:n + 1)
-            elist = [E](repeating: .init(), count: edges.count)
+        init(_ n: Int,_ edges: [(first: Int, second: E)]) {
+            start = [Int](repeating: 0, count:n + 1)
+            elist = [E](repeating: .zero, count: edges.count)
 //            for (auto e : edges) {
             for e in edges {
                 start[e.first + 1] += 1;
@@ -31,7 +31,7 @@ extension `internal` {
 
         func num_vertices() -> Int { return _n; }
 
-        mutating func add_edge(_ from: Int,_ to: Int) { edges.append((from, .init(to))); }
+        mutating func add_edge(_ from: Int,_ to: Int) { edges.append((from, .init(to: to))); }
 
         // @return pair of (# of scc, scc id)
         func scc_ids() -> (first: Int, second: [Int]) {
@@ -95,12 +95,9 @@ extension `internal` {
 
 //      private:
         var _n: Int;
-        struct edge: DefaultInitialize {
-            init() { to = 0 }
-            internal init(_ to: Int) {
-                self.to = to
-            }
+        struct edge: Zero {
             var to: Int;
+            static var zero: Self { .init(to: 0) }
         };
         var edges: [(Int,edge)] = [];
     };

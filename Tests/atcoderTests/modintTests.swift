@@ -21,9 +21,10 @@ final class modintTests: XCTestCase {
 
     enum mod_1:             static_barrett { static let modulus: static_mod = 1 }
     enum mod_11:            static_barrett { static let modulus: static_mod = 11 }
-    enum mod_1_000_000_007: static_barrett { static let modulus: static_mod = 1_000_000_007 }
+    enum mod_12:            static_barrett { static let modulus: static_mod = 12 }
+    enum mod_1_000_000_007: static_barrett { static let modulus: static_mod = .mod_1_000_000_007 }
     enum mod_1_000_000_008: static_barrett { static let modulus: static_mod = 1_000_000_008 }
-    enum INT32_MAX:         static_barrett { static let modulus = static_mod(Int32.max) }
+    enum INT32_MAX:         static_barrett { static let modulus: static_mod = .mod_INT32_MAX }
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -208,29 +209,33 @@ final class modintTests: XCTestCase {
     }
     
     func testInv() throws {
-        /*
-        for (int i = 1; i < 10; i++) {
-            int x = static_modint<11>(i).inv().val();
-            ASSERT_EQ(1, (x * i) % 11);
+        
+//        for (int i = 1; i < 10; i++) {
+        for i in uint(1)..<10 {
+            var x = static_modint<mod_11>(i).inv().val();
+            XCTAssertEqual(1, (x * i) % 11);
         }
 
-        for (int i = 1; i < 11; i++) {
-            if (gcd(i, 12) != 1) continue;
-            int x = static_modint<12>(i).inv().val();
-            ASSERT_EQ(1, (x * i) % 12);
+//        for (int i = 1; i < 11; i++) {
+        for i in uint(1)..<11 {
+            if (gcd(ll(i), 12) != 1) { continue; }
+            var x = static_modint<mod_12>(i).inv().val();
+            XCTAssertEqual(1, (x * i) % 12);
         }
 
-        for (int i = 1; i < 100000; i++) {
-            int x = static_modint<1'000'000'007>(i).inv().val();
-            ASSERT_EQ(1, (ll(x) * i) % 1'000'000'007);
+//        for (int i = 1; i < 100000; i++) {
+        for i in ll(1)..<100_000 {
+            var x = static_modint<mod_1_000_000_007>(i).inv().val();
+            XCTAssertEqual(1, (ll(x) * i) % 1_000_000_007);
         }
 
-        for (int i = 1; i < 100000; i++) {
-            if (gcd(i, 1'000'000'008) != 1) continue;
-            int x = static_modint<1'000'000'008>(i).inv().val();
-            ASSERT_EQ(1, (ll(x) * i) % 1'000'000'008);
+//        for (int i = 1; i < 100000; i++) {
+        for i in ll(1)..<100_000 {
+            if (gcd(ll(i), 1_000_000_008) != 1) { continue; }
+            var x = static_modint<mod_1_000_000_008>(i).inv().val();
+            XCTAssertEqual(1, (ll(x) * i) % 1_000_000_008);
         }
-         */
+        
         modint.set_mod(998244353);
 //        for (int i = 1; i < 100000; i++) {
         for i in ll(1)..<100000 {
