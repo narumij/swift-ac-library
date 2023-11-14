@@ -20,8 +20,6 @@ protocol mod_type {
 }
 
 extension mod_type {
-    static var _m: CUnsignedInt { modValue.m }
-    static var im: CUnsignedLongLong { modValue.im }
     static func umod() -> CUnsignedInt { modValue.umod() }
     static func mul(_ a: CUnsignedInt,_ b: CUnsignedInt) -> CUnsignedInt {
         modValue.mul(a,b)

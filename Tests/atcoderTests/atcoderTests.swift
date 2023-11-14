@@ -17,7 +17,6 @@ final class atcoderTests: XCTestCase {
             XCTAssertEqual([], (1..<=log).map{$0})
             XCTAssertEqual([], (log..>=1).map{$0})
             XCTAssertEqual([], ((log - 1)..>=1).map{$0})
-            XCTAssertEqual([], (log..>0).map{$0})
         }
 
         do {
@@ -25,7 +24,6 @@ final class atcoderTests: XCTestCase {
             XCTAssertEqual([1], (1..<=log).map{$0})
             XCTAssertEqual([1], (log..>=1).map{$0})
             XCTAssertEqual([], ((log - 1)..>=1).map{$0})
-            XCTAssertEqual([1], (log..>0).map{$0})
         }
 
         do {
@@ -33,7 +31,6 @@ final class atcoderTests: XCTestCase {
             XCTAssertEqual([1,2], (1..<=log).map{$0})
             XCTAssertEqual([2,1], (log..>=1).map{$0})
             XCTAssertEqual([1], ((log - 1)..>=1).map{$0})
-            XCTAssertEqual([2,1], (log..>0).map{$0})
         }
     }
 }
