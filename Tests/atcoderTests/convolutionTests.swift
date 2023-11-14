@@ -202,19 +202,17 @@ final class convolutionTests: XCTestCase {
     func testSimpleIntInvestigation() throws {
         
         throw XCTSkip("C++でも不一致のようなのでスキップ")
-
+        // 検査データC++コードは一番下にある。
         enum MOD1: static_mod { static let modValue: barrett = 998244353 }
-        do {
-            let a: [CInt] = [-366508063, -606130801, 425354724, -16101483, 936317027, 75824908]
-            let b: [CInt] = [723102387, -348770447]
-            let c: [CInt] = [-106203501, 44681908, 925902337, -1327691457, 950643207, 804941, -651950935]
-            let d: [CInt] = [ 892040852, 44681908, 925902337,   668797249, 950643207, 804941,  346293418]
-            let e: [CInt] = [ 892040852, 44681908, 925902337,   668797249, 950643207, 804941,  346293418]
-            XCTAssertEqual(c, convolution(a, b));
-            XCTAssertEqual(c, (convolution(MOD1.self, a, b)));
-            XCTAssertEqual(conv_naive(MOD1.self,a, b), d);
-            XCTAssertEqual(conv_naive(MOD1.self,a, b), e);
-        }
+        let a: [CInt] = [-366508063, -606130801, 425354724, -16101483, 936317027, 75824908]
+        let b: [CInt] = [723102387, -348770447]
+        let c: [CInt] = [-106203501, 44681908, 925902337, -1327691457, 950643207, 804941, -651950935]
+        let d: [CInt] = [ 892040852, 44681908, 925902337,   668797249, 950643207, 804941,  346293418]
+        let e: [CInt] = [ 892040852, 44681908, 925902337,   668797249, 950643207, 804941,  346293418]
+        XCTAssertEqual(c, convolution(a, b));
+        XCTAssertEqual(c, (convolution(MOD1.self, a, b)));
+        XCTAssertEqual(conv_naive(MOD1.self,a, b), d);
+        XCTAssertEqual(conv_naive(MOD1.self,a, b), e);
     }
     
     func testSimpleInt2() throws {
