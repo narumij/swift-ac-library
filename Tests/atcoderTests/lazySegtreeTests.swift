@@ -22,7 +22,7 @@ extension starry: LazySegtreeParameter, SegtreeParameter {
 
 typealias starry_seg = lazy_segtree<starry>
 
-final class LazySegtreeTests: XCTestCase {
+final class lazySegtreeTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -73,7 +73,7 @@ final class LazySegtreeTests: XCTestCase {
     }
     
     func testOne() throws {
-        var s = segtree<SegtreeTests.fixture>(1)
+        var s = segtree<segtreeTests.fixture>(1)
         XCTAssertEqual("$", s.all_prod());
         XCTAssertEqual("$", s.get(0));
         XCTAssertEqual("$", s.prod(0, 1));

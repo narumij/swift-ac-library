@@ -72,7 +72,7 @@ extension stress_fixture: LazySegtreeParameter {
     static let id: F = e_t()
 }
 
-final class LazySegtreeStressTests: XCTestCase {
+final class lazySegtreeStressTests: XCTestCase {
 
     typealias seg = lazy_segtree<stress_fixture>;
     typealias S = stress_fixture.S
