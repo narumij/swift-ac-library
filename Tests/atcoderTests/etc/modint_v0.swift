@@ -183,10 +183,6 @@ struct dynamic_modint_v0: modint_protocol_v0 {
         self.init(CInt(v ? 1 : 0))
     }
     
-    init<T: FixedWidthInteger>(_ v: T) where T.Magnitude == T {
-        _v = CUnsignedInt(v % T(Self.mod()));
-    }
-
     init<T: FixedWidthInteger>(_ v: T) {
         var x = v % T(Self.mod());
         if (x < 0) { x += T(Self.mod()); }
