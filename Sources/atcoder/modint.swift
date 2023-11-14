@@ -10,13 +10,21 @@ struct modint_base_static<bt: static_mod>: modint_implementation {
     var _v: CUnsignedInt
 }
 
+extension modint_base_static {
+    init?<T>(exactly source: T) where T : BinaryInteger {
+        _v = Self.value(CInt(source))
+    }
+    typealias Magnitude = CInt.Magnitude
+    var magnitude: CInt.Magnitude { val() }
+}
+
 extension modint_base_static: ExpressibleByIntegerLiteral {
     init(integerLiteral value: CInt) {
         self.init(value)
     }
 }
 
-protocol modint_base_protocol: AdditiveArithmetic, Equatable, ExpressibleByIntegerLiteral {
+protocol modint_base_protocol: Numeric, Equatable, ExpressibleByIntegerLiteral where Self.Magnitude: UnsignedInteger {
     associatedtype bt: mod_type
     static func mod() -> CInt
     static func raw(_ v: CInt) -> mint
@@ -152,6 +160,15 @@ struct modint_base_dynamic<bt: dynamic_mod>: modint_dynamic_implementation {
     var _v: CUnsignedInt
 }
 
+extension modint_base_dynamic {
+    init?<T>(exactly source: T) where T : BinaryInteger {
+        _v = Self.value(CInt(source))
+    }
+    typealias Magnitude = CInt.Magnitude
+    var magnitude: CInt.Magnitude { val() }
+}
+
+
 extension modint_base_dynamic: ExpressibleByIntegerLiteral {
     init(integerLiteral value: CInt) {
         self.init(value)
@@ -166,6 +183,14 @@ struct modint_base<bt: mod_type>: modint_implementation {
         _v = Self.value(v)
     }
     var _v: CUnsignedInt
+}
+
+extension modint_base {
+    init?<T>(exactly source: T) where T : BinaryInteger {
+        _v = Self.value(CInt(source))
+    }
+    typealias Magnitude = CInt.Magnitude
+    var magnitude: CInt.Magnitude { val() }
 }
 
 extension modint_base: ExpressibleByIntegerLiteral {
