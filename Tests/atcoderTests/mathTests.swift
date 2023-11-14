@@ -32,7 +32,7 @@ fileprivate func floor_sum_naive(_ n: ll,_ m: ll,_ a: ll,_ b: ll) -> ll {
     var sum: ll = 0;
 //    for (ll i = 0; i < n; i++) {
     for i in 0..<n {
-        var z: ll = a * i + b;
+        let z: ll = a * i + b;
         sum += (z - _internal.safe_mod(z, m)) / m;
     }
     return sum;
@@ -237,8 +237,8 @@ final class mathTests: XCTestCase {
             for ph in 0..<2 {
 //                for (ll ans : pred) {
                 for ans in pred {
-                    var res = crt([ans % a, ans % b], [a, b]);
-                    var lcm = a / gcd(a, b) * b;
+                    let res = crt([ans % a, ans % b], [a, b]);
+                    let lcm = a / gcd(a, b) * b;
                     XCTAssertEqual(lcm, res.second);
                     XCTAssertEqual(ans % lcm, res.first);
                 }

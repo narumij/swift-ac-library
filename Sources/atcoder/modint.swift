@@ -17,6 +17,7 @@ extension modint_base_static: ExpressibleByIntegerLiteral {
 }
 
 protocol modint_base_protocol: AdditiveArithmetic, Equatable, ExpressibleByIntegerLiteral {
+    associatedtype bt: mod_type
     static func mod() -> CInt
     static func raw(_ v: CInt) -> mint
     init()
@@ -39,7 +40,7 @@ extension modint_base_protocol {
 }
 
 protocol modint_implementation: modint_base_protocol, CustomStringConvertible {
-    associatedtype bt: mod_type
+//    associatedtype bt: mod_type
     init()
     init<T: FixedWidthInteger>(_ v: T)
     var _v: CUnsignedInt { get set }
@@ -132,6 +133,9 @@ extension modint_dynamic_implementation {
 
 extension modint_implementation {
     static func value<T: FixedWidthInteger>(_ v: T) -> CUnsignedInt {
+        if T.Magnitude.self is T {
+            return CUnsignedInt(v)
+        }
         var x = v % T(Self.mod());
         if (x < 0) { x += T(Self.mod()); }
         return CUnsignedInt(x);

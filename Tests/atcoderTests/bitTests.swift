@@ -52,25 +52,23 @@ final class bitTests: XCTestCase {
     }
     
     func testCountrZeroConstexpr() throws {
-        
-        throw XCTSkip("未テスト。そのうちやる。")
-        
-        /*
-         ASSERT_EQ(0, internal::countr_zero_constexpr(1U));
-         ASSERT_EQ(1, internal::countr_zero_constexpr(2U));
-         ASSERT_EQ(0, internal::countr_zero_constexpr(3U));
-         ASSERT_EQ(2, internal::countr_zero_constexpr(4U));
-         ASSERT_EQ(0, internal::countr_zero_constexpr(5U));
-         ASSERT_EQ(1, internal::countr_zero_constexpr(6U));
-         ASSERT_EQ(0, internal::countr_zero_constexpr(7U));
-         ASSERT_EQ(3, internal::countr_zero_constexpr(8U));
-         ASSERT_EQ(0, internal::countr_zero_constexpr(9U));
-         ASSERT_EQ(30, internal::countr_zero_constexpr(1U << 30));
-         ASSERT_EQ(0, internal::countr_zero_constexpr((1U << 31) - 1));
-         ASSERT_EQ(31, internal::countr_zero_constexpr(1U << 31));
-         ASSERT_EQ(0,
-                   internal::countr_zero_constexpr(std::numeric_limits<unsigned int>::max()));
-         */
+        throw XCTSkip("未実装")
+/*
+        XCTAssertEqual(0, _internal.countr_zero_constexpr(1));
+        XCTAssertEqual(1, _internal.countr_zero_constexpr(2));
+        XCTAssertEqual(0, _internal.countr_zero_constexpr(3));
+        XCTAssertEqual(2, _internal.countr_zero_constexpr(4));
+        XCTAssertEqual(0, _internal.countr_zero_constexpr(5));
+        XCTAssertEqual(1, _internal.countr_zero_constexpr(6));
+        XCTAssertEqual(0, _internal.countr_zero_constexpr(7));
+        XCTAssertEqual(3, _internal.countr_zero_constexpr(8));
+        XCTAssertEqual(0, _internal.countr_zero_constexpr(9));
+        XCTAssertEqual(30, _internal.countr_zero_constexpr(1 << 30));
+        XCTAssertEqual(0, _internal.countr_zero_constexpr((1 << 31) - 1));
+        XCTAssertEqual(31, _internal.countr_zero_constexpr(1 << 31));
+        XCTAssertEqual(0,
+                       _internal.countr_zero_constexpr(CInt.max);
+ */
     }
 
     func testPerformanceExample() throws {

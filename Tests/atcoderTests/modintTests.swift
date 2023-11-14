@@ -212,27 +212,27 @@ final class modintTests: XCTestCase {
         
 //        for (int i = 1; i < 10; i++) {
         for i in uint(1)..<10 {
-            var x = static_modint<mod_11>(i).inv().val();
+            let x = static_modint<mod_11>(i).inv().val();
             XCTAssertEqual(1, (x * i) % 11);
         }
 
 //        for (int i = 1; i < 11; i++) {
         for i in uint(1)..<11 {
             if (gcd(ll(i), 12) != 1) { continue; }
-            var x = static_modint<mod_12>(i).inv().val();
+            let x = static_modint<mod_12>(i).inv().val();
             XCTAssertEqual(1, (x * i) % 12);
         }
 
 //        for (int i = 1; i < 100000; i++) {
         for i in ll(1)..<100_000 {
-            var x = static_modint<mod_1_000_000_007>(i).inv().val();
+            let x = static_modint<mod_1_000_000_007>(i).inv().val();
             XCTAssertEqual(1, (ll(x) * i) % 1_000_000_007);
         }
 
 //        for (int i = 1; i < 100000; i++) {
         for i in ll(1)..<100_000 {
             if (gcd(ll(i), 1_000_000_008) != 1) { continue; }
-            var x = static_modint<mod_1_000_000_008>(i).inv().val();
+            let x = static_modint<mod_1_000_000_008>(i).inv().val();
             XCTAssertEqual(1, (ll(x) * i) % 1_000_000_008);
         }
         

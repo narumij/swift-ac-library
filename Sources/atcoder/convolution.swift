@@ -357,9 +357,9 @@ func convolution_ll(_ a: [CLongLong],
 //    for (int i = 0; i < n + m - 1; i++) {
     for i in 0..<(n + m - 1) {
         var x: ULL = 0;
-        x += ULL((c1[i] * LL(i1)) % MOD1 * M2M3);
-        x += ULL((c2[i] * LL(i2)) % MOD2 * M1M3);
-        x += ULL((c3[i] * LL(i3)) % MOD3 * M1M2);
+        x &+= ULL(bitPattern: (c1[i] * LL(i1)) % MOD1 &* M2M3);
+        x &+= ULL(bitPattern: (c2[i] * LL(i2)) % MOD2 &* M1M3);
+        x &+= ULL(bitPattern: (c3[i] * LL(i3)) % MOD3 &* M1M2);
         // B = 2^63, -B <= x, r(real value) < B
         // (x, x - M, x - 2M, or x - 3M) = r (mod 2B)
         // r = c1[i] (mod MOD1)
@@ -378,14 +378,14 @@ func convolution_ll(_ a: [CLongLong],
         //   ((2) mod MOD1) mod 5 = 3
         //   ((3) mod MOD1) mod 5 = 4
         var diff: LL =
-        c1[i] - _internal.safe_mod(LL(x), LL(MOD1));
+        c1[i] - _internal.safe_mod(LL(bitPattern: x), LL(MOD1));
         if (diff < 0) { diff += MOD1; }
         let offset: [ULL] = [
             0, 0, ULL(M1M2M3), ULL(2 * M1M2M3), ULL(3 * M1M2M3)];
-        x -= offset[Int(diff) % 5];
-        c[i] = LL(x);
+        x &-= offset[Int(diff) % 5];
+        c[i] = LL(bitPattern: x);
     }
-
+ 
     return c;
 }
 

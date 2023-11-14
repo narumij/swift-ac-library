@@ -212,8 +212,8 @@ final class maxFlowTests: XCTestCase {
     func testStress() throws {
 //        for (int phase = 0; phase < 10000; phase++) {
         for phase in 0..<10000 {
-            var n = randint(2, 20);
-            var m = randint(1, 100);
+            let n = randint(2, 20);
+            let m = randint(1, 100);
             var s, t: Int;
             (s, t) = randpair(0, n - 1);
             if (randbool()) { swap(&s, &t); }
