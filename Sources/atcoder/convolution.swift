@@ -1,6 +1,6 @@
 import Foundation
 
-//extension `internal` {
+extension _internal {
 
 //template <class mint,
 //          int g = internal::primitive_root<mint::mod()>,
@@ -53,7 +53,7 @@ struct fft_info<mint: modint_base_protocol> {
 };
 
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-func butterfly<mint: modint_base_protocol>(_ a: inout [mint]) {
+static func butterfly<mint: modint_base_protocol>(_ a: inout [mint]) {
     let n = a.count;
 //    int h = internal::countr_zero((unsigned int)n);
     let h = _internal.countr_zero(CUnsignedInt(n))
@@ -115,7 +115,7 @@ func butterfly<mint: modint_base_protocol>(_ a: inout [mint]) {
 }
 
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-func butterfly_inv<mint: modint_base_protocol>(_ a: inout [mint]) {
+static func butterfly_inv<mint: modint_base_protocol>(_ a: inout [mint]) {
     let n = a.count;
     let h = _internal.countr_zero(CUnsignedInt(n));
 
@@ -183,7 +183,7 @@ func butterfly_inv<mint: modint_base_protocol>(_ a: inout [mint]) {
 }
 
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-func convolution_naive<mint: modint_base_protocol>(_ a: [mint],
+static func convolution_naive<mint: modint_base_protocol>(_ a: [mint],
                                               _ b: [mint]) -> [mint] {
     let n = a.count, m = b.count;
     var ans = [mint](repeating: 0, count: n + m - 1);
@@ -207,6 +207,32 @@ func convolution_naive<mint: modint_base_protocol>(_ a: [mint],
     return ans;
 }
 
+//template <class mint, internal::is_static_modint_t<mint>* = nullptr>
+static func convolution_fft<mint: modint_base_protocol>(_ a: [mint],_ b: [mint]) -> [mint] {
+    var a = a
+    var b = b
+    let n = CInt(a.count), m = CInt(b.count);
+    let z = CInt(_internal.bit_ceil(CUnsignedInt(n + m - 1)));
+    a.resize(Int(z));
+    _internal.butterfly(&a);
+    b.resize(Int(z));
+    _internal.butterfly(&b);
+//    for (int i = 0; i < z; i++) {
+    for i in 0..<Int(z) {
+        a[i] *= b[i];
+    }
+    _internal.butterfly_inv(&a);
+    a.resize(Int(n + m - 1));
+    let iz = mint(z).inv();
+//    for (int i = 0; i < n + m - 1; i++) a[i] *= iz;
+    for i in 0..<Int(n + m - 1) { a[i] *= iz; }
+    return a;
+}
+
+
+
+}  // namespace internal
+
 extension Array where Element: modint_base_protocol {
     mutating func resize(_ n: Int) {
         if count > n {
@@ -217,31 +243,6 @@ extension Array where Element: modint_base_protocol {
     }
 }
 
-//template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-func convolution_fft<mint: modint_base_protocol>(_ a: [mint],_ b: [mint]) -> [mint] {
-    var a = a
-    var b = b
-    let n = CInt(a.count), m = CInt(b.count);
-    let z = CInt(_internal.bit_ceil(CUnsignedInt(n + m - 1)));
-    a.resize(Int(z));
-    butterfly(&a);
-    b.resize(Int(z));
-    butterfly(&b);
-//    for (int i = 0; i < z; i++) {
-    for i in 0..<Int(z) {
-        a[i] *= b[i];
-    }
-    butterfly_inv(&a);
-    a.resize(Int(n + m - 1));
-    let iz = mint(z).inv();
-//    for (int i = 0; i < n + m - 1; i++) a[i] *= iz;
-    for i in 0..<Int(n + m - 1) { a[i] *= iz; }
-    return a;
-}
-
-
-
-//}  // namespace internal
 
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
 func convolution<mint: modint_base_protocol>(_ a: [mint],_ b: [mint]) -> [mint] {
@@ -251,8 +252,8 @@ func convolution<mint: modint_base_protocol>(_ a: [mint],_ b: [mint]) -> [mint] 
     let z = _internal.bit_ceil(CUnsignedInt(n + m - 1));
     assert((mint.mod() - 1) % CInt(z) == 0);
 
-    if (min(n, m) <= 60) { return convolution_naive(a, b); }
-    return convolution_fft(a, b);
+    if (min(n, m) <= 60) { return _internal.convolution_naive(a, b); }
+    return _internal.convolution_fft(a, b);
 }
 
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
