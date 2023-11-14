@@ -100,11 +100,11 @@ final class fenwickTreeTests: XCTestCase {
         }
     }
     
-#if false
+#if true
     func testSMintTest() throws {
         enum mod_11: static_mod { static let modValue: barrett = 11 }
         typealias mint = static_modint<mod_11>;
-        for n in 0..<=50 {
+        for n in 0..<=5 {
             var fw = fenwick_tree<mint>(n);
 //            for (int i = 0; i < n; i++) {
             for i in 0..<n {
@@ -119,7 +119,7 @@ final class fenwickTreeTests: XCTestCase {
                     for i in l..<r {
                         sum += i * i;
                     }
-                    ASSERT_EQ(mint(sum), fw.sum(l, r));
+                    XCTAssertEqual(mint(sum), fw.sum(l, r));
                 }
             }
         }

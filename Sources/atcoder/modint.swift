@@ -1,9 +1,7 @@
 import Foundation
 
 struct modint_base_static<bt: static_mod>: modint_implementation {
-    init() {
-        self.init(0)
-    }
+    init() { self.init(0) }
     init<T: FixedWidthInteger>(_ v: T) {
         _v = Self.value(v)
     }
@@ -11,11 +9,8 @@ struct modint_base_static<bt: static_mod>: modint_implementation {
 }
 
 extension modint_base_static {
-    init?<T>(exactly source: T) where T : BinaryInteger {
-        _v = Self.value(CInt(source))
-    }
-    typealias Magnitude = CInt.Magnitude
-    var magnitude: CInt.Magnitude { val() }
+    init(unsigned: UInt32) { self.init(unsigned) }
+    var unsigned: CInt.Magnitude { val() }
 }
 
 extension modint_base_static: ExpressibleByIntegerLiteral {
@@ -24,7 +19,7 @@ extension modint_base_static: ExpressibleByIntegerLiteral {
     }
 }
 
-protocol modint_base_protocol: Numeric, Equatable, ExpressibleByIntegerLiteral where Self.Magnitude: UnsignedInteger {
+protocol modint_base_protocol: AdditiveArithmetic, Equatable, ExpressibleByIntegerLiteral, ToUnsigned {
     associatedtype bt: mod_type
     static func mod() -> CInt
     static func raw(_ v: CInt) -> mint
@@ -141,9 +136,6 @@ extension modint_dynamic_implementation {
 
 extension modint_implementation {
     static func value<T: FixedWidthInteger>(_ v: T) -> CUnsignedInt {
-        if T.Magnitude.self is T {
-            return CUnsignedInt(v)
-        }
         var x = v % T(Self.mod());
         if (x < 0) { x += T(Self.mod()); }
         return CUnsignedInt(x);
@@ -151,9 +143,7 @@ extension modint_implementation {
 }
 
 struct modint_base_dynamic<bt: dynamic_mod>: modint_dynamic_implementation {
-    init() {
-        self.init(0)
-    }
+    init() { self.init(0) }
     init<T: FixedWidthInteger>(_ v: T) {
         _v = Self.value(v)
     }
@@ -161,11 +151,8 @@ struct modint_base_dynamic<bt: dynamic_mod>: modint_dynamic_implementation {
 }
 
 extension modint_base_dynamic {
-    init?<T>(exactly source: T) where T : BinaryInteger {
-        _v = Self.value(CInt(source))
-    }
-    typealias Magnitude = CInt.Magnitude
-    var magnitude: CInt.Magnitude { val() }
+    init(unsigned: UInt32) { self.init(unsigned) }
+    var unsigned: CInt.Magnitude { val() }
 }
 
 
@@ -176,9 +163,7 @@ extension modint_base_dynamic: ExpressibleByIntegerLiteral {
 }
 
 struct modint_base<bt: mod_type>: modint_implementation {
-    init() {
-        self.init(0)
-    }
+    init() { self.init(0) }
     init<T: FixedWidthInteger>(_ v: T) {
         _v = Self.value(v)
     }
@@ -186,11 +171,8 @@ struct modint_base<bt: mod_type>: modint_implementation {
 }
 
 extension modint_base {
-    init?<T>(exactly source: T) where T : BinaryInteger {
-        _v = Self.value(CInt(source))
-    }
-    typealias Magnitude = CInt.Magnitude
-    var magnitude: CInt.Magnitude { val() }
+    init(unsigned: UInt32) { self.init(unsigned) }
+    var unsigned: CInt.Magnitude { val() }
 }
 
 extension modint_base: ExpressibleByIntegerLiteral {

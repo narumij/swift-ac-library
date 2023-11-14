@@ -1,9 +1,8 @@
 import Foundation
 
-public protocol ToUnsigned: Numeric {
+public protocol ToUnsigned {
     associatedtype Unsigned: FixedWidthInteger & UnsignedInteger
     init(unsigned: Unsigned)
-//    static func from(unsigned: Unsigned) -> Self
     var unsigned: Unsigned { get }
 }
 

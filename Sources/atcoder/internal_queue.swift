@@ -1,6 +1,6 @@
 import Foundation
 
-
+#if false
 extension _internal {
     // 使っていない。代わりにDequeを使っている。
     struct simple_queue<T> {
@@ -18,4 +18,4 @@ extension _internal {
         mutating func pop() { pos += 1; }
     };
 }
-
+#endif
