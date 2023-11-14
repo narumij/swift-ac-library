@@ -147,26 +147,26 @@ final class internalMathTests: XCTestCase {
 
     func testSafeMod() throws {
         
-        throw XCTSkip("再現できず")
+        throw XCTSkip("型が無く、同様の計算ができないためスキップ")
         
-        var preds = [ll]();
-//        for (int i = 0; i <= 100; i++) {
-        for i in 0..<=ll(100) {
-            preds.append(i);
-            preds.append(-i);
-            preds.append(i);
-            preds.append(ll.min + i);
-            preds.append(ll.max - i);
-        }
+        /*
+         std::vector<ll> preds;
+         for (int i = 0; i <= 100; i++) {
+             preds.push_back(i);
+             preds.push_back(-i);
+             preds.push_back(i);
+             preds.push_back(std::numeric_limits<ll>::min() + i);
+             preds.push_back(std::numeric_limits<ll>::max() - i);
+         }
 
-        for a in preds {
-            for b in preds {
-                if (b <= 0) { continue; }
-                // ll ans = (ll)((__int128(a) % b + b) % b);
-                let ans = ll((a % b &+ b) % b);
-                XCTAssertEqual(ans, _internal.safe_mod(a, b));
-            }
-        }
+         for (auto a : preds) {
+             for (auto b : preds) {
+                 if (b <= 0) continue;
+                 ll ans = (ll)((__int128(a) % b + b) % b);
+                 ASSERT_EQ(ans, internal::safe_mod(a, b));
+             }
+         }
+         */
     }
     
     func testSafeModAlt() throws {

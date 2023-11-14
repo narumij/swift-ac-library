@@ -202,7 +202,7 @@ final class convolutionTests: XCTestCase {
     func testSimpleIntInvestigation() throws {
         
         throw XCTSkip("C++でも不一致のようなのでスキップ")
-        // 検査データC++コードは一番下にある。
+        // 検査データを出力したC++コードは一番下にある。
         enum MOD1: static_mod { static let modValue: barrett = 998244353 }
         let a: [CInt] = [-366508063, -606130801, 425354724, -16101483, 936317027, 75824908]
         let b: [CInt] = [723102387, -348770447]

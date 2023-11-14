@@ -60,7 +60,7 @@ final class mathTests: XCTestCase {
     
     func testPowMod() throws {
         
-        throw XCTSkip("時間がかかるのでスキップ。一度テストは通っている。")
+        // throw XCTSkip("時間がかかるのでスキップ。一度テストは通っている。")
         
         func naive(_ x: ll,_ n: ll,_ mod: CInt) -> ll {
             let y: ll = _internal.safe_mod(x, ll(mod));

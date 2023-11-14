@@ -103,7 +103,7 @@ final class mincostflowTests: XCTestCase {
     }
     
     func testOutrange() throws {
-        throw XCTSkip()
+        throw XCTSkip("テスト自体がクラッシュするのでスキップ")
         var g = mcf_graph<Int>(10);
         XCTAssertThrowsError(g.slope(-1, 3), ".*");
         XCTAssertThrowsError(g.slope(3, 3), ".*");

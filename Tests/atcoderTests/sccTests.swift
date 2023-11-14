@@ -48,7 +48,7 @@ final class sccTests: XCTestCase {
     }
     
     func testInvalid() throws {
-        throw XCTSkip()
+        throw XCTSkip("テスト自体がクラッシュするのでスキップ")
         var graph: scc_graph = .init(2);
         XCTAssertThrowsError(graph.add_edge(0, 10), ".*");
     }

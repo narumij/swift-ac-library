@@ -203,7 +203,7 @@ final class maxFlowTests: XCTestCase {
     }
     
     func testInvalid() throws {
-        throw XCTSkip()
+        throw XCTSkip("テスト自体がクラッシュするのでスキップ")
         var g = mf_graph<Int>(2);
         XCTAssertThrowsError(g.flow(0, 0), ".*");
         XCTAssertThrowsError(g.flow(0, 0, 0), ".*");
