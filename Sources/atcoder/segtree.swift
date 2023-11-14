@@ -12,7 +12,7 @@ struct segtree<Parameter: SegtreeParameter> {
     func e() -> S { Parameter.e }
 
     init() { self.init(0) }
-    init(_ n: Int) { self.init([S](repeating: Parameter.e, count: n)) }
+    init<Index: FixedWidthInteger>(_ n: Index) { self.init([S](repeating: Parameter.e, count: Int(n))) }
     init(_ v: [S]) {
         _n = v.count
         size = Int(_internal.bit_ceil(CUnsignedInt(_n)))
@@ -24,8 +24,8 @@ struct segtree<Parameter: SegtreeParameter> {
         for i in (size - 1)..>=1 { update(i) }
     }
     
-    mutating func set(_ p: Int,_ x: S) {
-        var p = p
+    mutating func set<Index: FixedWidthInteger>(_ p: Index,_ x: S) {
+        var p = Int(p)
         assert(0 <= p && p < _n);
         p += size;
         d[p] = x;
@@ -33,13 +33,13 @@ struct segtree<Parameter: SegtreeParameter> {
         for i in 1..<=log { update(p >> i); }
     }
     
-    func get(_ p: Int) -> S {
+    func get<Index: FixedWidthInteger>(_ p: Index) -> S {
         assert(0 <= p && p < _n);
-        return d[p + size];
+        return d[Int(p) + size];
     }
     
-    func prod(_ l: Int,_ r: Int) -> S {
-        var l = l, r = r
+    func prod<Index: FixedWidthInteger>(_ l: Index,_ r: Index) -> S {
+        var l = Int(l), r = Int(r)
         assert(0 <= l && l <= r && r <= _n);
         var sml: S = e(), smr: S = e();
         l += size;
@@ -56,8 +56,8 @@ struct segtree<Parameter: SegtreeParameter> {
     
     func all_prod() -> S { return d[1]; }
 
-    func max_right(_ l: Int,_ f: (S) -> Bool) -> Int {
-        var l = l
+    func max_right<Index: FixedWidthInteger>(_ l: Index,_ f: (S) -> Bool) -> Int {
+        var l = Int(l)
         assert(0 <= l && l <= _n);
         assert(f(e()));
         if (l == _n) { return _n; }
@@ -81,8 +81,8 @@ struct segtree<Parameter: SegtreeParameter> {
         return _n;
     }
     
-    func min_left(_ r: Int,_ f: (S) -> Bool ) -> Int {
-        var r = r
+    func min_left<Index: FixedWidthInteger>(_ r: Index,_ f: (S) -> Bool ) -> Int {
+        var r = Int(r)
         assert(0 <= r && r <= _n);
         assert(f(e()));
         if (r == 0) { return 0; }
@@ -109,7 +109,7 @@ struct segtree<Parameter: SegtreeParameter> {
     private let _n, size, log: Int
     private var d: [S]
     
-    mutating func update(_ k: Int) {
+    private mutating func update(_ k: Int) {
         d[k] = op(d[2 * k], d[2 * k + 1])
     }
 }

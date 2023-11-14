@@ -2,10 +2,10 @@ import Foundation
 
 extension _internal {
 
-static func sa_naive<int: FixedWidthInteger>(_ s: [int]) -> [int] {
+static func sa_naive<int: FixedWidthInteger>(_ s: [int]) -> [Int] {
     let n = s.count;
-    var sa = [int](repeating: 0, count: n);
-    sa = (0..<n).map{ int($0) }
+    var sa = [Int](repeating: 0, count: n);
+    sa = (0..<n).map{ $0 }
     sa.sort(by: { l, r in
         var l = l, r = r
         if (l == r) { return false; }
@@ -19,13 +19,13 @@ static func sa_naive<int: FixedWidthInteger>(_ s: [int]) -> [int] {
     return sa;
 }
 
-static func sa_doubling<int>(_ s: [int]) -> [int] where int: FixedWidthInteger {
+static func sa_doubling<int>(_ s: [int]) -> [Int] where int: FixedWidthInteger {
     let n = s.count;
-    var sa = [int](repeating: 0, count: n), rnk = s, tmp = [int](repeating: 0, count: n);
-    sa = (0..<n).map{ int($0) }
+    var sa = [Int](repeating: 0, count: n), rnk = s, tmp = [int](repeating: 0, count: n);
+    sa = (0..<n).map{ $0 }
     // for (int k = 1; k < n; k *= 2) {
-    do { var k: int = 1; while k < n { defer { k *= 2 }
-        func cmp(_ x: int,_ y: int) -> Bool {
+    do { var k = 1; while k < n { defer { k *= 2 }
+        func cmp(_ x: Int,_ y: Int) -> Bool {
             if (rnk[x] != rnk[y]) { return rnk[x] < rnk[y]; }
             let rx = x + k < n ? rnk[x + k] : -1;
             let ry = y + k < n ? rnk[y + k] : -1;
@@ -47,7 +47,7 @@ static func sa_doubling<int>(_ s: [int]) -> [int] where int: FixedWidthInteger {
 // G. Nong, S. Zhang, and W. H. Chan,
 // Two Efficient Algorithms for Linear Time Suffix Array Construction
 // template <int THRESHOLD_NAIVE = 10, int THRESHOLD_DOUBLING = 40>
-static func sa_is<int>(_ s: [int],_ upper: int,_ THRESHOLD_NAIVE: int = 10,_ THRESHOLD_DOUBLING: int = 40) -> [int]
+static func sa_is<int>(_ s: [int],_ upper: int,_ THRESHOLD_NAIVE: int = 10,_ THRESHOLD_DOUBLING: int = 40) -> [Int]
     where int: FixedWidthInteger {
     let n = s.count;
     if (n == 0) { return []; }
@@ -66,7 +66,7 @@ static func sa_is<int>(_ s: [int],_ upper: int,_ THRESHOLD_NAIVE: int = 10,_ THR
         return sa_doubling(s);
     }
     
-    var sa = [int](repeating: 0, count: n);
+    var sa = [Int](repeating: 0, count: n);
     var ls = [Bool](repeating: false, count: n);
 //        for (int i = n - 2; i >= 0; i--) {
     for i in (n - 2)..>=0 {
@@ -95,11 +95,11 @@ static func sa_is<int>(_ s: [int],_ upper: int,_ THRESHOLD_NAIVE: int = 10,_ THR
         // for (auto d : lms) {
         for d in lms {
             if (d == n) { continue; }
-            sa[buf[s[d]]] = d; buf[s[d]] += 1
+            sa[buf[s[d]]] = Int(d); buf[s[d]] += 1
         }
         // std::copy(sum_l.begin(), sum_l.end(), buf.begin());
         buf = sum_l
-        sa[buf[s[n - 1]]] = int(n - 1); buf[s[n - 1]] += 1
+        sa[buf[s[n - 1]]] = n - 1; buf[s[n - 1]] += 1
         // for (int i = 0; i < n; i++) {
         for i in 0..<n {
             let v = sa[i];
@@ -142,7 +142,7 @@ static func sa_is<int>(_ s: [int],_ upper: int,_ THRESHOLD_NAIVE: int = 10,_ THR
         sorted_lms.reserveCapacity(Int(m));
         // for (int v : sa) {
         for v in sa {
-            if (lms_map[v] != -1) { sorted_lms.append(v); }
+            if (lms_map[v] != -1) { sorted_lms.append(int(v)); }
         }
         var rec_s = [int](repeating: 0, count: Int(m));
         var rec_upper: int = 0;
@@ -183,7 +183,7 @@ static func sa_is<int>(_ s: [int],_ upper: int,_ THRESHOLD_NAIVE: int = 10,_ THR
 
 }  // namespace internal
 
-func suffix_array(_ s: [Int],_ upper: Int) -> [Int] {
+func suffix_array<Index: FixedWidthInteger>(_ s: [Index],_ upper: Index) -> [Int] {
     assert(0 <= upper);
     // for (int d : s) {
     for d in s {
@@ -222,8 +222,8 @@ func suffix_array(_ s: String) -> [Int] {
 // T. Kasai, G. Lee, H. Arimura, S. Arikawa, and K. Park,
 // Linear-Time Longest-Common-Prefix Computation in Suffix Arrays and Its
 // Applications
-func lcp_array<T: Equatable>(_ s: [T],
-                             _ sa: [Int]) -> [Int] {
+func lcp_array<T: Equatable, Index: FixedWidthInteger>(_ s: [T],
+                             _ sa: [Index]) -> [Int] {
     let n = s.count;
     assert(n >= 1);
     var rnk = [Int](repeating: 0, count: n);
@@ -237,7 +237,7 @@ func lcp_array<T: Equatable>(_ s: [T],
     for i in 0..<n {
         if (h > 0) { h -= 1; }
         if (rnk[i] == 0) { continue; }
-        let j = sa[rnk[i] - 1];
+        let j = Int(sa[rnk[i] - 1]);
         // for (; j + h < n && i + h < n; h++) {
         while j + h < n && i + h < n { defer { h += 1 }
             if (s[j + h] != s[i + h]) { h -= 1; /* defer分の補正 */ break; }
@@ -247,7 +247,7 @@ func lcp_array<T: Equatable>(_ s: [T],
     return lcp;
 }
 
-func lcp_array(_ s: String,_ sa: [Int]) -> [Int] {
+func lcp_array<Index: FixedWidthInteger>(_ s: String,_ sa: [Index]) -> [Int] {
     let n = s.count;
     var s2 = [Int](repeating: 0, count: n);
     // for (int i = 0; i < n; i++) {

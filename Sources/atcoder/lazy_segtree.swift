@@ -15,7 +15,7 @@ public struct lazy_segtree<Parameter: LazySegtreeParameter> {
     @usableFromInline typealias F = Parameter.F
     
     init() { self.init(0) }
-    init(_ n: Int) { self.init([S](repeating: Parameter.e, count: n)) }
+    init<Index: FixedWidthInteger>(_ n: Index) { self.init([S](repeating: Parameter.e, count: Int(n))) }
     init(_ v: [S]) {
         _n = v.count
         size = Int(_internal.bit_ceil(CUnsignedInt(_n)))
@@ -266,11 +266,11 @@ extension lazy_segtree {
 }
 
 extension lazy_segtree {
-    mutating func set(_ p: Int,_ x: S)                        { _update{ $0.set(p,x) } }
-    mutating func get(_ p: Int) -> S                          { _update{ $0.get(p) } }
-    mutating func prod(_ l: Int,_ r: Int) -> S                { _update{ $0.prod(l, r) } }
-    mutating func apply(_ p: Int,_ f: F)                      { _update{ $0.apply(p, f) } }
-    mutating func apply(_ l: Int,_ r: Int,_ f: F)             { _update{ $0.apply(l, r, f) } }
-    mutating func max_right(_ l: Int,_ g: (S) -> Bool) -> Int { _update{ $0.max_right(l, g) } }
-    mutating func min_left(_ r: Int,_ g: (S) -> Bool) -> Int  { _update{ $0.min_left(r, g) } }
+    mutating func set<Index: FixedWidthInteger>(_ p: Index,_ x: S)                        { _update{ $0.set(Int(p),x) } }
+    mutating func get<Index: FixedWidthInteger>(_ p: Index) -> S                          { _update{ $0.get(Int(p)) } }
+    mutating func prod<Index: FixedWidthInteger>(_ l: Index,_ r: Index) -> S                { _update{ $0.prod(Int(l), Int(r)) } }
+    mutating func apply<Index: FixedWidthInteger>(_ p: Index,_ f: F)                      { _update{ $0.apply(Int(p), f) } }
+    mutating func apply<Index: FixedWidthInteger>(_ l: Index,_ r: Index,_ f: F)             { _update{ $0.apply(Int(l), Int(r), f) } }
+    mutating func max_right<Index: FixedWidthInteger>(_ l: Index,_ g: (S) -> Bool) -> Int { _update{ $0.max_right(Int(l), g) } }
+    mutating func min_left<Index: FixedWidthInteger>(_ r: Index,_ g: (S) -> Bool) -> Int  { _update{ $0.min_left(Int(r), g) } }
 }

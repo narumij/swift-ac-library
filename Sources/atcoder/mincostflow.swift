@@ -5,10 +5,12 @@ struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
     typealias Cost = Value
 //  public:
     init() { _n = 0 }
-    init(_ n: Int) { _n = n }
+    init<Index: FixedWidthInteger>(_ n: Index) { _n = Int(n) }
 
     @discardableResult
-    mutating func add_edge(_ from: Int,_ to: Int,_ cap: Cap,_ cost: Cost) -> Int {
+    mutating func add_edge<Index: FixedWidthInteger>(_ from: Index,_ to: Index,_ cap: Cap,_ cost: Cost) -> Int {
+        let from = Int(from)
+        let to = Int(to)
         assert(0 <= from && from < _n);
         assert(0 <= to && to < _n);
         assert(0 <= cap);
@@ -32,23 +34,26 @@ struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
         var cost: Cost;
     };
 
-    func get_edge(_ i: Int) -> edge {
+    func get_edge<Index: FixedWidthInteger>(_ i: Index) -> edge {
+        let i = Int(i)
         let m = _edges.count;
         assert(0 <= i && i < m);
         return _edges[i];
     }
     func edges() -> [edge] { return _edges; }
 
-    mutating func flow(_ s: Int,_ t: Int) -> (Cap,Cost) {
+    mutating func flow<Index: FixedWidthInteger>(_ s: Index,_ t: Index) -> (Cap,Cost) {
         return flow(s, t, Cap.max);
     }
-    mutating func flow(_ s: Int,_ t: Int,_ flow_limit: Cap) -> (Cap,Cost) {
+    mutating func flow<Index: FixedWidthInteger>(_ s: Index,_ t: Index,_ flow_limit: Cap) -> (Cap,Cost) {
         return slope(s, t, flow_limit).last!;
     }
-    mutating func slope(_ s: Int,_ t: Int) -> [(Cap,Cost)] {
+    mutating func slope<Index: FixedWidthInteger>(_ s: Index,_ t: Index) -> [(Cap,Cost)] {
         return slope(s, t, Cap.max);
     }
-    mutating func slope(_ s: Int,_ t: Int,_ flow_limit: Cap) -> [(Cap,Cost)] {
+    mutating func slope<Index: FixedWidthInteger>(_ s: Index,_ t: Index,_ flow_limit: Cap) -> [(Cap,Cost)] {
+        let s = Int(s)
+        let t = Int(t)
         assert(0 <= s && s < _n);
         assert(0 <= t && t < _n);
         assert(s != t);
@@ -92,8 +97,8 @@ struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
     }
 
 //  private:
-    var _n: Int;
-    var _edges: [edge] = [];
+    private var _n: Int;
+    private var _edges: [edge] = [];
 
     // inside edge
     struct _edge: Zero {
@@ -109,7 +114,7 @@ struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
         static func <(lhs: Q, rhs: Q) -> Bool { return lhs.key > rhs.key }
     };
 
-    func slope(_ g: inout _internal.csr<_edge>,
+    private func slope(_ g: inout _internal.csr<_edge>,
                _ s: Int,
                _ t: Int,
                _ flow_limit: Cap) -> [(Cap, Cost)] {

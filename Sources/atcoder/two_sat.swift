@@ -3,9 +3,11 @@ import Foundation
 struct two_sat {
 //  public:
     init() { _n = 0; _answer = []; scc = _internal.scc_graph(0) }
-    init(_ n: Int) { _n = n; _answer = [Bool](repeating: false, count: n); scc = _internal.scc_graph(2 * n) }
+    init<Index: FixedWidthInteger>(_ n: Index) { let n = Int(n); _n = n; _answer = [Bool](repeating: false, count: n); scc = _internal.scc_graph(2 * n) }
 
-    mutating func add_clause(_ i: Int,_ f: Bool,_ j: Int,_ g: Bool) {
+    mutating func add_clause<Index: FixedWidthInteger>(_ i: Index,_ f: Bool,_ j: Index,_ g: Bool) {
+        let i = Int(i)
+        let j = Int(j)
         assert(0 <= i && i < _n);
         assert(0 <= j && j < _n);
         scc.add_edge(2 * i + (f ? 0 : 1), 2 * j + (g ? 1 : 0));
@@ -23,7 +25,7 @@ struct two_sat {
     func answer() -> [Bool] { return _answer; }
 
 //  private:
-    var _n: Int;
-    var _answer: [Bool];
-    var scc: _internal.scc_graph;
+    private var _n: Int;
+    private var _answer: [Bool];
+    private var scc: _internal.scc_graph;
 };

@@ -2,7 +2,7 @@ import Foundation
 
 public struct dsu {
     init() { _n = 0; parent_or_size = [] }
-    init(_ n: Int) { _n = n; parent_or_size = .init(repeating: -1, count: n) }
+    init<Index: FixedWidthInteger>(_ n: Index) { _n = Int(n); parent_or_size = .init(repeating: -1, count: Int(n)) }
     @usableFromInline var _n: Int;
     @usableFromInline var parent_or_size: ContiguousArray<Int>;
 };
@@ -92,20 +92,20 @@ extension dsu {
 
 extension dsu {
     
-    mutating func merge(_ a: Int,_ b: Int) -> Int {
-        _update { $0.merge(a, b) }
+    mutating func merge<Index: FixedWidthInteger>(_ a: Index,_ b: Index) -> Int {
+        _update { $0.merge(Int(a), Int(b)) }
     }
 
-    mutating func same(_ a: Int,_ b: Int) -> Bool {
-        _update { $0.same(a, b) }
+    mutating func same<Index: FixedWidthInteger>(_ a: Index,_ b: Index) -> Bool {
+        _update { $0.same(Int(a), Int(b)) }
     }
 
-    mutating func leader(_ a: Int) -> Int {
-        _update { $0.leader(a) }
+    mutating func leader<Index: FixedWidthInteger>(_ a: Index) -> Int {
+        _update { $0.leader(Int(a)) }
     }
 
-    mutating func size(_ a: Int) -> Int {
-        _update { $0.size(a) }
+    mutating func size<Index: FixedWidthInteger>(_ a: Index) -> Int {
+        _update { $0.size(Int(a)) }
     }
 
     mutating func groups() -> [[Int]] {

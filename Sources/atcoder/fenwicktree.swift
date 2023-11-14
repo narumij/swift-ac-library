@@ -5,7 +5,7 @@ public struct fenwick_tree<T: AdditiveArithmetic & ToUnsigned> where T: ToUnsign
     init() { _n = 0; data = [] }
     init<Index: FixedWidthInteger>(_ n: Index) { _n = Int(n); data = .init(repeating: 0, count: Int(n)) }
 
-    mutating func add<I: FixedWidthInteger>(_ p: I,_ x: T) {
+    mutating func add<Index: FixedWidthInteger>(_ p: Index,_ x: T) {
         _update{ $0.add(Int(p),x) }
     }
 
