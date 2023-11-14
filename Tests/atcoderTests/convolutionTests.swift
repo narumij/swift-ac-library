@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import atcoder
+import atcoder
 
 fileprivate typealias uint = CUnsignedInt;
 fileprivate typealias ll = CLongLong;
@@ -65,10 +65,6 @@ fileprivate func conv_naive2<T: FixedWidthInteger, MOD: mod_type>(_ t: MOD.Type,
         }
     }
     return c;
-}
-
-extension mod_type {
-    static func value<T: FixedWidthInteger>() -> T { T(umod()) }
 }
 
 final class convolutionTests: XCTestCase {

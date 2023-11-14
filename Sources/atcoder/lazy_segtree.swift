@@ -11,12 +11,12 @@ public protocol LazySegtreeParameter {
 }
 
 public struct lazy_segtree<Parameter: LazySegtreeParameter> {
-    @usableFromInline typealias S = Parameter.S
-    @usableFromInline typealias F = Parameter.F
+    public typealias S = Parameter.S
+    public typealias F = Parameter.F
     
-    init() { self.init(0) }
-    init<Index: FixedWidthInteger>(_ n: Index) { self.init([S](repeating: Parameter.e, count: Int(n))) }
-    init(_ v: [S]) {
+    public init() { self.init(0) }
+    public init<Index: FixedWidthInteger>(_ n: Index) { self.init([S](repeating: Parameter.e, count: Int(n))) }
+    public init(_ v: [S]) {
         _n = v.count
         size = Int(_internal.bit_ceil(CUnsignedInt(_n)))
         log = Int(_internal.countr_zero(CUnsignedInt(size)))
@@ -87,7 +87,7 @@ extension lazy_segtree._UnsafeHandle {
     }
 }
 
-extension lazy_segtree {
+public extension lazy_segtree {
     func all_prod() -> S { return d[1]; }
 }
 
@@ -265,7 +265,7 @@ extension lazy_segtree {
     }
 }
 
-extension lazy_segtree {
+public extension lazy_segtree {
     mutating func set<Index: FixedWidthInteger>(_ p: Index,_ x: S)                        { _update{ $0.set(Int(p),x) } }
     mutating func get<Index: FixedWidthInteger>(_ p: Index) -> S                          { _update{ $0.get(Int(p)) } }
     mutating func prod<Index: FixedWidthInteger>(_ l: Index,_ r: Index) -> S                { _update{ $0.prod(Int(l), Int(r)) } }

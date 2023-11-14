@@ -1,6 +1,6 @@
 import Foundation
 
-func pow_mod(_ x: CLongLong,_ n: CLongLong,_ m: CInt) -> CLongLong {
+public func pow_mod(_ x: CLongLong,_ n: CLongLong,_ m: CInt) -> CLongLong {
     var n = n
     assert(0 <= n && 1 <= m);
     if (m == 1) { return 0; }
@@ -14,7 +14,7 @@ func pow_mod(_ x: CLongLong,_ n: CLongLong,_ m: CInt) -> CLongLong {
     return CLongLong(r);
 }
 
-func inv_mod(_ x: CLongLong,_ m: CLongLong) -> CLongLong {
+public func inv_mod(_ x: CLongLong,_ m: CLongLong) -> CLongLong {
     assert(1 <= m);
     let z = _internal.inv_gcd(x, m);
     assert(z.first == 1);
@@ -22,7 +22,7 @@ func inv_mod(_ x: CLongLong,_ m: CLongLong) -> CLongLong {
 }
 
 // (rem, mod)
-func crt(_ r: [CLongLong],
+public func crt(_ r: [CLongLong],
          _ m: [CLongLong]) -> (first: CLongLong, second: CLongLong) {
     assert(r.count == m.count);
     let n = r.count;
@@ -71,7 +71,7 @@ func crt(_ r: [CLongLong],
     return (r0, m0);
 }
 
-func floor_sum(_ n: CLongLong,_ m: CLongLong,_ a: CLongLong,_ b: CLongLong) -> CLongLong {
+public func floor_sum(_ n: CLongLong,_ m: CLongLong,_ a: CLongLong,_ b: CLongLong) -> CLongLong {
     var a = a, b = b
     assert(0 <= n && n < ((1 as CLongLong) << 32));
     assert(1 <= m && m < ((1 as CLongLong) << 32));

@@ -1,14 +1,14 @@
 import Foundation
 
-struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
-    typealias Cap = Value
-    typealias Cost = Value
+public struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
+    public typealias Cap = Value
+    public typealias Cost = Value
 //  public:
-    init() { _n = 0 }
-    init<Index: FixedWidthInteger>(_ n: Index) { _n = Int(n) }
+    public init() { _n = 0 }
+    public init<Index: FixedWidthInteger>(_ n: Index) { _n = Int(n) }
 
     @discardableResult
-    mutating func add_edge<Index: FixedWidthInteger>(_ from: Index,_ to: Index,_ cap: Cap,_ cost: Cost) -> Int {
+    public mutating func add_edge<Index: FixedWidthInteger>(_ from: Index,_ to: Index,_ cap: Cap,_ cost: Cost) -> Int {
         let from = Int(from)
         let to = Int(to)
         assert(0 <= from && from < _n);
@@ -20,7 +20,7 @@ struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
         return m;
     }
 
-    struct edge {
+    public struct edge {
         init() { from = 0; to = 0; cap = 0; flow = 0; cost = 0 }
         internal init(_ from: Int,_ to: Int,_ cap: Cap,_ flow: Cap,_ cost: Cost) {
             self.from = from
@@ -29,29 +29,29 @@ struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
             self.flow = flow
             self.cost = cost
         }
-        var from, to: Int;
-        var cap, flow: Cap;
-        var cost: Cost;
+        public var from, to: Int;
+        public var cap, flow: Cap;
+        public var cost: Cost;
     };
 
-    func get_edge<Index: FixedWidthInteger>(_ i: Index) -> edge {
+    public func get_edge<Index: FixedWidthInteger>(_ i: Index) -> edge {
         let i = Int(i)
         let m = _edges.count;
         assert(0 <= i && i < m);
         return _edges[i];
     }
-    func edges() -> [edge] { return _edges; }
+    public func edges() -> [edge] { return _edges; }
 
-    mutating func flow<Index: FixedWidthInteger>(_ s: Index,_ t: Index) -> (Cap,Cost) {
+    public mutating func flow<Index: FixedWidthInteger>(_ s: Index,_ t: Index) -> (Cap,Cost) {
         return flow(s, t, Cap.max);
     }
-    mutating func flow<Index: FixedWidthInteger>(_ s: Index,_ t: Index,_ flow_limit: Cap) -> (Cap,Cost) {
+    public mutating func flow<Index: FixedWidthInteger>(_ s: Index,_ t: Index,_ flow_limit: Cap) -> (Cap,Cost) {
         return slope(s, t, flow_limit).last!;
     }
-    mutating func slope<Index: FixedWidthInteger>(_ s: Index,_ t: Index) -> [(Cap,Cost)] {
+    public mutating func slope<Index: FixedWidthInteger>(_ s: Index,_ t: Index) -> [(Cap,Cost)] {
         return slope(s, t, Cap.max);
     }
-    mutating func slope<Index: FixedWidthInteger>(_ s: Index,_ t: Index,_ flow_limit: Cap) -> [(Cap,Cost)] {
+    public mutating func slope<Index: FixedWidthInteger>(_ s: Index,_ t: Index,_ flow_limit: Cap) -> [(Cap,Cost)] {
         let s = Int(s)
         let t = Int(t)
         assert(0 <= s && s < _n);

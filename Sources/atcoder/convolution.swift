@@ -245,7 +245,7 @@ extension Array where Element: modint_base_protocol {
 
 
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-func convolution<mint: modint_base_protocol>(_ a: [mint],_ b: [mint]) -> [mint] {
+public func convolution<mint: modint_base_protocol>(_ a: [mint],_ b: [mint]) -> [mint] {
     let n = a.count, m = b.count;
     if ((n == 0) || (m == 0)) { return []; }
 
@@ -272,7 +272,7 @@ func convolution<mint: modint_base_protocol>(_ a: [mint],_ b: [mint]) -> [mint] 
 //template <unsigned int mod = 998244353,
 //          class T,
 //          std::enable_if_t<internal::is_integral<T>::value>* = nullptr>
-func convolution<T: FixedWidthInteger, mod: mod_type>(_ t: mod.Type,_ a: [T],_ b: [T]) -> [T] {
+public func convolution<T: FixedWidthInteger, mod: mod_type>(_ t: mod.Type,_ a: [T],_ b: [T]) -> [T] {
     
     let n = a.count, m = b.count;
     if ((n == 0) || (m == 0)) { return []; }
@@ -300,11 +300,11 @@ func convolution<T: FixedWidthInteger, mod: mod_type>(_ t: mod.Type,_ a: [T],_ b
     return c;
 }
 
-func convolution<T: FixedWidthInteger>(_ a: [T],_ b: [T]) -> [T] {
+public func convolution<T: FixedWidthInteger>(_ a: [T],_ b: [T]) -> [T] {
     convolution(mod_998244353.self, a, b)
 }
 
-func convolution_ll(_ a: [CLongLong],
+public func convolution_ll(_ a: [CLongLong],
                     _ b: [CLongLong]) -> [CLongLong] {
     let n = a.count, m = b.count;
     if ((n == 0) || (m == 0)) { return []; }

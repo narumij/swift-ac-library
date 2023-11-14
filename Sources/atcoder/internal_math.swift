@@ -23,14 +23,14 @@ func imValue(_ _m: CInt) -> CUnsignedLongLong {
 // Fast modular multiplication by barrett reduction
 // Reference: https://en.wikipedia.org/wiki/Barrett_reduction
 // NOTE: reconsider after Ice Lake
-struct barrett {
+public struct barrett {
     let m: CUnsignedInt
     let im: CUnsignedLongLong
-    init<Unsigned: UnsignedInteger>(_ _m: Unsigned) {
+    public init<Unsigned: UnsignedInteger>(_ _m: Unsigned) {
         m = CUnsignedInt(_m)
         im = imValue(CUnsignedInt(_m))
     }
-    init<Signed: SignedInteger>(_ _m: Signed) {
+    public init<Signed: SignedInteger>(_ _m: Signed) {
         m = CUnsignedInt(bitPattern: CInt(_m))
         im = imValue(CInt(_m))
     }

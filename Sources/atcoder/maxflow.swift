@@ -1,13 +1,13 @@
 import Foundation
 import Collections
 
-struct mf_graph<Cap: FixedWidthInteger> {
+public struct mf_graph<Cap: FixedWidthInteger> {
 //  public:
-    init() { _n = 0; g = [] }
-    init<Index: FixedWidthInteger>(_ n: Index) { _n = Int(n); g = [[_edge]].init(repeating: [], count: Int(n)) }
+    public init() { _n = 0; g = [] }
+    public init<Index: FixedWidthInteger>(_ n: Index) { _n = Int(n); g = [[_edge]].init(repeating: [], count: Int(n)) }
 
     @discardableResult
-    mutating func add_edge<Index: FixedWidthInteger>(_ from: Index,_ to: Index,_ cap: Cap) -> Int {
+    public mutating func add_edge<Index: FixedWidthInteger>(_ from: Index,_ to: Index,_ cap: Cap) -> Int {
         let from = Int(from)
         let to = Int(to)
         assert(0 <= from && from < _n);
@@ -23,7 +23,7 @@ struct mf_graph<Cap: FixedWidthInteger> {
         return m;
     }
 
-    struct edge {
+    public struct edge {
         init() {
             self.init(0, 0, 0, 0)
         }
@@ -33,11 +33,11 @@ struct mf_graph<Cap: FixedWidthInteger> {
             self.cap = cap
             self.flow = flow
         }
-        var from, to: Int;
-        var cap, flow: Cap;
+        public var from, to: Int;
+        public var cap, flow: Cap;
     };
 
-    func get_edge<Index: FixedWidthInteger>(_ i: Index) -> edge {
+    public func get_edge<Index: FixedWidthInteger>(_ i: Index) -> edge {
         let i = Int(i)
         let m = pos.count;
         assert(0 <= i && i < m);
@@ -45,7 +45,7 @@ struct mf_graph<Cap: FixedWidthInteger> {
         let _re = g[_e.to][_e.rev];
         return edge(pos[i].first, _e.to, _e.cap + _re.cap, _re.cap);
     }
-    func edges() -> [edge] {
+    public func edges() -> [edge] {
         let m = pos.count;
         var result: [edge] = [];
 //        for (int i = 0; i < m; i++) {
@@ -54,7 +54,7 @@ struct mf_graph<Cap: FixedWidthInteger> {
         }
         return result;
     }
-    mutating func change_edge<Index: FixedWidthInteger>(_ i: Index,_ new_cap: Cap,_ new_flow: Cap) {
+    public mutating func change_edge<Index: FixedWidthInteger>(_ i: Index,_ new_cap: Cap,_ new_flow: Cap) {
         let i = Int(i)
         let m = pos.count;
         assert(0 <= i && i < m);
@@ -67,10 +67,10 @@ struct mf_graph<Cap: FixedWidthInteger> {
         g[_e.to][_e.rev] = _re
     }
 
-    mutating func flow<Index: FixedWidthInteger>(_ s: Index,_ t: Index) -> Cap {
+    public mutating func flow<Index: FixedWidthInteger>(_ s: Index,_ t: Index) -> Cap {
         return flow(s, t, Cap.max);
     }
-    mutating func flow<Index: FixedWidthInteger>(_ s: Index,_ t: Index,_ flow_limit: Cap) -> Cap {
+    public mutating func flow<Index: FixedWidthInteger>(_ s: Index,_ t: Index,_ flow_limit: Cap) -> Cap {
         let s = Int(s)
         let t = Int(t)
         assert(0 <= s && s < _n);
@@ -131,7 +131,7 @@ struct mf_graph<Cap: FixedWidthInteger> {
         return flow;
     }
 
-    func min_cut<Index: FixedWidthInteger>(_ s: Index) -> [Bool] {
+    public func min_cut<Index: FixedWidthInteger>(_ s: Index) -> [Bool] {
         let s = Int(s)
         var visited = [Bool](repeating: false, count:_n);
         var que = Deque<Int>()

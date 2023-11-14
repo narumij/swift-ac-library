@@ -1,8 +1,8 @@
 import Foundation
 
 public struct dsu {
-    init() { _n = 0; parent_or_size = [] }
-    init<Index: FixedWidthInteger>(_ n: Index) { _n = Int(n); parent_or_size = .init(repeating: -1, count: Int(n)) }
+    public init() { _n = 0; parent_or_size = [] }
+    public init<Index: FixedWidthInteger>(_ n: Index) { _n = Int(n); parent_or_size = .init(repeating: -1, count: Int(n)) }
     @usableFromInline var _n: Int;
     @usableFromInline var parent_or_size: ContiguousArray<Int>;
 };
@@ -90,7 +90,7 @@ extension dsu {
     }
 }
 
-extension dsu {
+public extension dsu {
     
     mutating func merge<Index: FixedWidthInteger>(_ a: Index,_ b: Index) -> Int {
         _update { $0.merge(Int(a), Int(b)) }

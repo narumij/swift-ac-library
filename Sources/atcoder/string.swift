@@ -183,7 +183,7 @@ static func sa_is<int>(_ s: [int],_ upper: int,_ THRESHOLD_NAIVE: int = 10,_ THR
 
 }  // namespace internal
 
-func suffix_array<Index: FixedWidthInteger>(_ s: [Index],_ upper: Index) -> [Int] {
+public func suffix_array<Index: FixedWidthInteger>(_ s: [Index],_ upper: Index) -> [Int] {
     assert(0 <= upper);
     // for (int d : s) {
     for d in s {
@@ -193,7 +193,7 @@ func suffix_array<Index: FixedWidthInteger>(_ s: [Index],_ upper: Index) -> [Int
     return sa;
 }
 
-func suffix_array<T: Comparable>(_ s: [T]) -> [Int] {
+public func suffix_array<T: Comparable>(_ s: [T]) -> [Int] {
     let n = s.count;
     var idx = [Int](repeating: 0, count: n);
     idx = (0..<n).map { $0 }
@@ -208,7 +208,7 @@ func suffix_array<T: Comparable>(_ s: [T]) -> [Int] {
     return _internal.sa_is(s2, now);
 }
 
-func suffix_array(_ s: String) -> [Int] {
+public func suffix_array(_ s: String) -> [Int] {
     let n = s.count;
     var s2 = [Int](repeating: 0, count: n);
     // for (int i = 0; i < n; i++) {
@@ -222,7 +222,7 @@ func suffix_array(_ s: String) -> [Int] {
 // T. Kasai, G. Lee, H. Arimura, S. Arikawa, and K. Park,
 // Linear-Time Longest-Common-Prefix Computation in Suffix Arrays and Its
 // Applications
-func lcp_array<T: Equatable, Index: FixedWidthInteger>(_ s: [T],
+public func lcp_array<T: Equatable, Index: FixedWidthInteger>(_ s: [T],
                              _ sa: [Index]) -> [Int] {
     let n = s.count;
     assert(n >= 1);
@@ -247,7 +247,7 @@ func lcp_array<T: Equatable, Index: FixedWidthInteger>(_ s: [T],
     return lcp;
 }
 
-func lcp_array<Index: FixedWidthInteger>(_ s: String,_ sa: [Index]) -> [Int] {
+public func lcp_array<Index: FixedWidthInteger>(_ s: String,_ sa: [Index]) -> [Int] {
     let n = s.count;
     var s2 = [Int](repeating: 0, count: n);
     // for (int i = 0; i < n; i++) {
@@ -261,7 +261,7 @@ func lcp_array<Index: FixedWidthInteger>(_ s: String,_ sa: [Index]) -> [Int] {
 // D. Gusfield,
 // Algorithms on Strings, Trees, and Sequences: Computer Science and
 // Computational Biology
-func z_algorithm<T: Comparable>(_ s: [T]) -> [Int] {
+public func z_algorithm<T: Comparable>(_ s: [T]) -> [Int] {
     let n = s.count;
     if (n == 0) { return []; }
     var z = [Int](repeating: 0, count: n);
@@ -281,7 +281,7 @@ func z_algorithm<T: Comparable>(_ s: [T]) -> [Int] {
     return z;
 }
 
-func z_algorithm(_ s: String) -> [Int] {
+public func z_algorithm(_ s: String) -> [Int] {
     let n = s.count;
     var s2 = [Int](repeating: 0, count: n);
     // for (int i = 0; i < n; i++) {

@@ -1,29 +1,29 @@
 import Foundation
 
-struct modint_base_static<bt: static_mod>: modint_implementation {
-    init() { self.init(0) }
-    init<T: FixedWidthInteger>(_ v: T) {
+public struct modint_base_static<bt: static_mod>: modint_implementation {
+    public init() { self.init(0) }
+    public init<T: FixedWidthInteger>(_ v: T) {
         _v = Self.value(v)
     }
     var _v: CUnsignedInt
 }
 
 extension modint_base_static {
-    init(unsigned: UInt32) { self.init(unsigned) }
-    var unsigned: CInt.Magnitude { val() }
+    public init(unsigned: UInt32) { self.init(unsigned) }
+    public var unsigned: CInt.Magnitude { val() }
 }
 
 extension modint_base_static: ExpressibleByIntegerLiteral {
-    init(integerLiteral value: CInt) {
+    public init(integerLiteral value: CInt) {
         self.init(value)
     }
 }
 
-protocol modint_base_protocol: AdditiveArithmetic, Equatable, ExpressibleByIntegerLiteral, ToUnsigned {
-    associatedtype bt: mod_type
+public protocol modint_base_protocol: AdditiveArithmetic, Equatable, ExpressibleByIntegerLiteral, ToUnsigned {
     static func mod() -> CInt
     static func raw(_ v: CInt) -> mint
     init()
+    init(_ v: Bool)
     init<T: FixedWidthInteger>(_ v: T)
     func val() -> CUnsignedInt
     static func +(lhs: mint, rhs: mint) -> mint
@@ -34,16 +34,22 @@ protocol modint_base_protocol: AdditiveArithmetic, Equatable, ExpressibleByInteg
     static func -=(lhs: inout mint, rhs: mint)
     static func *=(lhs: inout mint, rhs: mint)
     static func /=(lhs: inout mint, rhs: mint)
+    static prefix func + (_ m: Self) -> Self
+    static prefix func - (_ m: Self) -> Self
     func pow(_ n: CLongLong) -> mint
     func inv() -> mint
 }
 
 extension modint_base_protocol {
-    typealias mint = Self
+    public typealias mint = Self
+}
+
+public protocol modint_dynamic_protocol: modint_base_protocol {
+    static func set_mod(_ m: CInt)
 }
 
 protocol modint_implementation: modint_base_protocol, CustomStringConvertible {
-//    associatedtype bt: mod_type
+    associatedtype bt: mod_type
     init()
     init<T: FixedWidthInteger>(_ v: T)
     var _v: CUnsignedInt { get set }
@@ -51,59 +57,57 @@ protocol modint_implementation: modint_base_protocol, CustomStringConvertible {
 
 extension modint_implementation {
     
-    typealias mint = Self
-
-    static func mod() -> CInt { return CInt(bitPattern: bt.umod()); }
+    public static func mod() -> CInt { return CInt(bitPattern: bt.umod()); }
     
-    static func raw(_ v: CInt) -> mint {
+    public static func raw(_ v: CInt) -> mint {
         var x = mint();
         x._v = CUnsignedInt(bitPattern: v);
         return x;
     }
 
-    init(_ v: Bool) {
+    public init(_ v: Bool) {
         self.init(CInt(v ? 1 : 0))
     }
 
-    func val() -> CUnsignedInt { return _v; }
+    public func val() -> CUnsignedInt { return _v; }
     
-    static func + (lhs: mint, rhs: mint) -> mint {
+    public static func + (lhs: mint, rhs: mint) -> mint {
         var _v = lhs._v &+ rhs._v
         if (_v >= umod()) { _v -= umod(); }
         return Self.raw(CInt(bitPattern: _v))
     }
-    static func - (lhs: mint, rhs: mint) -> mint {
+    public static func - (lhs: mint, rhs: mint) -> mint {
         var _v = lhs._v &+ CUnsignedInt(bitPattern: mod()) &- rhs._v
         if (_v >= umod()) { _v -= umod(); }
         return Self.raw(CInt(bitPattern: _v))
     }
-    static func * (lhs: mint, rhs: mint) -> mint {
+    public static func * (lhs: mint, rhs: mint) -> mint {
         let _v = bt.mul(lhs._v, rhs._v);
         return Self.raw(CInt(bitPattern: _v))
     }
-    static func / (lhs: mint, rhs: mint) -> mint {
+    public static func / (lhs: mint, rhs: mint) -> mint {
         lhs * rhs.inv()
     }
-    static func +=(lhs: inout Self, rhs: Self) {
+    public static func +=(lhs: inout Self, rhs: Self) {
         lhs = lhs + rhs
     }
-    static func -=(lhs: inout Self, rhs: Self) {
+    public static func -=(lhs: inout Self, rhs: Self) {
         lhs = lhs - rhs
    }
-    static func *=(lhs: inout Self, rhs: Self) {
+    public static func *=(lhs: inout Self, rhs: Self) {
         lhs = lhs * rhs
     }
-    static func /=(lhs: inout Self, rhs: Self) {
+    public static func /=(lhs: inout Self, rhs: Self) {
         lhs = lhs / rhs
     }
-    static prefix func + (_ m: Self) -> Self {
+    public static prefix func + (_ m: Self) -> Self {
         return m
     }
-    static prefix func - (_ m: Self) -> Self {
+    public static prefix func - (_ m: Self) -> Self {
         return Self() - m
     }
 
-    func pow(_ n: CLongLong) -> mint {
+    public func pow(_ n: CLongLong) -> mint {
         assert(0 <= n);
         var n = n
         var x = self, r: Self = Self.init(CInt(1));
@@ -115,7 +119,7 @@ extension modint_implementation {
         return r;
     }
     
-    func inv() -> mint {
+    public func inv() -> mint {
         let eg = _internal.inv_gcd(CLongLong(_v), CLongLong(Self.mod()));
         assert(eg.first == 1);
         return Self.init(CInt(eg.second));
@@ -123,13 +127,13 @@ extension modint_implementation {
     
     static func umod() -> CUnsignedInt { return bt.umod(); }
     
-    var description: String { val().description }
+    public var description: String { val().description }
 }
 
-protocol modint_dynamic_implementation: modint_implementation where bt: dynamic_mod { }
+protocol modint_dynamic_implementation: modint_implementation & modint_dynamic_protocol where bt: dynamic_mod { }
 
 extension modint_dynamic_implementation {
-    static func set_mod(_ m: CInt) {
+    public static func set_mod(_ m: CInt) {
         bt.set_mod(m)
     }
 }
@@ -142,22 +146,22 @@ extension modint_implementation {
     }
 }
 
-struct modint_base_dynamic<bt: dynamic_mod>: modint_dynamic_implementation {
-    init() { self.init(0) }
-    init<T: FixedWidthInteger>(_ v: T) {
+public struct modint_base_dynamic<bt: dynamic_mod>: modint_dynamic_implementation {
+    public init() { self.init(0) }
+    public init<T: FixedWidthInteger>(_ v: T) {
         _v = Self.value(v)
     }
     var _v: CUnsignedInt
 }
 
 extension modint_base_dynamic {
-    init(unsigned: UInt32) { self.init(unsigned) }
-    var unsigned: CInt.Magnitude { val() }
+    public init(unsigned: UInt32) { self.init(unsigned) }
+    public var unsigned: CInt.Magnitude { val() }
 }
 
 
 extension modint_base_dynamic: ExpressibleByIntegerLiteral {
-    init(integerLiteral value: CInt) {
+    public init(integerLiteral value: CInt) {
         self.init(value)
     }
 }
@@ -181,12 +185,9 @@ extension modint_base: ExpressibleByIntegerLiteral {
     }
 }
 
-typealias modint998244353 = modint_base_static<mod_998244353>
-typealias modint1000000007 = modint_base_static<mod_1000000007>
-
-typealias static_modint = modint_base_static
-
-typealias dynamic_modint = modint_base_dynamic<mod_dynamic>
-
-typealias modint = dynamic_modint
+public typealias modint998244353 = modint_base_static<mod_998244353>
+public typealias modint1000000007 = modint_base_static<mod_1000000007>
+public typealias static_modint = modint_base_static
+public typealias dynamic_modint = modint_base_dynamic<mod_dynamic>
+public typealias modint = dynamic_modint
 
