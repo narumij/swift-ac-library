@@ -1,25 +1,13 @@
 import Foundation
 
 public struct modint_base_static<bt: static_mod>: modint_implementation {
-    public init() { self.init(0) }
     public init<T: FixedWidthInteger>(_ v: T) {
         _v = Self.value(v)
     }
     var _v: CUnsignedInt
 }
 
-extension modint_base_static {
-    public init(unsigned: UInt32) { self.init(unsigned) }
-    public var unsigned: CInt.Magnitude { val() }
-}
-
-extension modint_base_static: ExpressibleByIntegerLiteral {
-    public init(integerLiteral value: CInt) {
-        self.init(value)
-    }
-}
-
-public protocol modint_base_protocol: AdditiveArithmetic, Equatable, ExpressibleByIntegerLiteral, ToUnsigned {
+public protocol modint_base_protocol: AdditiveArithmetic, Equatable, ExpressibleByIntegerLiteral, CustomStringConvertible, ToUnsigned {
     static func mod() -> CInt
     static func raw(_ v: CInt) -> mint
     init()
@@ -50,8 +38,6 @@ public protocol modint_dynamic_protocol: modint_base_protocol {
 
 protocol modint_implementation: modint_base_protocol, CustomStringConvertible {
     associatedtype bt: mod_type
-    init()
-    init<T: FixedWidthInteger>(_ v: T)
     var _v: CUnsignedInt { get set }
 }
 
@@ -63,10 +49,6 @@ extension modint_implementation {
         var x = mint();
         x._v = CUnsignedInt(bitPattern: v);
         return x;
-    }
-
-    public init(_ v: Bool) {
-        self.init(CInt(v ? 1 : 0))
     }
 
     public func val() -> CUnsignedInt { return _v; }
@@ -130,6 +112,24 @@ extension modint_implementation {
     public var description: String { val().description }
 }
 
+extension modint_implementation {
+    public init() { self.init(0) }
+    public init(_ v: Bool) {
+        self.init(CInt(v ? 1 : 0))
+    }
+}
+
+extension modint_implementation {
+    public init(unsigned: UInt32) { self.init(unsigned) }
+    public var unsigned: CInt.Magnitude { val() }
+}
+
+extension modint_implementation {
+    public init(integerLiteral value: CInt) {
+        self.init(value)
+    }
+}
+
 protocol modint_dynamic_implementation: modint_implementation & modint_dynamic_protocol where bt: dynamic_mod { }
 
 extension modint_dynamic_implementation {
@@ -147,42 +147,17 @@ extension modint_implementation {
 }
 
 public struct modint_base_dynamic<bt: dynamic_mod>: modint_dynamic_implementation {
-    public init() { self.init(0) }
     public init<T: FixedWidthInteger>(_ v: T) {
         _v = Self.value(v)
     }
     var _v: CUnsignedInt
 }
 
-extension modint_base_dynamic {
-    public init(unsigned: UInt32) { self.init(unsigned) }
-    public var unsigned: CInt.Magnitude { val() }
-}
-
-
-extension modint_base_dynamic: ExpressibleByIntegerLiteral {
-    public init(integerLiteral value: CInt) {
-        self.init(value)
-    }
-}
-
 struct modint_base<bt: mod_type>: modint_implementation {
-    init() { self.init(0) }
     init<T: FixedWidthInteger>(_ v: T) {
         _v = Self.value(v)
     }
     var _v: CUnsignedInt
-}
-
-extension modint_base {
-    init(unsigned: UInt32) { self.init(unsigned) }
-    var unsigned: CInt.Magnitude { val() }
-}
-
-extension modint_base: ExpressibleByIntegerLiteral {
-    init(integerLiteral value: CInt) {
-        self.init(value)
-    }
 }
 
 public typealias modint998244353 = modint_base_static<mod_998244353>
@@ -190,4 +165,3 @@ public typealias modint1000000007 = modint_base_static<mod_1000000007>
 public typealias static_modint = modint_base_static
 public typealias dynamic_modint = modint_base_dynamic<mod_dynamic>
 public typealias modint = dynamic_modint
-
