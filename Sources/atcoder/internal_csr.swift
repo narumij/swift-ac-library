@@ -4,6 +4,10 @@ protocol Zero {
     static var zero: Self { get }
 }
 
+extension Zero where Self: ExpressibleByIntegerLiteral {
+    static var zero: Self { 0 }
+}
+
 extension _internal {
     
     struct csr<E: Zero> {

@@ -72,9 +72,9 @@ extension _internal {
 
 //      private:
         var _n: Int;
-        struct edge: Zero {
+        struct edge: Zero, ExpressibleByIntegerLiteral {
             var to: Int;
-            static var zero: Self { .init(to: 0) }
+            init(integerLiteral value: Int) { to = value }
         };
         var edges: [(Int,edge)] = [];
     };
