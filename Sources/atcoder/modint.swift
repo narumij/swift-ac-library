@@ -130,19 +130,19 @@ extension modint_implementation {
     }
 }
 
-protocol modint_dynamic_implementation: modint_implementation & modint_dynamic_protocol where bt: dynamic_mod { }
-
-extension modint_dynamic_implementation {
-    public static func set_mod(_ m: CInt) {
-        bt.set_mod(m)
-    }
-}
-
 extension modint_implementation {
     static func value<T: FixedWidthInteger>(_ v: T) -> CUnsignedInt {
         var x = v % T(Self.mod());
         if (x < 0) { x += T(Self.mod()); }
         return CUnsignedInt(x);
+    }
+}
+
+protocol modint_dynamic_implementation: modint_implementation & modint_dynamic_protocol where bt: dynamic_mod { }
+
+extension modint_dynamic_implementation {
+    public static func set_mod(_ m: CInt) {
+        bt.set_mod(m)
     }
 }
 

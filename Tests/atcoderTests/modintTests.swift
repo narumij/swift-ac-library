@@ -432,10 +432,13 @@ final class modintTests: XCTestCase {
     func testSome() throws {
         typealias mint = modint998244353
         XCTAssertEqual(1, (mint(3) / 2).val() - CUnsignedInt((mint.mod() + 1) / 2))
-        
         XCTAssertEqual(4, (mint(9) / 2).val() - CUnsignedInt((mint.mod() + 1) / 2))
-        
         XCTAssertEqual(18, (mint(36) / 2).val())
+        
+        XCTAssertEqual(0, mint(false).val());
+        XCTAssertEqual(0, modint(false).val());
+        
+        XCTAssertEqual("0", modint(false).description);
     }
     
     func testPerformanceExample() throws {
