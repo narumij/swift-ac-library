@@ -74,6 +74,7 @@ extension _internal {
         var _n: Int;
         struct edge: Zero, ExpressibleByIntegerLiteral {
             var to: Int;
+            init(to: Int) { self.to = to }
             init(integerLiteral value: Int) { to = value }
         };
         var edges: [(Int,edge)] = [];
