@@ -24,7 +24,7 @@ fileprivate func conv_ll_naive(_ a: [ll],_ b: [ll]) -> [ll] {
 }
 
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-fileprivate func conv_naive<mint: modint_base_protocol>(_ a: [mint],_ b: [mint]) -> [mint] {
+fileprivate func conv_naive<mint: modint_base>(_ a: [mint],_ b: [mint]) -> [mint] {
     let n = a.count, m = b.count;
     var c = [mint](repeating: 0, count: n + m - 1);
 //    for (int i = 0; i < n; i++) {

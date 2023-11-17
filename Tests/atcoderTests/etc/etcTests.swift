@@ -9,15 +9,15 @@ fileprivate func compileCheckAboutModintTypes() {
     
     enum mod1: dynamic_mod { static var modValue: barrett = -1 }
     mod1.set_mod(2)
-    typealias modint1 = modint_base<mod1>
+    typealias modint1 = internal_modint<mod1>
     
     enum mod2: dynamic_mod { static var modValue: barrett = -1 }
     mod2.set_mod(5)
-    typealias modint2 = modint_base<mod2>
+    typealias modint2 = internal_modint<mod2>
     
     enum mod3: dynamic_mod { static var modValue: barrett = -1 }
     mod3.set_mod(7)
-    typealias modint3 = modint_base<mod3>
+    typealias modint3 = internal_modint<mod3>
 }
 
 

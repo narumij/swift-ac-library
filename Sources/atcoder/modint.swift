@@ -1,13 +1,6 @@
 import Foundation
 
-public struct modint_base_static<bt: static_mod>: modint_implementation {
-    public init<T: FixedWidthInteger>(_ v: T) {
-        _v = Self.value(v)
-    }
-    var _v: CUnsignedInt
-}
-
-public protocol modint_base_protocol: AdditiveArithmetic, Equatable, ExpressibleByIntegerLiteral, CustomStringConvertible, ToUnsigned {
+public protocol modint_base: AdditiveArithmetic, Equatable, ExpressibleByIntegerLiteral, CustomStringConvertible, ToUnsigned {
     static func mod() -> CInt
     static func raw(_ v: CInt) -> mint
     init()
@@ -28,27 +21,34 @@ public protocol modint_base_protocol: AdditiveArithmetic, Equatable, Expressible
     func inv() -> mint
 }
 
-extension modint_base_protocol {
+extension modint_base {
     public typealias mint = Self
 }
 
-public protocol modint_dynamic_protocol: modint_base_protocol {
+public protocol static_modint_base: modint_base { }
+
+public protocol dynamic_modint_base: modint_base {
     static func set_mod(_ m: CInt)
 }
 
-protocol modint_implementation: modint_base_protocol, CustomStringConvertible {
+protocol modint_internal: modint_base {
     associatedtype bt: mod_type
     var _v: CUnsignedInt { get set }
 }
 
-extension modint_implementation {
-    
+extension modint_internal {
+
     public static func mod() -> CInt { return CInt(bitPattern: bt.umod()); }
     
     public static func raw(_ v: CInt) -> mint {
         var x = mint();
         x._v = CUnsignedInt(bitPattern: v);
         return x;
+    }
+    
+    public init() { self.init(0) }
+    public init(_ v: Bool) {
+        self.init(CInt(v ? 1 : 0))
     }
 
     public func val() -> CUnsignedInt { return _v; }
@@ -112,56 +112,52 @@ extension modint_implementation {
     public var description: String { val().description }
 }
 
-extension modint_implementation {
-    public init() { self.init(0) }
-    public init(_ v: Bool) {
-        self.init(CInt(v ? 1 : 0))
-    }
-}
-
-extension modint_implementation {
+extension modint_internal {
     public init(unsigned: UInt32) { self.init(unsigned) }
     public var unsigned: CInt.Magnitude { val() }
 }
 
-extension modint_implementation {
+extension modint_internal {
     public init(integerLiteral value: CInt) {
         self.init(value)
     }
 }
 
-extension modint_implementation {
-    static func value<T: FixedWidthInteger>(_ v: T) -> CUnsignedInt {
+fileprivate extension modint_internal {
+    static func _value<T: FixedWidthInteger>(_ v: T) -> CUnsignedInt {
         var x = v % T(Self.mod());
         if (x < 0) { x += T(Self.mod()); }
         return CUnsignedInt(x);
     }
 }
 
-protocol modint_dynamic_implementation: modint_implementation & modint_dynamic_protocol where bt: dynamic_mod { }
+public struct static_modint<bt: static_mod>: static_modint_base & modint_internal {
+    public init<T: FixedWidthInteger>(_ v: T) {
+        _v = Self._value(v)
+    }
+    var _v: CUnsignedInt
+}
 
-extension modint_dynamic_implementation {
+public struct dynamic_modint: dynamic_modint_base & modint_internal {
+    typealias bt = mod_dynamic
+    public init<T: FixedWidthInteger>(_ v: T) {
+        _v = Self._value(v)
+    }
+    var _v: CUnsignedInt
     public static func set_mod(_ m: CInt) {
         bt.set_mod(m)
     }
 }
 
-public struct modint_base_dynamic<bt: dynamic_mod>: modint_dynamic_implementation {
-    public init<T: FixedWidthInteger>(_ v: T) {
-        _v = Self.value(v)
-    }
-    var _v: CUnsignedInt
-}
-
-struct modint_base<bt: mod_type>: modint_implementation {
-    init<T: FixedWidthInteger>(_ v: T) {
-        _v = Self.value(v)
-    }
-    var _v: CUnsignedInt
-}
-
-public typealias modint998244353 = modint_base_static<mod_998244353>
-public typealias modint1000000007 = modint_base_static<mod_1000000007>
-public typealias static_modint = modint_base_static
-public typealias dynamic_modint = modint_base_dynamic<mod_dynamic>
+public typealias modint998244353 = static_modint<mod_998244353>
+public typealias modint1000000007 = static_modint<mod_1000000007>
 public typealias modint = dynamic_modint
+
+// MARK: -
+
+struct internal_modint<bt: mod_type>: modint_internal {
+    init<T: FixedWidthInteger>(_ v: T) {
+        _v = Self._value(v)
+    }
+    var _v: CUnsignedInt
+}
