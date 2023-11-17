@@ -24,7 +24,7 @@ SwiftPM パッケージで swift-ac-libraryを利用する場合は、以下をP
 
 ```
 dependencies: [
-  .package(url: "https://github.com/narumij/swift-ac-library.git", from: "0.0.4"),
+  .package(url: "https://github.com/narumij/swift-ac-library.git", from: "0.0.5"),
 ],
 ```
 
