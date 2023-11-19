@@ -266,11 +266,39 @@ extension lazy_segtree {
 }
 
 public extension lazy_segtree {
-    mutating func set<Index: FixedWidthInteger>(_ p: Index,_ x: S)                        { _update{ $0.set(Int(p),x) } }
-    mutating func get<Index: FixedWidthInteger>(_ p: Index) -> S                          { _update{ $0.get(Int(p)) } }
-    mutating func prod<Index: FixedWidthInteger>(_ l: Index,_ r: Index) -> S                { _update{ $0.prod(Int(l), Int(r)) } }
-    mutating func apply<Index: FixedWidthInteger>(_ p: Index,_ f: F)                      { _update{ $0.apply(Int(p), f) } }
-    mutating func apply<Index: FixedWidthInteger>(_ l: Index,_ r: Index,_ f: F)             { _update{ $0.apply(Int(l), Int(r), f) } }
-    mutating func max_right<Index: FixedWidthInteger>(_ l: Index,_ g: (S) -> Bool) -> Int { _update{ $0.max_right(Int(l), g) } }
-    mutating func min_left<Index: FixedWidthInteger>(_ r: Index,_ g: (S) -> Bool) -> Int  { _update{ $0.min_left(Int(r), g) } }
+    mutating func set<Index>(_ p: Index,_ x: S)
+    where Index: FixedWidthInteger
+    {
+        _update{ $0.set(Int(p),x) }
+    }
+    mutating func get<Index>(_ p: Index) -> S
+    where Index: FixedWidthInteger
+    {
+        _update{ $0.get(Int(p)) }
+    }
+    mutating func prod<Index>(_ l: Index,_ r: Index) -> S
+    where Index: FixedWidthInteger 
+    {
+        _update{ $0.prod(Int(l), Int(r)) }
+    }
+    mutating func apply<Index>(_ p: Index,_ f: F)
+    where Index: FixedWidthInteger
+    {
+        _update{ $0.apply(Int(p), f) }
+    }
+    mutating func apply<Index>(_ l: Index,_ r: Index,_ f: F)
+    where Index: FixedWidthInteger
+    {
+        _update{ $0.apply(Int(l), Int(r), f) }
+    }
+    mutating func max_right<Index>(_ l: Index,_ g: (S) -> Bool) -> Int
+    where Index: FixedWidthInteger
+    {
+        _update{ $0.max_right(Int(l), g) }
+    }
+    mutating func min_left<Index>(_ r: Index,_ g: (S) -> Bool) -> Int
+    where Index: FixedWidthInteger
+    {
+        _update{ $0.min_left(Int(r), g) }
+    }
 }

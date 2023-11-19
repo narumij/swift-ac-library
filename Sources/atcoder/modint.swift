@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol modint_base: AdditiveArithmetic, Equatable, ExpressibleByIntegerLiteral, CustomStringConvertible, ToUnsigned {
+public protocol modint_base: AdditiveArithmetic, Hashable, ExpressibleByIntegerLiteral, CustomStringConvertible, ToUnsigned {
     static func mod() -> CInt
     static func raw(_ v: CInt) -> mint
     init()
