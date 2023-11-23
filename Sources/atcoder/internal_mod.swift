@@ -32,16 +32,16 @@ extension mod_type {
 
 public struct mod_value {
     public init<Integer: FixedWidthInteger>(_ m: Integer) {
-        self.m = CUnsignedInt(m)
+        self.mod = CUnsignedInt(m)
         self.isPrime = _internal.is_prime(CInt(m))
     }
-    let m: CUnsignedInt
+    let mod: CUnsignedInt
     let isPrime: Bool
 }
 
 extension mod_value: ExpressibleByIntegerLiteral {
     public init(integerLiteral value: CInt) {
-        self.m = CUnsignedInt(bitPattern: value)
+        self.mod = CUnsignedInt(bitPattern: value)
         self.isPrime = _internal.is_prime(value)
     }
 }
@@ -58,8 +58,9 @@ public protocol mod_type2 {
 }
 
 extension mod_type2 {
-    static var umod: CUnsignedInt { m.m }
-    static var mod: CInt { CInt(m.m) }
+    static var m: CUnsignedInt { m.mod }
+    static var umod: CUnsignedInt { m.mod }
+    static var mod: CInt { CInt(m.mod) }
     static var isPrime: Bool { m.isPrime }
 }
 

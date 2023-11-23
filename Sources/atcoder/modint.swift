@@ -35,7 +35,7 @@ public protocol modint_internal: modint_base {
     var _v: CUnsignedInt { get set }
 }
 
-public struct static_modint<modValue: static_mod>: static_modint_base, modint_internal {
+public struct static_modint<m: static_mod>: static_modint_base, modint_internal {
     public init(raw v: CUnsignedInt) {
         _v = v;
     }
@@ -43,7 +43,9 @@ public struct static_modint<modValue: static_mod>: static_modint_base, modint_in
 }
 
 public extension static_modint {
-    static func mod() -> CInt { return CInt(bitPattern: modValue.umod); }
+    var isPrime: Bool { m.isPrime }
+
+    static func mod() -> CInt { return CInt(bitPattern: m.umod); }
     
     init() { self.init(raw: 0) }
     init(_ v: Bool) { self.init(v ? 1 : 0) }
@@ -107,19 +109,17 @@ public extension static_modint {
     }
     
     func inv() -> mint {
-        if modValue.isPrime {
+        if isPrime {
             assert(_v != 0);
             return pow(CLongLong(Self.umod()) - 2);
         } else {
-            let eg = _internal.inv_gcd(CLongLong(_v), CLongLong(m));
+            let eg = _internal.inv_gcd(CLongLong(_v), CLongLong(m.m));
             assert(eg.first == 1);
             return Self.init(CInt(eg.second));
         }
     }
     
-    var m: CUnsignedInt { modValue.m.m }
-    
-    static func umod() -> CUnsignedInt { modValue.umod }
+    static func umod() -> CUnsignedInt { m.umod }
     
     var description: String { val().description }
 }
