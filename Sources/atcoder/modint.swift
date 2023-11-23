@@ -56,24 +56,6 @@ public extension static_modint {
     typealias ULL = CUnsignedLongLong
     typealias UINT = CUnsignedInt
 
-    static func + (lhs: mint, rhs: mint) -> mint {
-        var _v = lhs._v &+ rhs._v
-        if (_v >= umod()) { _v &-= umod(); }
-        return .init(raw:_v)
-    }
-    static func - (lhs: mint, rhs: mint) -> mint {
-        var _v = lhs._v &- rhs._v
-        if (_v >= umod()) { _v &+= umod(); }
-        return .init(raw:_v)
-    }
-    static func * (lhs: mint, rhs: mint) -> mint {
-        var z: ULL = ULL(lhs._v);
-        z *= ULL(rhs._v);
-        return .init(raw: UINT(z % ULL(umod())));
-    }
-    static func / (lhs: mint, rhs: mint) -> mint {
-        lhs * rhs.inv()
-    }
     static func +=(lhs: inout Self, rhs: Self) {
         lhs._v &+= rhs._v
         if (lhs._v >= umod()) { lhs._v &-= umod(); }
@@ -96,7 +78,25 @@ public extension static_modint {
     static prefix func - (_ m: Self) -> Self {
         return .init(raw: 0) - m
     }
-
+    static func + (lhs: mint, rhs: mint) -> mint {
+        var _v = lhs._v &+ rhs._v
+        if (_v >= umod()) { _v &-= umod(); }
+        return .init(raw:_v)
+    }
+    static func - (lhs: mint, rhs: mint) -> mint {
+        var _v = lhs._v &- rhs._v
+        if (_v >= umod()) { _v &+= umod(); }
+        return .init(raw:_v)
+    }
+    static func * (lhs: mint, rhs: mint) -> mint {
+        var z: ULL = ULL(lhs._v);
+        z *= ULL(rhs._v);
+        return .init(raw: UINT(z % ULL(umod())));
+    }
+    static func / (lhs: mint, rhs: mint) -> mint {
+        lhs * rhs.inv()
+    }
+    
     func pow(_ n: CLongLong) -> mint {
         assert(0 <= n);
         var n = n
@@ -145,23 +145,6 @@ extension dynamic_modint {
 
     public func val() -> CUnsignedInt { return _v; }
     
-    public static func + (lhs: mint, rhs: mint) -> mint {
-        var _v = lhs._v &+ rhs._v
-        if (_v >= umod()) { _v -= umod(); }
-        return .init(raw:_v)
-    }
-    public static func - (lhs: mint, rhs: mint) -> mint {
-        var _v = lhs._v &+ umod() &- rhs._v
-        if (_v >= umod()) { _v -= umod(); }
-        return .init(raw:_v)
-    }
-    public static func * (lhs: mint, rhs: mint) -> mint {
-        let _v = bt.mul(lhs._v, rhs._v);
-        return .init(raw:_v)
-    }
-    public static func / (lhs: mint, rhs: mint) -> mint {
-        lhs * rhs.inv()
-    }
     public static func +=(lhs: inout Self, rhs: Self) {
         lhs._v &+= rhs._v
         if (lhs._v >= umod()) { lhs._v -= umod(); }
@@ -181,6 +164,23 @@ extension dynamic_modint {
     }
     public static prefix func - (_ m: Self) -> Self {
         return .init(raw: 0) - m
+    }
+    public static func + (lhs: mint, rhs: mint) -> mint {
+        var _v = lhs._v &+ rhs._v
+        if (_v >= umod()) { _v -= umod(); }
+        return .init(raw:_v)
+    }
+    public static func - (lhs: mint, rhs: mint) -> mint {
+        var _v = lhs._v &+ umod() &- rhs._v
+        if (_v >= umod()) { _v -= umod(); }
+        return .init(raw:_v)
+    }
+    public static func * (lhs: mint, rhs: mint) -> mint {
+        let _v = bt.mul(lhs._v, rhs._v);
+        return .init(raw:_v)
+    }
+    public static func / (lhs: mint, rhs: mint) -> mint {
+        lhs * rhs.inv()
     }
 
     public func pow(_ n: CLongLong) -> mint {
@@ -216,9 +216,6 @@ extension internal_modint {
     }
     public init(unsigned: UInt32) { self.init(unsigned) }
     public var unsigned: CInt.Magnitude { val() }
-    public static func raw(_ v: CInt) -> mint {
-        return .init(raw: CUnsignedInt(bitPattern: v));
-    }
     public var description: String { val().description }
 }
 

@@ -38,7 +38,6 @@ public protocol static_mod {
 extension static_mod {
     static var m: CUnsignedInt { mod.mod }
     static var umod: CUnsignedInt { mod.mod }
-    static var mod: CInt { CInt(mod.mod) }
     static var isPrime: Bool { mod.isPrime }
 }
 

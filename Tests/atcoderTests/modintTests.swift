@@ -375,6 +375,40 @@ final class modintTests: XCTestCase {
 //        XCTAssertThrowsError(mint(3).pow(-1), ".*");
     }
     
+    func testDynamicUsage2() throws {
+        typealias mint = modint;
+        mint.set_mod(998244353);
+        do {
+            var m = mint(1)
+            m += mint(2)
+            XCTAssertEqual(3, m.val());
+        }
+        do {
+            var m = mint(1)
+            m += 2
+            XCTAssertEqual(3, m.val());
+        }
+
+        mint.set_mod(3);
+        do {
+            var m = mint(2)
+            m -= mint(1)
+            XCTAssertEqual(1, m.val());
+        }
+        do {
+            var m = mint(1)
+            m += 2
+            XCTAssertEqual(0, m.val());
+        }
+
+        mint.set_mod(11);
+        do {
+            var m = mint(3)
+            m *= mint(5)
+            XCTAssertEqual(4, m.val());
+        }
+    }
+
     func testConstructor() throws {
         modint.set_mod(11);
         XCTAssertEqual(1, modint(true).val());

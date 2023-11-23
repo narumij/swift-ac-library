@@ -22,6 +22,17 @@ final class etcTests: XCTestCase {
         // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
         // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
     }
+    
+    func testSubscript() throws {
+        var array: ContiguousArray<Int> = [0,1,2,3]
+        XCTAssertEqual(3, array[CInt(3)])
+        array[CChar(1)] = 4
+        XCTAssertEqual(4, array[1])
+    }
+    
+    func testPowerMode1() throws {
+        XCTAssertEqual(0, _internal.pow_mod_constexpr(2, 32, 1))
+    }
 
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
