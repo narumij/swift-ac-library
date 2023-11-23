@@ -48,7 +48,7 @@ public protocol dynamic_mod {
 }
 
 extension dynamic_mod {
-    static var umod: CUnsignedInt { bt.umod() }
+    @usableFromInline static var umod: CUnsignedInt { bt.umod() }
     static func mul(_ a: CUnsignedInt,_ b: CUnsignedInt) -> CUnsignedInt {
         bt.mul(a,b)
     }

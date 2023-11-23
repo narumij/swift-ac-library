@@ -102,6 +102,7 @@ public extension static_modint {
         }
     }
     
+    @inlinable @inline(__always)
     static func umod() -> CUnsignedInt { m.umod }
 }
 
@@ -118,9 +119,9 @@ public struct dynamic_modint: dynamic_modint_base & internal_modint {
 
 extension dynamic_modint {
 
+    @inlinable @inline(__always)
     public static func mod() -> CInt { return CInt(bitPattern: bt.umod); }
-    public func mod() -> CInt { return Self.mod(); }
-
+    
     public init() { self.init(raw: 0) }
     public init(_ v: Bool) { self.init(raw: Self._v(uint: v ? 1 : 0)) }
     public init(_ v: CInt) { self.init(raw: Self._v(int: v)) }
@@ -179,11 +180,12 @@ extension dynamic_modint {
     }
     
     public func inv() -> mint {
-        let eg = _internal.inv_gcd(LL(_v), LL(mod()));
+        let eg = _internal.inv_gcd(LL(_v), LL(Self.mod()));
         assert(eg.first == 1);
         return .init(CInt(eg.second));
     }
     
+    @inlinable @inline(__always)
     public static func umod() -> CUnsignedInt { return bt.umod; }
 }
 
@@ -196,7 +198,7 @@ public typealias modint = dynamic_modint
 extension internal_modint {
     @inlinable @inline(__always)
     public init(integerLiteral value: CInt) {
-        self.init(raw: Self._v(value))
+        self.init(raw: Self._v(int: value))
     }
     public init(unsigned: CUnsignedInt) { self.init(raw: Self._v(uint: unsigned)) }
     public var unsigned: CInt.Magnitude { val() }

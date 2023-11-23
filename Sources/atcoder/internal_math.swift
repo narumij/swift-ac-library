@@ -36,7 +36,7 @@ public struct barrett {
     }
     
     // @return m
-    func umod() -> CUnsignedInt { return m; }
+    @usableFromInline func umod() -> CUnsignedInt { return m; }
     // @param a `0 <= a < m`
     // @param b `0 <= b < m`
     // @return `a * b % m`
