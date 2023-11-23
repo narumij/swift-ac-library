@@ -290,7 +290,7 @@ public func convolution<T: FixedWidthInteger, mod: static_mod>(_ t: mod.Type,_ a
 }
 
 public func convolution<T: FixedWidthInteger>(_ a: [T],_ b: [T]) -> [T] {
-    convolution(mod_998244353.self, a, b)
+    convolution(mod_998_244_353.self, a, b)
 }
 
 public func convolution_ll(_ a: [CLongLong],
@@ -309,9 +309,9 @@ public func convolution_ll(_ a: [CLongLong],
         static let M1M3: LL = MOD1 &* MOD3;
         static let M1M2: LL = MOD1 &* MOD2;
         static let M1M2M3: LL = MOD1 &* MOD2 &* MOD3;
-        enum mod1: static_mod { static let m = mod_value(MOD1) }
-        enum mod2: static_mod { static let m = mod_value(MOD2) }
-        enum mod3: static_mod { static let m = mod_value(MOD3) }
+        enum mod1: static_mod { static let mod = mod_value(MOD1) }
+        enum mod2: static_mod { static let mod = mod_value(MOD2) }
+        enum mod3: static_mod { static let mod = mod_value(MOD3) }
         static let i1 = ULL(_internal.inv_gcd(MOD2 * MOD3, MOD1).second);
         static let i2 = ULL(_internal.inv_gcd(MOD1 * MOD3, MOD2).second);
         static let i3 = ULL(_internal.inv_gcd(MOD1 * MOD2, MOD3).second);

@@ -102,7 +102,7 @@ final class fenwickTreeTests: XCTestCase {
     
 #if true
     func testSMintTest() throws {
-        enum mod_11: static_mod { static let m: mod_value = 11 }
+        enum mod_11: static_mod { static let mod: mod_value = 11 }
         typealias mint = static_modint<mod_11>;
         for n in 0..<=5 {
             var fw = fenwick_tree<mint>(n);

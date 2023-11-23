@@ -5,22 +5,6 @@ fileprivate typealias uint = CUnsignedInt;
 fileprivate typealias ll = CLongLong;
 fileprivate typealias ull = CUnsignedLongLong;
 
-fileprivate func compileCheckAboutModintTypes() {
-    
-    enum mod1: dynamic_mod { static var modValue: barrett = -1 }
-    mod1.set_mod(2)
-    typealias modint1 = internal_modint<mod1>
-    
-    enum mod2: dynamic_mod { static var modValue: barrett = -1 }
-    mod2.set_mod(5)
-    typealias modint2 = internal_modint<mod2>
-    
-    enum mod3: dynamic_mod { static var modValue: barrett = -1 }
-    mod3.set_mod(7)
-    typealias modint3 = internal_modint<mod3>
-}
-
-
 final class etcTests: XCTestCase {
 
     override func setUpWithError() throws {

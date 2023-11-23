@@ -30,12 +30,12 @@ public protocol dynamic_modint_base: modint_base {
     static func set_mod(_ m: CInt)
 }
 
-public protocol modint_internal: modint_base {
+public protocol internal_modint: modint_base {
     init(raw: CUnsignedInt)
     var _v: CUnsignedInt { get set }
 }
 
-public struct static_modint<m: static_mod>: static_modint_base, modint_internal {
+public struct static_modint<m: static_mod>: static_modint_base, internal_modint {
     public init(raw v: CUnsignedInt) {
         _v = v;
     }
@@ -54,7 +54,8 @@ public extension static_modint {
     func val() -> CUnsignedInt { return _v; }
     
     typealias ULL = CUnsignedLongLong
-    
+    typealias UINT = CUnsignedInt
+
     static func + (lhs: mint, rhs: mint) -> mint {
         var _v = lhs._v &+ rhs._v
         if (_v >= umod()) { _v &-= umod(); }
@@ -68,7 +69,7 @@ public extension static_modint {
     static func * (lhs: mint, rhs: mint) -> mint {
         var z: ULL = ULL(lhs._v);
         z *= ULL(rhs._v);
-        return .init(raw:CUnsignedInt(z % ULL(umod())));
+        return .init(raw: UINT(z % ULL(umod())));
     }
     static func / (lhs: mint, rhs: mint) -> mint {
         lhs * rhs.inv()
@@ -84,7 +85,7 @@ public extension static_modint {
     static func *=(lhs: inout Self, rhs: Self) {
         var z: ULL = ULL(lhs._v);
         z *= ULL(rhs._v);
-        lhs._v = CUnsignedInt(z % ULL(umod()));
+        lhs._v = UINT(z % ULL(umod()));
     }
     static func /=(lhs: inout Self, rhs: Self) {
         lhs = lhs * rhs.inv()
@@ -120,25 +121,24 @@ public extension static_modint {
     }
     
     static func umod() -> CUnsignedInt { m.umod }
-    
-    var description: String { val().description }
 }
 
-public protocol dynamic_modint_internal: modint_internal { 
-    associatedtype bt: mod_type
+public struct dynamic_modint: dynamic_modint_base & internal_modint {
+    public typealias bt = mod_dynamic
+    public init(raw v: CUnsignedInt) {
+        _v = v;
+    }
+    public var _v: CUnsignedInt
+    public static func set_mod(_ m: CInt) {
+        bt.set_mod(m)
+    }
 }
 
-extension dynamic_modint_internal {
+extension dynamic_modint {
 
-    public static func mod() -> CInt { return CInt(bitPattern: bt.umod()); }
+    public static func mod() -> CInt { return CInt(bitPattern: bt.umod); }
     public func mod() -> CInt { return Self.mod(); }
 
-    public static func raw(_ v: CInt) -> mint {
-        var x = mint();
-        x._v = CUnsignedInt(bitPattern: v);
-        return x;
-    }
-    
     public init() { self.init(raw: 0) }
     public init(_ v: Bool) { self.init(v ? 1 : 0) }
     public init<T: FixedWidthInteger>(_ v: T) { self.init(raw: Self._value(v)) }
@@ -151,7 +151,7 @@ extension dynamic_modint_internal {
         return .init(raw:_v)
     }
     public static func - (lhs: mint, rhs: mint) -> mint {
-        var _v = lhs._v &+ CUnsignedInt(bitPattern: mod()) &- rhs._v
+        var _v = lhs._v &+ umod() &- rhs._v
         if (_v >= umod()) { _v -= umod(); }
         return .init(raw:_v)
     }
@@ -163,22 +163,24 @@ extension dynamic_modint_internal {
         lhs * rhs.inv()
     }
     public static func +=(lhs: inout Self, rhs: Self) {
-        lhs = lhs + rhs
+        lhs._v &+= rhs._v
+        if (lhs._v >= umod()) { lhs._v -= umod(); }
     }
     public static func -=(lhs: inout Self, rhs: Self) {
-        lhs = lhs - rhs
+        lhs._v &+= umod() &- rhs._v
+        if (lhs._v >= umod()) { lhs._v -= umod(); }
    }
     public static func *=(lhs: inout Self, rhs: Self) {
-        lhs = lhs * rhs
+        lhs._v = bt.mul(lhs._v, rhs._v);
     }
     public static func /=(lhs: inout Self, rhs: Self) {
-        lhs = lhs / rhs
+        lhs *= rhs.inv()
     }
     public static prefix func + (_ m: Self) -> Self {
         return m
     }
     public static prefix func - (_ m: Self) -> Self {
-        return Self() - m
+        return .init(raw: 0) - m
     }
 
     public func pow(_ n: CLongLong) -> mint {
@@ -196,53 +198,38 @@ extension dynamic_modint_internal {
     public func inv() -> mint {
         let eg = _internal.inv_gcd(CLongLong(_v), CLongLong(mod()));
         assert(eg.first == 1);
-        return Self.init(CInt(eg.second));
+        return .init(CInt(eg.second));
     }
     
-    static func umod() -> CUnsignedInt { return bt.umod(); }
-    
-    public var description: String { val().description }
+    static func umod() -> CUnsignedInt { return bt.umod; }
 }
 
-extension modint_internal {
-    public init(unsigned: UInt32) { self.init(unsigned) }
-    public var unsigned: CInt.Magnitude { val() }
-}
+public typealias modint998244353 = static_modint<mod_998_244_353>
+public typealias modint1000000007 = static_modint<mod_1_000_000_007>
+public typealias modint = dynamic_modint
 
-extension modint_internal {
+// MARK: -
+
+extension internal_modint {
     public init(integerLiteral value: CInt) {
         self.init(raw: Self._value(value))
     }
+    public init(unsigned: UInt32) { self.init(unsigned) }
+    public var unsigned: CInt.Magnitude { val() }
+    public static func raw(_ v: CInt) -> mint {
+        return .init(raw: CUnsignedInt(bitPattern: v));
+    }
+    public var description: String { val().description }
 }
 
-fileprivate extension modint_internal {
+fileprivate extension internal_modint {
     static func _value<T: FixedWidthInteger>(_ v: T) -> CUnsignedInt {
+        if 0 < Self.mod(), (0 ..< T(Self.mod())).contains(v) {
+            return CUnsignedInt(v)
+        }
         var x = v % T(mod());
         if (x < 0) { x += T(mod()); }
         return CUnsignedInt(x);
     }
 }
 
-public struct dynamic_modint: dynamic_modint_base & dynamic_modint_internal {
-    public typealias bt = mod_dynamic
-    public init(raw v: CUnsignedInt) {
-        _v = v;
-    }
-    public var _v: CUnsignedInt
-    public static func set_mod(_ m: CInt) {
-        bt.set_mod(m)
-    }
-}
-
-public typealias modint998244353 = static_modint<mod_998244353>
-public typealias modint1000000007 = static_modint<mod_1000000007>
-public typealias modint = dynamic_modint
-
-// MARK: -
-
-struct internal_modint<bt: mod_type>: dynamic_modint_internal {
-    public init(raw v: CUnsignedInt) {
-        _v = v;
-    }
-    var _v: CUnsignedInt
-}
