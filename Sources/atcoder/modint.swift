@@ -42,7 +42,7 @@ public extension static_modint {
    }
     static func *=(lhs: inout Self, rhs: Self) {
         var z: ULL = ULL(lhs._v);
-        z *= ULL(rhs._v);
+        z &*= ULL(rhs._v);
         lhs._v = UINT(z % ULL(umod()));
     }
     static func /=(lhs: inout Self, rhs: Self) {
@@ -66,7 +66,7 @@ public extension static_modint {
     }
     static func * (lhs: mint, rhs: mint) -> mint {
         var z: ULL = ULL(lhs._v);
-        z *= ULL(rhs._v);
+        z &*= ULL(rhs._v);
         return .init(raw: UINT(z % ULL(umod())));
     }
     static func / (lhs: mint, rhs: mint) -> mint {
@@ -123,11 +123,11 @@ extension dynamic_modint {
     
     public static func +=(lhs: inout Self, rhs: Self) {
         lhs._v &+= rhs._v
-        if (lhs._v >= umod()) { lhs._v -= umod(); }
+        if (lhs._v >= umod()) { lhs._v &-= umod(); }
     }
     public static func -=(lhs: inout Self, rhs: Self) {
         lhs._v &+= umod() &- rhs._v
-        if (lhs._v >= umod()) { lhs._v -= umod(); }
+        if (lhs._v >= umod()) { lhs._v &-= umod(); }
    }
     public static func *=(lhs: inout Self, rhs: Self) {
         lhs._v = bt.mul(lhs._v, rhs._v);
@@ -143,12 +143,12 @@ extension dynamic_modint {
     }
     public static func + (lhs: mint, rhs: mint) -> mint {
         var _v = lhs._v &+ rhs._v
-        if (_v >= umod()) { _v -= umod(); }
+        if (_v >= umod()) { _v &-= umod(); }
         return .init(raw:_v)
     }
     public static func - (lhs: mint, rhs: mint) -> mint {
         var _v = lhs._v &+ umod() &- rhs._v
-        if (_v >= umod()) { _v -= umod(); }
+        if (_v >= umod()) { _v &-= umod(); }
         return .init(raw:_v)
     }
     public static func * (lhs: mint, rhs: mint) -> mint {
