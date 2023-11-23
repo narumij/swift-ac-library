@@ -9,6 +9,13 @@ public protocol dynamic_modint_base: modint_base {
 public protocol internal_modint: modint_base {
     init(raw: CUnsignedInt)
     var _v: CUnsignedInt { get set }
+    static func umod() -> CUnsignedInt
+}
+
+extension internal_modint {
+    typealias ULL = CUnsignedLongLong
+    typealias LL = CLongLong
+    typealias UINT = CUnsignedInt
 }
 
 public struct static_modint<m: static_mod>: static_modint_base, internal_modint {
@@ -21,17 +28,16 @@ public struct static_modint<m: static_mod>: static_modint_base, internal_modint 
 public extension static_modint {
     var isPrime: Bool { m.isPrime }
 
+    @inlinable @inline(__always)
     static func mod() -> CInt { return CInt(bitPattern: m.umod); }
     
     init() { self.init(raw: 0) }
-    init(_ v: Bool) { self.init(v ? 1 : 0) }
-    init<T: FixedWidthInteger>(_ v: T) { self.init(raw: Self._value(v)) }
+    init(_ v: Bool) { self.init(raw: Self._v(uint: v ? 1 : 0)) }
+    init(_ v: CInt) { self.init(raw: Self._v(int: v)) }
+    init<T: FixedWidthInteger>(_ v: T) { self.init(raw: Self._v(v)) }
 
     func val() -> CUnsignedInt { return _v; }
     
-    typealias ULL = CUnsignedLongLong
-    typealias UINT = CUnsignedInt
-
     static func +=(lhs: inout Self, rhs: Self) {
         lhs._v &+= rhs._v
         if (lhs._v >= umod()) { lhs._v &-= umod(); }
@@ -88,9 +94,9 @@ public extension static_modint {
     func inv() -> mint {
         if isPrime {
             assert(_v != 0);
-            return pow(CLongLong(Self.umod()) - 2);
+            return pow(LL(Self.umod()) - 2);
         } else {
-            let eg = _internal.inv_gcd(CLongLong(_v), CLongLong(m.m));
+            let eg = _internal.inv_gcd(LL(_v), LL(m.m));
             assert(eg.first == 1);
             return Self.init(CInt(eg.second));
         }
@@ -116,8 +122,9 @@ extension dynamic_modint {
     public func mod() -> CInt { return Self.mod(); }
 
     public init() { self.init(raw: 0) }
-    public init(_ v: Bool) { self.init(v ? 1 : 0) }
-    public init<T: FixedWidthInteger>(_ v: T) { self.init(raw: Self._value(v)) }
+    public init(_ v: Bool) { self.init(raw: Self._v(uint: v ? 1 : 0)) }
+    public init(_ v: CInt) { self.init(raw: Self._v(int: v)) }
+    public init<T: FixedWidthInteger>(_ v: T) { self.init(raw: Self._v(v)) }
 
     public func val() -> CUnsignedInt { return _v; }
     
@@ -172,12 +179,12 @@ extension dynamic_modint {
     }
     
     public func inv() -> mint {
-        let eg = _internal.inv_gcd(CLongLong(_v), CLongLong(mod()));
+        let eg = _internal.inv_gcd(LL(_v), LL(mod()));
         assert(eg.first == 1);
         return .init(CInt(eg.second));
     }
     
-    static func umod() -> CUnsignedInt { return bt.umod; }
+    public static func umod() -> CUnsignedInt { return bt.umod; }
 }
 
 public typealias modint998244353 = static_modint<mod_998_244_353>
@@ -187,22 +194,29 @@ public typealias modint = dynamic_modint
 // MARK: -
 
 extension internal_modint {
+    @inlinable @inline(__always)
     public init(integerLiteral value: CInt) {
-        self.init(raw: Self._value(value))
+        self.init(raw: Self._v(value))
     }
-    public init(unsigned: UInt32) { self.init(unsigned) }
+    public init(unsigned: CUnsignedInt) { self.init(raw: Self._v(uint: unsigned)) }
     public var unsigned: CInt.Magnitude { val() }
     public var description: String { val().description }
 }
 
-fileprivate extension internal_modint {
-    static func _value<T: FixedWidthInteger>(_ v: T) -> CUnsignedInt {
-        if 0 < Self.mod(), (0 ..< T(Self.mod())).contains(v) {
-            return CUnsignedInt(v)
-        }
+extension internal_modint {
+    @usableFromInline static func _v<T: FixedWidthInteger>(_ v: T) -> CUnsignedInt {
+        // 整数のキャストが意外と重たいため、分けている
         var x = v % T(mod());
         if (x < 0) { x += T(mod()); }
-        return CUnsignedInt(x);
+        return UINT(bitPattern: CInt(x));
+    }
+    @usableFromInline static func _v(uint v: CUnsignedInt) -> CUnsignedInt {
+        return v % umod();
+    }
+    @usableFromInline static func _v(int v: CInt) -> CUnsignedInt {
+        var x = v % mod();
+        if (x < 0) { x += mod(); }
+        return UINT(bitPattern: x);
     }
 }
 

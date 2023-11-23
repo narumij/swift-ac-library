@@ -11,8 +11,8 @@ public struct mod_value {
         self.mod = CUnsignedInt(m)
         self.isPrime = _internal.is_prime(CInt(m))
     }
-    let mod: CUnsignedInt
-    let isPrime: Bool
+    @usableFromInline let mod: CUnsignedInt
+    @usableFromInline let isPrime: Bool
 }
 
 public extension mod_value {
@@ -36,9 +36,9 @@ public protocol static_mod {
 }
 
 extension static_mod {
-    static var m: CUnsignedInt { mod.mod }
-    static var umod: CUnsignedInt { mod.mod }
-    static var isPrime: Bool { mod.isPrime }
+    @usableFromInline static var m: CUnsignedInt { mod.mod }
+    @usableFromInline static var umod: CUnsignedInt { mod.mod }
+    @usableFromInline static var isPrime: Bool { mod.isPrime }
 }
 
 // MARK: -
@@ -74,6 +74,7 @@ public protocol modint_base: AdditiveArithmetic, Hashable, ExpressibleByIntegerL
     static func mod() -> CInt
     init()
     init(_ v: Bool)
+    init(_ v: CInt)
     init<T: FixedWidthInteger>(_ v: T)
     func val() -> CUnsignedInt
     static func +(lhs: mint, rhs: mint) -> mint
