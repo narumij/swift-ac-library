@@ -69,3 +69,27 @@ public enum mod_998_244_353: static_mod {
 public enum mod_1_000_000_007: static_mod {
     public static let mod: mod_value = 1_000_000_007
 }
+
+public protocol modint_base: AdditiveArithmetic, Hashable, ExpressibleByIntegerLiteral, CustomStringConvertible, ToUnsigned {
+    static func mod() -> CInt
+    init()
+    init(_ v: Bool)
+    init<T: FixedWidthInteger>(_ v: T)
+    func val() -> CUnsignedInt
+    static func +(lhs: mint, rhs: mint) -> mint
+    static func -(lhs: mint, rhs: mint) -> mint
+    static func *(lhs: mint, rhs: mint) -> mint
+    static func /(lhs: mint, rhs: mint) -> mint
+    static func +=(lhs: inout mint, rhs: mint)
+    static func -=(lhs: inout mint, rhs: mint)
+    static func *=(lhs: inout mint, rhs: mint)
+    static func /=(lhs: inout mint, rhs: mint)
+    static prefix func + (_ m: Self) -> Self
+    static prefix func - (_ m: Self) -> Self
+    func pow(_ n: CLongLong) -> mint
+    func inv() -> mint
+}
+
+extension modint_base {
+    public typealias mint = Self
+}

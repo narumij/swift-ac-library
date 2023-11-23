@@ -1,29 +1,5 @@
 import Foundation
 
-public protocol modint_base: AdditiveArithmetic, Hashable, ExpressibleByIntegerLiteral, CustomStringConvertible, ToUnsigned {
-    static func mod() -> CInt
-    init()
-    init(_ v: Bool)
-    init<T: FixedWidthInteger>(_ v: T)
-    func val() -> CUnsignedInt
-    static func +(lhs: mint, rhs: mint) -> mint
-    static func -(lhs: mint, rhs: mint) -> mint
-    static func *(lhs: mint, rhs: mint) -> mint
-    static func /(lhs: mint, rhs: mint) -> mint
-    static func +=(lhs: inout mint, rhs: mint)
-    static func -=(lhs: inout mint, rhs: mint)
-    static func *=(lhs: inout mint, rhs: mint)
-    static func /=(lhs: inout mint, rhs: mint)
-    static prefix func + (_ m: Self) -> Self
-    static prefix func - (_ m: Self) -> Self
-    func pow(_ n: CLongLong) -> mint
-    func inv() -> mint
-}
-
-extension modint_base {
-    public typealias mint = Self
-}
-
 public protocol static_modint_base: modint_base { }
 
 public protocol dynamic_modint_base: modint_base {
