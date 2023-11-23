@@ -19,12 +19,12 @@ fileprivate func gcd(_ a: ll,_ b: ll) -> ll{
 
 final class modintTests: XCTestCase {
 
-    enum mod_1:             static_mod { static let modValue: barrett = 1 }
-    enum mod_11:            static_mod { static let modValue: barrett = 11 }
-    enum mod_12:            static_mod { static let modValue: barrett = 12 }
-    enum mod_1_000_000_007: static_mod { static let modValue: barrett = .mod_1_000_000_007 }
-    enum mod_1_000_000_008: static_mod { static let modValue: barrett = 1_000_000_008 }
-    enum INT32_MAX:         static_mod { static let modValue: barrett = .mod_INT32_MAX }
+    enum mod_1:             static_mod { static let m: mod_value = 1 }
+    enum mod_11:            static_mod { static let m: mod_value = 11 }
+    enum mod_12:            static_mod { static let m: mod_value = 12 }
+    enum mod_1_000_000_007: static_mod { static let m: mod_value = 1_000_000_007 }
+    enum mod_1_000_000_008: static_mod { static let m: mod_value = 1_000_000_008 }
+    enum INT32_MAX:         static_mod { static let m: mod_value = .mod_INT32_MAX }
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

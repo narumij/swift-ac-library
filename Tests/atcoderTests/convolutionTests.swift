@@ -37,7 +37,7 @@ fileprivate func conv_naive<mint: modint_base>(_ a: [mint],_ b: [mint]) -> [mint
     return c;
 }
 
-fileprivate func conv_naive<T: FixedWidthInteger, MOD: mod_type>(_ t: MOD.Type,_ a: [T],_ b: [T]) -> [T] {
+fileprivate func conv_naive<T: FixedWidthInteger, MOD: static_mod>(_ t: MOD.Type,_ a: [T],_ b: [T]) -> [T] {
     let n = a.count, m = b.count
     var c = [T](repeating: 0, count: n + m - 1);
 //    for (int i = 0; i < n; i++) {
@@ -51,7 +51,7 @@ fileprivate func conv_naive<T: FixedWidthInteger, MOD: mod_type>(_ t: MOD.Type,_
     return c;
 }
 
-fileprivate func conv_naive2<T: FixedWidthInteger, MOD: mod_type>(_ t: MOD.Type,_ a: [T],_ b: [T]) -> [T] {
+fileprivate func conv_naive2<T: FixedWidthInteger, MOD: static_mod>(_ t: MOD.Type,_ a: [T],_ b: [T]) -> [T] {
     // testSimpleIntの不一致を修正したバージョン
     let n = a.count, m = b.count
     var c = [T](repeating: 0, count: n + m - 1);
@@ -119,8 +119,8 @@ final class convolutionTests: XCTestCase {
     
     func testSimpleSMod() throws {
         
-        enum MOD1: static_mod { static let modValue: barrett = 998244353 }
-        enum MOD2: static_mod { static let modValue: barrett = 924844033 }
+        enum MOD1: static_mod { static let m: mod_value = 998244353 }
+        enum MOD2: static_mod { static let m: mod_value = 924844033 }
         
         typealias s_mint1 = static_modint<MOD1>
         typealias s_mint2 = static_modint<MOD2>
@@ -158,8 +158,8 @@ final class convolutionTests: XCTestCase {
         
         throw XCTSkip("C++でも不一致のようなのでスキップ")
 
-        enum MOD1: static_mod { static let modValue: barrett = 998244353 }
-        enum MOD2: static_mod { static let modValue: barrett = 924844033 }
+        enum MOD1: static_mod { static let m: mod_value = 998244353 }
+        enum MOD2: static_mod { static let m: mod_value = 924844033 }
 
         for n in 1..<10 {
             for m in 1..<10 {
@@ -199,7 +199,7 @@ final class convolutionTests: XCTestCase {
         
         throw XCTSkip("C++でも不一致のようなのでスキップ")
         // 検査データを出力したC++コードは一番下にある。
-        enum MOD1: static_mod { static let modValue: barrett = 998244353 }
+        enum MOD1: static_mod { static let m: mod_value = 998244353 }
         let a: [CInt] = [-366508063, -606130801, 425354724, -16101483, 936317027, 75824908]
         let b: [CInt] = [723102387, -348770447]
         let c: [CInt] = [-106203501, 44681908, 925902337, -1327691457, 950643207, 804941, -651950935]
@@ -213,8 +213,8 @@ final class convolutionTests: XCTestCase {
     
     func testSimpleInt2() throws {
         // testSimpleIntの不一致を修正したバージョン
-        enum MOD1: static_mod { static let modValue: barrett = 998244353 }
-        enum MOD2: static_mod { static let modValue: barrett = 924844033 }
+        enum MOD1: static_mod { static let m: mod_value = 998244353 }
+        enum MOD2: static_mod { static let m: mod_value = 924844033 }
 
         for n in 1..<20 {
             for m in 1..<20 {
@@ -247,8 +247,8 @@ final class convolutionTests: XCTestCase {
     }
     
     func testSimpleUint() throws {
-        enum MOD1: static_mod { static let modValue: barrett = 998244353 }
-        enum MOD2: static_mod { static let modValue: barrett = 924844033 }
+        enum MOD1: static_mod { static let m: mod_value = 998244353 }
+        enum MOD2: static_mod { static let m: mod_value = 924844033 }
 
         for n in 1..<20 {
             for m in 1..<20 {
@@ -281,8 +281,8 @@ final class convolutionTests: XCTestCase {
     }
     
     func testSimpleULL() throws {
-        enum MOD1: static_mod { static let modValue: barrett = 998244353 }
-        enum MOD2: static_mod { static let modValue: barrett = 924844033 }
+        enum MOD1: static_mod { static let m: mod_value = 998244353 }
+        enum MOD2: static_mod { static let m: mod_value = 924844033 }
 
         for n in 1..<20 {
             for m in 1..<20 {
@@ -433,7 +433,7 @@ final class convolutionTests: XCTestCase {
     // https://github.com/atcoder/ac-library/issues/30
     func testConv641() throws {
          // 641 = 128 * 5 + 1
-        enum MOD: static_mod { static let modValue: barrett = 641 }
+        enum MOD: static_mod { static let m: mod_value = 641 }
         
         var a = [ll](repeating: 0, count: 64)
         var b = [ll](repeating: 0, count: 65)
@@ -452,7 +452,7 @@ final class convolutionTests: XCTestCase {
     func testConv18433() throws {
         
          // 18433 = 2048 * 9 + 1
-        enum MOD: static_mod { static let modValue: barrett = 18433 }
+        enum MOD: static_mod { static let m: mod_value = 18433 }
         
         var a = [ll](repeating: 0, count: 1024)
         var b = [ll](repeating: 0, count: 1025)
@@ -468,13 +468,13 @@ final class convolutionTests: XCTestCase {
     }
     
     func testConv2() throws {
-        enum mod_2: static_mod { static let modValue: barrett = 2 }
+        enum mod_2: static_mod { static let m: mod_value = 2 }
         let empty: [ll] = [];
         XCTAssertEqual(empty, convolution(mod_2.self, empty, empty));
     }
     
     func testConv257() throws {
-        enum MOD: static_mod { static let modValue: barrett = 257 }
+        enum MOD: static_mod { static let m: mod_value = 257 }
         
         var a = [ll](repeating: 0, count: 128)
         var b = [ll](repeating: 0, count: 129)
@@ -490,7 +490,7 @@ final class convolutionTests: XCTestCase {
     }
     
     func testConv2147483647() throws {
-        enum MOD: static_mod { static let modValue: barrett = 2147483647 }
+        enum MOD: static_mod { static let m: mod_value = 2147483647 }
         
         var a = [ll](repeating: 0, count: 1)
         var b = [ll](repeating: 0, count: 2)
@@ -506,7 +506,7 @@ final class convolutionTests: XCTestCase {
     }
     
     func testConv2130706433() throws {
-        enum MOD: static_mod { static let modValue: barrett = 2130706433 }
+        enum MOD: static_mod { static let m: mod_value = 2130706433 }
         
         var a = [ll](repeating: 0, count: 1024)
         var b = [ll](repeating: 0, count: 1024)

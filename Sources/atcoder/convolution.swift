@@ -24,7 +24,7 @@ struct fft_info<mint: modint_base> {
         root[Int(rank2)] = mint(g).pow(CLongLong((mint.mod() - 1) >> rank2));
         iroot[Int(rank2)] = root[Int(rank2)].inv();
 //        for (int i = rank2 - 1; i >= 0; i--) {
-        for i in Int(rank2 - 1)..>=0 {
+        for i in Int(rank2 - 1) ..>= 0 {
             root[i] = root[i + 1] * root[i + 1];
             iroot[i] = iroot[i + 1] * iroot[i + 1];
         }
@@ -32,7 +32,7 @@ struct fft_info<mint: modint_base> {
         do {
             var prod: mint = 1; var iprod: mint = 1;
 //            for (int i = 0; i <= rank2 - 2; i++) {
-            for i in 0..<=Int(rank2 - 2) {
+            for i in 0 ..<= Int(rank2 - 2) {
                 rate2[i] = root[i + 2] * prod;
                 irate2[i] = iroot[i + 2] * iprod;
                 prod *= iroot[i + 2];
@@ -42,7 +42,7 @@ struct fft_info<mint: modint_base> {
         do {
             var prod: mint = 1; var iprod: mint = 1;
 //            for (int i = 0; i <= rank2 - 3; i++) {
-            for i in 0..<=Int(rank2 - 3) {
+            for i in 0 ..<= Int(rank2 - 3) {
                 rate3[i] = root[i + 3] * prod;
                 irate3[i] = iroot[i + 3] * iprod;
                 prod *= iroot[i + 3];
@@ -233,16 +233,6 @@ static func convolution_fft<mint: modint_base>(_ a: [mint],_ b: [mint]) -> [mint
 
 }  // namespace internal
 
-extension Array where Element: modint_base {
-    mutating func resize(_ n: Int) {
-        if count > n {
-            removeLast(count - n)
-        } else {
-            append(contentsOf: repeatElement(0, count: n - count))
-        }
-    }
-}
-
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
 public func convolution<mint: modint_base>(_ a: [mint],_ b: [mint]) -> [mint] {
     let n = a.count, m = b.count;
@@ -271,12 +261,12 @@ public func convolution<mint: modint_base>(_ a: [mint],_ b: [mint]) -> [mint] {
 //template <unsigned int mod = 998244353,
 //          class T,
 //          std::enable_if_t<internal::is_integral<T>::value>* = nullptr>
-public func convolution<T: FixedWidthInteger, mod: mod_type>(_ t: mod.Type,_ a: [T],_ b: [T]) -> [T] {
+public func convolution<T: FixedWidthInteger, mod: static_mod>(_ t: mod.Type,_ a: [T],_ b: [T]) -> [T] {
     
     let n = a.count, m = b.count;
     if ((n == 0) || (m == 0)) { return []; }
 
-    typealias mint = internal_modint<mod>;
+    typealias mint = static_modint<mod>;
 
     let z = Int(_internal.bit_ceil(CUnsignedInt(n + m - 1)));
     assert((Int(mint.mod()) - 1) % z == 0);
@@ -319,9 +309,9 @@ public func convolution_ll(_ a: [CLongLong],
         static let M1M3: LL = MOD1 &* MOD3;
         static let M1M2: LL = MOD1 &* MOD2;
         static let M1M2M3: LL = MOD1 &* MOD2 &* MOD3;
-        enum mod1: static_mod { static let modValue = barrett(MOD1) }
-        enum mod2: static_mod { static let modValue = barrett(MOD2) }
-        enum mod3: static_mod { static let modValue = barrett(MOD3) }
+        enum mod1: static_mod { static let m = mod_value(MOD1) }
+        enum mod2: static_mod { static let m = mod_value(MOD2) }
+        enum mod3: static_mod { static let m = mod_value(MOD3) }
         static let i1 = ULL(_internal.inv_gcd(MOD2 * MOD3, MOD1).second);
         static let i2 = ULL(_internal.inv_gcd(MOD1 * MOD3, MOD2).second);
         static let i3 = ULL(_internal.inv_gcd(MOD1 * MOD2, MOD3).second);
