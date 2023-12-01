@@ -1,5 +1,7 @@
 import Foundation
 
+// TODO: abc331_fのtestcaseが公開されたら、profileをとり、可能ならばチューニングすること。
+
 public protocol SegtreeParameter {
     associatedtype S
     static var op: (S,S) -> S { get }

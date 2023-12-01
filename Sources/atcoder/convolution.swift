@@ -1,5 +1,7 @@
 import Foundation
 
+// TODO: abc331_gのtestcaseが公開されたら、profileをとり、可能ならばチューニングすること。
+
 extension _internal {
 
 //template <class mint,

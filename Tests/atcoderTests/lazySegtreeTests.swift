@@ -1,6 +1,5 @@
 import XCTest
 @testable import atcoder
-import Fortify
 
 struct starry {
     static func op_ss(_ a: Int,_ b: Int) -> Int { return Swift.max(a, b); }
@@ -56,9 +55,7 @@ final class lazySegtreeTests: XCTestCase {
         
         throw XCTSkip("配列のfatalをSwiftのみでハンドリングする方法が、まだない。SE-0403以後に、テストするように切り替えます。")
         
-        XCTAssertThrowsError(try Fortify.exec {
-            starry_seg(-1)
-        })
+        XCTAssertThrowsError(starry_seg(-1))
         
         var s = starry_seg(10)
         

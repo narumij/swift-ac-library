@@ -216,10 +216,9 @@ public struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
             // for (int v = t; v != s; v = g.elist[prev_e[v]].to) {
             do { var v = t; while v != s { defer { v = g.elist[prev_e[v]].to; }
                 // auto& e = g.elist[prev_e[v]];
-                // e.cap += c;
-                g.elist[prev_e[v]].cap += c
-                // g.elist[e.rev].cap -= c;
-                g.elist[g.elist[prev_e[v]].rev].cap -= c;
+                var e = g.elist[prev_e[v]]; defer { g.elist[prev_e[v]] = e }
+                e.cap += c
+                g.elist[e.rev].cap -= c;
             } }
             let d = -dual_dist[s].first;
             flow += c;

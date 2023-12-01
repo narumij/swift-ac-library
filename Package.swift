@@ -14,7 +14,6 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-collections.git", from: "1.0.4"),
         .package(url: "https://github.com/apple/swift-algorithms", from: "1.1.0"),
-        .package(url: "https://github.com/johnno1962/Fortify", from: "1.0.2"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -30,7 +29,6 @@ let package = Package(
                 "atcoder",
                 .product(name: "Collections", package: "swift-collections"),
                 .product(name: "Algorithms", package: "swift-algorithms"),
-                .product(name: "Fortify", package: "Fortify"),
             ]),
     ]
 )
