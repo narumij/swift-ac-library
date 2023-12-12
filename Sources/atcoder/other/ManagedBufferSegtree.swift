@@ -96,7 +96,7 @@ extension ManagedBufferSegtree {
                 (elements + size + _n).initialize(repeating: Base.e, count: size - _n)
             }
             __update {
-                for i in ($0.size - 1) ..>= 1 { $0.update(i) }
+                for i in stride(from: $0.size - 1, through: 1, by: -1) { $0.update(i) }
             }
         }
 
