@@ -58,7 +58,7 @@ struct fft_info<mint: modint_base> {
 static func butterfly<mint: modint_base>(_ a: inout [mint]) {
     let n = a.count;
 //    int h = internal::countr_zero((unsigned int)n);
-    let h = _internal.countr_zero(CUnsignedInt(n))
+    let h: CInt = _internal.countr_zero(CUnsignedInt(n))
 
 //    static const fft_info<mint> info;
     let info = fft_info<mint>(); // 挙動に関して注意
@@ -81,7 +81,7 @@ static func butterfly<mint: modint_base>(_ a: inout [mint]) {
                     a[i + offset + p] = l - r;
                 }
                 if (s + 1 != (1 << len))
-                    { rot *= info.rate2[Int(_internal.countr_zero(~CUnsignedInt(s)))]; }
+                    { rot *= info.rate2[_internal.countr_zero(~CUnsignedInt(s))]; }
             }
             len += 1;
         } else {
@@ -109,7 +109,7 @@ static func butterfly<mint: modint_base>(_ a: inout [mint]) {
                     a[i + offset + 3 * p] = mint(a0 + na2 + (mod2 - a1na3imag));
                 }
                 if (s + 1 != (1 << len))
-                    { rot *= info.rate3[Int(_internal.countr_zero(~(CUnsignedInt(s))))]; }
+                    { rot *= info.rate3[_internal.countr_zero(~(CUnsignedInt(s)))]; }
             }
             len += 2;
         }
@@ -119,7 +119,7 @@ static func butterfly<mint: modint_base>(_ a: inout [mint]) {
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
 static func butterfly_inv<mint: modint_base>(_ a: inout [mint]) {
     let n = a.count;
-    let h = _internal.countr_zero(CUnsignedInt(n));
+    let h: CInt = _internal.countr_zero(CUnsignedInt(n));
 
 //    static const fft_info<mint> info;
     let info = fft_info<mint>(); // 挙動に関して注意
@@ -144,7 +144,7 @@ static func butterfly_inv<mint: modint_base>(_ a: inout [mint]) {
                     ULL(irot.val()));
                 }
                 if (s + 1 != (1 << (len - 1)))
-                    { irot *= info.irate2[Int(_internal.countr_zero(~CUnsignedInt(s)))]; }
+                    { irot *= info.irate2[_internal.countr_zero(~CUnsignedInt(s))]; }
             }
             len -= 1;
         } else {
@@ -177,7 +177,7 @@ static func butterfly_inv<mint: modint_base>(_ a: inout [mint]) {
                         ULL(irot3.val()));
                 }
                 if (s + 1 != (1 << (len - 2)))
-                    { irot *= info.irate3[Int(_internal.countr_zero(~(CUnsignedInt(s))))]; }
+                    { irot *= info.irate3[_internal.countr_zero(~(CUnsignedInt(s)))]; }
             }
             len -= 2;
         }
@@ -214,7 +214,7 @@ static func convolution_fft<mint: modint_base>(_ a: [mint],_ b: [mint]) -> [mint
     var a = a
     var b = b
     let n = CInt(a.count), m = CInt(b.count);
-    let z = CInt(_internal.bit_ceil(CUnsignedInt(n + m - 1)));
+    let z: CInt = _internal.bit_ceil(CUnsignedInt(n + m - 1));
     a.resize(Int(z));
     _internal.butterfly(&a);
     b.resize(Int(z));
@@ -240,7 +240,7 @@ public func convolution<mint: modint_base>(_ a: [mint],_ b: [mint]) -> [mint] {
     let n = a.count, m = b.count;
     if ((n == 0) || (m == 0)) { return []; }
 
-    let z = _internal.bit_ceil(CUnsignedInt(n + m - 1));
+    let z: CInt = _internal.bit_ceil(CUnsignedInt(n + m - 1));
     assert((mint.mod() - 1) % CInt(z) == 0);
 
     if (min(n, m) <= 60) { return _internal.convolution_naive(a, b); }
@@ -270,7 +270,7 @@ public func convolution<T: FixedWidthInteger, mod: static_mod>(_ t: mod.Type,_ a
 
     typealias mint = static_modint<mod>;
 
-    let z = Int(_internal.bit_ceil(CUnsignedInt(n + m - 1)));
+    let z: Int = _internal.bit_ceil(CUnsignedInt(n + m - 1));
     assert((Int(mint.mod()) - 1) % z == 0);
 
     var a2 = [mint](repeating: 0, count: n), b2 = [mint](repeating: 0, count: m);

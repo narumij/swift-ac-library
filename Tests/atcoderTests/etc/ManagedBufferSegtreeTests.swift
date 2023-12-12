@@ -26,8 +26,6 @@ final class ManagedBufferSegtreeTests: XCTestCase {
         // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
     }
     
-    typealias segtree = ManagedBufferSegtree
-
     enum fixture: SegtreeParameter {
         static let op: (String,String) -> String = { a, b in
             assert(a == "$" || b == "$" || a <= b);
@@ -39,9 +37,21 @@ final class ManagedBufferSegtreeTests: XCTestCase {
         typealias S = String
     }
     
+    struct segtree: SegtreeProtocol {
+        static let op: (String,String) -> String = { a, b in
+            assert(a == "$" || b == "$" || a <= b);
+            if (a == "$") { return b; }
+            if (b == "$") { return a; }
+            return a + b;
+        }
+        static let e: String = "$"
+        typealias S = String
+        var storage: Storage
+    }
+    
     func test0() {
-        XCTAssertEqual("$", segtree<fixture>(0).all_prod())
-        XCTAssertEqual("$", segtree<fixture>().all_prod())
+        XCTAssertEqual("$", segtree(0).all_prod())
+        XCTAssertEqual("$", segtree().all_prod())
     }
     
     func testInvalid() throws {
@@ -50,7 +60,7 @@ final class ManagedBufferSegtreeTests: XCTestCase {
         
         XCTAssertThrowsError(segtree_naive<fixture>(-1))
         
-        let s = segtree<fixture>(10)
+        let s = segtree(10)
         
         XCTAssertThrowsError(s.get(-1))
         XCTAssertThrowsError(s.get(10))
@@ -67,7 +77,7 @@ final class ManagedBufferSegtreeTests: XCTestCase {
     }
     
     func testOne() throws {
-        var s = segtree<fixture>(1)
+        var s = segtree(1)
         XCTAssertEqual("$", s.all_prod());
         XCTAssertEqual("$", s.get(0));
         XCTAssertEqual("$", s.prod(0, 1));
@@ -85,7 +95,7 @@ final class ManagedBufferSegtreeTests: XCTestCase {
 //        for (int n = 0; n < 30; n++) {
         for n in 0..<30 {
             var seg0 = segtree_naive<fixture>(n);
-            var seg1 = segtree<fixture>(n);
+            var seg1 = segtree(n);
 //            for (int i = 0; i < n; i++) {
             for i in 0..<n {
                 var s = ""
@@ -131,8 +141,8 @@ final class ManagedBufferSegtreeTests: XCTestCase {
     }
     
     func testAssign() throws {
-        var seg0 = segtree<fixture>();
-        XCTAssertNoThrow(seg0 = segtree<fixture>(10));
+        var seg0 = segtree();
+        XCTAssertNoThrow(seg0 = segtree(10));
     }
     
     func testPerformanceExample() throws {
