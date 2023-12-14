@@ -24,7 +24,8 @@ fileprivate struct time_manager {
     }
 };
 
-fileprivate enum stress_fixture {
+fileprivate struct lazy_segtree_stress: LazySegtreeProtocol {
+    var storage: Storage
     struct S {
         internal init(_ l: Int,_ r: Int,_ time: Int) {
             self.l = l
@@ -63,7 +64,7 @@ fileprivate enum stress_fixture {
     static func e_t() -> T { return T(-1); }
 }
 
-extension stress_fixture: LazySegtreeParameter {
+extension lazy_segtree_stress {
     typealias F = T
     static let op: (S,S) -> S = op_ss
     static let e: S = e_s()
@@ -72,11 +73,11 @@ extension stress_fixture: LazySegtreeParameter {
     static let id: F = e_t()
 }
 
-final class lazySegtreeStressTests: XCTestCase {
+final class ManagedBufferLazySegtreeStressTests: XCTestCase {
 
-    fileprivate typealias seg = lazy_segtree<stress_fixture>;
-    fileprivate typealias S = stress_fixture.S
-    fileprivate typealias T = stress_fixture.T
+    fileprivate typealias seg = lazy_segtree_stress;
+    fileprivate typealias S = lazy_segtree_stress.S
+    fileprivate typealias T = lazy_segtree_stress.T
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

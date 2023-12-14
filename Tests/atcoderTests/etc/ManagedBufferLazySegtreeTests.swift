@@ -1,27 +1,28 @@
 import XCTest
 @testable import atcoder
 
-fileprivate struct starry {
+fileprivate struct lazy_segtree_starry {
     static func op_ss(_ a: Int,_ b: Int) -> Int { return Swift.max(a, b); }
     static func op_ts(_ a: Int,_ b: Int) -> Int { return a + b; }
     static func op_tt(_ a: Int,_ b: Int) -> Int { return a + b; }
     static func e_s() -> Int { return -1_000_000_000; }
     static func e_t() -> Int { return 0; }
+    var storage: Storage
 };
 
-extension starry: LazySegtreeParameter, SegtreeParameter {
+extension lazy_segtree_starry: LazySegtreeProtocol {
     typealias S = Int
     static let op: (S,S) -> S = op_ss
     static let e: S = e_s()
     typealias F = Int
-    static var mapping: (F,S) -> S = { a, b in starry.op_ts(a,b) }
-    static var composition: (F,F) -> F = { a, b in starry.op_tt(a,b) }
+    static var mapping: (F,S) -> S = { a, b in lazy_segtree_starry.op_ts(a,b) }
+    static var composition: (F,F) -> F = { a, b in lazy_segtree_starry.op_tt(a,b) }
     static let id: F = e_t()
 }
 
-fileprivate typealias starry_seg = lazy_segtree<starry>
+fileprivate typealias starry_seg = lazy_segtree_starry
 
-final class lazySegtreeTests: XCTestCase {
+final class ManagedBufferLazySegtreeTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -48,7 +49,7 @@ final class lazySegtreeTests: XCTestCase {
     
     func testAssign() throws {
         var seg0 = starry_seg();
-        XCTAssertNoThrow(seg0 = lazy_segtree<starry>(10));
+        XCTAssertNoThrow(seg0 = starry_seg(10));
     }
 
     func testInvalid() throws {
@@ -108,7 +109,7 @@ final class lazySegtreeTests: XCTestCase {
     
     func testUsage() throws {
         
-        var seg = lazy_segtree<starry>([Int](repeating: 0, count: 10));
+        var seg = starry_seg([Int](repeating: 0, count: 10));
         
         XCTAssertEqual(0, seg.all_prod());
         seg.apply(0, 3, 5);

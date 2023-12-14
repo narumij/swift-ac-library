@@ -31,8 +31,8 @@ public struct lazy_segtree<Parameter: LazySegtreeParameter> {
     }
     
     @usableFromInline let _n, size, log: Int;
-    @usableFromInline var d: ContiguousArray<S>;
-    @usableFromInline var lz: ContiguousArray<F>;
+    @usableFromInline var d: [S];
+    @usableFromInline var lz: [F];
 }
 
 extension lazy_segtree._UnsafeHandle {

@@ -7,8 +7,8 @@ public protocol _SegtreeProtocol {
 }
 
 public protocol SegtreeProtocol: _SegtreeProtocol {
-    var storage: Storage { get set }
     init(storage: Storage)
+    var storage: Storage { get set }
 }
 
 extension SegtreeProtocol {
@@ -22,7 +22,9 @@ extension SegtreeProtocol {
     }
 }
 
-public enum ManagedBufferSegtree<Base: _SegtreeProtocol> { }
+public enum ManagedBufferSegtree<Base: _SegtreeProtocol> {
+    public typealias S = Base.S
+}
 
 extension ManagedBufferSegtree {
     
@@ -125,8 +127,6 @@ extension ManagedBufferSegtree {
     }
 }
 
-extension ManagedBufferSegtree._BufferHeader { }
-
 extension ManagedBufferSegtree {
     
     public
@@ -155,14 +155,10 @@ extension ManagedBufferSegtree {
     }
 }
 
-extension ManagedBufferSegtree {
-    public typealias S = Base.S
-}
-
 extension ManagedBufferSegtree._UnsafeHandle {
     
-    public func set<Index: FixedWidthInteger>(_ p: Index,_ x: S) {
-        var p = Int(p)
+    public func set(_ p: Int,_ x: S) {
+        var p = p
         assert(0 <= p && p < _n);
         p += size;
         (d + p).pointee = x;
@@ -170,13 +166,13 @@ extension ManagedBufferSegtree._UnsafeHandle {
         for _ in 0 ..< log { p >>= 1; update(p) }
     }
     
-    public func get<Index: FixedWidthInteger>(_ p: Index) -> S {
+    public func get(_ p: Int) -> S {
         assert(0 <= p && p < _n);
-        return d[Int(p) + size];
+        return d[p + size];
     }
     
-    public func prod<Index: FixedWidthInteger>(_ l: Index,_ r: Index) -> S {
-        var l = Int(l), r = Int(r)
+    public func prod(_ l: Int,_ r: Int) -> S {
+        var l = l, r = r
         assert(0 <= l && l <= r && r <= _n);
         var sml: S = e(), smr: S = e();
         l += size;
@@ -193,8 +189,8 @@ extension ManagedBufferSegtree._UnsafeHandle {
     
     public func all_prod() -> S { (d + 1).pointee }
     
-    public func max_right<Index: FixedWidthInteger>(_ l: Index,_ f: (S) -> Bool) -> Int {
-        var l = Int(l)
+    public func max_right(_ l: Int,_ f: (S) -> Bool) -> Int {
+        var l = l
         assert(0 <= l && l <= _n);
         assert(f(e()));
         if (l == _n) { return _n; }
@@ -218,8 +214,8 @@ extension ManagedBufferSegtree._UnsafeHandle {
         return _n;
     }
     
-    public func min_left<Index: FixedWidthInteger>(_ r: Index,_ f: (S) -> Bool ) -> Int {
-        var r = Int(r)
+    public func min_left(_ r: Int,_ f: (S) -> Bool ) -> Int {
+        var r = r
         assert(0 <= r && r <= _n);
         assert(f(e()));
         if (r == 0) { return 0; }
@@ -252,15 +248,15 @@ extension ManagedBufferSegtree._UnsafeHandle {
 extension SegtreeProtocol {
     
     public mutating func set<Index: FixedWidthInteger>(_ p: Index,_ x: S) {
-        storage.__update{ $0.set(p, x) }
+        storage.__update{ $0.set(Int(p), x) }
     }
     
     public func get<Index: FixedWidthInteger>(_ p: Index) -> S {
-        storage.__read { $0.get(p) }
+        storage.__read { $0.get(Int(p)) }
     }
 
     public func prod<Index: FixedWidthInteger>(_ l: Index,_ r: Index) -> S {
-        storage.__read { $0.prod(l, r) }
+        storage.__read { $0.prod(Int(l), Int(r)) }
     }
     
     public func all_prod() -> S {
@@ -268,11 +264,11 @@ extension SegtreeProtocol {
     }
     
     public func max_right<Index: FixedWidthInteger>(_ l: Index,_ f: (S) -> Bool) -> Int {
-        storage.__read { $0.max_right(l, f) }
+        storage.__read { $0.max_right(Int(l), f) }
     }
     
     public func min_left<Index: FixedWidthInteger>(_ r: Index,_ f: (S) -> Bool ) -> Int {
-        storage.__read { $0.min_left(r, f) }
+        storage.__read { $0.min_left(Int(r), f) }
     }
 }
 
