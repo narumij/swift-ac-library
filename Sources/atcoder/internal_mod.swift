@@ -92,5 +92,20 @@ public protocol modint_base: AdditiveArithmetic, Hashable, ExpressibleByIntegerL
 }
 
 extension modint_base {
+    static func + <I: FixedWidthInteger>(lhs: I, rhs: mint) -> mint { mint(lhs) + rhs }
+    static func + <I: FixedWidthInteger>(lhs: mint, rhs: I) -> mint { lhs + mint(rhs) }
+    static func - <I: FixedWidthInteger>(lhs: I, rhs: mint) -> mint { mint(lhs) - rhs }
+    static func - <I: FixedWidthInteger>(lhs: mint, rhs: I) -> mint { lhs - mint(rhs) }
+    static func * <I: FixedWidthInteger>(lhs: I, rhs: mint) -> mint { mint(lhs) * rhs }
+    static func * <I: FixedWidthInteger>(lhs: mint, rhs: I) -> mint { lhs * mint(rhs) }
+    static func / <I: FixedWidthInteger>(lhs: I, rhs: mint) -> mint { mint(lhs) / rhs }
+    static func / <I: FixedWidthInteger>(lhs: mint, rhs: I) -> mint { lhs / mint(rhs) }
+    static func += <I: FixedWidthInteger>(lhs: inout mint, rhs: I) { lhs += mint(rhs) }
+    static func -= <I: FixedWidthInteger>(lhs: inout mint, rhs: I) { lhs -= mint(rhs) }
+    static func *= <I: FixedWidthInteger>(lhs: inout mint, rhs: I) { lhs *= mint(rhs) }
+    static func /= <I: FixedWidthInteger>(lhs: inout mint, rhs: I) { lhs /= mint(rhs) }
+}
+
+extension modint_base {
     public typealias mint = Self
 }
