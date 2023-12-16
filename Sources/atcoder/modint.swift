@@ -9,7 +9,6 @@ public protocol dynamic_modint_base: modint_base {
 public protocol internal_modint: modint_base {
     init(raw: CUnsignedInt)
     var _v: CUnsignedInt { get set }
-    static func umod() -> CUnsignedInt
 }
 
 extension internal_modint {
@@ -30,11 +29,12 @@ public extension static_modint {
 
     @inlinable @inline(__always)
     static func mod() -> CInt { return CInt(bitPattern: m.umod); }
-    
+
     init() { self.init(raw: 0) }
-    init(_ v: Bool) { self.init(raw: Self._v(uint: v ? 1 : 0)) }
-    init(_ v: CInt) { self.init(raw: Self._v(int: v)) }
-    init<T: FixedWidthInteger>(_ v: T) { self.init(raw: Self._v(v)) }
+    init(_ v: Bool) { _v = ___modint_v(v ? 1 : 0, mod: __modint_mod(m.umod)) }
+    init(_ v: CInt) { _v = ___modint_v(v, mod: __modint_mod(m.umod)) }
+    init<T: UnsignedInteger>(unsigned v: T) { _v = __modint_v(v, umod: __modint_mod(m.umod)) }
+    init<T: FixedWidthInteger>(_ v: T) { _v = ___modint_v(v, mod: __modint_mod(m.umod)) }
 
     func val() -> CUnsignedInt { return _v; }
     
@@ -122,10 +122,13 @@ extension dynamic_modint {
     @inlinable @inline(__always)
     public static func mod() -> CInt { return CInt(bitPattern: bt.umod); }
     
+    public static func _mod<INT: SignedInteger>() -> INT { return INT(bt.umod) }
+
     public init() { self.init(raw: 0) }
-    public init(_ v: Bool) { self.init(raw: Self._v(uint: v ? 1 : 0)) }
-    public init(_ v: CInt) { self.init(raw: Self._v(int: v)) }
-    public init<T: FixedWidthInteger>(_ v: T) { self.init(raw: Self._v(v)) }
+    public init(_ v: Bool) { _v = ___modint_v(v ? 1 : 0, mod: __modint_mod(bt.umod)) }
+    public init(_ v: CInt) { _v = ___modint_v(v, mod: __modint_mod(bt.umod)) }
+    public init<T: UnsignedInteger>(unsigned v: T) { _v = __modint_v(v, umod: __modint_mod(bt.umod)) }
+    public init<T: FixedWidthInteger>(_ v: T) { _v = ___modint_v(v, mod: __modint_mod(bt.umod))  }
 
     public func val() -> CUnsignedInt { return _v; }
     
@@ -198,27 +201,27 @@ public typealias modint = dynamic_modint
 extension internal_modint {
     @inlinable @inline(__always)
     public init(integerLiteral value: CInt) {
-        self.init(raw: Self._v(int: value))
+        self.init(raw: ___modint_v(value, mod: __modint_mod(Self.mod())))
     }
-    public init(unsigned: CUnsignedInt) { self.init(raw: Self._v(uint: unsigned)) }
+    public init(unsigned: CUnsignedInt) { self.init(raw: __modint_v(unsigned, umod: __modint_umod(Self.mod()))) }
     public var unsigned: CInt.Magnitude { val() }
     public var description: String { val().description }
 }
 
-extension internal_modint {
-    @usableFromInline static func _v<T: FixedWidthInteger>(_ v: T) -> CUnsignedInt {
-        // 整数のキャストが意外と重たいため、分けている
-        var x = v % T(mod());
-        if (x < 0) { x += T(mod()); }
-        return UINT(bitPattern: CInt(x));
-    }
-    @usableFromInline static func _v(uint v: CUnsignedInt) -> CUnsignedInt {
-        return v % umod();
-    }
-    @usableFromInline static func _v(int v: CInt) -> CUnsignedInt {
-        var x = v % mod();
-        if (x < 0) { x += mod(); }
-        return UINT(bitPattern: x);
-    }
+@usableFromInline func __modint_v<T: UnsignedInteger>(_ v: T, umod: T) -> CUnsignedInt {
+    let x = v % umod
+    return CUnsignedInt(truncatingIfNeeded: x);
 }
+
+@usableFromInline func ___modint_v<T: FixedWidthInteger>(_ v: T, mod: T) -> CUnsignedInt {
+    var x = v % mod;
+    if (x < 0) { x += mod }
+    let x0 = CInt(truncatingIfNeeded: x)
+    return CUnsignedInt(bitPattern: x0)
+}
+
+@usableFromInline func __modint_mod<T: UnsignedInteger>(_ umod: CUnsignedInt) -> T { T(umod) }
+@usableFromInline func __modint_mod<T: FixedWidthInteger>(_ umod: CUnsignedInt) -> T { T(truncatingIfNeeded: umod) }
+@usableFromInline func __modint_umod<T: UnsignedInteger>(_ mod: CInt) -> T { T(mod) }
+@usableFromInline func __modint_mod<T: FixedWidthInteger>(_ mod: CInt) -> T { T(truncatingIfNeeded: mod) }
 
