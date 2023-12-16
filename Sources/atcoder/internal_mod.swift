@@ -92,7 +92,7 @@ public protocol modint_base: AdditiveArithmetic, Hashable, ExpressibleByIntegerL
     func inv() -> mint
 }
 
-extension modint_base {
+public extension modint_base {
     static func + <I: FixedWidthInteger>(lhs: I, rhs: mint) -> mint { mint(lhs) + rhs }
     static func + <I: FixedWidthInteger>(lhs: mint, rhs: I) -> mint { lhs + mint(rhs) }
     static func - <I: FixedWidthInteger>(lhs: I, rhs: mint) -> mint { mint(lhs) - rhs }

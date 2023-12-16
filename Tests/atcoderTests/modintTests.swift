@@ -475,6 +475,12 @@ final class modintTests: XCTestCase {
         XCTAssertEqual("0", modint(false).description);
     }
     
+    func testEtc() throws {
+        typealias mint = modint998244353
+        let K = 2
+        var p = mint(1) / K
+    }
+    
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
         self.measure {
