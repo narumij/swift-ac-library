@@ -88,7 +88,7 @@ public protocol modint_base: AdditiveArithmetic, Hashable, ExpressibleByIntegerL
     static func /=(lhs: inout mint, rhs: mint)
     static prefix func + (_ m: Self) -> Self
     static prefix func - (_ m: Self) -> Self
-    func pow(_ n: CLongLong) -> mint
+    func pow<LL: SignedInteger>(_ n: LL) -> mint
     func inv() -> mint
 }
 

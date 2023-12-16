@@ -79,6 +79,10 @@ public extension static_modint {
         lhs * rhs.inv()
     }
     
+    func pow<LL: SignedInteger>(_ n: LL) -> mint {
+        pow(CLongLong(n))
+    }
+    
     func pow(_ n: CLongLong) -> mint {
         assert(0 <= n);
         var n = n
@@ -170,6 +174,10 @@ extension dynamic_modint {
         lhs * rhs.inv()
     }
 
+    public func pow<LL: SignedInteger>(_ n: LL) -> mint {
+        pow(CLongLong(n))
+    }
+    
     public func pow(_ n: CLongLong) -> mint {
         assert(0 <= n);
         var n = n
