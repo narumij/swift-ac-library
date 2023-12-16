@@ -1,19 +1,7 @@
 import XCTest
 @testable import atcoder
 
-extension dsu._Storage {
-    
-    var array: [Int] {
-        (0..<count).map{ self[$0] }
-    }
-    
-    subscript(index: Int) -> Int {
-        get { _buffer.withUnsafeMutablePointerToElements{ $0[index] } }
-        nonmutating set { _buffer.withUnsafeMutablePointerToElements{ $0[index] = newValue } }
-    }
-}
-
-final class dsuTests: XCTestCase {
+final class dsuTests_v1: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -34,19 +22,16 @@ final class dsuTests: XCTestCase {
     func test0() throws {
         var uf = dsu(0);
         XCTAssertEqual([], uf.groups());
-        XCTAssertEqual([], uf.storage.array)
     }
     
     func testEmpty() throws {
         var uf = dsu();
         XCTAssertEqual([], uf.groups());
-        XCTAssertEqual([], uf.storage.array)
     }
     
     func testAssign() throws {
         var uf: dsu = .init();
         uf = dsu(10);
-        XCTAssertEqual([Int](repeating: -1, count: 10), uf.storage.array)
     }
     
     func testSimple() throws {
