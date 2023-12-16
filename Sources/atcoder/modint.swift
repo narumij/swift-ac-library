@@ -200,9 +200,6 @@ extension internal_modint {
     public init(integerLiteral value: CInt) {
         self.init(raw: Self._v(int: value))
     }
-    public init(unsigned: CUnsignedInt) { self.init(raw: Self._v(uint: unsigned)) }
-    public var unsigned: CInt.Magnitude { val() }
-    public var description: String { val().description }
 }
 
 extension internal_modint {
