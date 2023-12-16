@@ -70,7 +70,7 @@ public enum mod_1_000_000_007: static_mod {
     public static let mod: mod_value = 1_000_000_007
 }
 
-public protocol modint_base: AdditiveArithmetic, Hashable, ExpressibleByIntegerLiteral, CustomStringConvertible, ToUnsigned {
+public protocol modint_base: AdditiveArithmetic, Hashable, ExpressibleByIntegerLiteral, CustomStringConvertible {
     static func mod() -> CInt
     init()
     init(_ v: Bool)

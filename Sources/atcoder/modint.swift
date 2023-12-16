@@ -203,8 +203,6 @@ extension internal_modint {
     public init(integerLiteral value: CInt) {
         self.init(raw: ___modint_v(value, mod: __modint_mod(Self.mod())))
     }
-    public init(unsigned: CUnsignedInt) { self.init(raw: __modint_v(unsigned, umod: __modint_umod(Self.mod()))) }
-    public var unsigned: CInt.Magnitude { val() }
     public var description: String { val().description }
 }
 
