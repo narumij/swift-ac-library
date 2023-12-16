@@ -3,7 +3,7 @@ import XCTest
 import Algorithms
 
 // time manager
-fileprivate struct time_manager {
+struct time_manager {
     var v: [Int]
     init(_ n: Int) {
         v = [Int](repeating: -1, count: n)
@@ -24,7 +24,7 @@ fileprivate struct time_manager {
     }
 };
 
-fileprivate enum stress_fixture {
+enum stress_fixture {
     struct S {
         internal init(_ l: Int,_ r: Int,_ time: Int) {
             self.l = l
@@ -74,9 +74,9 @@ extension stress_fixture: LazySegtreeParameter {
 
 final class lazySegtreeStressTests: XCTestCase {
 
-    fileprivate typealias seg = lazy_segtree<stress_fixture>;
-    fileprivate typealias S = stress_fixture.S
-    fileprivate typealias T = stress_fixture.T
+    typealias seg = lazy_segtree<stress_fixture>;
+    typealias S = stress_fixture.S
+    typealias T = stress_fixture.T
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

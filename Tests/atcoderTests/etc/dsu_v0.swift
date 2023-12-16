@@ -1,13 +1,13 @@
 import Foundation
 
-public struct dsu {
+public struct dsu_v0 {
     public init() { parent_or_size = [] }
     public init(_ n: Int) { parent_or_size = .init(repeating: -1, count: n) }
     @usableFromInline var _n: Int { parent_or_size.count }
     @usableFromInline var parent_or_size: [Int];
 };
 
-public extension dsu {
+public extension dsu_v0 {
     
     mutating func merge(_ a: Int,_ b: Int) -> Int {
         assert(0 <= a && a < _n);

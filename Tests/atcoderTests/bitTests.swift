@@ -19,40 +19,21 @@ final class bitTests: XCTestCase {
     }
 
     func testBitCeil() throws {
-        XCTAssertEqual(1, _internal.bit_ceil(0 as CUnsignedInt));
-        XCTAssertEqual(1, _internal.bit_ceil(1 as CUnsignedInt));
-        XCTAssertEqual(2, _internal.bit_ceil(2 as CUnsignedInt));
-        XCTAssertEqual(4, _internal.bit_ceil(3 as CUnsignedInt));
-        XCTAssertEqual(4, _internal.bit_ceil(4 as CUnsignedInt));
-        XCTAssertEqual(8, _internal.bit_ceil(5 as CUnsignedInt));
-        XCTAssertEqual(8, _internal.bit_ceil(6 as CUnsignedInt));
-        XCTAssertEqual(8, _internal.bit_ceil(7 as CUnsignedInt));
-        XCTAssertEqual(8, _internal.bit_ceil(8 as CUnsignedInt));
-        XCTAssertEqual(16, _internal.bit_ceil(9 as CUnsignedInt));
-        XCTAssertEqual(1 << 30, _internal.bit_ceil(1 << 30 as CUnsignedInt));
-        XCTAssertEqual(1 << 31, _internal.bit_ceil((1 << 30) + 1 as CUnsignedInt));
-        XCTAssertEqual(1 << 31, _internal.bit_ceil((1 << 31) - 1 as CUnsignedInt));
-        XCTAssertEqual(1 << 31, _internal.bit_ceil(1 << 31 as CUnsignedInt));
+        XCTAssertEqual(1, _internal.bit_ceil(0));
+        XCTAssertEqual(1, _internal.bit_ceil(1));
+        XCTAssertEqual(2, _internal.bit_ceil(2));
+        XCTAssertEqual(4, _internal.bit_ceil(3));
+        XCTAssertEqual(4, _internal.bit_ceil(4));
+        XCTAssertEqual(8, _internal.bit_ceil(5));
+        XCTAssertEqual(8, _internal.bit_ceil(6));
+        XCTAssertEqual(8, _internal.bit_ceil(7));
+        XCTAssertEqual(8, _internal.bit_ceil(8));
+        XCTAssertEqual(16, _internal.bit_ceil(9));
+        XCTAssertEqual(1 << 30, _internal.bit_ceil(1 << 30));
+        XCTAssertEqual(1 << 31, _internal.bit_ceil((1 << 30) + 1));
+        XCTAssertEqual(1 << 31, _internal.bit_ceil((1 << 31) - 1));
+        XCTAssertEqual(1 << 31, _internal.bit_ceil(1 << 31));
     }
-    
-#if false
-    func testBitCeil2() throws {
-        XCTAssertEqual(1, _internal.bit_ceil(0 as UInt));
-        XCTAssertEqual(1, _internal.bit_ceil(1 as UInt));
-        XCTAssertEqual(2, _internal.bit_ceil(2 as UInt));
-        XCTAssertEqual(4, _internal.bit_ceil(3 as UInt));
-        XCTAssertEqual(4, _internal.bit_ceil(4 as UInt));
-        XCTAssertEqual(8, _internal.bit_ceil(5 as UInt));
-        XCTAssertEqual(8, _internal.bit_ceil(6 as UInt));
-        XCTAssertEqual(8, _internal.bit_ceil(7 as UInt));
-        XCTAssertEqual(8, _internal.bit_ceil(8 as UInt));
-        XCTAssertEqual(16, _internal.bit_ceil(9 as UInt));
-        XCTAssertEqual(1 << 30, _internal.bit_ceil(1 << 30 as UInt));
-        XCTAssertEqual(1 << 31, _internal.bit_ceil((1 << 30) as UInt + 1));
-        XCTAssertEqual(1 << 31, _internal.bit_ceil((1 << 31) as UInt - 1));
-        XCTAssertEqual(1 << 31, _internal.bit_ceil(1 << 31 as UInt) as UInt);
-    }
-#endif
     
     func testCountrZero() throws {
         XCTAssertEqual(0, _internal.countr_zero(1));

@@ -75,6 +75,7 @@ public protocol modint_base: AdditiveArithmetic, Hashable, ExpressibleByIntegerL
     init()
     init(_ v: Bool)
     init(_ v: CInt)
+    init<T: UnsignedInteger>(unsigned v: T)
     init<T: FixedWidthInteger>(_ v: T)
     func val() -> CUnsignedInt
     static func +(lhs: mint, rhs: mint) -> mint

@@ -1,7 +1,5 @@
 import Foundation
 
-// TODO: abc331_gのtestcaseが公開されたら、profileをとり、可能ならばチューニングすること。
-
 extension _internal {
 
 //template <class mint,
@@ -54,8 +52,12 @@ struct fft_info<mint: modint_base> {
     }
 };
 
-//template <class mint, internal::is_static_modint_t<mint>* = nullptr>
 static func butterfly<mint: modint_base>(_ a: inout [mint]) {
+    a.withUnsafeMutableBufferPointer { butterfly($0) }
+}
+
+//template <class mint, internal::is_static_modint_t<mint>* = nullptr>
+static func butterfly<mint: modint_base>(_ a: UnsafeMutableBufferPointer<mint>) {
     let n = a.count;
 //    int h = internal::countr_zero((unsigned int)n);
     let h: CInt = _internal.countr_zero(CUnsignedInt(n))
@@ -101,12 +103,12 @@ static func butterfly<mint: modint_base>(_ a: inout [mint]) {
                     let a2: ULL = 1 * ULL(a[i + offset + 2 * p].val()) * ULL(rot2.val());
                     let a3: ULL = 1 * ULL(a[i + offset + 3 * p].val()) * ULL(rot3.val());
                     let a1na3imag =
-                    1 * ULL(mint(a1 + ULL(mod2) - a3).val()) * ULL(imag.val());
+                    1 * ULL(mint(unsigned: a1 + ULL(mod2) - a3).val()) * ULL(imag.val());
                     let na2 = mod2 - a2;
-                    a[i + offset] = mint(a0 + a2 + a1 + a3);
-                    a[i + offset + 1 * p] = mint(a0 + a2 + (2 * mod2 - (a1 + a3)));
-                    a[i + offset + 2 * p] = mint(a0 + na2 + a1na3imag);
-                    a[i + offset + 3 * p] = mint(a0 + na2 + (mod2 - a1na3imag));
+                    a[i + offset] = mint(unsigned: a0 + a2 + a1 + a3);
+                    a[i + offset + 1 * p] = mint(unsigned: a0 + a2 + (2 * mod2 - (a1 + a3)));
+                    a[i + offset + 2 * p] = mint(unsigned: a0 + na2 + a1na3imag);
+                    a[i + offset + 3 * p] = mint(unsigned: a0 + na2 + (mod2 - a1na3imag));
                 }
                 if (s + 1 != (1 << len))
                     { rot *= info.rate3[_internal.countr_zero(~(CUnsignedInt(s)))]; }
@@ -116,8 +118,12 @@ static func butterfly<mint: modint_base>(_ a: inout [mint]) {
     }
 }
 
-//template <class mint, internal::is_static_modint_t<mint>* = nullptr>
 static func butterfly_inv<mint: modint_base>(_ a: inout [mint]) {
+    a.withUnsafeMutableBufferPointer { butterfly_inv($0) }
+}
+    
+//template <class mint, internal::is_static_modint_t<mint>* = nullptr>
+static func butterfly_inv<mint: modint_base>(_ a: UnsafeMutableBufferPointer<mint>) {
     let n = a.count;
     let h: CInt = _internal.countr_zero(CUnsignedInt(n));
 
@@ -139,7 +145,7 @@ static func butterfly_inv<mint: modint_base>(_ a: inout [mint]) {
                     let l = a[i + offset];
                     let r = a[i + offset + p];
                     a[i + offset] = l + r;
-                    a[i + offset + p] = mint(
+                    a[i + offset + p] = mint(unsigned:
                         (ULL(mint.mod()) + ULL(l.val()) - ULL(r.val())) *
                     ULL(irot.val()));
                 }
@@ -165,15 +171,15 @@ static func butterfly_inv<mint: modint_base>(_ a: inout [mint]) {
 
                     let a2na3iimag: ULL =
                         1 *
-                    ULL(mint((ULL(mint.mod()) + a2 - a3) * ULL(iimag.val())).val());
-                    a[i + offset] = mint(a0 + a1 + a2 + a3);
+                    ULL(mint(unsigned: (ULL(mint.mod()) + a2 - a3) * ULL(iimag.val())).val());
+                    a[i + offset] = mint(unsigned: a0 + a1 + a2 + a3);
                     a[i + offset + 1 * p] =
-                    mint((a0 + (ULL(mint.mod()) - a1) + a2na3iimag) * ULL(irot.val()));
+                    mint(unsigned: (a0 + (ULL(mint.mod()) - a1) + a2na3iimag) * ULL(irot.val()));
                     a[i + offset + 2 * p] =
-                    mint((a0 + a1 + (ULL(mint.mod()) - a2) + (ULL(mint.mod()) - a3)) *
+                    mint(unsigned: (a0 + a1 + (ULL(mint.mod()) - a2) + (ULL(mint.mod()) - a3)) *
                         ULL(irot2.val()));
                     a[i + offset + 3 * p] =
-                    mint((a0 + (ULL(mint.mod()) - a1) + (ULL(mint.mod()) - a2na3iimag)) *
+                    mint(unsigned: (a0 + (ULL(mint.mod()) - a1) + (ULL(mint.mod()) - a2na3iimag)) *
                         ULL(irot3.val()));
                 }
                 if (s + 1 != (1 << (len - 2)))
