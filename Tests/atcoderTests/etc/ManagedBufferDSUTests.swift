@@ -1,6 +1,18 @@
 import XCTest
 @testable import atcoder
 
+extension ManagedBufferDSU._Storage {
+    
+    var array: [Int] {
+        (0..<count).map{ self[$0] }
+    }
+    
+    subscript(index: Int) -> Int {
+        get { _buffer.withUnsafeMutablePointerToElements{ $0[index] } }
+        nonmutating set { _buffer.withUnsafeMutablePointerToElements{ $0[index] = newValue } }
+    }
+}
+
 final class ManagedBufferDSUTests: XCTestCase {
 
     override func setUpWithError() throws {

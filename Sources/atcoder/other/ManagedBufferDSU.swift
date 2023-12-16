@@ -100,8 +100,8 @@ extension ManagedBufferDSU._UnsafeHandle {
         var x = leader(a), y = leader(b);
         if (x == y) { return x; }
         if (-parent_or_size[x] < -parent_or_size[y]) { swap(&x, &y); }
-        parent_or_size[x] += parent_or_size[y];
-        parent_or_size[y] = x;
+        (parent_or_size + x).pointee += parent_or_size[y];
+        (parent_or_size + y).pointee = x;
         return x;
     }
 
@@ -114,7 +114,7 @@ extension ManagedBufferDSU._UnsafeHandle {
     func leader(_ a: Element) -> Element {
         assert(0 <= a && a < _n);
         if (parent_or_size[a] < 0) { return a; }
-        parent_or_size[a] = leader(parent_or_size[a]);
+        (parent_or_size + a).pointee = leader(parent_or_size[a]);
         return parent_or_size[a]
     }
 
@@ -143,6 +143,7 @@ extension ManagedBufferDSU._UnsafeHandle {
 
 extension ManagedBufferDSU {
     
+    @discardableResult
     mutating func merge(_ a: Element,_ b: Element) -> Element {
         storage.__update { $0.merge(a, b) }
     }
@@ -160,14 +161,3 @@ extension ManagedBufferDSU {
     }
 }
 
-extension ManagedBufferDSU._Storage {
-    
-    var array: [Int] {
-        (0..<count).map{ self[$0] }
-    }
-    
-    subscript(index: Int) -> Int {
-        get { _buffer.withUnsafeMutablePointerToElements{ $0[index] } }
-        nonmutating set { _buffer.withUnsafeMutablePointerToElements{ $0[index] = newValue } }
-    }
-}
