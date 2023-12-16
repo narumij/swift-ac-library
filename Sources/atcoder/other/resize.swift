@@ -5,7 +5,9 @@ extension Array where Element: ExpressibleByIntegerLiteral {
         if count > n {
             removeLast(count - n)
         } else {
-            append(contentsOf: repeatElement(0, count: n - count))
+            for _ in 0..<(n - count) {
+                append(0)
+            }
         }
     }
 }

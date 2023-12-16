@@ -1,7 +1,7 @@
 import XCTest
 @testable import atcoder
 
-fileprivate struct starry {
+struct starry {
     static func op_ss(_ a: Int,_ b: Int) -> Int { return Swift.max(a, b); }
     static func op_ts(_ a: Int,_ b: Int) -> Int { return a + b; }
     static func op_tt(_ a: Int,_ b: Int) -> Int { return a + b; }
@@ -19,7 +19,7 @@ extension starry: LazySegtreeParameter, SegtreeParameter {
     static let id: F = e_t()
 }
 
-fileprivate typealias starry_seg = lazy_segtree<starry>
+typealias starry_seg = lazy_segtree<starry>
 
 final class lazySegtreeTests: XCTestCase {
 
