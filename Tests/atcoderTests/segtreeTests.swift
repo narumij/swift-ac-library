@@ -1,6 +1,5 @@
 import XCTest
 @testable import atcoder
-import Fortify
 
 extension CChar: ExpressibleByStringLiteral {
     public init(stringLiteral s: String) {
@@ -38,9 +37,7 @@ final class segtreeTests: XCTestCase {
         
         throw XCTSkip("配列のfatalをSwiftのみでハンドリングする方法が、まだない。SE-0403以後に、テストするように切り替えます。")
         
-        XCTAssertThrowsError(try Fortify.exec {
-            segtree_naive<fixture>(-1)
-        })
+        XCTAssertThrowsError(segtree_naive<fixture>(-1))
         
         let s = segtree<fixture>(10)
         
