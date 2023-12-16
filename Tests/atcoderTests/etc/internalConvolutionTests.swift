@@ -47,7 +47,7 @@ final class internalConvolutionTests: XCTestCase {
         var a = repeatElement(1, count: 64).map{mint($0)}
         var b = repeatElement(1, count: 128).map{mint($0)}
         let n = CInt(a.count), m = CInt(b.count);
-        let z = CInt(_internal.bit_ceil(CUnsignedInt(n + m - 1)));
+        let z: CInt = _internal.bit_ceil(CUnsignedInt(n + m - 1));
         a.resize(Int(z));
         _internal.butterfly(&a);
         b.resize(Int(z));
