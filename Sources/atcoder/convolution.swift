@@ -63,7 +63,10 @@ static func butterfly<mint: static_modint_base>(_ a: UnsafeMutableBufferPointer<
     let h: CInt = _internal.countr_zero(CUnsignedInt(n))
 
 //    static const fft_info<mint> info;
-    let info = fft_info<mint>(); // 挙動に関して注意
+    let info = fft_info<mint>();
+    // Swiftの制限でC++のstatic constに該当するものをgeneric型では使うことができない。
+    // Swift5.9でのプロファイルでは今のところ性能上、目立った実行時間にはなっていない。(ABC331-Gの重たい問題でも18ms程度)
+    // 手元のOSではSwift5.8.1が動かせず、ジャッジ環境で実際にどのくらいの影響があるのかは不明。
     
     typealias ULL = CUnsignedLongLong
 
