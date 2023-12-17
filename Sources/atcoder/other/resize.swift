@@ -5,8 +5,10 @@ extension Array where Element: ExpressibleByIntegerLiteral {
         if count > n {
             removeLast(count - n)
         } else {
+            reserveCapacity(n)
+            let zero: Element = 0
             for _ in 0..<(n - count) {
-                append(0)
+                append(zero)
             }
         }
     }

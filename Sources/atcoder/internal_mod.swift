@@ -76,7 +76,6 @@ public protocol modint_base: AdditiveArithmetic, Hashable, ExpressibleByIntegerL
     init()
     init(_ v: Bool)
     init(_ v: CInt)
-    init<T: UnsignedInteger>(unsigned v: T)
     init<T: FixedWidthInteger>(_ v: T)
     func val() -> CUnsignedInt
     static func +(lhs: mint, rhs: mint) -> mint
@@ -107,6 +106,22 @@ public extension modint_base {
     static func *= <I: FixedWidthInteger>(lhs: inout mint, rhs: I) { lhs *= mint(rhs) }
     static func /= <I: FixedWidthInteger>(lhs: inout mint, rhs: I) { lhs /= mint(rhs) }
 }
+
+@usableFromInline func __modint_v<T: UnsignedInteger>(_ v: T, umod: T) -> CUnsignedInt {
+    let x = v % umod
+    return CUnsignedInt(truncatingIfNeeded: x);
+}
+
+@usableFromInline func ___modint_v<T: FixedWidthInteger>(_ v: T, mod: T) -> CUnsignedInt {
+    var x = v % mod;
+    if (x < 0) { x += mod }
+    let x0 = CInt(truncatingIfNeeded: x)
+    return CUnsignedInt(bitPattern: x0)
+}
+
+@usableFromInline func __modint_umod<T: UnsignedInteger>(_ umod: CUnsignedInt) -> T { T(umod) }
+@usableFromInline func __modint_mod<T: FixedWidthInteger>(_ umod: CUnsignedInt) -> T { T(truncatingIfNeeded: umod) }
+@usableFromInline func __modint_mod<T: FixedWidthInteger>(_ mod: CInt) -> T { T(truncatingIfNeeded: mod) }
 
 extension modint_base {
     public typealias mint = Self

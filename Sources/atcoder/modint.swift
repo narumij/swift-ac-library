@@ -1,6 +1,8 @@
 import Foundation
 
-public protocol static_modint_base: modint_base { }
+public protocol static_modint_base: modint_base {
+    init(unsigned v: CUnsignedLongLong)
+}
 
 public protocol dynamic_modint_base: modint_base {
     static func set_mod(_ m: CInt)
@@ -33,7 +35,7 @@ public extension static_modint {
     init() { self.init(raw: 0) }
     init(_ v: Bool) { _v = ___modint_v(v ? 1 : 0, mod: __modint_mod(m.umod)) }
     init(_ v: CInt) { _v = ___modint_v(v, mod: __modint_mod(m.umod)) }
-    init<T: UnsignedInteger>(unsigned v: T) { _v = __modint_v(v, umod: __modint_umod(m.umod)) }
+    init(unsigned v: CUnsignedLongLong) { _v = __modint_v(v, umod: __modint_umod(m.umod)) }
     init<T: FixedWidthInteger>(_ v: T) { _v = ___modint_v(v, mod: __modint_mod(m.umod)) }
 
     func val() -> CUnsignedInt { return _v; }
@@ -213,20 +215,4 @@ extension internal_modint {
     }
     public var description: String { val().description }
 }
-
-@usableFromInline func __modint_v<T: UnsignedInteger>(_ v: T, umod: T) -> CUnsignedInt {
-    let x = v % umod
-    return CUnsignedInt(truncatingIfNeeded: x);
-}
-
-@usableFromInline func ___modint_v<T: FixedWidthInteger>(_ v: T, mod: T) -> CUnsignedInt {
-    var x = v % mod;
-    if (x < 0) { x += mod }
-    let x0 = CInt(truncatingIfNeeded: x)
-    return CUnsignedInt(bitPattern: x0)
-}
-
-@usableFromInline func __modint_umod<T: UnsignedInteger>(_ umod: CUnsignedInt) -> T { T(umod) }
-@usableFromInline func __modint_mod<T: FixedWidthInteger>(_ umod: CUnsignedInt) -> T { T(truncatingIfNeeded: umod) }
-@usableFromInline func __modint_mod<T: FixedWidthInteger>(_ mod: CInt) -> T { T(truncatingIfNeeded: mod) }
 
