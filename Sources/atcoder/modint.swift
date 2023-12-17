@@ -19,6 +19,14 @@ extension internal_modint {
     typealias UINT = CUnsignedInt
 }
 
+extension internal_modint {
+    @inlinable @inline(__always)
+    public init(integerLiteral value: CInt) {
+        self.init(raw: ___modint_v(value, mod: __modint_mod(Self.mod())))
+    }
+    public var description: String { val().description }
+}
+
 public struct static_modint<m: static_mod>: static_modint_base, internal_modint {
     public init(raw v: CUnsignedInt) {
         _v = v;
@@ -127,13 +135,10 @@ extension dynamic_modint {
 
     @inlinable @inline(__always)
     public static func mod() -> CInt { return CInt(bitPattern: bt.umod); }
-    
-    public static func _mod<INT: SignedInteger>() -> INT { return INT(bt.umod) }
 
     public init() { self.init(raw: 0) }
     public init(_ v: Bool) { _v = ___modint_v(v ? 1 : 0, mod: __modint_mod(bt.umod)) }
     public init(_ v: CInt) { _v = ___modint_v(v, mod: __modint_mod(bt.umod)) }
-    public init<T: UnsignedInteger>(unsigned v: T) { _v = __modint_v(v, umod: __modint_umod(bt.umod)) }
     public init<T: FixedWidthInteger>(_ v: T) { _v = ___modint_v(v, mod: __modint_mod(bt.umod))  }
 
     public func val() -> CUnsignedInt { return _v; }
@@ -205,14 +210,4 @@ extension dynamic_modint {
 public typealias modint998244353 = static_modint<mod_998_244_353>
 public typealias modint1000000007 = static_modint<mod_1_000_000_007>
 public typealias modint = dynamic_modint
-
-// MARK: -
-
-extension internal_modint {
-    @inlinable @inline(__always)
-    public init(integerLiteral value: CInt) {
-        self.init(raw: ___modint_v(value, mod: __modint_mod(Self.mod())))
-    }
-    public var description: String { val().description }
-}
 
