@@ -5,7 +5,7 @@ extension _internal {
 //template <class mint,
 //          int g = internal::primitive_root<mint::mod()>,
 //          internal::is_static_modint_t<mint>* = nullptr>
-struct fft_info<mint: modint_base> {
+struct fft_info<mint: static_modint_base> {
     static var g: CInt { _internal.primitive_root(mint.mod()) }
     static var rank2: CInt { _internal.countr_zero(UInt32(mint.mod()) - 1) }
     var g: CInt { Self.g }
@@ -52,12 +52,12 @@ struct fft_info<mint: modint_base> {
     }
 };
 
-static func butterfly<mint: modint_base>(_ a: inout [mint]) {
+static func butterfly<mint: static_modint_base>(_ a: inout [mint]) {
     a.withUnsafeMutableBufferPointer { butterfly($0) }
 }
 
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-static func butterfly<mint: modint_base>(_ a: UnsafeMutableBufferPointer<mint>) {
+static func butterfly<mint: static_modint_base>(_ a: UnsafeMutableBufferPointer<mint>) {
     let n = a.count;
 //    int h = internal::countr_zero((unsigned int)n);
     let h: CInt = _internal.countr_zero(CUnsignedInt(n))
@@ -103,7 +103,7 @@ static func butterfly<mint: modint_base>(_ a: UnsafeMutableBufferPointer<mint>) 
                     let a2: ULL = 1 * ULL(a[i + offset + 2 * p].val()) * ULL(rot2.val());
                     let a3: ULL = 1 * ULL(a[i + offset + 3 * p].val()) * ULL(rot3.val());
                     let a1na3imag =
-                    1 * ULL(mint(unsigned: a1 + ULL(mod2) - a3).val()) * ULL(imag.val());
+                    1 * ULL(mint(unsigned: a1 + mod2 - a3).val()) * ULL(imag.val());
                     let na2 = mod2 - a2;
                     a[i + offset] = mint(unsigned: a0 + a2 + a1 + a3);
                     a[i + offset + 1 * p] = mint(unsigned: a0 + a2 + (2 * mod2 - (a1 + a3)));
@@ -118,12 +118,12 @@ static func butterfly<mint: modint_base>(_ a: UnsafeMutableBufferPointer<mint>) 
     }
 }
 
-static func butterfly_inv<mint: modint_base>(_ a: inout [mint]) {
+static func butterfly_inv<mint: static_modint_base>(_ a: inout [mint]) {
     a.withUnsafeMutableBufferPointer { butterfly_inv($0) }
 }
     
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-static func butterfly_inv<mint: modint_base>(_ a: UnsafeMutableBufferPointer<mint>) {
+static func butterfly_inv<mint: static_modint_base>(_ a: UnsafeMutableBufferPointer<mint>) {
     let n = a.count;
     let h: CInt = _internal.countr_zero(CUnsignedInt(n));
 
@@ -191,8 +191,8 @@ static func butterfly_inv<mint: modint_base>(_ a: UnsafeMutableBufferPointer<min
 }
 
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-static func convolution_naive<mint: modint_base>(_ a: [mint],
-                                              _ b: [mint]) -> [mint] {
+static func convolution_naive<mint: static_modint_base>(_ a: [mint],
+                                                        _ b: [mint]) -> [mint] {
     let n = a.count, m = b.count;
     var ans = [mint](repeating: 0, count: n + m - 1);
     if (n < m) {
@@ -216,7 +216,7 @@ static func convolution_naive<mint: modint_base>(_ a: [mint],
 }
 
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-static func convolution_fft<mint: modint_base>(_ a: [mint],_ b: [mint]) -> [mint] {
+static func convolution_fft<mint: static_modint_base>(_ a: [mint],_ b: [mint]) -> [mint] {
     var a = a
     var b = b
     let n = CInt(a.count), m = CInt(b.count);
@@ -242,7 +242,7 @@ static func convolution_fft<mint: modint_base>(_ a: [mint],_ b: [mint]) -> [mint
 }  // namespace internal
 
 //template <class mint, internal::is_static_modint_t<mint>* = nullptr>
-public func convolution<mint: modint_base>(_ a: [mint],_ b: [mint]) -> [mint] {
+public func convolution<mint: static_modint_base>(_ a: [mint],_ b: [mint]) -> [mint] {
     let n = a.count, m = b.count;
     if ((n == 0) || (m == 0)) { return []; }
 

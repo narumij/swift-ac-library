@@ -33,7 +33,7 @@ public extension static_modint {
     init() { self.init(raw: 0) }
     init(_ v: Bool) { _v = ___modint_v(v ? 1 : 0, mod: __modint_mod(m.umod)) }
     init(_ v: CInt) { _v = ___modint_v(v, mod: __modint_mod(m.umod)) }
-    init<T: UnsignedInteger>(unsigned v: T) { _v = __modint_v(v, umod: __modint_mod(m.umod)) }
+    init<T: UnsignedInteger>(unsigned v: T) { _v = __modint_v(v, umod: __modint_umod(m.umod)) }
     init<T: FixedWidthInteger>(_ v: T) { _v = ___modint_v(v, mod: __modint_mod(m.umod)) }
 
     func val() -> CUnsignedInt { return _v; }
@@ -131,7 +131,7 @@ extension dynamic_modint {
     public init() { self.init(raw: 0) }
     public init(_ v: Bool) { _v = ___modint_v(v ? 1 : 0, mod: __modint_mod(bt.umod)) }
     public init(_ v: CInt) { _v = ___modint_v(v, mod: __modint_mod(bt.umod)) }
-    public init<T: UnsignedInteger>(unsigned v: T) { _v = __modint_v(v, umod: __modint_mod(bt.umod)) }
+    public init<T: UnsignedInteger>(unsigned v: T) { _v = __modint_v(v, umod: __modint_umod(bt.umod)) }
     public init<T: FixedWidthInteger>(_ v: T) { _v = ___modint_v(v, mod: __modint_mod(bt.umod))  }
 
     public func val() -> CUnsignedInt { return _v; }
@@ -226,8 +226,7 @@ extension internal_modint {
     return CUnsignedInt(bitPattern: x0)
 }
 
-@usableFromInline func __modint_mod<T: UnsignedInteger>(_ umod: CUnsignedInt) -> T { T(umod) }
+@usableFromInline func __modint_umod<T: UnsignedInteger>(_ umod: CUnsignedInt) -> T { T(umod) }
 @usableFromInline func __modint_mod<T: FixedWidthInteger>(_ umod: CUnsignedInt) -> T { T(truncatingIfNeeded: umod) }
-@usableFromInline func __modint_umod<T: UnsignedInteger>(_ mod: CInt) -> T { T(mod) }
 @usableFromInline func __modint_mod<T: FixedWidthInteger>(_ mod: CInt) -> T { T(truncatingIfNeeded: mod) }
 

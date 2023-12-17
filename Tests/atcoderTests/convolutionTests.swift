@@ -95,19 +95,19 @@ final class convolutionTests: XCTestCase {
         XCTAssertEqual([] as [ll],
                   convolution([] as [ll], [1, 2]));
 
-        XCTAssertEqual([] as [dynamic_modint],
-                  convolution([] as [dynamic_modint],
-                              [] as [dynamic_modint]));
-        XCTAssertEqual([] as [dynamic_modint],
-                  convolution([] as [dynamic_modint],
-                              [1, 2]));
+//        XCTAssertEqual([] as [dynamic_modint],
+//                  convolution([] as [dynamic_modint],
+//                              [] as [dynamic_modint]));
+//        XCTAssertEqual([] as [dynamic_modint],
+//                  convolution([] as [dynamic_modint],
+//                              [1, 2]));
     }
     
     func testMid() throws {
         // std::mt19937 mt;
         let n = 1234, m = 2345;
-        typealias mint = dynamic_modint
-        mint.set_mod(998244353)
+        typealias mint = modint998244353
+//        mint.set_mod(998244353)
         var a = [mint](repeating: 0, count: n); var b = [mint](repeating: 0, count: m);
         
 //        for (int i = 0; i < n; i++) {

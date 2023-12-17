@@ -72,6 +72,7 @@ public enum mod_1_000_000_007: static_mod {
 
 public protocol modint_base: AdditiveArithmetic, Hashable, ExpressibleByIntegerLiteral, CustomStringConvertible {
     static func mod() -> CInt
+    static func umod() -> CUnsignedInt
     init()
     init(_ v: Bool)
     init(_ v: CInt)
