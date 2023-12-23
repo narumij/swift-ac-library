@@ -138,7 +138,7 @@ extension dsu._UnsafeHandle {
     }
 }
 
-extension dsu {
+public extension dsu {
     
     @discardableResult
     mutating func merge(_ a: Element,_ b: Element) -> Element {
