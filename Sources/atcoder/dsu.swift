@@ -1,6 +1,6 @@
 import Foundation
 
-struct dsu {
+public struct dsu {
     typealias Element = Int
     // storageは参照型で、dsuは値型というより、C++のpimplパターンに近い形になっています。
     // このため、万が一コピーして使う場合、ほぼ未定義動作となります。
