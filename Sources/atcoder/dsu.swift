@@ -1,7 +1,7 @@
 import Foundation
 
 public struct dsu {
-    typealias Element = Int
+    public typealias Element = Int
     // storageは参照型で、dsuは値型というより、C++のpimplパターンに近い形になっています。
     // このため、万が一コピーして使う場合、ほぼ未定義動作となります。
     // 参照型storageのCopyWhenWriteな挙動のオーバーヘッドは
@@ -71,6 +71,7 @@ extension dsu {
 
 extension dsu {
     
+    @usableFromInline
     struct _UnsafeHandle {
         
         @inlinable @inline(__always)
@@ -88,7 +89,7 @@ extension dsu {
 
 extension dsu._UnsafeHandle {
     
-    typealias Element = Int
+    public typealias Element = Int
 
     func merge(_ a: Element,_ b: Element) -> Element {
         assert(0 <= a && a < _n);
