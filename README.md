@@ -1,24 +1,6 @@
 # swift-ac-library
 
-ac-libraryのSwiftポートの一つです。
-
-## 動機
-
-解説を読んで実装を試したかった。
-
-## 目的
-
-Swiftに欠けてるライブラリを、ac-libraryを参考に補填すること。
-
-## 方針
-
-ac-libraryとの目視照らし合わせで間違いを発見しやすいこと。
-
-このため、Swiftらしい書き方よりも、C++そのままに近い方を優先します。
-
-バグが無いことを保証する力量は残念ながらないため、せめてバグが少ないことを目指す。
-
-追記：試しているうちにパフォーマンスに不満を感じはじめ、いろいろ手直ししています。場合により、方針を逸脱する場合もあるかもしれません。
+swift-ac-libraryは、[AtCoder Library][ac-library]のSwift移植版です。
 
 ## 利用の仕方
 
@@ -30,18 +12,45 @@ dependencies: [
 ],
 ```
 
-提出時用のエキスパンダーの用意はいまのところありません。コピペで頑張ってください。
+提出時は、コピペで頑張ってください。
+
+## 公式情報
+
+[AtCoder Library (ACL) - AtCoder][acl]
+
+## 関連
+
+[ac-library-swift] - Swift版。128bitの乗算部分など、いくつか参考にさせていただきました。
+
+[ac-library-csharp] - C#版。命名等に関して、今後参考にさせていただこうと思っています。
+
+[ac-library-python] - Python版。こちらも参考にさせていただこうと思っています。
 
 ## その他
 
-無保証です。
+無保証です。破壊的変更の可能性があります。
 
-破壊的変更の可能性があります。
+## 方針
 
-modintは構造の違いによる使い方の差異があります。具体的にはbarrettをプロトコルでインジェクションするカタチになっています。
-通常利用の範囲ではmodint998244353等がありますので、問題ないかと考えてます。
+ac-libraryとの目視照らし合わせで間違いを発見しやすいこと。
+
+このため、Swiftらしい書き方よりも、C++そのままに近い方を優先します。
+
+命名規則関連は、C#版やPython版を参考に、ガチガチにC++に似せていたのを、緩めていきます。
 
 ## ライセンス
 
-ac-libraryにならい、CC0です。
+[CC0]
+
+[acl]: https://atcoder.jp/posts/517
+
+[ac-library]: https://github.com/atcoder/ac-library
+
+[ac-library-swift]: https://github.com/kyomuei/ac-library-swift
+
+[ac-library-python]: https://github.com/not522/ac-library-python
+
+[ac-library-csharp]: https://github.com/kzrnm/ac-library-csharp
+
+[CC0]: https://creativecommons.org/public-domain/cc0/
 
