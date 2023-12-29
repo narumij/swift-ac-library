@@ -1,5 +1,5 @@
 import XCTest
-@testable import atcoder
+@testable import AtCoder
 
 fileprivate typealias uint = CUnsignedInt;
 fileprivate typealias ll = CLongLong;

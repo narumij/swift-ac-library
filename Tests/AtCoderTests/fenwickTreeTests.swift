@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import atcoder
+@testable import AtCoder
 
 fileprivate typealias int = CInt;
 fileprivate typealias uint = CUnsignedInt;

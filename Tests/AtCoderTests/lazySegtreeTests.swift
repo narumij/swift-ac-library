@@ -1,5 +1,5 @@
 import XCTest
-@testable import atcoder
+@testable import AtCoder
 
 struct starry {
     static func op_ss(_ a: Int,_ b: Int) -> Int { return Swift.max(a, b); }

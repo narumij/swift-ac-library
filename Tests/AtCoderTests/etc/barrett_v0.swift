@@ -1,5 +1,5 @@
 import Foundation
-@testable import atcoder
+@testable import AtCoder
 
 extension _internal {
     

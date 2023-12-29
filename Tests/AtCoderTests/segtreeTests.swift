@@ -1,5 +1,5 @@
 import XCTest
-@testable import atcoder
+@testable import AtCoder
 
 extension CChar: ExpressibleByStringLiteral {
     public init(stringLiteral s: String) {

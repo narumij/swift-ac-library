@@ -1,5 +1,5 @@
 import XCTest
-@testable import atcoder
+@testable import AtCoder
 import Algorithms
 
 // time manager

@@ -1,5 +1,5 @@
 import Foundation
-@testable import atcoder
+@testable import AtCoder
 
 // from https://github.com/atcoder/ac-library/blob/master/test/unittest/segtree_test.cpp
 struct segtree_naive<T: SegtreeParameter> {

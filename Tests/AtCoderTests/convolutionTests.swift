@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import atcoder
+@testable import AtCoder
 
 extension static_mod {
     public static func value<T: FixedWidthInteger>() -> T { T(umod) }

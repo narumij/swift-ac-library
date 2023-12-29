@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import atcoder
+@testable import AtCoder
 
 #if false
 // TESTコードの挙動が再現できない。

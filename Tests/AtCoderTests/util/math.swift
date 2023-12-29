@@ -1,5 +1,5 @@
 import Foundation
-@testable import atcoder
+@testable import AtCoder
 
 func factors(_ m: CInt) -> [CInt] {
     var m = m

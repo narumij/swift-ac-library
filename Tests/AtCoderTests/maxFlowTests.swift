@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import atcoder
+@testable import AtCoder
 
 extension mf_graph.edge: ExpressibleByArrayLiteral where Cap == Int {
     public init(arrayLiteral elements: Int...) {

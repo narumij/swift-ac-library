@@ -1,5 +1,5 @@
 import Foundation
-@testable import atcoder
+@testable import AtCoder
 
 // 残念ながらSwift固有の事情で速度不十分
 // from https://github.com/atcoder/ac-library/blob/master/atcoder/lazysegtree.hpp

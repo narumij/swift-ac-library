@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import atcoder
+@testable import AtCoder
 
 fileprivate typealias ll = CLongLong;
 fileprivate typealias  ull = CUnsignedLongLong;

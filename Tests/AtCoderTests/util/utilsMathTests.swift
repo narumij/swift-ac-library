@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import atcoder
+@testable import AtCoder
 
 func is_primitive_root_naive(_ m: CInt,_ g: CInt) -> Bool {
     assert(1 <= g && g < m);

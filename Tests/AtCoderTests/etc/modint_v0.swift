@@ -1,5 +1,5 @@
 import Foundation
-@testable import atcoder
+@testable import AtCoder
 
 // AC - https://atcoder.jp/contests/practice2/submissions/47521141
 
