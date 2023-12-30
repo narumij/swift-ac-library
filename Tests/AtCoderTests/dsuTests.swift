@@ -3,11 +3,11 @@ import XCTest
 
 extension dsu._Storage {
     
-    var array: [Element] {
+    var array: [Int] {
         (0..<count).map{ self[$0] }
     }
     
-    subscript(index: Int) -> Element {
+    subscript(index: Int) -> Int {
         get { _buffer.withUnsafeMutablePointerToElements{ $0[index] } }
         nonmutating set { _buffer.withUnsafeMutablePointerToElements{ $0[index] = newValue } }
     }

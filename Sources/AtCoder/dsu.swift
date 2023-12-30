@@ -1,10 +1,9 @@
 import Foundation
 
 public struct dsu {
-    public typealias Element = Int
     // storageは参照型で、dsuは値型というより、C++のpimplパターンに近い形になっています。
     // このため、万が一コピーして変更を加えた場合、Swiftの常識に反した動作となります。
-    var storage: _Storage<Element>
+    var storage: _Storage
     public init() { storage = .init(n: 0) }
     public init(_ n: Int) { storage = .init(n: n) }
 }
@@ -23,7 +22,7 @@ extension dsu {
     }
     
     @usableFromInline
-    class _Buffer: ManagedBuffer<_BufferHeader, Element> {
+    class _Buffer: ManagedBuffer<_BufferHeader, Int> {
         deinit {
             let count = header.count
             withUnsafeMutablePointers {
@@ -35,7 +34,7 @@ extension dsu {
     }
     
     @usableFromInline
-    struct _Storage<Element: SignedInteger> {
+    struct _Storage {
         
         @inlinable @inline(__always)
         init(_buffer: _BufferPointer) { self._buffer = _buffer }
@@ -51,14 +50,14 @@ extension dsu {
             }
         }
 
-        public typealias _BufferPointer = ManagedBufferPointer<_BufferHeader, Element>
+        public typealias _BufferPointer = ManagedBufferPointer<_BufferHeader, Int>
         public var _buffer: _BufferPointer
         
         @inlinable @inline(__always)
         public var count: Int { _buffer.header.count }
         
         @inlinable @inline(__always)
-        public mutating func __update<R>(_ body: (_UnsafeHandle<Element>) -> R) -> R {
+        public mutating func __update<R>(_ body: (_UnsafeHandle) -> R) -> R {
             _buffer.withUnsafeMutablePointers{ _header, _elements in
                 let handle = _UnsafeHandle(_header: _header, _elements: _elements)
                 return body(handle)
@@ -70,66 +69,66 @@ extension dsu {
 extension dsu {
     
     @usableFromInline
-    struct _UnsafeHandle<Element: SignedInteger> {
+    struct _UnsafeHandle {
         
         @inlinable @inline(__always)
         init(_header: UnsafeMutablePointer<_BufferHeader>,
-             _elements: UnsafeMutablePointer<Element>) {
+             _elements: UnsafeMutablePointer<Int>) {
             self._header = _header
             self.parent_or_size = _elements
         }
 
         public var _header: UnsafeMutablePointer<_BufferHeader>
-        public var parent_or_size: UnsafeMutablePointer<Element>
+        public var parent_or_size: UnsafeMutablePointer<Int>
         public var _n: Int { _header.pointee.count }
     }
 }
 
 extension dsu._UnsafeHandle {
     
-    typealias Stride = UnsafeMutablePointer<Element>.Stride
-    
-    func merge(_ a: Element,_ b: Element) -> Element {
+//    public typealias Element = Int
+
+    func merge(_ a: Int,_ b: Int) -> Int {
         assert(0 <= a && a < _n);
         assert(0 <= b && b < _n);
         var x = leader(a), y = leader(b);
         if (x == y) { return x; }
         if (-parent_or_size[x] < -parent_or_size[y]) { swap(&x, &y); }
-        (parent_or_size + Stride(x)).pointee += parent_or_size[y];
-        (parent_or_size + Stride(y)).pointee = x;
+        (parent_or_size + x).pointee += parent_or_size[y];
+        (parent_or_size + y).pointee = x;
         return x;
     }
 
-    func same(_ a: Element,_ b: Element) -> Bool {
+    func same(_ a: Int,_ b: Int) -> Bool {
         assert(0 <= a && a < _n);
         assert(0 <= b && b < _n);
         return leader(a) == leader(b);
     }
 
-    func leader(_ a: Element) -> Element {
+    func leader(_ a: Int) -> Int {
         assert(0 <= a && a < _n);
         if (parent_or_size[a] < 0) { return a; }
-        (parent_or_size + Stride(a)).pointee = leader(parent_or_size[a]);
+        (parent_or_size + a).pointee = leader(parent_or_size[a]);
         return parent_or_size[a]
     }
 
-    func size(_ a: Element) -> Element {
+    func size(_ a: Int) -> Int {
         assert(0 <= a && a < _n);
         return -parent_or_size[leader(a)];
     }
 
-    func groups() -> [[Element]] {
-        var leader_buf = [Element](repeating: -1, count:_n), group_size = [Int](repeating: -1, count:_n)
-        for i in 0..<_n {
-            leader_buf[i] = leader(Element(i));
+    func groups() -> [[Int]] {
+        var leader_buf = [Int](repeating: -1, count:_n), group_size = [Int](repeating: -1, count:_n)
+        for i in 0..<Int(_n) {
+            leader_buf[i] = leader(i);
             group_size[leader_buf[i]] += 1;
         }
-        var result: [[Element]] = [[Element]](repeating: [], count: _n);
+        var result: [[Int]] = [[Int]](repeating: [], count: _n);
         for i in 0..<_n {
             result[i].reserveCapacity(group_size[i])
         }
-        for i in 0..<_n {
-            result[leader_buf[i]].append(Element(i));
+        for i in 0..<Int(_n) {
+            result[leader_buf[i]].append(i);
         }
         result.removeAll { $0.isEmpty }
         return result;
@@ -139,20 +138,19 @@ extension dsu._UnsafeHandle {
 public extension dsu {
     
     @discardableResult
-    mutating func merge(_ a: Element,_ b: Element) -> Element {
+    mutating func merge(_ a: Int,_ b: Int) -> Int {
         storage.__update { $0.merge(a, b) }
     }
-    mutating func same(_ a: Element,_ b: Element) -> Bool {
+    mutating func same(_ a: Int,_ b: Int) -> Bool {
         storage.__update { $0.same(a, b) }
     }
-    mutating func leader(_ a: Element) -> Element {
+    mutating func leader(_ a: Int) -> Int {
         storage.__update { $0.leader(a) }
     }
-    mutating func size(_ a: Element) -> Element {
+    mutating func size(_ a: Int) -> Int {
         storage.__update { $0.size(a) }
     }
-    mutating func groups() -> [[Element]] {
+    mutating func groups() -> [[Int]] {
         storage.__update { $0.groups() }
     }
 }
-

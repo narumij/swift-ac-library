@@ -31,8 +31,8 @@ public struct lazy_segtree<Parameter: LazySegtreeParameter> {
     }
     
     @usableFromInline let _n, size, log: Int;
-    @usableFromInline var d: ContiguousArray<S>;
-    @usableFromInline var lz: ContiguousArray<F>;
+    @usableFromInline var d: [S];
+    @usableFromInline var lz: [F];
 }
 
 extension lazy_segtree._UnsafeHandle {
@@ -231,8 +231,8 @@ extension lazy_segtree {
             _n: Int,
             size: Int,
             log: Int,
-            d: UnsafeMutableBufferPointer<S>,
-            lz: UnsafeMutableBufferPointer<F>)
+            d: UnsafeMutablePointer<S>,
+            lz: UnsafeMutablePointer<F>)
         {
             self._n = _n
             self.size = size
@@ -242,8 +242,8 @@ extension lazy_segtree {
         }
         
         @usableFromInline let _n, size, log: Int
-        @usableFromInline let d: UnsafeMutableBufferPointer<S>
-        @usableFromInline let lz: UnsafeMutableBufferPointer<F>
+        @usableFromInline let d: UnsafeMutablePointer<S>
+        @usableFromInline let lz: UnsafeMutablePointer<F>
         
         @usableFromInline typealias S = Parameter.S
         @usableFromInline func op(_ l: S,_ r: S) -> S { Parameter.op(l,r) }
@@ -259,7 +259,7 @@ extension lazy_segtree {
     mutating func _update<R>(_ body: (_UnsafeHandle) -> R) -> R {
         d.withUnsafeMutableBufferPointer { d in
             lz.withUnsafeMutableBufferPointer { lz in
-                body(_UnsafeHandle(_n: _n, size: size, log: log, d: d, lz: lz))
+                body(_UnsafeHandle(_n: _n, size: size, log: log, d: d.baseAddress!, lz: lz.baseAddress!))
             }
         }
     }

@@ -23,7 +23,7 @@ public func inv_mod(_ x: CLongLong,_ m: CLongLong) -> CLongLong {
 
 // (rem, mod)
 public func crt(_ r: [CLongLong],
-         _ m: [CLongLong]) -> (first: CLongLong, second: CLongLong) {
+                _ m: [CLongLong]) -> (first: CLongLong, second: CLongLong) {
     assert(r.count == m.count);
     let n = r.count;
     // Contracts: 0 <= r0 < m0
