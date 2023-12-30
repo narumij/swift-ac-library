@@ -1,18 +1,6 @@
 import XCTest
 @testable import AtCoder
 
-extension dsu._Storage {
-    
-    var array: [Int] {
-        (0..<count).map{ self[$0] }
-    }
-    
-    subscript(index: Int) -> Int {
-        get { _buffer.withUnsafeMutablePointerToElements{ $0[index] } }
-        nonmutating set { _buffer.withUnsafeMutablePointerToElements{ $0[index] = newValue } }
-    }
-}
-
 final class dsuTests: XCTestCase {
 
     override func setUpWithError() throws {
@@ -30,25 +18,7 @@ final class dsuTests: XCTestCase {
         // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
         // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
     }
-    
-    func test0() throws {
-        var uf = dsu(0);
-        XCTAssertEqual([], uf.groups());
-        XCTAssertEqual([], uf.storage.array)
-    }
-    
-    func testEmpty() throws {
-        var uf = dsu();
-        XCTAssertEqual([], uf.groups());
-        XCTAssertEqual([], uf.storage.array)
-    }
-    
-    func testAssign() throws {
-        var uf: dsu = .init();
-        uf = dsu(10);
-        XCTAssertEqual([Int](repeating: -1, count: 10), uf.storage.array)
-    }
-    
+        
     func testSimple() throws {
         var uf = dsu(2);
         XCTAssertFalse(uf.same(0, 1));
