@@ -131,8 +131,8 @@ public struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
 //            int to;
 //            bool operator<(Q r) const { return key > r.key; }
 //        };
-        var que_min = ContiguousArray<Int>();
-        var que = ContiguousArray<Q>();
+        var que_min = [Int]();
+        var que = [Q]();
         func dual_ref() -> Bool {
             // for (int i = 0; i < _n; i++) {
             for i in 0..<_n {
@@ -233,7 +233,7 @@ public struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
     }
 };
 
-extension ContiguousArray where Element: Comparable {
+extension Array where Element: Comparable {
     
     mutating func push_heap(_ start: Int, _ end: Int) {
         push_heap(end, >)

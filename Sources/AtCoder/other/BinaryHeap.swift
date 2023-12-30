@@ -10,16 +10,6 @@ extension Array: BinaryHeap {
     }
 }
 
-extension ContiguousArray: BinaryHeap {
-    @inlinable @inline(__always)
-    mutating func _update<R>(_ comp: @escaping (Element, Element) -> Bool,
-                             _ body: (BinaryHeapUnsafeHandle<Element>) -> R) -> R {
-      withUnsafeMutableBufferPointer { buffer in
-        body(BinaryHeapUnsafeHandle(buffer, comp))
-      }
-    }
-}
-
 protocol BinaryHeap: Sequence {
     @inlinable @inline(__always)
     mutating func _update<R>(_ comp: @escaping (Element, Element) -> Bool,
