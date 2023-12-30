@@ -109,7 +109,13 @@ extension _LazySegtree {
     struct _UnsafeHandle {
         
         @inlinable @inline(__always)
-        init(_n: Int, size: Int, log: Int, d: UnsafeMutablePointer<Base.S>, lz: UnsafeMutablePointer<Base.F>) {
+        init(
+            _n: Int,
+            size: Int,
+            log: Int,
+            d: UnsafeMutablePointer<Base.S>,
+            lz: UnsafeMutablePointer<Base.F>
+        ) {
             self._n = _n
             self.size = size
             self.log = log
@@ -136,171 +142,155 @@ extension _LazySegtree._UnsafeHandle {
     
     func set(_ p: Int,_ x: S) {
         var p = p
-        assert(0 <= p && p < _n);
-        p += size;
-        // for (int i = log; i >= 1; i--) push(p >> i);
-        for i in log..>=1 { push(p >> i); }
-        d[p] = x;
-        // for (int i = 1; i <= log; i++) update(p >> i);
-        for i in 1..<=log { update(p >> i); }
+        assert(0 <= p && p < _n)
+        p += size
+        for i in log..>=1 { push(p >> i) }
+        d[p] = x
+        for i in 1..<=log { update(p >> i) }
     }
     
     func get(_ p: Int) -> S {
         var p = p
-        assert(0 <= p && p < _n);
-        p += size;
-        // for (int i = log; i >= 1; i--) push(p >> i);
-        for i in log..>=1 { push(p >> i); }
-        return d[p];
+        assert(0 <= p && p < _n)
+        p += size
+        for i in log..>=1 { push(p >> i) }
+        return d[p]
     }
     
     func prod(_ l: Int,_ r: Int) -> S{
         var l = l
         var r = r
-        assert(0 <= l && l <= r && r <= _n);
-        if (l == r) { return e(); }
+        assert(0 <= l && l <= r && r <= _n)
+        if (l == r) { return e() }
         
-        l += size;
-        r += size;
+        l += size
+        r += size
         
-        // for (int i = log; i >= 1; i--) {
         for i in log..>=1 {
-            if (((l >> i) << i) != l) { push(l >> i); }
-            if (((r >> i) << i) != r) { push((r - 1) >> i); }
+            if (((l >> i) << i) != l) { push(l >> i) }
+            if (((r >> i) << i) != r) { push((r - 1) >> i) }
         }
         
-        var sml = e(), smr = e();
+        var sml = e(), smr = e()
         while (l < r) {
             if (l & 1 != 0) { sml = op(sml, d[l]); l += 1 }
-            if (r & 1 != 0) { r -= 1; smr = op(d[r], smr); }
-            l >>= 1;
-            r >>= 1;
+            if (r & 1 != 0) { r -= 1; smr = op(d[r], smr) }
+            l >>= 1
+            r >>= 1
         }
         
-        return op(sml, smr);
+        return op(sml, smr)
     }
     
-    func all_prod() -> S { return d[1]; }
+    func all_prod() -> S { return d[1] }
 
     func apply(_ p: Int,_ f: F) {
         var p = p
-        assert(0 <= p && p < _n);
-        p += size;
-        // for (int i = log; i >= 1; i--) push(p >> i);
-        for i in log..>=1 { push(p >> i); }
-        d[p] = mapping(f, d[p]);
-        // for (int i = 1; i <= log; i++) update(p >> i);
-        for i in 1..<=log { update(p >> i); }
+        assert(0 <= p && p < _n)
+        p += size
+        for i in log..>=1 { push(p >> i) }
+        d[p] = mapping(f, d[p])
+        for i in 1..<=log { update(p >> i) }
     }
 
     func apply(_ l: Int,_ r: Int,_ f: F) {
         var l = l
         var r = r
-        assert(0 <= l && l <= r && r <= _n);
-        if (l == r) { return; }
+        assert(0 <= l && l <= r && r <= _n)
+        if (l == r) { return }
 
-        l += size;
-        r += size;
+        l += size
+        r += size
 
-        // for (int i = log; i >= 1; i--) {
         for i in log..>=1 {
-            if (((l >> i) << i) != l) { push(l >> i); }
-            if (((r >> i) << i) != r) { push((r - 1) >> i); }
+            if (((l >> i) << i) != l) { push(l >> i) }
+            if (((r >> i) << i) != r) { push((r - 1) >> i) }
         }
 
         do {
-            let l2 = l, r2 = r;
+            let l2 = l, r2 = r
             while (l < r) {
                 if (l & 1 != 0) { all_apply(l, f); l += 1 }
-                if (r & 1 != 0) { r -= 1; all_apply(r, f); }
-                l >>= 1;
-                r >>= 1;
+                if (r & 1 != 0) { r -= 1; all_apply(r, f) }
+                l >>= 1
+                r >>= 1
             }
-            l = l2;
-            r = r2;
+            l = l2
+            r = r2
         }
 
-        // for (int i = 1; i <= log; i++) {
         for i in 1..<=log {
-            if (((l >> i) << i) != l) { update(l >> i); }
-            if (((r >> i) << i) != r) { update((r - 1) >> i); }
+            if (((l >> i) << i) != l) { update(l >> i) }
+            if (((r >> i) << i) != r) { update((r - 1) >> i) }
         }
     }
 
-//    template <bool (*g)(S)> int max_right(int l) {
-//        return max_right(l, [](S x) { return g(x); });
-//    }
     func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
         var l = l
-        assert(0 <= l && l <= _n);
-        assert(g(e()));
-        if (l == _n) { return _n; }
-        l += size;
-        // for (int i = log; i >= 1; i--) push(l >> i);
-        for i in log..>=1 { push(l >> i); }
-        var sm: S = e();
+        assert(0 <= l && l <= _n)
+        assert(g(e()))
+        if (l == _n) { return _n }
+        l += size
+        for i in log..>=1 { push(l >> i) }
+        var sm: S = e()
         repeat {
-            while (l % 2 == 0) { l >>= 1; }
+            while (l % 2 == 0) { l >>= 1 }
             if (!g(op(sm, d[l]))) {
                 while (l < size) {
-                    push(l);
-                    l = (2 * l);
+                    push(l)
+                    l = (2 * l)
                     if (g(op(sm, d[l]))) {
-                        sm = op(sm, d[l]);
-                        l += 1;
+                        sm = op(sm, d[l])
+                        l += 1
                     }
                 }
-                return l - size;
+                return l - size
             }
-            sm = op(sm, d[l]);
-            l += 1;
-        } while ((l & -l) != l);
-        return _n;
+            sm = op(sm, d[l])
+            l += 1
+        } while ((l & -l) != l)
+        return _n
     }
     
-//    template <bool (*g)(S)> int min_left(int r) {
-//        return min_left(r, [](S x) { return g(x); });
-//    }
     func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
         var r = r
-        assert(0 <= r && r <= _n);
-        assert(g(e()));
-        if (r == 0) { return 0; }
-        r += size;
-        // for (int i = log; i >= 1; i--) push((r - 1) >> i);
-        for i in log..>=1 { push((r - 1) >> i); }
-        var sm: S = e();
+        assert(0 <= r && r <= _n)
+        assert(g(e()))
+        if (r == 0) { return 0 }
+        r += size
+        for i in log..>=1 { push((r - 1) >> i) }
+        var sm: S = e()
         repeat {
-            r -= 1;
-            while (r > 1 && (r % 2) != 0) { r >>= 1; }
+            r -= 1
+            while (r > 1 && (r % 2) != 0) { r >>= 1 }
             if (!g(op(d[r], sm))) {
                 while (r < size) {
-                    push(r);
-                    r = (2 * r + 1);
+                    push(r)
+                    r = (2 * r + 1)
                     if (g(op(d[r], sm))) {
-                        sm = op(d[r], sm);
-                        r -= 1;
+                        sm = op(d[r], sm)
+                        r -= 1
                     }
                 }
-                return r + 1 - size;
+                return r + 1 - size
             }
-            sm = op(d[r], sm);
-        } while ((r & -r) != r);
-        return 0;
+            sm = op(d[r], sm)
+        } while ((r & -r) != r)
+        return 0
     }
     
     @usableFromInline
-    func update(_ k: Int) { d[k] = op(d[2 * k], d[2 * k + 1]); }
+    func update(_ k: Int) { d[k] = op(d[2 * k], d[2 * k + 1]) }
     
     func all_apply(_ k: Int,_ f: F) {
-        d[k] = mapping(f, d[k]);
-        if (k < size) { lz[k] = composition(f, lz[k]); }
+        d[k] = mapping(f, d[k])
+        if (k < size) { lz[k] = composition(f, lz[k]) }
     }
     
     func push(_ k: Int) {
-        all_apply(2 * k, lz[k]);
-        all_apply(2 * k + 1, lz[k]);
-        lz[k] = id();
+        all_apply(2 * k, lz[k])
+        all_apply(2 * k + 1, lz[k])
+        lz[k] = id()
     }
 }
 

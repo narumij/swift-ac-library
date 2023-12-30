@@ -117,82 +117,82 @@ extension _Segtree._UnsafeHandle {
     
     func set(_ p: Int,_ x: S) {
         var p = p
-        assert(0 <= p && p < _n);
-        p += size;
-        d[p] = x;
-        for i in stride(from: 1, through: log, by: 1) { update(p >> i); }
+        assert(0 <= p && p < _n)
+        p += size
+        d[p] = x
+        for i in stride(from: 1, through: log, by: 1) { update(p >> i) }
     }
     
     func get(_ p: Int) -> S {
-        assert(0 <= p && p < _n);
-        return d[p + size];
+        assert(0 <= p && p < _n)
+        return d[p + size]
     }
     
     func prod(_ l: Int,_ r: Int) -> S {
         var l = l, r = r
-        assert(0 <= l && l <= r && r <= _n);
-        var sml: S = e(), smr: S = e();
-        l += size;
-        r += size;
+        assert(0 <= l && l <= r && r <= _n)
+        var sml: S = e(), smr: S = e()
+        l += size
+        r += size
 
         while (l < r) {
             if (l & 1) != 0 { sml = op(sml, d[l]); l += 1 }
-            if (r & 1) != 0 { r -= 1; smr = op(d[r], smr); }
-            l >>= 1;
-            r >>= 1;
+            if (r & 1) != 0 { r -= 1; smr = op(d[r], smr) }
+            l >>= 1
+            r >>= 1
         }
-        return op(sml, smr);
+        return op(sml, smr)
     }
     
     func all_prod() -> S { return d[1]; }
 
     func max_right(_ l: Int,_ f: (S) -> Bool) -> Int {
         var l = l
-        assert(0 <= l && l <= _n);
-        assert(f(e()));
-        if (l == _n) { return _n; }
-        l += size;
-        var sm: S = e();
+        assert(0 <= l && l <= _n)
+        assert(f(e()))
+        if (l == _n) { return _n }
+        l += size
+        var sm: S = e()
         repeat {
-            while (l % 2 == 0) { l >>= 1; }
+            while (l % 2 == 0) { l >>= 1 }
             if (!f(op(sm, d[l]))) {
                 while (l < size) {
-                    l = (2 * l);
+                    l = (2 * l)
                     if (f(op(sm, d[l]))) {
-                        sm = op(sm, d[l]);
-                        l += 1;
+                        sm = op(sm, d[l])
+                        l += 1
                     }
                 }
-                return l - size;
+                return l - size
             }
-            sm = op(sm, d[l]);
-            l += 1;
-        } while ((l & -l) != l);
-        return _n;
+            sm = op(sm, d[l])
+            l += 1
+        } while ((l & -l) != l)
+        return _n
     }
     
     func min_left(_ r: Int,_ f: (S) -> Bool ) -> Int {
         var r = r
-        assert(0 <= r && r <= _n);
-        assert(f(e()));
-        if (r == 0) { return 0; }
-        r += size;
-        var sm: S = e();
+        assert(0 <= r && r <= _n)
+        assert(f(e()))
+        if (r == 0) { return 0 }
+        r += size
+        var sm: S = e()
         repeat {
-            r -= 1;
-            while (r > 1 && (r % 2) != 0) { r >>= 1; }
+            r -= 1
+            while (r > 1 && (r % 2) != 0) { r >>= 1 }
             if (!f(op(d[r], sm))) {
                 while (r < size) {
-                    r = (2 * r + 1);
+                    r = (2 * r + 1)
                     if (f(op(d[r], sm))) {
-                        sm = op(d[r], sm);
-                        r -= 1;
+                        sm = op(d[r], sm)
+                        r -= 1
                     }
                 }
-                return r + 1 - size;
+                return r + 1 - size
             }
-            sm = op(d[r], sm);
-        } while ((r & -r) != r);
+            sm = op(d[r], sm)
+        } while ((r & -r) != r)
         return 0;
     }
     
