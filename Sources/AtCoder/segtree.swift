@@ -12,11 +12,11 @@ public struct segtree<Parameter: SegtreeParameter> {
     func e() -> S { Parameter.e }
 
     public init() { self.init(0) }
-    public init<Index: FixedWidthInteger>(_ n: Index) { self.init([S](repeating: Parameter.e, count: Int(n))) }
+    public init(_ n: Int) { self.init([S](repeating: Parameter.e, count: n)) }
     public init(_ v: [S]) {
         _n = v.count
-        size = _internal.bit_ceil(CUnsignedInt(_n))
-        log = _internal.countr_zero(CUnsignedInt(size))
+        size = _internal.bit_ceil(UInt64(_n))
+        log = _internal.countr_zero(UInt64(size))
         d = [S](repeating: Parameter.e, count: 2 * size)
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         for i in 0..<_n { d[size + i] = v[i] }
@@ -24,7 +24,7 @@ public struct segtree<Parameter: SegtreeParameter> {
         for i in (size - 1)..>=1 { update(i) }
     }
     
-    public mutating func set<Index: FixedWidthInteger>(_ p: Index,_ x: S) {
+    public mutating func set(_ p: Int,_ x: S) {
         var p = Int(p)
         assert(0 <= p && p < _n);
         p += size;
@@ -33,12 +33,12 @@ public struct segtree<Parameter: SegtreeParameter> {
         for i in 1..<=log { update(p >> i); }
     }
     
-    public func get<Index: FixedWidthInteger>(_ p: Index) -> S {
+    public func get(_ p: Int) -> S {
         assert(0 <= p && p < _n);
         return d[Int(p) + size];
     }
     
-    public func prod<Index: FixedWidthInteger>(_ l: Index,_ r: Index) -> S {
+    public func prod(_ l: Int,_ r: Int) -> S {
         var l = Int(l), r = Int(r)
         assert(0 <= l && l <= r && r <= _n);
         var sml: S = e(), smr: S = e();
@@ -56,7 +56,7 @@ public struct segtree<Parameter: SegtreeParameter> {
     
     public func all_prod() -> S { return d[1]; }
 
-    public func max_right<Index: FixedWidthInteger>(_ l: Index,_ f: (S) -> Bool) -> Int {
+    public func max_right(_ l: Int,_ f: (S) -> Bool) -> Int {
         var l = Int(l)
         assert(0 <= l && l <= _n);
         assert(f(e()));
@@ -81,7 +81,7 @@ public struct segtree<Parameter: SegtreeParameter> {
         return _n;
     }
     
-    public func min_left<Index: FixedWidthInteger>(_ r: Index,_ f: (S) -> Bool ) -> Int {
+    public func min_left(_ r: Int,_ f: (S) -> Bool ) -> Int {
         var r = Int(r)
         assert(0 <= r && r <= _n);
         assert(f(e()));

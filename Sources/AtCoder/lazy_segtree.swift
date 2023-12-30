@@ -15,11 +15,11 @@ public struct lazy_segtree<Parameter: LazySegtreeParameter> {
     public typealias F = Parameter.F
     
     public init() { self.init(0) }
-    public init<Index: FixedWidthInteger>(_ n: Index) { self.init([S](repeating: Parameter.e, count: Int(n))) }
+    public init(_ n: Int) { self.init([S](repeating: Parameter.e, count: n)) }
     public init(_ v: [S]) {
         _n = v.count
-        size = _internal.bit_ceil(CUnsignedInt(_n))
-        log = _internal.countr_zero(CUnsignedInt(size))
+        size = _internal.bit_ceil(UInt64(_n))
+        log = _internal.countr_zero(UInt64(size))
         d = .init(repeating: Parameter.e, count: 2 * size)
         lz = .init(repeating: Parameter.id, count: size)
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
@@ -266,39 +266,25 @@ extension lazy_segtree {
 }
 
 public extension lazy_segtree {
-    mutating func set<Index>(_ p: Index,_ x: S)
-    where Index: FixedWidthInteger
-    {
-        _update{ $0.set(Int(p),x) }
+    mutating func set(_ p: Int,_ x: S) {
+        _update{ $0.set(p,x) }
     }
-    mutating func get<Index>(_ p: Index) -> S
-    where Index: FixedWidthInteger
-    {
-        _update{ $0.get(Int(p)) }
+    mutating func get(_ p: Int) -> S {
+        _update{ $0.get(p) }
     }
-    mutating func prod<Index>(_ l: Index,_ r: Index) -> S
-    where Index: FixedWidthInteger 
-    {
-        _update{ $0.prod(Int(l), Int(r)) }
+    mutating func prod(_ l: Int,_ r: Int) -> S {
+        _update{ $0.prod(l, r) }
     }
-    mutating func apply<Index>(_ p: Index,_ f: F)
-    where Index: FixedWidthInteger
-    {
-        _update{ $0.apply(Int(p), f) }
+    mutating func apply(_ p: Int,_ f: F) {
+        _update{ $0.apply(p, f) }
     }
-    mutating func apply<Index>(_ l: Index,_ r: Index,_ f: F)
-    where Index: FixedWidthInteger
-    {
-        _update{ $0.apply(Int(l), Int(r), f) }
+    mutating func apply(_ l: Int,_ r: Int,_ f: F) {
+        _update{ $0.apply(l, r, f) }
     }
-    mutating func max_right<Index>(_ l: Index,_ g: (S) -> Bool) -> Int
-    where Index: FixedWidthInteger
-    {
-        _update{ $0.max_right(Int(l), g) }
+    mutating func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
+        _update{ $0.max_right(l, g) }
     }
-    mutating func min_left<Index>(_ r: Index,_ g: (S) -> Bool) -> Int
-    where Index: FixedWidthInteger
-    {
-        _update{ $0.min_left(Int(r), g) }
+    mutating func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
+        _update{ $0.min_left(r, g) }
     }
 }
