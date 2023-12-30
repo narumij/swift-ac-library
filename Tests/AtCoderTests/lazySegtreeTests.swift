@@ -20,6 +20,15 @@ extension lazy_segtree_starry: LazySegtreeProtocol {
     static let id: F = e_t()
 }
 
+fileprivate struct lazy_segtree_starry2: LazySegtreeProtocol {
+    static let op: (Int,Int) -> Int = max
+    static let e: Int = Int.min
+    static var mapping: (Int,Int) -> Int = (+)
+    static var composition: (Int,Int) -> Int = (+)
+    static let id: Int = 0
+    var storage: Storage
+}
+
 fileprivate typealias starry_seg = lazy_segtree_starry
 
 final class ManagedBufferLazySegtreeTests: XCTestCase {

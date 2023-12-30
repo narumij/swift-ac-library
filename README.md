@@ -16,14 +16,14 @@ dependencies: [
 
 ## セグ木の作り方
 
-プロトコル適用をすることで、構造体をセグに木にして利用することができます。
+プロトコル適用をすることで、構造体をセグ木にして利用することができます。
 適用の際に行う必要があるのは、単位元、二項演算、ストレージの三つを書くことです。
 集合Sについては型推論が働くため書く必要がありません。
 
 例: 集合SがInt、単位元が0、二項演算がmax関数の場合
 ```swift
 struct segtree: SegtreeProtocol {
-    static let e = 0
+    static let e = Int.min
     static let op: (Int, Int) -> Int = max
     var storage: Storage
 }
@@ -43,6 +43,23 @@ struct segtree: SegtreeProtocol {
 struct segtree: SegtreeProtocol {
     static let e = 1
     static let op: (Int, Int) -> Int = (*)
+    var storage: Storage
+}
+```
+
+## 遅延セグ木の作り方
+
+プロトコル適用をすることで、構造体をセグ木にして利用することができます。
+適用の際に行う必要があるのは、単位元、二項演算、写像関数、合成関数、写像の単位、ストレージの五つを書くことです。
+
+例: モノイドの型S、写像の型FがInt。単位元が0、二項演算がmax関数、写像関数が加算、合成関数が加算、写像の単位が0の場合。
+```swift
+struct lazy_segtree: LazySegtreeProtocol {
+    static let op: (Int,Int) -> Int = max
+    static let e: Int = Int.min
+    static var mapping: (Int,Int) -> Int = (+)
+    static var composition: (Int,Int) -> Int = (+)
+    static let id: Int = 0
     var storage: Storage
 }
 ```

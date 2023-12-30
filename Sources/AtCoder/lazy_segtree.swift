@@ -127,6 +127,7 @@ extension _LazySegtree {
         @usableFromInline let d: UnsafeMutablePointer<Base.S>
         @usableFromInline let lz: UnsafeMutablePointer<Base.F>
 
+#if true
         typealias S = Base.S
         func op(_ l: S,_ r: S) -> S { Base.op(l,r) }
         func e() -> S { Base.e }
@@ -135,6 +136,18 @@ extension _LazySegtree {
         func mapping(_ l: F,_ r: S) -> S { Base.mapping(l,r) }
         func composition(_ l: F,_ r: F) -> F { Base.composition(l,r) }
         func id() -> F { Base.id }
+#else
+        // Swift 5.9以後は以下にする。
+        // protocolにまつわる分岐が減り、パフォーマンスが改善する
+        typealias S = Base.S
+        var op: (S,S) -> S = { Base.op }()
+        func e() -> S { Base.e }
+        
+        typealias F = Base.F
+        var mapping: (F,S) -> S = { Base.mapping }()
+        var composition: (F,F) -> F = { Base.composition }()
+        func id() -> F { Base.id }
+#endif
     }
 }
 

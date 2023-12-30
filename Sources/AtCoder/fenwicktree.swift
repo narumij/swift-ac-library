@@ -7,7 +7,7 @@ public struct fenwick_tree<T: AdditiveArithmetic & ToUnsigned> where T: ToUnsign
 
     @usableFromInline var _n: Int
     @usableFromInline var data: [U]
-};
+}
 
 public extension fenwick_tree {
     
@@ -52,7 +52,7 @@ extension fenwick_tree {
 
         @inlinable @inline(__always)
         func sum(_ r: Int) -> U {
-            var r = Int(r)
+            var r = r
             var s: U = 0
             while (r > 0) {
                 s &+= data[r - 1]
