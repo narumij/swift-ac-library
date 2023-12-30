@@ -2,8 +2,8 @@ import Foundation
 
 public struct scc_graph {
 //  public:
-    public init() { `internal` = _internal.scc_graph.init(0) }
-    public init<Index: FixedWidthInteger>(_ n: Index) { `internal` = _internal.scc_graph.init(Int(n)) }
+    public init() { `internal` = _Internal.scc_graph.init(0) }
+    public init<Index: FixedWidthInteger>(_ n: Index) { `internal` = _Internal.scc_graph.init(Int(n)) }
 
     public mutating func add_edge<Index: FixedWidthInteger>(_ from: Index,_ to: Index) {
         let from = Int(from)
@@ -17,5 +17,5 @@ public struct scc_graph {
     public func scc() -> [[Int]] { return `internal`.scc(); }
 
 //  private:
-    var `internal`: _internal.scc_graph;
+    var `internal`: _Internal.scc_graph;
 };

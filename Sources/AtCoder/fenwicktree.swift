@@ -36,29 +36,29 @@ extension fenwick_tree {
         @inlinable @inline(__always)
         func add(_ p: Int,_ x: T) {
             var p = p
-            assert(0 <= p && p < _n);
-            p += 1;
+            assert(0 <= p && p < _n)
+            p += 1
             while (p <= _n) {
-                data[p - 1] &+= x.unsigned;
-                p += p & -p;
+                data[p - 1] &+= x.unsigned
+                p += p & -p
             }
         }
 
         @inlinable @inline(__always)
         func sum(_ l: Int,_ r: Int) -> T {
-            assert(0 <= l && l <= r && r <= _n);
-            return T(unsigned: sum(r) &- sum(l));
+            assert(0 <= l && l <= r && r <= _n)
+            return T(unsigned: sum(r) &- sum(l))
         }
 
         @inlinable @inline(__always)
         func sum(_ r: Int) -> U {
             var r = Int(r)
-            var s: U = 0;
+            var s: U = 0
             while (r > 0) {
-                s &+= data[r - 1];
-                r -= r & -r;
+                s &+= data[r - 1]
+                r -= r & -r
             }
-            return s;
+            return s
         }
     }
     

@@ -110,7 +110,7 @@ public extension static_modint {
             assert(_v != 0);
             return pow(LL(Self.umod()) - 2);
         } else {
-            let eg = _internal.inv_gcd(LL(_v), LL(m.m));
+            let eg = _Internal.inv_gcd(LL(_v), LL(m.m));
             assert(eg.first == 1);
             return Self.init(CInt(eg.second));
         }
@@ -198,7 +198,7 @@ extension dynamic_modint {
     }
     
     public func inv() -> mint {
-        let eg = _internal.inv_gcd(LL(_v), LL(Self.mod()));
+        let eg = _Internal.inv_gcd(LL(_v), LL(Self.mod()));
         assert(eg.first == 1);
         return .init(CInt(eg.second));
     }

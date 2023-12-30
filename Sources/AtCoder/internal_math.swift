@@ -1,6 +1,6 @@
 import Foundation
 
-extension _internal {
+extension _Internal {
 // @param m `1 <= m`
 // @return x mod m
 static func safe_mod(_ x: CLongLong,_ m: CLongLong) -> CLongLong {
@@ -59,7 +59,7 @@ public struct barrett {
     }
 }
 
-extension _internal {
+extension _Internal {
 
 // @param n `0 <= n`
 // @param m `1 <= m`

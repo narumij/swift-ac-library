@@ -174,7 +174,7 @@ final class stringTests: XCTestCase {
                     g /= 4;
                 }
 
-                let sa = _internal.sa_naive(s);
+                let sa = _Internal.sa_naive(s);
                 XCTAssertEqual(sa_naive(s), sa);
             }
         }
@@ -193,7 +193,7 @@ final class stringTests: XCTestCase {
                     g /= 2;
                 }
 
-                let sa = _internal.sa_naive(s);
+                let sa = _Internal.sa_naive(s);
                 XCTAssertEqual(sa_naive(s), sa);
             }
         }
@@ -215,7 +215,7 @@ final class stringTests: XCTestCase {
                     g /= 4;
                 }
 
-                let sa = _internal.sa_doubling(s);
+                let sa = _Internal.sa_doubling(s);
                 XCTAssertEqual(sa_naive(s), sa);
             }
         }
@@ -233,7 +233,7 @@ final class stringTests: XCTestCase {
                     g /= 2;
                 }
 
-                let sa = _internal.sa_doubling(s);
+                let sa = _Internal.sa_doubling(s);
                 XCTAssertEqual(sa_naive(s), sa);
             }
         }
@@ -257,7 +257,7 @@ final class stringTests: XCTestCase {
                     g /= 4;
                 }
                 
-                let sa = _internal.sa_is(s, max_c, -1, -1);
+                let sa = _Internal.sa_is(s, max_c, -1, -1);
                 XCTAssertEqual(sa_naive(s), sa);
             }
         }
@@ -278,7 +278,7 @@ final class stringTests: XCTestCase {
                     g /= 2;
                 }
 
-                let sa = _internal.sa_is(s, max_c, -1, -1);
+                let sa = _Internal.sa_is(s, max_c, -1, -1);
                 XCTAssertEqual(sa_naive(s), sa);
             }
         }

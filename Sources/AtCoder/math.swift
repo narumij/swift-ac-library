@@ -5,7 +5,7 @@ public func pow_mod(_ x: CLongLong,_ n: CLongLong,_ m: CInt) -> CLongLong {
     assert(0 <= n && 1 <= m);
     if (m == 1) { return 0; }
     let bt = barrett(CUnsignedInt(m));
-    var r: CUnsignedInt = 1, y = CUnsignedInt(_internal.safe_mod(x, CLongLong(m)));
+    var r: CUnsignedInt = 1, y = CUnsignedInt(_Internal.safe_mod(x, CLongLong(m)));
     while ((n) != 0) {
         if ((n & 1) != 0) { r = bt.mul(r, y); }
         y = bt.mul(y, y);
@@ -16,7 +16,7 @@ public func pow_mod(_ x: CLongLong,_ n: CLongLong,_ m: CInt) -> CLongLong {
 
 public func inv_mod(_ x: CLongLong,_ m: CLongLong) -> CLongLong {
     assert(1 <= m);
-    let z = _internal.inv_gcd(x, m);
+    let z = _Internal.inv_gcd(x, m);
     assert(z.first == 1);
     return z.second;
 }
@@ -31,7 +31,7 @@ public func crt(_ r: [CLongLong],
 //    for (int i = 0; i < n; i++) {
     for i in 0..<n {
         assert(1 <= m[i]);
-        var r1 = _internal.safe_mod(r[i], m[i]), m1 = m[i];
+        var r1 = _Internal.safe_mod(r[i], m[i]), m1 = m[i];
         if (m0 < m1) {
             swap(&r0, &r1);
             swap(&m0, &m1);
@@ -51,7 +51,7 @@ public func crt(_ r: [CLongLong],
 
         // im = inv(u0) (mod u1) (0 <= im < u1)
         var g, im: CLongLong;
-        (g, im) = _internal.inv_gcd(m0, m1);
+        (g, im) = _Internal.inv_gcd(m0, m1);
 
         let u1 = (m1 / g);
         // |r1 - r0| < (m0 + m1) <= lcm(m0, m1)
@@ -77,14 +77,14 @@ public func floor_sum(_ n: CLongLong,_ m: CLongLong,_ a: CLongLong,_ b: CLongLon
     assert(1 <= m && m < ((1 as CLongLong) << 32));
     var ans: CLongLong = 0;
     if (a < 0) {
-        let a2 = _internal.safe_mod(a, m);
+        let a2 = _Internal.safe_mod(a, m);
         ans -= 1 * n * (n &- 1) / 2 * ((a2 - a) / m);
         a = a2;
     }
     if (b < 0) {
-        let b2 = _internal.safe_mod(b, m);
+        let b2 = _Internal.safe_mod(b, m);
         ans -= 1 * n * ((b2 - b) / m);
         b = b2;
     }
-    return ans + _internal.floor_sum_unsigned(n, m, a, b);
+    return ans + _Internal.floor_sum_unsigned(n, m, a, b);
 }

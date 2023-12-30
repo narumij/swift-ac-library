@@ -48,7 +48,7 @@ final class utilsMathTests: XCTestCase {
     func testIsPrimitiveRootTest() throws {
 //        for (int m = 2; m <= 500; m++) {
         for m in CInt(2)..<=500 {
-            if (!_internal.is_prime_constexpr(m)) { continue; }
+            if (!_Internal.is_prime_constexpr(m)) { continue; }
 //            for (int g = 1; g < m; g++) {
             for g in 1..<m {
                 XCTAssertEqual(is_primitive_root_naive(m, g), is_primitive_root(m, g));

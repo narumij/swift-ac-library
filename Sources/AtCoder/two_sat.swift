@@ -2,8 +2,8 @@ import Foundation
 
 public struct two_sat {
 //  public:
-    public init() { _n = 0; _answer = []; scc = _internal.scc_graph(0) }
-    public init<Index: FixedWidthInteger>(_ n: Index) { let n = Int(n); _n = n; _answer = [Bool](repeating: false, count: n); scc = _internal.scc_graph(2 * n) }
+    public init() { _n = 0; _answer = []; scc = _Internal.scc_graph(0) }
+    public init<Index: FixedWidthInteger>(_ n: Index) { let n = Int(n); _n = n; _answer = [Bool](repeating: false, count: n); scc = _Internal.scc_graph(2 * n) }
 
     public mutating func add_clause<Index: FixedWidthInteger>(_ i: Index,_ f: Bool,_ j: Index,_ g: Bool) {
         let i = Int(i)
@@ -27,5 +27,5 @@ public struct two_sat {
 //  private:
     private var _n: Int;
     private var _answer: [Bool];
-    private var scc: _internal.scc_graph;
+    private var scc: _Internal.scc_graph;
 };

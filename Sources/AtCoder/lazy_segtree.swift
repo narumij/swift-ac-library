@@ -63,8 +63,8 @@ extension _LazySegtree {
         @inlinable @inline(__always)
         init<V: Collection>(_ v: V) where V.Element == S, V.Index == Int {
             let _n = v.count
-            let size: Int = _internal.bit_ceil(UInt64(_n))
-            let log: Int = _internal.countr_zero(UInt64(size))
+            let size: Int = _Internal.bit_ceil(UInt64(_n))
+            let log: Int = _Internal.countr_zero(UInt64(size))
             let buffer = _Buffer(
                 _n: _n,
                 size: size,

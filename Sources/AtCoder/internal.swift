@@ -7,7 +7,7 @@
 
 import Foundation
 
-@usableFromInline enum _internal { 
+@usableFromInline enum _Internal {
     
     @usableFromInline typealias ULL  = CUnsignedLongLong
     @usableFromInline typealias LL   = CLongLong

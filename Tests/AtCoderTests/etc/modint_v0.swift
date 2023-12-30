@@ -280,7 +280,7 @@ struct dynamic_modint_v0: modint_protocol_v0 {
         return r;
     }
     func inv() -> mint {
-        let eg = _internal.inv_gcd(CLongLong(_v), CLongLong(Self.mod()));
+        let eg = _Internal.inv_gcd(CLongLong(_v), CLongLong(Self.mod()));
         assert(eg.first == 1);
         return Self.init(CInt(eg.second));
     }

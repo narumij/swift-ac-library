@@ -8,7 +8,7 @@ extension Zero where Self: ExpressibleByIntegerLiteral {
     static var zero: Self { 0 }
 }
 
-extension _internal {
+extension _Internal {
     
     struct csr<E: Zero> {
         var start: [Int];

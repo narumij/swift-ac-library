@@ -9,7 +9,7 @@ extension barrett: ExpressibleByIntegerLiteral {
 public struct mod_value {
     public init<Integer: FixedWidthInteger>(_ m: Integer) {
         self.mod = CUnsignedInt(m)
-        self.isPrime = _internal.is_prime(CInt(m))
+        self.isPrime = _Internal.is_prime(CInt(m))
     }
     @usableFromInline let mod: CUnsignedInt
     @usableFromInline let isPrime: Bool
@@ -25,7 +25,7 @@ public extension mod_value {
 extension mod_value: ExpressibleByIntegerLiteral {
     public init(integerLiteral value: CInt) {
         self.mod = CUnsignedInt(bitPattern: value)
-        self.isPrime = _internal.is_prime(value)
+        self.isPrime = _Internal.is_prime(value)
     }
 }
 

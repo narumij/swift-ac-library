@@ -1,6 +1,6 @@
 import Foundation
 
-extension _internal {
+extension _Internal {
     
     @usableFromInline
     static func bit_ceil<SINT: FixedWidthInteger>(_ n: UInt32) -> SINT {

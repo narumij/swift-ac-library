@@ -16,8 +16,8 @@ public struct segtree_v0<Parameter: SegtreeParameter> {
     public init(_ n: Int) { self.init([S](repeating: Parameter.e, count: n)) }
     public init(_ v: [S]) {
         _n = v.count
-        size = _internal.bit_ceil(UInt64(_n))
-        log = _internal.countr_zero(UInt64(size))
+        size = _Internal.bit_ceil(UInt64(_n))
+        log = _Internal.countr_zero(UInt64(size))
         d = [S](repeating: Parameter.e, count: 2 * size)
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         for i in 0..<_n { d[size + i] = v[i] }

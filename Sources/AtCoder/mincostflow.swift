@@ -73,7 +73,7 @@ public struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
                 elist.append((e.from, .init(to: e.to, rev: -1, cap: e.cap - e.flow, cost: e.cost)));
                 elist.append((e.to, .init(to: e.from, rev: -1, cap: e.flow, cost: -e.cost)));
             }
-            var _g = _internal.csr<_edge>(_n, elist);
+            var _g = _Internal.csr<_edge>(_n, elist);
             // for (int i = 0; i < m; i++) {
             for i in 0..<m {
                 let e = _edges[i];
@@ -114,7 +114,7 @@ public struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
         static func <(lhs: Q, rhs: Q) -> Bool { return lhs.key > rhs.key }
     };
 
-    private func slope(_ g: inout _internal.csr<_edge>,
+    private func slope(_ g: inout _Internal.csr<_edge>,
                _ s: Int,
                _ t: Int,
                _ flow_limit: Cap) -> [(Cap, Cost)] {

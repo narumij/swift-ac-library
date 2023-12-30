@@ -1,6 +1,6 @@
 import Foundation
 
-extension _internal {
+extension _Internal {
     
     struct scc_graph {
 //      public:

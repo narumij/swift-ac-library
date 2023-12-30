@@ -1,7 +1,7 @@
 import Foundation
 @testable import AtCoder
 
-extension _internal {
+extension _Internal {
     
     // Fast modular multiplication by barrett reduction
     // Reference: https://en.wikipedia.org/wiki/Barrett_reduction

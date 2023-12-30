@@ -33,7 +33,7 @@ fileprivate func floor_sum_naive(_ n: ll,_ m: ll,_ a: ll,_ b: ll) -> ll {
 //    for (ll i = 0; i < n; i++) {
     for i in 0..<n {
         let z: ll = a * i + b;
-        sum += (z - _internal.safe_mod(z, m)) / m;
+        sum += (z - _Internal.safe_mod(z, m)) / m;
     }
     return sum;
 }
@@ -63,7 +63,7 @@ final class mathTests: XCTestCase {
         // throw XCTSkip("時間がかかるのでスキップ。一度テストは通っている。")
         
         func naive(_ x: ll,_ n: ll,_ mod: CInt) -> ll {
-            let y: ll = _internal.safe_mod(x, ll(mod));
+            let y: ll = _Internal.safe_mod(x, ll(mod));
             var z: ull = 1 % ull(mod);
 //            for (ll i = 0; i < n; i++) {
             for i in ll(0)..<n {
@@ -97,7 +97,7 @@ final class mathTests: XCTestCase {
         for a in ll(-100)..<=100 {
 //            for (int b = 1; b <= 1000; b++) {
             for b in ll(1)..<=1000 {
-                if (gcd(_internal.safe_mod(a, b), b) != 1) { continue; }
+                if (gcd(_Internal.safe_mod(a, b), b) != 1) { continue; }
                 let c = inv_mod(a, b);
                 XCTAssertLessThanOrEqual(0, c);
                 XCTAssertLessThan(c, b);
@@ -158,8 +158,8 @@ final class mathTests: XCTestCase {
                             continue;
                         }
                         XCTAssertEqual(a * b / gcd(a, b), res.second);
-                        XCTAssertEqual(_internal.safe_mod(c, a), res.first % a);
-                        XCTAssertEqual(_internal.safe_mod(d, b), res.first % b);
+                        XCTAssertEqual(_Internal.safe_mod(c, a), res.first % a);
+                        XCTAssertEqual(_Internal.safe_mod(d, b), res.first % b);
                     }
                 }
             }
@@ -191,9 +191,9 @@ final class mathTests: XCTestCase {
                                     continue;
                                 }
                                 XCTAssertEqual(lcm, res.second);
-                                XCTAssertEqual(_internal.safe_mod(d, a), res.first % a);
-                                XCTAssertEqual(_internal.safe_mod(e, b), res.first % b);
-                                XCTAssertEqual(_internal.safe_mod(f, c), res.first % c);
+                                XCTAssertEqual(_Internal.safe_mod(d, a), res.first % a);
+                                XCTAssertEqual(_Internal.safe_mod(e, b), res.first % b);
+                                XCTAssertEqual(_Internal.safe_mod(f, c), res.first % c);
                             }
                         }
                     }

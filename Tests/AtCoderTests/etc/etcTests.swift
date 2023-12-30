@@ -24,7 +24,7 @@ final class etcTests: XCTestCase {
     }
     
     func testPowerMode1() throws {
-        XCTAssertEqual(0, _internal.pow_mod_constexpr(2, 32, 1))
+        XCTAssertEqual(0, _Internal.pow_mod_constexpr(2, 32, 1))
     }
 
     func testPerformanceExample() throws {

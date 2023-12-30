@@ -1,7 +1,7 @@
 import Foundation
 
 #if false
-extension _internal {
+extension _Internal {
     // 使っていない。代わりにDequeを使っている。
     struct simple_queue<T> {
         var payload: [T];
