@@ -144,7 +144,7 @@ extension _Segtree._UnsafeHandle {
         return op(sml, smr)
     }
     
-    func all_prod() -> S { return d[1]; }
+    func all_prod() -> S { return d[1] }
 
     func max_right(_ l: Int,_ f: (S) -> Bool) -> Int {
         var l = l
@@ -193,7 +193,7 @@ extension _Segtree._UnsafeHandle {
             }
             sm = op(d[r], sm)
         } while ((r & -r) != r)
-        return 0;
+        return 0
     }
     
     @usableFromInline
