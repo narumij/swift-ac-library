@@ -108,7 +108,7 @@ extension _Segtree {
         @usableFromInline let d: UnsafeMutablePointer<Base.S>
         
         typealias S = Base.S
-        func op(_ l: S,_ r: S) -> S { Base.op(l,r) }
+        let op: (S,S) -> S = { Base.op }()
         func e() -> S { Base.e }
     }
 }
@@ -207,25 +207,19 @@ public extension SegtreeProtocol {
     mutating func set(_ p: Int,_ x: S) {
         storage.__update{ $0.set(p, x) }
     }
-    
     func get(_ p: Int) -> S {
         storage.__read { $0.get(p) }
     }
-
     func prod(_ l: Int,_ r: Int) -> S {
         storage.__read { $0.prod(l, r) }
     }
-    
     func all_prod() -> S {
         storage.__read { $0.all_prod() }
     }
-    
     func max_right(_ l: Int,_ f: (S) -> Bool) -> Int {
         storage.__read { $0.max_right(l, f) }
     }
-    
     func min_left(_ r: Int,_ f: (S) -> Bool ) -> Int {
         storage.__read { $0.min_left(r, f) }
     }
 }
-

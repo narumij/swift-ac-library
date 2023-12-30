@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol LazySegtreeParameter {
+public protocol _LazySegtreeProtocol {
     associatedtype S
     static var op: (S,S) -> S { get }
     static var e: S { get }
@@ -10,34 +10,130 @@ public protocol LazySegtreeParameter {
     static var id: F { get }
 }
 
-public struct lazy_segtree<Parameter: LazySegtreeParameter> {
-    public typealias S = Parameter.S
-    public typealias F = Parameter.F
-    
-    public init() { self.init(0) }
-    public init(_ n: Int) { self.init([S](repeating: Parameter.e, count: n)) }
-    public init(_ v: [S]) {
-        _n = v.count
-        size = _internal.bit_ceil(UInt64(_n))
-        log = _internal.countr_zero(UInt64(size))
-        d = .init(repeating: Parameter.e, count: 2 * size)
-        lz = .init(repeating: Parameter.id, count: size)
-        // for (int i = 0; i < _n; i++) d[size + i] = v[i];
-        for i in 0..<_n { d[size + i] = v[i]; }
-        // for (int i = size - 1; i >= 1; i--) {
-        for i in (size - 1)..>=1 {
-            _update { $0.update(i); }
-        }
-    }
-    
-    @usableFromInline let _n, size, log: Int;
-    @usableFromInline var d: [S];
-    @usableFromInline var lz: [F];
+public protocol LazySegtreeProtocol: _LazySegtreeProtocol {
+    init(storage: Storage)
+    var storage: Storage { get set }
 }
 
-extension lazy_segtree._UnsafeHandle {
+public extension LazySegtreeProtocol {
+    typealias Storage = _LazySegtree<Self>._Storage
+    init() { self.init(0) }
+    init(_ n: Int) {
+        self.init(storage: Storage(n: Int(n)))
+    }
+    init<V: Collection>(_ v: V) where V.Element == S, V.Index == Int {
+        self.init(storage: Storage(v))
+    }
+}
+
+public enum _LazySegtree<Base: _LazySegtreeProtocol> {
+    public typealias S = Base.S
+    public typealias F = Base.F
+}
+
+extension _LazySegtree {
+
+    @usableFromInline
+    class _Buffer {
+        @usableFromInline
+        init(_n: Int, size: Int, log: Int, d: [Base.S], lz: [Base.F]) {
+            self._n = _n
+            self.size = size
+            self.log = log
+            self.d = d
+            self.lz = lz
+        }
+        @usableFromInline let _n, size, log: Int
+        @usableFromInline var d: [Base.S]
+        @usableFromInline var lz: [Base.F]
+    }
     
-    @inlinable @inline(__always)
+    public struct _Storage {
+        
+        @inlinable @inline(__always)
+        init(_buffer: _Buffer) {
+            self._buffer = _buffer
+        }
+        
+        @inlinable @inline(__always)
+        init(n: Int) {
+            self.init([S](repeating: Base.e, count: n))
+        }
+
+        @inlinable @inline(__always)
+        init<V: Collection>(_ v: V) where V.Element == S, V.Index == Int {
+            let _n = v.count
+            let size: Int = _internal.bit_ceil(UInt64(_n))
+            let log: Int = _internal.countr_zero(UInt64(size))
+            let buffer = _Buffer(
+                _n: _n,
+                size: size,
+                log: log,
+                d: [S](repeating: Base.e, count: 2 * size),
+                lz: [F](repeating: Base.id, count: size)
+            )
+            self.init(_buffer: buffer)
+            __update {
+                for i in 0..<_n { $0.d[size + i] = v[i] }
+                for i in stride(from: $0.size - 1, through: 1, by: -1) { $0.update(i) }
+            }
+        }
+
+        @usableFromInline var _buffer: _Buffer
+        
+        @inlinable @inline(__always)
+        public func __read<R>(_ body: (_UnsafeHandle) -> R) -> R {
+            _buffer.d.withUnsafeMutableBufferPointer { d in
+                _buffer.lz.withUnsafeMutableBufferPointer { lz in
+                    let handle = _UnsafeHandle(_n: _buffer._n, size: _buffer.size, log: _buffer.log, d: d.baseAddress!, lz: lz.baseAddress!)
+                    return body(handle)
+                }
+            }
+        }
+        
+        @inlinable @inline(__always)
+        public mutating func __update<R>(_ body: (_UnsafeHandle) -> R) -> R {
+            _buffer.d.withUnsafeMutableBufferPointer { d in
+                _buffer.lz.withUnsafeMutableBufferPointer { lz in
+                    let handle = _UnsafeHandle(_n: _buffer._n, size: _buffer.size, log: _buffer.log, d: d.baseAddress!, lz: lz.baseAddress!)
+                    return body(handle)
+                }
+            }
+        }
+    }
+}
+
+extension _LazySegtree {
+    
+    public
+    struct _UnsafeHandle {
+        
+        @inlinable @inline(__always)
+        init(_n: Int, size: Int, log: Int, d: UnsafeMutablePointer<Base.S>, lz: UnsafeMutablePointer<Base.F>) {
+            self._n = _n
+            self.size = size
+            self.log = log
+            self.d = d
+            self.lz = lz
+        }
+        
+        @usableFromInline let _n, size, log: Int
+        @usableFromInline let d: UnsafeMutablePointer<Base.S>
+        @usableFromInline let lz: UnsafeMutablePointer<Base.F>
+
+        typealias S = Base.S
+        func op(_ l: S,_ r: S) -> S { Base.op(l,r) }
+        func e() -> S { Base.e }
+        
+        typealias F = Base.F
+        func mapping(_ l: F,_ r: S) -> S { Base.mapping(l,r) }
+        func composition(_ l: F,_ r: F) -> F { Base.composition(l,r) }
+        func id() -> F { Base.id }
+    }
+}
+
+extension _LazySegtree._UnsafeHandle {
+    
     func set(_ p: Int,_ x: S) {
         var p = p
         assert(0 <= p && p < _n);
@@ -49,7 +145,6 @@ extension lazy_segtree._UnsafeHandle {
         for i in 1..<=log { update(p >> i); }
     }
     
-    @inlinable @inline(__always)
     func get(_ p: Int) -> S {
         var p = p
         assert(0 <= p && p < _n);
@@ -59,7 +154,6 @@ extension lazy_segtree._UnsafeHandle {
         return d[p];
     }
     
-    @inlinable @inline(__always)
     func prod(_ l: Int,_ r: Int) -> S{
         var l = l
         var r = r
@@ -85,15 +179,9 @@ extension lazy_segtree._UnsafeHandle {
         
         return op(sml, smr);
     }
-}
-
-public extension lazy_segtree {
+    
     func all_prod() -> S { return d[1]; }
-}
 
-extension lazy_segtree._UnsafeHandle {
-
-    @inlinable @inline(__always)
     func apply(_ p: Int,_ f: F) {
         var p = p
         assert(0 <= p && p < _n);
@@ -105,7 +193,6 @@ extension lazy_segtree._UnsafeHandle {
         for i in 1..<=log { update(p >> i); }
     }
 
-    @inlinable @inline(__always)
     func apply(_ l: Int,_ r: Int,_ f: F) {
         var l = l
         var r = r
@@ -143,7 +230,6 @@ extension lazy_segtree._UnsafeHandle {
 //    template <bool (*g)(S)> int max_right(int l) {
 //        return max_right(l, [](S x) { return g(x); });
 //    }
-    @inlinable @inline(__always)
     func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
         var l = l
         assert(0 <= l && l <= _n);
@@ -175,7 +261,6 @@ extension lazy_segtree._UnsafeHandle {
 //    template <bool (*g)(S)> int min_left(int r) {
 //        return min_left(r, [](S x) { return g(x); });
 //    }
-    @inlinable @inline(__always)
     func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
         var r = r
         assert(0 <= r && r <= _n);
@@ -204,16 +289,14 @@ extension lazy_segtree._UnsafeHandle {
         return 0;
     }
     
-    @inlinable @inline(__always)
-    public func update(_ k: Int) { d[k] = op(d[2 * k], d[2 * k + 1]); }
+    @usableFromInline
+    func update(_ k: Int) { d[k] = op(d[2 * k], d[2 * k + 1]); }
     
-    @inlinable @inline(__always)
     func all_apply(_ k: Int,_ f: F) {
         d[k] = mapping(f, d[k]);
         if (k < size) { lz[k] = composition(f, lz[k]); }
     }
     
-    @inlinable @inline(__always)
     func push(_ k: Int) {
         all_apply(2 * k, lz[k]);
         all_apply(2 * k + 1, lz[k]);
@@ -221,70 +304,30 @@ extension lazy_segtree._UnsafeHandle {
     }
 }
 
-extension lazy_segtree {
+public extension LazySegtreeProtocol {
     
-    @usableFromInline
-    struct _UnsafeHandle {
-        
-        @inlinable @inline(__always)
-        internal init(
-            _n: Int,
-            size: Int,
-            log: Int,
-            d: UnsafeMutablePointer<S>,
-            lz: UnsafeMutablePointer<F>)
-        {
-            self._n = _n
-            self.size = size
-            self.log = log
-            self.d = d
-            self.lz = lz
-        }
-        
-        @usableFromInline let _n, size, log: Int
-        @usableFromInline let d: UnsafeMutablePointer<S>
-        @usableFromInline let lz: UnsafeMutablePointer<F>
-        
-        @usableFromInline typealias S = Parameter.S
-        @usableFromInline func op(_ l: S,_ r: S) -> S { Parameter.op(l,r) }
-        @usableFromInline func e() -> S { Parameter.e }
-        
-        @usableFromInline typealias F = Parameter.F
-        @usableFromInline func mapping(_ l: F,_ r: S) -> S { Parameter.mapping(l,r) }
-        @usableFromInline func composition(_ l: F,_ r: F) -> F { Parameter.composition(l,r) }
-        @usableFromInline func id() -> F { Parameter.id }
-    }
-    
-    @inlinable @inline(__always)
-    mutating func _update<R>(_ body: (_UnsafeHandle) -> R) -> R {
-        d.withUnsafeMutableBufferPointer { d in
-            lz.withUnsafeMutableBufferPointer { lz in
-                body(_UnsafeHandle(_n: _n, size: size, log: log, d: d.baseAddress!, lz: lz.baseAddress!))
-            }
-        }
-    }
-}
-
-public extension lazy_segtree {
     mutating func set(_ p: Int,_ x: S) {
-        _update{ $0.set(p,x) }
+        storage.__update{ $0.set(Int(p),x) }
     }
     mutating func get(_ p: Int) -> S {
-        _update{ $0.get(p) }
+        storage.__update{ $0.get(Int(p)) }
     }
     mutating func prod(_ l: Int,_ r: Int) -> S {
-        _update{ $0.prod(l, r) }
+        storage.__update{ $0.prod(Int(l), Int(r)) }
+    }
+    func all_prod() -> S {
+        storage.__read{ $0.all_prod() }
     }
     mutating func apply(_ p: Int,_ f: F) {
-        _update{ $0.apply(p, f) }
+        storage.__update{ $0.apply(Int(p), f) }
     }
     mutating func apply(_ l: Int,_ r: Int,_ f: F) {
-        _update{ $0.apply(l, r, f) }
+        storage.__update{ $0.apply(Int(l), Int(r), f) }
     }
     mutating func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
-        _update{ $0.max_right(l, g) }
+        storage.__update{ $0.max_right(Int(l), g) }
     }
     mutating func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
-        _update{ $0.min_left(r, g) }
+        storage.__update{ $0.min_left(Int(r), g) }
     }
 }

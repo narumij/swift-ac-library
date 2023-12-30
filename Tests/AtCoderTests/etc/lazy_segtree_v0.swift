@@ -1,6 +1,16 @@
 import Foundation
 @testable import AtCoder
 
+public protocol LazySegtreeParameter {
+    associatedtype S
+    static var op: (S,S) -> S { get }
+    static var e: S { get }
+    associatedtype F
+    static var mapping: (F,S) -> S { get }
+    static var composition: (F,F) -> F { get }
+    static var id: F { get }
+}
+
 // 残念ながらSwift固有の事情で速度不十分
 // from https://github.com/atcoder/ac-library/blob/master/atcoder/lazysegtree.hpp
 struct lazy_segtree_v0<Property: LazySegtreeParameter> {

@@ -18,6 +18,30 @@ extension _Segtree._Storage {
     }
 }
 
+enum fixture: SegtreeParameter {
+    static let op: (String,String) -> String = { a, b in
+        assert(a == "$" || b == "$" || a <= b);
+        if (a == "$") { return b; }
+        if (b == "$") { return a; }
+        return a + b;
+    }
+    static let e: String = "$"
+    typealias S = String
+}
+
+protocol SegtreeFixture: _SegtreeProtocol { }
+
+extension SegtreeFixture {
+    static var op: (String,String) -> String { { a, b in
+        assert(a == "$" || b == "$" || a <= b);
+        if (a == "$") { return b; }
+        if (b == "$") { return a; }
+        return a + b;
+    } }
+    static var e: String { "$" }
+}
+
+
 final class segtreeTests: XCTestCase {
 
     override func setUpWithError() throws {
@@ -36,25 +60,7 @@ final class segtreeTests: XCTestCase {
         // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
     }
     
-    enum fixture: SegtreeParameter {
-        static let op: (String,String) -> String = { a, b in
-            assert(a == "$" || b == "$" || a <= b);
-            if (a == "$") { return b; }
-            if (b == "$") { return a; }
-            return a + b;
-        }
-        static let e: String = "$"
-        typealias S = String
-    }
-    
-    struct segtree: SegtreeProtocol {
-        static let op: (String, String) -> String = { a, b in
-            assert(a == "$" || b == "$" || a <= b);
-            if (a == "$") { return b; }
-            if (b == "$") { return a; }
-            return a + b;
-        }
-        static let e: String = "$"
+    struct segtree: SegtreeProtocol, SegtreeFixture {
         var storage: Storage
     }
     
