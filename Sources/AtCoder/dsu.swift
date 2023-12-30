@@ -4,7 +4,7 @@ public struct dsu {
     public typealias Element = Int
     // storageは参照型で、dsuは値型というより、C++のpimplパターンに近い形になっています。
     // このため、万が一コピーして変更を加えた場合、Swiftの常識に反した動作となります。
-    var storage: _Storage
+    var storage: _Storage<Element>
     public init() { storage = .init(n: 0) }
     public init(_ n: Int) { storage = .init(n: n) }
 }
@@ -35,7 +35,7 @@ extension dsu {
     }
     
     @usableFromInline
-    struct _Storage {
+    struct _Storage<Element: SignedInteger> {
         
         @inlinable @inline(__always)
         init(_buffer: _BufferPointer) { self._buffer = _buffer }
@@ -58,7 +58,7 @@ extension dsu {
         public var count: Int { _buffer.header.count }
         
         @inlinable @inline(__always)
-        public mutating func __update<R>(_ body: (_UnsafeHandle) -> R) -> R {
+        public mutating func __update<R>(_ body: (_UnsafeHandle<Element>) -> R) -> R {
             _buffer.withUnsafeMutablePointers{ _header, _elements in
                 let handle = _UnsafeHandle(_header: _header, _elements: _elements)
                 return body(handle)
@@ -70,7 +70,7 @@ extension dsu {
 extension dsu {
     
     @usableFromInline
-    struct _UnsafeHandle {
+    struct _UnsafeHandle<Element: SignedInteger> {
         
         @inlinable @inline(__always)
         init(_header: UnsafeMutablePointer<_BufferHeader>,
@@ -87,16 +87,16 @@ extension dsu {
 
 extension dsu._UnsafeHandle {
     
-    public typealias Element = Int
-
+    typealias Stride = UnsafeMutablePointer<Element>.Stride
+    
     func merge(_ a: Element,_ b: Element) -> Element {
         assert(0 <= a && a < _n);
         assert(0 <= b && b < _n);
         var x = leader(a), y = leader(b);
         if (x == y) { return x; }
         if (-parent_or_size[x] < -parent_or_size[y]) { swap(&x, &y); }
-        (parent_or_size + x).pointee += parent_or_size[y];
-        (parent_or_size + y).pointee = x;
+        (parent_or_size + Stride(x)).pointee += parent_or_size[y];
+        (parent_or_size + Stride(y)).pointee = x;
         return x;
     }
 
@@ -109,7 +109,7 @@ extension dsu._UnsafeHandle {
     func leader(_ a: Element) -> Element {
         assert(0 <= a && a < _n);
         if (parent_or_size[a] < 0) { return a; }
-        (parent_or_size + a).pointee = leader(parent_or_size[a]);
+        (parent_or_size + Stride(a)).pointee = leader(parent_or_size[a]);
         return parent_or_size[a]
     }
 
@@ -120,16 +120,16 @@ extension dsu._UnsafeHandle {
 
     func groups() -> [[Element]] {
         var leader_buf = [Element](repeating: -1, count:_n), group_size = [Int](repeating: -1, count:_n)
-        for i in 0..<Element(_n) {
-            leader_buf[i] = leader(i);
+        for i in 0..<_n {
+            leader_buf[i] = leader(Element(i));
             group_size[leader_buf[i]] += 1;
         }
         var result: [[Element]] = [[Element]](repeating: [], count: _n);
         for i in 0..<_n {
             result[i].reserveCapacity(group_size[i])
         }
-        for i in 0..<Element(_n) {
-            result[leader_buf[i]].append(i);
+        for i in 0..<_n {
+            result[leader_buf[i]].append(Element(i));
         }
         result.removeAll { $0.isEmpty }
         return result;

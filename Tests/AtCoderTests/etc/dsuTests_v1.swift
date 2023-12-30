@@ -19,6 +19,8 @@ final class dsuTests_v1: XCTestCase {
         // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
     }
     
+    typealias dsu = dsu_v1
+    
     func test0() throws {
         var uf = dsu(0);
         XCTAssertEqual([], uf.groups());
