@@ -14,6 +14,39 @@ dependencies: [
 
 提出時は、コピペで頑張ってください。
 
+## セグ木の作り方
+
+プロトコル適用をすることで、構造体をセグに木にして利用することができます。
+適用の際に行う必要があるのは、単位元、二項演算、ストレージの三つを書くことです。
+集合Sについては型推論が働くため書く必要がありません。
+
+例: 集合SがInt、単位元が0、二項演算がmax関数の場合
+```swift
+struct segtree: SegtreeProtocol {
+    static let e = 0
+    static let op: (Int, Int) -> Int = max
+    var storage: Storage
+}
+```
+
+例: 集合SがInt、単位元が0、二項演算が加算の場合
+```swift
+struct segtree: SegtreeProtocol {
+    static let e: Int = 0
+    static let op: (Int, Int) -> Int = (+)
+    var storage: Storage
+}
+```
+
+例: 集合SがInt、単位元が1、二項演算が乗算の場合
+```swift
+struct segtree: SegtreeProtocol {
+    static let e = 1
+    static let op: (Int, Int) -> Int = (*)
+    var storage: Storage
+}
+```
+
 ## 公式情報
 
 [AtCoder Library (ACL) - AtCoder][acl]
@@ -29,6 +62,7 @@ dependencies: [
 ## その他
 
 無保証です。破壊的変更の可能性があります。
+不具合等ありましたら、教えてくれると喜びます。
 
 ## 方針
 

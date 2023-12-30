@@ -70,7 +70,7 @@ final class lazySegtreeTests: XCTestCase {
     }
     
     func testOne() throws {
-        var s = segtree<segtreeTests.fixture>(1)
+        var s = segtree_v0<segtreeTests_v0.fixture>(1)
         XCTAssertEqual("$", s.all_prod());
         XCTAssertEqual("$", s.get(0));
         XCTAssertEqual("$", s.prod(0, 1));

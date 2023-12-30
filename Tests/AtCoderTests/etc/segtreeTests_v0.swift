@@ -1,24 +1,13 @@
-//
-//  ManagedBufferSegtreeTests.swift
-//  
-//
-//  Created by narumij on 2023/12/03.
-//
-
 import XCTest
 @testable import AtCoder
 
-extension _Segtree._Storage {
-    
-    var array: [Base.S] { _buffer.d }
-    
-    subscript(index: Int) -> Base.S {
-        get { _buffer.d[index] }
-        nonmutating set { _buffer.d[index] = newValue }
+extension CChar: ExpressibleByStringLiteral {
+    public init(stringLiteral s: String) {
+        self = Character(s).asciiValue.map{ Int8($0) }!
     }
 }
 
-final class ManagedBufferSegtreeTests: XCTestCase {
+final class segtreeTests_v0: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -28,14 +17,6 @@ final class ManagedBufferSegtreeTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-    
     enum fixture: SegtreeParameter {
         static let op: (String,String) -> String = { a, b in
             assert(a == "$" || b == "$" || a <= b);
@@ -47,21 +28,9 @@ final class ManagedBufferSegtreeTests: XCTestCase {
         typealias S = String
     }
     
-    struct segtree: SegtreeProtocol {
-        static let op: (String,String) -> String = { a, b in
-            assert(a == "$" || b == "$" || a <= b);
-            if (a == "$") { return b; }
-            if (b == "$") { return a; }
-            return a + b;
-        }
-        static let e: String = "$"
-        typealias S = String
-        var storage: Storage
-    }
-    
     func test0() {
-        XCTAssertEqual("$", segtree(0).all_prod())
-        XCTAssertEqual("$", segtree().all_prod())
+        XCTAssertEqual("$", segtree_v0<fixture>(0).all_prod())
+        XCTAssertEqual("$", segtree_v0<fixture>().all_prod())
     }
     
     func testInvalid() throws {
@@ -70,7 +39,7 @@ final class ManagedBufferSegtreeTests: XCTestCase {
         
         XCTAssertThrowsError(segtree_naive<fixture>(-1))
         
-        let s = segtree(10)
+        let s = segtree_v0<fixture>(10)
         
         XCTAssertThrowsError(s.get(-1))
         XCTAssertThrowsError(s.get(10))
@@ -87,7 +56,7 @@ final class ManagedBufferSegtreeTests: XCTestCase {
     }
     
     func testOne() throws {
-        var s = segtree(1)
+        var s = segtree_v0<fixture>(1)
         XCTAssertEqual("$", s.all_prod());
         XCTAssertEqual("$", s.get(0));
         XCTAssertEqual("$", s.prod(0, 1));
@@ -105,7 +74,7 @@ final class ManagedBufferSegtreeTests: XCTestCase {
 //        for (int n = 0; n < 30; n++) {
         for n in 0..<30 {
             var seg0 = segtree_naive<fixture>(n);
-            var seg1 = segtree(n);
+            var seg1 = segtree_v0<fixture>(n);
 //            for (int i = 0; i < n; i++) {
             for i in 0..<n {
                 var s = ""
@@ -151,8 +120,8 @@ final class ManagedBufferSegtreeTests: XCTestCase {
     }
     
     func testAssign() throws {
-        var seg0 = segtree();
-        XCTAssertNoThrow(seg0 = segtree(10));
+        var seg0 = segtree_v0<fixture>();
+        XCTAssertNoThrow(seg0 = segtree_v0<fixture>(10));
     }
     
     func testPerformanceExample() throws {
@@ -161,5 +130,4 @@ final class ManagedBufferSegtreeTests: XCTestCase {
             // Put the code you want to measure the time of here.
         }
     }
-
 }

@@ -1,45 +1,135 @@
 import Foundation
 
-public protocol SegtreeParameter {
+public protocol _SegtreeProtocol {
     associatedtype S
     static var op: (S,S) -> S { get }
     static var e: S { get }
 }
 
-public struct segtree<Parameter: SegtreeParameter> {
-    public typealias S = Parameter.S
-    func op(_ l: S,_ r: S) -> S { Parameter.op(l,r) }
-    func e() -> S { Parameter.e }
+public protocol SegtreeProtocol: _SegtreeProtocol {
+    init(storage: Storage)
+    var storage: Storage { get set }
+}
 
-    public init() { self.init(0) }
-    public init(_ n: Int) { self.init([S](repeating: Parameter.e, count: n)) }
-    public init(_ v: [S]) {
-        _n = v.count
-        size = _internal.bit_ceil(UInt64(_n))
-        log = _internal.countr_zero(UInt64(size))
-        d = [S](repeating: Parameter.e, count: 2 * size)
-        // for (int i = 0; i < _n; i++) d[size + i] = v[i];
-        for i in 0..<_n { d[size + i] = v[i] }
-        // for (int i = size - 1; i >= 1; i--) {
-        for i in (size - 1)..>=1 { update(i) }
+public extension SegtreeProtocol {
+    typealias Storage = _Segtree<Self>._Storage
+    init() { self.init(0) }
+    init(_ n: Int) {
+        self.init(storage: Storage(_n: n))
+    }
+    init<V: Collection>(_ v: V) where V.Element == S, V.Index == Int {
+        self.init(storage: Storage(v))
+    }
+}
+
+public enum _Segtree<Base: _SegtreeProtocol> {
+    public typealias S = Base.S
+}
+
+extension _Segtree {
+    
+    @usableFromInline
+    class _Buffer {
+        @usableFromInline
+        init(_n: Int, size: Int, log: Int, d: [Base.S]) {
+            self._n = _n
+            self.size = size
+            self.log = log
+            self.d = d
+        }
+        @usableFromInline let _n, size, log: Int
+        @usableFromInline var d: [S]
     }
     
-    public mutating func set(_ p: Int,_ x: S) {
-        var p = Int(p)
+    public struct _Storage {
+        
+        @inlinable @inline(__always)
+        init(_buffer: _Buffer) {
+            self._buffer = _buffer
+        }
+        
+        @inlinable @inline(__always)
+        init(_n: Int) {
+            self.init([S](repeating: Base.e, count: _n))
+        }
+
+        @inlinable @inline(__always)
+        init<V: Collection>(_ v: V) where V.Element == S, V.Index == Int {
+            let _n = v.count
+            let size: Int = _internal.bit_ceil(UInt64(_n))
+            let log: Int = _internal.countr_zero(UInt64(size))
+            let buffer = _Buffer(
+                _n: _n,
+                size: size,
+                log: log,
+                d: [S](repeating: Base.e, count: 2 * size)
+            )
+            self.init(_buffer: buffer)
+            __update {
+                for i in 0..<_n { $0.d[size + i] = v[i] }
+                for i in stride(from: $0.size - 1, through: 1, by: -1) { $0.update(i) }
+            }
+        }
+
+        @usableFromInline var _buffer: _Buffer
+        
+        @inlinable @inline(__always)
+        func __read<R>(_ body: (_UnsafeHandle) -> R) -> R {
+            _buffer.d.withUnsafeMutableBufferPointer{ d in
+                let handle = _UnsafeHandle(_n: _buffer._n, size: _buffer.size, log: _buffer.log, d: d.baseAddress!)
+                return body(handle)
+            }
+        }
+        
+        @inlinable @inline(__always)
+        mutating func __update<R>(_ body: (_UnsafeHandle) -> R) -> R {
+            _buffer.d.withUnsafeMutableBufferPointer{ d in
+                let handle = _UnsafeHandle(_n: _buffer._n, size: _buffer.size, log: _buffer.log, d: d.baseAddress!)
+                return body(handle)
+            }
+        }
+    }
+}
+
+extension _Segtree {
+    
+    @usableFromInline
+    struct _UnsafeHandle {
+        
+        @inlinable @inline(__always)
+        init(_n: Int, size: Int, log: Int, d: UnsafeMutablePointer<Base.S>) {
+            self._n = _n
+            self.size = size
+            self.log = log
+            self.d = d
+        }
+        
+        @usableFromInline let _n, size, log: Int
+        @usableFromInline let d: UnsafeMutablePointer<Base.S>
+        
+        typealias S = Base.S
+        func op(_ l: S,_ r: S) -> S { Base.op(l,r) }
+        func e() -> S { Base.e }
+    }
+}
+
+extension _Segtree._UnsafeHandle {
+    
+    func set(_ p: Int,_ x: S) {
+        var p = p
         assert(0 <= p && p < _n);
         p += size;
         d[p] = x;
-        // for (int i = 1; i <= log; i++) update(p >> i);
-        for i in 1..<=log { update(p >> i); }
+        for i in stride(from: 1, through: log, by: 1) { update(p >> i); }
     }
     
-    public func get(_ p: Int) -> S {
+    func get(_ p: Int) -> S {
         assert(0 <= p && p < _n);
-        return d[Int(p) + size];
+        return d[p + size];
     }
     
-    public func prod(_ l: Int,_ r: Int) -> S {
-        var l = Int(l), r = Int(r)
+    func prod(_ l: Int,_ r: Int) -> S {
+        var l = l, r = r
         assert(0 <= l && l <= r && r <= _n);
         var sml: S = e(), smr: S = e();
         l += size;
@@ -54,10 +144,10 @@ public struct segtree<Parameter: SegtreeParameter> {
         return op(sml, smr);
     }
     
-    public func all_prod() -> S { return d[1]; }
+    func all_prod() -> S { return d[1]; }
 
-    public func max_right(_ l: Int,_ f: (S) -> Bool) -> Int {
-        var l = Int(l)
+    func max_right(_ l: Int,_ f: (S) -> Bool) -> Int {
+        var l = l
         assert(0 <= l && l <= _n);
         assert(f(e()));
         if (l == _n) { return _n; }
@@ -81,8 +171,8 @@ public struct segtree<Parameter: SegtreeParameter> {
         return _n;
     }
     
-    public func min_left(_ r: Int,_ f: (S) -> Bool ) -> Int {
-        var r = Int(r)
+    func min_left(_ r: Int,_ f: (S) -> Bool ) -> Int {
+        var r = r
         assert(0 <= r && r <= _n);
         assert(f(e()));
         if (r == 0) { return 0; }
@@ -106,12 +196,36 @@ public struct segtree<Parameter: SegtreeParameter> {
         return 0;
     }
     
-    private let _n, size, log: Int
-    private var d: [S]
-    
-    private mutating func update(_ k: Int) {
+    @usableFromInline
+    func update(_ k: Int) {
         d[k] = op(d[2 * k], d[2 * k + 1])
     }
 }
 
+public extension SegtreeProtocol {
+    
+    mutating func set(_ p: Int,_ x: S) {
+        storage.__update{ $0.set(p, x) }
+    }
+    
+    func get(_ p: Int) -> S {
+        storage.__read { $0.get(p) }
+    }
+
+    func prod(_ l: Int,_ r: Int) -> S {
+        storage.__read { $0.prod(l, r) }
+    }
+    
+    func all_prod() -> S {
+        storage.__read { $0.all_prod() }
+    }
+    
+    func max_right(_ l: Int,_ f: (S) -> Bool) -> Int {
+        storage.__read { $0.max_right(l, f) }
+    }
+    
+    func min_left(_ r: Int,_ f: (S) -> Bool ) -> Int {
+        storage.__read { $0.min_left(r, f) }
+    }
+}
 
