@@ -23,7 +23,7 @@ dependencies: [
 例: 集合SがInt、単位元が0、二項演算がmax関数の場合
 ```swift
 struct segtree: SegtreeProtocol {
-    static let e = Int.min
+    static let e = 0
     static let op: (Int, Int) -> Int = max
     var storage: Storage
 }
