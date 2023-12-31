@@ -1,6 +1,6 @@
 import Foundation
 
-public struct fenwick_tree<T: AdditiveArithmetic & ToUnsigned> where T: ToUnsigned {
+public struct fenwick_tree<T: AdditiveArithmetic & HandleUnsigned> where T: HandleUnsigned {
     @usableFromInline var _n: Int
     @usableFromInline var data: [U]
 }
@@ -9,14 +9,14 @@ public extension fenwick_tree {
 
     typealias U = T.Unsigned
     init() { _n = 0; data = [] }
-    init<Index: FixedWidthInteger>(_ n: Index) { _n = Int(n); data = .init(repeating: 0, count: Int(n)) }
+    init(_ n: Int) { _n = n; data = .init(repeating: 0, count: n) }
 
-    mutating func add<Index: FixedWidthInteger>(_ p: Index,_ x: T) {
-        _update{ $0.add(Int(p),x) }
+    mutating func add(_ p: Int,_ x: T) {
+        _update{ $0.add(p,x) }
     }
 
-    mutating func sum<Index: FixedWidthInteger>(_ l: Index,_ r: Index) -> T {
-        _update{ $0.sum(Int(l),Int(r)) }
+    mutating func sum(_ l: Int,_ r: Int) -> T {
+        _update{ $0.sum(l,r) }
     }
 }
 

@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol ToUnsigned {
+public protocol HandleUnsigned {
     associatedtype Unsigned: FixedWidthInteger & UnsignedInteger
     init(unsigned: Unsigned)
     var unsigned: Unsigned { get }
@@ -15,17 +15,17 @@ extension UnsignedInteger {
     public var unsigned: Self { self }
 }
 
-extension Int32: ToUnsigned {
+extension Int32: HandleUnsigned {
     public init(unsigned: Magnitude) { self.init(bitPattern: unsigned) }
 }
-extension Int64: ToUnsigned {
+extension Int64: HandleUnsigned {
     public init(unsigned: Magnitude) { self.init(bitPattern: unsigned) }
 }
-extension Int: ToUnsigned {
+extension Int: HandleUnsigned {
     public init(unsigned: Magnitude) { self.init(bitPattern: unsigned) }
 }
 
-extension UInt32: ToUnsigned { }
-extension UInt64: ToUnsigned { }
-extension UInt: ToUnsigned { }
+extension UInt32: HandleUnsigned { }
+extension UInt64: HandleUnsigned { }
+extension UInt: HandleUnsigned { }
 
