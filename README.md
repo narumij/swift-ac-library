@@ -1,6 +1,6 @@
 # swift-ac-library
 
-swift-ac-libraryは、[AtCoder Library][ac-library]のSwift移植版です。
+swift-ac-libraryは、[AC(AtCoder) Library][ac-library]のSwift移植版です。
 
 ## 利用の仕方
 
@@ -70,8 +70,6 @@ struct lazy_segtree: LazySegtreeProtocol {
 
 ## 関連
 
-[ac-library] - オリジナル
-
 [ac-library-swift] - Swift版。128bitの乗算部分など、いくつか参考にさせていただきました。
 
 [ac-library-csharp] - C#版。命名等に関して、今後参考にさせていただこうと思っています。
@@ -87,7 +85,7 @@ struct lazy_segtree: LazySegtreeProtocol {
 
 ac-libraryとの目視照らし合わせで間違いを発見しやすいこと。
 
-このため、Swiftらしい書き方よりも、C++そのままに近い方を優先します。
+このため、実装部分に関しては、Swiftらしい書き方よりも、C++そのままに近い方を優先します。
 
 命名規則関連は、C#版やPython版を参考に、ガチガチにC++に似せていたのを、緩めていきます。
 
