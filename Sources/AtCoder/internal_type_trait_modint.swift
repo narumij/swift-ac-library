@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by narumij on 2023/12/17.
-//
-
 import Foundation
 
 extension static_modint: ToUnsigned { }

@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by narumij on 2023/12/30.
-//
-
 import Foundation
 
 @usableFromInline enum _Internal {
