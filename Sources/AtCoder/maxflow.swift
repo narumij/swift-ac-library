@@ -28,8 +28,8 @@ public extension mf_graph {
     }
 
     struct edge {
-        public var from, to: Int
-        public var cap, flow: Cap
+        public let from, to: Int
+        public let cap, flow: Cap
     }
 
     func get_edge(_ i: Int) -> edge {
@@ -141,7 +141,7 @@ public extension mf_graph {
 
 extension mf_graph {
     struct _edge {
-        var to, rev: Int
+        let to, rev: Int
         var cap: Cap
     }
 }

@@ -8,7 +8,9 @@ extension _Internal {
 
         func num_vertices() -> Int { return _n; }
 
-        mutating func add_edge(_ from: Int,_ to: Int) { edges.append((from, .init(to: to))); }
+        mutating func add_edge(_ from: Int,_ to: Int) {
+            edges.append((from, .init(to: to)));
+        }
 
         // @return pair of (# of scc, scc id)
         func scc_ids() -> (first: Int, second: [Int]) {
@@ -71,9 +73,9 @@ extension _Internal {
         }
 
 //      private:
-        var _n: Int;
+        let _n: Int;
         struct edge {
-            var to: Int
+            let to: Int
         }
         var edges: [(Int,edge)] = [];
     };

@@ -29,9 +29,10 @@ public struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
             self.flow = flow
             self.cost = cost
         }
-        public var from, to: Int;
-        public var cap, flow: Cap;
-        public var cost: Cost;
+        public let from, to: Int;
+        public let cap: Cap;
+        public var flow: Cap;
+        public let cost: Cost;
     };
 
     public func get_edge<Index: FixedWidthInteger>(_ i: Index) -> edge {
@@ -102,15 +103,16 @@ public struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
 
     // inside edge
     struct _edge {
-        var to, rev: Int;
-        var cap: Cap;
-        var cost: Cost;
+        let to: Int
+        var rev: Int
+        var cap: Cap
+        let cost: Cost
         static var zero: Self { Self.init(to: 0, rev: 0, cap: 0, cost: 0) }
     };
 
     struct Q: Comparable {
-        var key: Cost;
-        var to: Int;
+        let key: Cost
+        let to: Int
         static func <(lhs: Q, rhs: Q) -> Bool { return lhs.key > rhs.key }
     };
 

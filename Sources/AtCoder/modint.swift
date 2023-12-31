@@ -24,6 +24,7 @@ extension internal_modint {
     public init(integerLiteral value: CInt) {
         self.init(raw: ___modint_v(value, mod: __modint_mod(Self.mod())))
     }
+    @inlinable @inline(__always)
     public var description: String { val().description }
 }
 
