@@ -4,7 +4,7 @@ public struct two_sat {
     var _n: Int
     var _answer: [Bool]
     var scc: _Internal.scc_graph
-};
+}
 
 public extension two_sat {
     
