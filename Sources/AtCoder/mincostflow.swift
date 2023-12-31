@@ -79,8 +79,8 @@ public struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
                 let e = _edges[i];
                 edge_idx[i] += _g.start[e.from];
                 redge_idx[i] += _g.start[e.to];
-                _g.elist[edge_idx[i]].rev = redge_idx[i];
-                _g.elist[redge_idx[i]].rev = edge_idx[i];
+                _g.elist[edge_idx[i]]!.rev = redge_idx[i];
+                _g.elist[redge_idx[i]]!.rev = edge_idx[i];
             }
             return _g;
         }();
@@ -89,7 +89,7 @@ public struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
 
         // for (int i = 0; i < m; i++) {
         for i in 0..<m {
-            let e = g.elist[edge_idx[i]];
+            let e = g.elist[edge_idx[i]]!;
             _edges[i].flow = _edges[i].cap - e.cap;
         }
         
@@ -101,7 +101,7 @@ public struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
     private var _edges: [edge] = [];
 
     // inside edge
-    struct _edge: Zero {
+    struct _edge {
         var to, rev: Int;
         var cap: Cap;
         var cost: Cost;
@@ -169,7 +169,7 @@ public struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
                 let dual_v = dual_dist[v].first, dist_v = dual_dist[v].second;
                 // for (int i = g.start[v]; i < g.start[v + 1]; i++) {
                 do { var i = g.start[v]; while i < g.start[v + 1] { defer { i += 1 }
-                    let e = g.elist[i];
+                    let e = g.elist[i]!;
                     if ((e.cap == 0)) { continue; }
                     // |-dual[e.to] + dual[v]| <= (n-1)C
                     // cost <= C - -(n-1)C + 0 = nC
@@ -210,15 +210,15 @@ public struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
             if (!dual_ref()) { break; }
             var c = flow_limit - flow;
             // for (int v = t; v != s; v = g.elist[prev_e[v]].to) {
-            do { var v = t; while v != s { defer { v = g.elist[prev_e[v]].to; }
-                c = min(c, g.elist[g.elist[prev_e[v]].rev].cap);
+            do { var v = t; while v != s { defer { v = g.elist[prev_e[v]]!.to; }
+                c = min(c, g.elist[g.elist[prev_e[v]]!.rev]!.cap);
             } }
             // for (int v = t; v != s; v = g.elist[prev_e[v]].to) {
-            do { var v = t; while v != s { defer { v = g.elist[prev_e[v]].to; }
+            do { var v = t; while v != s { defer { v = g.elist[prev_e[v]]!.to; }
                 // auto& e = g.elist[prev_e[v]];
-                var e = g.elist[prev_e[v]]; defer { g.elist[prev_e[v]] = e }
+                var e = g.elist[prev_e[v]]!; defer { g.elist[prev_e[v]] = e }
                 e.cap += c
-                g.elist[e.rev].cap -= c;
+                g.elist[e.rev]!.cap -= c;
             } }
             let d = -dual_dist[s].first;
             flow += c;

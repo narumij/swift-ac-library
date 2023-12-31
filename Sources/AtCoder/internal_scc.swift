@@ -21,7 +21,7 @@ extension _Internal {
                 visited.append(v);
 //                for (int i = g.start[v]; i < g.start[v + 1]; i++) {
                 for i in g.start[v]..<g.start[v + 1] {
-                    let to = g.elist[i].to;
+                    let to = g.elist[i]!.to;
                     if (ord[to] == -1) {
                         dfs(to);
                         low[v] = min(low[v], low[to]);
@@ -72,7 +72,7 @@ extension _Internal {
 
 //      private:
         var _n: Int;
-        struct edge: Zero, ExpressibleByIntegerLiteral {
+        struct edge: ExpressibleByIntegerLiteral {
             var to: Int;
             init(to: Int) { self.to = to }
             init(integerLiteral value: Int) { to = value }

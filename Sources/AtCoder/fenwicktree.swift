@@ -1,16 +1,16 @@
 import Foundation
 
 public struct fenwick_tree<T: AdditiveArithmetic & ToUnsigned> where T: ToUnsigned {
-    @usableFromInline typealias U = T.Unsigned
-    public init() { _n = 0; data = [] }
-    public init<Index: FixedWidthInteger>(_ n: Index) { _n = Int(n); data = .init(repeating: 0, count: Int(n)) }
-
     @usableFromInline var _n: Int
     @usableFromInline var data: [U]
 }
 
 public extension fenwick_tree {
-    
+
+    typealias U = T.Unsigned
+    init() { _n = 0; data = [] }
+    init<Index: FixedWidthInteger>(_ n: Index) { _n = Int(n); data = .init(repeating: 0, count: Int(n)) }
+
     mutating func add<Index: FixedWidthInteger>(_ p: Index,_ x: T) {
         _update{ $0.add(Int(p),x) }
     }

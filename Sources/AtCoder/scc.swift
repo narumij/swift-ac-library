@@ -1,21 +1,20 @@
 import Foundation
 
 public struct scc_graph {
-//  public:
-    public init() { `internal` = _Internal.scc_graph.init(0) }
-    public init<Index: FixedWidthInteger>(_ n: Index) { `internal` = _Internal.scc_graph.init(Int(n)) }
+    var _internal: _Internal.scc_graph
+}
 
-    public mutating func add_edge<Index: FixedWidthInteger>(_ from: Index,_ to: Index) {
-        let from = Int(from)
-        let to = Int(to)
-        let n = `internal`.num_vertices();
-        assert(0 <= from && from < n);
-        assert(0 <= to && to < n);
-        `internal`.add_edge(from, to);
+public extension scc_graph {
+    
+    init() { _internal = _Internal.scc_graph.init(0) }
+    init(_ n: Int) { _internal = _Internal.scc_graph.init(n) }
+
+    mutating func add_edge(_ from: Int,_ to: Int) {
+        let n = _internal.num_vertices()
+        assert(0 <= from && from < n)
+        assert(0 <= to && to < n)
+        _internal.add_edge(from, to)
     }
 
-    public func scc() -> [[Int]] { return `internal`.scc(); }
-
-//  private:
-    var `internal`: _Internal.scc_graph;
-};
+    func scc() -> [[Int]] { return _internal.scc() }
+}
