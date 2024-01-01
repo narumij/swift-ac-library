@@ -19,6 +19,8 @@ final class sccTests: XCTestCase {
         // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
     }
     
+    typealias scc_graph = SCCGraph
+    
     func testEmpty() throws {
         let graph0: scc_graph = .init();
         XCTAssertEqual([], graph0.scc());
@@ -32,17 +34,17 @@ final class sccTests: XCTestCase {
     
     func testSimple() throws {
         var graph: scc_graph = .init(2);
-        graph.add_edge(0, 1);
-        graph.add_edge(1, 0);
+        graph.addEdge(0, 1);
+        graph.addEdge(1, 0);
         let scc = graph.scc();
         XCTAssertEqual(1, scc.count);
     }
     
     func testSelfLoop() throws {
         var graph: scc_graph = .init(2);
-        graph.add_edge(0, 0);
-        graph.add_edge(0, 0);
-        graph.add_edge(1, 1);
+        graph.addEdge(0, 0);
+        graph.addEdge(0, 0);
+        graph.addEdge(1, 1);
         let scc = graph.scc();
         XCTAssertEqual(2, scc.count);
     }
@@ -50,7 +52,7 @@ final class sccTests: XCTestCase {
     func testInvalid() throws {
         throw XCTSkip("テスト自体がクラッシュするのでスキップ")
         var graph: scc_graph = .init(2);
-        XCTAssertThrowsError(graph.add_edge(0, 10), ".*");
+        XCTAssertThrowsError(graph.addEdge(0, 10), ".*");
     }
 
     func testPerformanceExample() throws {

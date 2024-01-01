@@ -318,7 +318,7 @@ public extension LazySegtreeProtocol {
     mutating func prod(_ l: Int,_ r: Int) -> S {
         storage.__update{ $0.prod(l, r) }
     }
-    func all_prod() -> S {
+    func allProd() -> S {
         storage.__read{ $0.all_prod() }
     }
     mutating func apply(_ p: Int,_ f: F) {
@@ -327,10 +327,10 @@ public extension LazySegtreeProtocol {
     mutating func apply(_ l: Int,_ r: Int,_ f: F) {
         storage.__update{ $0.apply(l, r, f) }
     }
-    mutating func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
+    mutating func maxRight(_ l: Int,_ g: (S) -> Bool) -> Int {
         storage.__update{ $0.max_right(l, g) }
     }
-    mutating func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
+    mutating func minLeft(_ r: Int,_ g: (S) -> Bool) -> Int {
         storage.__update{ $0.min_left(r, g) }
     }
 }

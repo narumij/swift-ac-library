@@ -156,7 +156,7 @@ final class lazySegtreeStressTests: XCTestCase {
                     var l, r: Int;
                     (l, r) = randpair(0, n);
                     if (ty == 0) {
-                        XCTAssertEqual(r, seg0.max_right(l) { s in
+                        XCTAssertEqual(r, seg0.maxRight(l) { s in
                             if (s.l == -1) { return true; }
                             assert(s.l == l);
                             assert(s.time == tm.prod(l, s.r));
@@ -195,7 +195,7 @@ final class lazySegtreeStressTests: XCTestCase {
                     var l, r: Int;
                     (l, r) = randpair(0, n);
                     if (ty == 0) {
-                        XCTAssertEqual(l, seg0.min_left(r) { s in
+                        XCTAssertEqual(l, seg0.minLeft(r) { s in
                             if (s.l == -1) { return true; }
                             assert(s.r == r);
                             assert(s.time == tm.prod(s.l, r));

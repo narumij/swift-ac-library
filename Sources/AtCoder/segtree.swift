@@ -30,15 +30,15 @@ extension _Segtree {
     
     @usableFromInline
     class _Buffer {
-        @usableFromInline
+        @inlinable @inline(__always)
         init(_n: Int, size: Int, log: Int, d: [Base.S]) {
             self._n = _n
             self.size = size
             self.log = log
             self.d = d
         }
-        @usableFromInline let _n, size, log: Int
-        @usableFromInline var d: [S]
+        public let _n, size, log: Int
+        public var d: [S]
     }
     
     public struct _Storage {
@@ -104,12 +104,12 @@ extension _Segtree {
             self.d = d
         }
         
-        @usableFromInline let _n, size, log: Int
-        @usableFromInline let d: UnsafeMutablePointer<Base.S>
+        public let _n, size, log: Int
+        public let d: UnsafeMutablePointer<Base.S>
         
-        typealias S = Base.S
-        let op: (S,S) -> S = { Base.op }()
-        func e() -> S { Base.e }
+        public typealias S = Base.S
+        public let op: (S,S) -> S = { Base.op }()
+        public func e() -> S { Base.e }
     }
 }
 
@@ -213,13 +213,13 @@ public extension SegtreeProtocol {
     func prod(_ l: Int,_ r: Int) -> S {
         storage.__read { $0.prod(l, r) }
     }
-    func all_prod() -> S {
+    func allProd() -> S {
         storage.__read { $0.all_prod() }
     }
-    func max_right(_ l: Int,_ f: (S) -> Bool) -> Int {
+    func maxRight(_ l: Int,_ f: (S) -> Bool) -> Int {
         storage.__read { $0.max_right(l, f) }
     }
-    func min_left(_ r: Int,_ f: (S) -> Bool ) -> Int {
+    func minLeft(_ r: Int,_ f: (S) -> Bool ) -> Int {
         storage.__read { $0.min_left(r, f) }
     }
 }

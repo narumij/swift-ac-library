@@ -1,12 +1,12 @@
 import Foundation
 
-public struct two_sat {
+public struct TwoSAT {
     var _n: Int
     var _answer: [Bool]
     var scc: _Internal.scc_graph
 }
 
-public extension two_sat {
+public extension TwoSAT {
     
     init() { _n = 0; _answer = []; scc = _Internal.scc_graph(0) }
     init(_ n: Int) {
@@ -14,7 +14,7 @@ public extension two_sat {
         _answer = [Bool](repeating: false, count: n)
         scc = _Internal.scc_graph(2 * n)
     }
-    mutating func add_clause(_ i: Int,_ f: Bool,_ j: Int,_ g: Bool) {
+    mutating func addClause(_ i: Int,_ f: Bool,_ j: Int,_ g: Bool) {
         assert(0 <= i && i < _n)
         assert(0 <= j && j < _n)
         scc.add_edge(2 * i + (f ? 0 : 1), 2 * j + (g ? 1 : 0))
