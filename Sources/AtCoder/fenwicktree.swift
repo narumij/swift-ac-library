@@ -21,10 +21,9 @@ extension FenwickTree {
             self._n = _n
             self.data = data
         }
-        @usableFromInline let _n: Int
-        @usableFromInline let data: UnsafeMutablePointer<U>
-        
-        @usableFromInline typealias U = T.Unsigned
+        public let _n: Int
+        public let data: UnsafeMutablePointer<U>
+        public typealias U = T.Unsigned
     }
 }
 
