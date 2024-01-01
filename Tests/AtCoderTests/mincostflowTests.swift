@@ -8,6 +8,10 @@
 import XCTest
 @testable import AtCoder
 
+extension mcf_graph.edge {
+    init() { self.init(from: 0, to: 0, cap: 0, flow: 0, cost: 0) }
+}
+
 extension mcf_graph.edge: ExpressibleByArrayLiteral where Value == Int {
     public init(arrayLiteral elements: Int...) {
         self.init(from: elements[0], to: elements[1], cap: elements[2], flow: elements[3], cost: elements[4])

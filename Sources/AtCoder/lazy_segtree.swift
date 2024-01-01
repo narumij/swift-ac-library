@@ -74,7 +74,7 @@ extension _LazySegtree {
             )
             self.init(_buffer: buffer)
             __update {
-                for i in 0..<_n { $0.d[size + i] = v[i] }
+                for i in 0 ..< _n { $0.d[size + i] = v[i] }
                 for i in stride(from: $0.size - 1, through: 1, by: -1) { $0.update(i) }
             }
         }
@@ -157,16 +157,16 @@ extension _LazySegtree._UnsafeHandle {
         var p = p
         assert(0 <= p && p < _n)
         p += size
-        for i in log..>=1 { push(p >> i) }
+        for i in log ..>= 1 { push(p >> i) }
         d[p] = x
-        for i in 1..<=log { update(p >> i) }
+        for i in 1 ..<= log { update(p >> i) }
     }
     
     func get(_ p: Int) -> S {
         var p = p
         assert(0 <= p && p < _n)
         p += size
-        for i in log..>=1 { push(p >> i) }
+        for i in log ..>= 1 { push(p >> i) }
         return d[p]
     }
     
@@ -174,20 +174,20 @@ extension _LazySegtree._UnsafeHandle {
         var l = l
         var r = r
         assert(0 <= l && l <= r && r <= _n)
-        if (l == r) { return e() }
+        if l == r { return e() }
         
         l += size
         r += size
         
-        for i in log..>=1 {
-            if (((l >> i) << i) != l) { push(l >> i) }
-            if (((r >> i) << i) != r) { push((r - 1) >> i) }
+        for i in log ..>= 1 {
+            if ((l >> i) << i) != l { push(l >> i) }
+            if ((r >> i) << i) != r { push((r - 1) >> i) }
         }
         
         var sml = e(), smr = e()
-        while (l < r) {
-            if (l & 1 != 0) { sml = op(sml, d[l]); l += 1 }
-            if (r & 1 != 0) { r -= 1; smr = op(d[r], smr) }
+        while l < r {
+            if l & 1 != 0 { sml = op(sml, d[l]); l += 1 }
+            if r & 1 != 0 { r -= 1; smr = op(d[r], smr) }
             l >>= 1
             r >>= 1
         }
@@ -201,30 +201,30 @@ extension _LazySegtree._UnsafeHandle {
         var p = p
         assert(0 <= p && p < _n)
         p += size
-        for i in log..>=1 { push(p >> i) }
+        for i in log ..>= 1 { push(p >> i) }
         d[p] = mapping(f, d[p])
-        for i in 1..<=log { update(p >> i) }
+        for i in 1 ..<= log { update(p >> i) }
     }
 
     func apply(_ l: Int,_ r: Int,_ f: F) {
         var l = l
         var r = r
         assert(0 <= l && l <= r && r <= _n)
-        if (l == r) { return }
+        if l == r { return }
 
         l += size
         r += size
 
-        for i in log..>=1 {
-            if (((l >> i) << i) != l) { push(l >> i) }
-            if (((r >> i) << i) != r) { push((r - 1) >> i) }
+        for i in log ..>= 1 {
+            if ((l >> i) << i) != l { push(l >> i) }
+            if ((r >> i) << i) != r { push((r - 1) >> i) }
         }
 
         do {
             let l2 = l, r2 = r
-            while (l < r) {
-                if (l & 1 != 0) { all_apply(l, f); l += 1 }
-                if (r & 1 != 0) { r -= 1; all_apply(r, f) }
+            while l < r {
+                if l & 1 != 0 { all_apply(l, f); l += 1 }
+                if r & 1 != 0 { r -= 1; all_apply(r, f) }
                 l >>= 1
                 r >>= 1
             }
@@ -232,9 +232,9 @@ extension _LazySegtree._UnsafeHandle {
             r = r2
         }
 
-        for i in 1..<=log {
-            if (((l >> i) << i) != l) { update(l >> i) }
-            if (((r >> i) << i) != r) { update((r - 1) >> i) }
+        for i in 1 ..<= log {
+            if ((l >> i) << i) != l { update(l >> i) }
+            if ((r >> i) << i) != r { update((r - 1) >> i) }
         }
     }
 
@@ -242,17 +242,17 @@ extension _LazySegtree._UnsafeHandle {
         var l = l
         assert(0 <= l && l <= _n)
         assert(g(e()))
-        if (l == _n) { return _n }
+        if l == _n { return _n }
         l += size
-        for i in log..>=1 { push(l >> i) }
-        var sm: S = e()
+        for i in log ..>= 1 { push(l >> i) }
+        var sm = e()
         repeat {
-            while (l % 2 == 0) { l >>= 1 }
-            if (!g(op(sm, d[l]))) {
-                while (l < size) {
+            while l % 2 == 0 { l >>= 1 }
+            if !g(op(sm, d[l])) {
+                while l < size {
                     push(l)
                     l = (2 * l)
-                    if (g(op(sm, d[l]))) {
+                    if g(op(sm, d[l])) {
                         sm = op(sm, d[l])
                         l += 1
                     }
@@ -261,7 +261,7 @@ extension _LazySegtree._UnsafeHandle {
             }
             sm = op(sm, d[l])
             l += 1
-        } while ((l & -l) != l)
+        } while (l & -l) != l
         return _n
     }
     
@@ -269,18 +269,18 @@ extension _LazySegtree._UnsafeHandle {
         var r = r
         assert(0 <= r && r <= _n)
         assert(g(e()))
-        if (r == 0) { return 0 }
+        if r == 0 { return 0 }
         r += size
-        for i in log..>=1 { push((r - 1) >> i) }
-        var sm: S = e()
+        for i in log ..>= 1 { push((r - 1) >> i) }
+        var sm = e()
         repeat {
             r -= 1
-            while (r > 1 && (r % 2) != 0) { r >>= 1 }
-            if (!g(op(d[r], sm))) {
-                while (r < size) {
+            while r > 1 && (r % 2) != 0 { r >>= 1 }
+            if !g(op(d[r], sm)) {
+                while r < size {
                     push(r)
                     r = (2 * r + 1)
-                    if (g(op(d[r], sm))) {
+                    if g(op(d[r], sm)) {
                         sm = op(d[r], sm)
                         r -= 1
                     }
@@ -288,7 +288,7 @@ extension _LazySegtree._UnsafeHandle {
                 return r + 1 - size
             }
             sm = op(d[r], sm)
-        } while ((r & -r) != r)
+        } while (r & -r) != r
         return 0
     }
     
@@ -297,7 +297,7 @@ extension _LazySegtree._UnsafeHandle {
     
     func all_apply(_ k: Int,_ f: F) {
         d[k] = mapping(f, d[k])
-        if (k < size) { lz[k] = composition(f, lz[k]) }
+        if k < size { lz[k] = composition(f, lz[k]) }
     }
     
     func push(_ k: Int) {
@@ -310,27 +310,27 @@ extension _LazySegtree._UnsafeHandle {
 public extension LazySegtreeProtocol {
     
     mutating func set(_ p: Int,_ x: S) {
-        storage.__update{ $0.set(Int(p),x) }
+        storage.__update{ $0.set(p,x) }
     }
     mutating func get(_ p: Int) -> S {
-        storage.__update{ $0.get(Int(p)) }
+        storage.__update{ $0.get(p) }
     }
     mutating func prod(_ l: Int,_ r: Int) -> S {
-        storage.__update{ $0.prod(Int(l), Int(r)) }
+        storage.__update{ $0.prod(l, r) }
     }
     func all_prod() -> S {
         storage.__read{ $0.all_prod() }
     }
     mutating func apply(_ p: Int,_ f: F) {
-        storage.__update{ $0.apply(Int(p), f) }
+        storage.__update{ $0.apply(p, f) }
     }
     mutating func apply(_ l: Int,_ r: Int,_ f: F) {
-        storage.__update{ $0.apply(Int(l), Int(r), f) }
+        storage.__update{ $0.apply(l, r, f) }
     }
     mutating func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
-        storage.__update{ $0.max_right(Int(l), g) }
+        storage.__update{ $0.max_right(l, g) }
     }
     mutating func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
-        storage.__update{ $0.min_left(Int(r), g) }
+        storage.__update{ $0.min_left(r, g) }
     }
 }

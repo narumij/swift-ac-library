@@ -6,11 +6,15 @@ public struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
 }
 
 public extension mcf_graph {
+    
     typealias Cap = Value
     typealias Cost = Value
     
     init() { _n = 0 }
     init(_ n: Int) { _n = n }
+}
+
+public extension mcf_graph {
     
     @discardableResult
     mutating func add_edge(_ from: Int,_ to: Int,_ cap: Cap,_ cost: Cost) -> Int {
@@ -97,13 +101,13 @@ extension mcf_graph {
         var cap: Cap
         let cost: Cost
         static var zero: Self { Self.init(to: 0, rev: 0, cap: 0, cost: 0) }
-    };
+    }
 
     struct Q: Comparable {
         let key: Cost
         let to: Int
         static func <(lhs: Q, rhs: Q) -> Bool { return lhs.key > rhs.key }
-    };
+    }
 
     private func slope(_ g: inout _Internal.csr<_edge>,
                _ s: Int,

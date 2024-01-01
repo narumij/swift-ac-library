@@ -66,7 +66,7 @@ extension _Segtree {
             )
             self.init(_buffer: buffer)
             __update {
-                for i in 0..<_n { $0.d[size + i] = v[i] }
+                for i in 0 ..< _n { $0.d[size + i] = v[i] }
                 for i in stride(from: $0.size - 1, through: 1, by: -1) { $0.update(i) }
             }
         }
@@ -131,13 +131,13 @@ extension _Segtree._UnsafeHandle {
     func prod(_ l: Int,_ r: Int) -> S {
         var l = l, r = r
         assert(0 <= l && l <= r && r <= _n)
-        var sml: S = e(), smr: S = e()
+        var sml = e(), smr = e()
         l += size
         r += size
 
-        while (l < r) {
-            if (l & 1) != 0 { sml = op(sml, d[l]); l += 1 }
-            if (r & 1) != 0 { r -= 1; smr = op(d[r], smr) }
+        while l < r {
+            if l & 1 != 0 { sml = op(sml, d[l]); l += 1 }
+            if r & 1 != 0 { r -= 1; smr = op(d[r], smr) }
             l >>= 1
             r >>= 1
         }
@@ -150,15 +150,15 @@ extension _Segtree._UnsafeHandle {
         var l = l
         assert(0 <= l && l <= _n)
         assert(f(e()))
-        if (l == _n) { return _n }
+        if l == _n { return _n }
         l += size
-        var sm: S = e()
+        var sm = e()
         repeat {
-            while (l % 2 == 0) { l >>= 1 }
-            if (!f(op(sm, d[l]))) {
-                while (l < size) {
+            while l % 2 == 0 { l >>= 1 }
+            if !f(op(sm, d[l])) {
+                while l < size {
                     l = (2 * l)
-                    if (f(op(sm, d[l]))) {
+                    if f(op(sm, d[l])) {
                         sm = op(sm, d[l])
                         l += 1
                     }
@@ -167,7 +167,7 @@ extension _Segtree._UnsafeHandle {
             }
             sm = op(sm, d[l])
             l += 1
-        } while ((l & -l) != l)
+        } while (l & -l) != l
         return _n
     }
     
@@ -177,14 +177,14 @@ extension _Segtree._UnsafeHandle {
         assert(f(e()))
         if (r == 0) { return 0 }
         r += size
-        var sm: S = e()
+        var sm = e()
         repeat {
             r -= 1
             while (r > 1 && (r % 2) != 0) { r >>= 1 }
-            if (!f(op(d[r], sm))) {
-                while (r < size) {
+            if !f(op(d[r], sm)) {
+                while r < size {
                     r = (2 * r + 1)
-                    if (f(op(d[r], sm))) {
+                    if f(op(d[r], sm)) {
                         sm = op(d[r], sm)
                         r -= 1
                     }
@@ -192,7 +192,7 @@ extension _Segtree._UnsafeHandle {
                 return r + 1 - size
             }
             sm = op(d[r], sm)
-        } while ((r & -r) != r)
+        } while (r & -r) != r
         return 0
     }
     
