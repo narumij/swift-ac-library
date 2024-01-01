@@ -78,33 +78,33 @@ public protocol modint_base: AdditiveArithmetic, Hashable, ExpressibleByIntegerL
     init(_ v: CInt)
     init<T: FixedWidthInteger>(_ v: T)
     func val() -> CUnsignedInt
-    static func +(lhs: mint, rhs: mint) -> mint
-    static func -(lhs: mint, rhs: mint) -> mint
-    static func *(lhs: mint, rhs: mint) -> mint
-    static func /(lhs: mint, rhs: mint) -> mint
-    static func +=(lhs: inout mint, rhs: mint)
-    static func -=(lhs: inout mint, rhs: mint)
-    static func *=(lhs: inout mint, rhs: mint)
-    static func /=(lhs: inout mint, rhs: mint)
+    static func +(lhs: Self, rhs: Self) -> Self
+    static func -(lhs: Self, rhs: Self) -> Self
+    static func *(lhs: Self, rhs: Self) -> Self
+    static func /(lhs: Self, rhs: Self) -> Self
+    static func +=(lhs: inout Self, rhs: Self)
+    static func -=(lhs: inout Self, rhs: Self)
+    static func *=(lhs: inout Self, rhs: Self)
+    static func /=(lhs: inout Self, rhs: Self)
     static prefix func + (_ m: Self) -> Self
     static prefix func - (_ m: Self) -> Self
-    func pow<LL: SignedInteger>(_ n: LL) -> mint
-    func inv() -> mint
+    func pow<LL: SignedInteger>(_ n: LL) -> Self
+    func inv() -> Self
 }
 
 public extension modint_base {
-    static func + <I: FixedWidthInteger>(lhs: I, rhs: mint) -> mint { mint(lhs) + rhs }
-    static func + <I: FixedWidthInteger>(lhs: mint, rhs: I) -> mint { lhs + mint(rhs) }
-    static func - <I: FixedWidthInteger>(lhs: I, rhs: mint) -> mint { mint(lhs) - rhs }
-    static func - <I: FixedWidthInteger>(lhs: mint, rhs: I) -> mint { lhs - mint(rhs) }
-    static func * <I: FixedWidthInteger>(lhs: I, rhs: mint) -> mint { mint(lhs) * rhs }
-    static func * <I: FixedWidthInteger>(lhs: mint, rhs: I) -> mint { lhs * mint(rhs) }
-    static func / <I: FixedWidthInteger>(lhs: I, rhs: mint) -> mint { mint(lhs) / rhs }
-    static func / <I: FixedWidthInteger>(lhs: mint, rhs: I) -> mint { lhs / mint(rhs) }
-    static func += <I: FixedWidthInteger>(lhs: inout mint, rhs: I) { lhs += mint(rhs) }
-    static func -= <I: FixedWidthInteger>(lhs: inout mint, rhs: I) { lhs -= mint(rhs) }
-    static func *= <I: FixedWidthInteger>(lhs: inout mint, rhs: I) { lhs *= mint(rhs) }
-    static func /= <I: FixedWidthInteger>(lhs: inout mint, rhs: I) { lhs /= mint(rhs) }
+    static func + <I: FixedWidthInteger>(lhs: I, rhs: Self) -> Self { Self(lhs) + rhs }
+    static func + <I: FixedWidthInteger>(lhs: Self, rhs: I) -> Self { lhs + Self(rhs) }
+    static func - <I: FixedWidthInteger>(lhs: I, rhs: Self) -> Self { Self(lhs) - rhs }
+    static func - <I: FixedWidthInteger>(lhs: Self, rhs: I) -> Self { lhs - Self(rhs) }
+    static func * <I: FixedWidthInteger>(lhs: I, rhs: Self) -> Self { Self(lhs) * rhs }
+    static func * <I: FixedWidthInteger>(lhs: Self, rhs: I) -> Self { lhs * Self(rhs) }
+    static func / <I: FixedWidthInteger>(lhs: I, rhs: Self) -> Self { Self(lhs) / rhs }
+    static func / <I: FixedWidthInteger>(lhs: Self, rhs: I) -> Self { lhs / Self(rhs) }
+    static func += <I: FixedWidthInteger>(lhs: inout Self, rhs: I) { lhs += Self(rhs) }
+    static func -= <I: FixedWidthInteger>(lhs: inout Self, rhs: I) { lhs -= Self(rhs) }
+    static func *= <I: FixedWidthInteger>(lhs: inout Self, rhs: I) { lhs *= Self(rhs) }
+    static func /= <I: FixedWidthInteger>(lhs: inout Self, rhs: I) { lhs /= Self(rhs) }
 }
 
 @usableFromInline func __modint_v<T: UnsignedInteger>(_ v: T, umod: T) -> CUnsignedInt {
@@ -122,7 +122,3 @@ public extension modint_base {
 @usableFromInline func __modint_umod<T: UnsignedInteger>(_ umod: CUnsignedInt) -> T { T(umod) }
 @usableFromInline func __modint_mod<T: FixedWidthInteger>(_ umod: CUnsignedInt) -> T { T(truncatingIfNeeded: umod) }
 @usableFromInline func __modint_mod<T: FixedWidthInteger>(_ mod: CInt) -> T { T(truncatingIfNeeded: mod) }
-
-extension modint_base {
-    public typealias mint = Self
-}

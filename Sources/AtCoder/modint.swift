@@ -71,30 +71,30 @@ public extension static_modint {
     static prefix func - (_ m: Self) -> Self {
         return .init(raw: 0) - m
     }
-    static func + (lhs: mint, rhs: mint) -> mint {
+    static func + (lhs: Self, rhs: Self) -> Self {
         var _v = lhs._v &+ rhs._v
         if (_v >= umod()) { _v &-= umod(); }
         return .init(raw:_v)
     }
-    static func - (lhs: mint, rhs: mint) -> mint {
+    static func - (lhs: Self, rhs: Self) -> Self {
         var _v = lhs._v &- rhs._v
         if (_v >= umod()) { _v &+= umod(); }
         return .init(raw:_v)
     }
-    static func * (lhs: mint, rhs: mint) -> mint {
+    static func * (lhs: Self, rhs: Self) -> Self {
         var z: ULL = ULL(lhs._v);
         z &*= ULL(rhs._v);
         return .init(raw: UINT(z % ULL(umod())));
     }
-    static func / (lhs: mint, rhs: mint) -> mint {
+    static func / (lhs: Self, rhs: Self) -> Self {
         lhs * rhs.inv()
     }
     
-    func pow<LL: SignedInteger>(_ n: LL) -> mint {
+    func pow<LL: SignedInteger>(_ n: LL) -> Self {
         pow(CLongLong(n))
     }
     
-    func pow(_ n: CLongLong) -> mint {
+    func pow(_ n: CLongLong) -> Self {
         assert(0 <= n);
         var n = n
         var x = self, r: Self = .init(raw: 1);
@@ -106,7 +106,7 @@ public extension static_modint {
         return r;
     }
     
-    func inv() -> mint {
+    func inv() -> Self {
         if isPrime {
             assert(_v != 0);
             return pow(LL(Self.umod()) - 2);
@@ -164,29 +164,29 @@ extension dynamic_modint {
     public static prefix func - (_ m: Self) -> Self {
         return .init(raw: 0) - m
     }
-    public static func + (lhs: mint, rhs: mint) -> mint {
+    public static func + (lhs: Self, rhs: Self) -> Self {
         var _v = lhs._v &+ rhs._v
         if (_v >= umod()) { _v &-= umod(); }
         return .init(raw:_v)
     }
-    public static func - (lhs: mint, rhs: mint) -> mint {
+    public static func - (lhs: Self, rhs: Self) -> Self {
         var _v = lhs._v &+ umod() &- rhs._v
         if (_v >= umod()) { _v &-= umod(); }
         return .init(raw:_v)
     }
-    public static func * (lhs: mint, rhs: mint) -> mint {
+    public static func * (lhs: Self, rhs: Self) -> Self {
         let _v = bt.mul(lhs._v, rhs._v);
         return .init(raw:_v)
     }
-    public static func / (lhs: mint, rhs: mint) -> mint {
+    public static func / (lhs: Self, rhs: Self) -> Self {
         lhs * rhs.inv()
     }
 
-    public func pow<LL: SignedInteger>(_ n: LL) -> mint {
+    public func pow<LL: SignedInteger>(_ n: LL) -> Self {
         pow(CLongLong(n))
     }
     
-    public func pow(_ n: CLongLong) -> mint {
+    public func pow(_ n: CLongLong) -> Self {
         assert(0 <= n);
         var n = n
         var x = self, r: Self = .init(raw: 1);
@@ -198,7 +198,7 @@ extension dynamic_modint {
         return r;
     }
     
-    public func inv() -> mint {
+    public func inv() -> Self {
         let eg = _Internal.inv_gcd(LL(_v), LL(Self.mod()));
         assert(eg.first == 1);
         return .init(CInt(eg.second));
