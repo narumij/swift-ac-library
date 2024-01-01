@@ -1,105 +1,94 @@
 import Foundation
 
 public struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
-    public typealias Cap = Value
-    public typealias Cost = Value
-//  public:
-    public init() { _n = 0 }
-    public init<Index: FixedWidthInteger>(_ n: Index) { _n = Int(n) }
+    var _n: Int
+    var _edges: [edge] = []
+}
 
+public extension mcf_graph {
+    typealias Cap = Value
+    typealias Cost = Value
+    
+    init() { _n = 0 }
+    init(_ n: Int) { _n = n }
+    
     @discardableResult
-    public mutating func add_edge<Index: FixedWidthInteger>(_ from: Index,_ to: Index,_ cap: Cap,_ cost: Cost) -> Int {
-        let from = Int(from)
-        let to = Int(to)
-        assert(0 <= from && from < _n);
-        assert(0 <= to && to < _n);
-        assert(0 <= cap);
-        assert(0 <= cost);
-        let m = _edges.count;
-        _edges.append(.init(from, to, cap, 0, cost));
-        return m;
+    mutating func add_edge(_ from: Int,_ to: Int,_ cap: Cap,_ cost: Cost) -> Int {
+        assert(0 <= from && from < _n)
+        assert(0 <= to && to < _n)
+        assert(0 <= cap)
+        assert(0 <= cost)
+        let m = _edges.count
+        _edges.append(edge(from: from, to: to, cap: cap, flow: 0, cost: cost))
+        return m
     }
-
-    public struct edge {
-        init() { from = 0; to = 0; cap = 0; flow = 0; cost = 0 }
-        internal init(_ from: Int,_ to: Int,_ cap: Cap,_ flow: Cap,_ cost: Cost) {
-            self.from = from
-            self.to = to
-            self.cap = cap
-            self.flow = flow
-            self.cost = cost
-        }
-        public let from, to: Int;
-        public let cap: Cap;
-        public var flow: Cap;
-        public let cost: Cost;
-    };
-
-    public func get_edge<Index: FixedWidthInteger>(_ i: Index) -> edge {
-        let i = Int(i)
-        let m = _edges.count;
-        assert(0 <= i && i < m);
-        return _edges[i];
+    
+    struct edge {
+        public let from, to: Int
+        public let cap: Cap
+        public var flow: Cap
+        public let cost: Cost
     }
-    public func edges() -> [edge] { return _edges; }
-
-    public mutating func flow<Index: FixedWidthInteger>(_ s: Index,_ t: Index) -> (Cap,Cost) {
-        return flow(s, t, Cap.max);
+    
+    func get_edge(_ i: Int) -> edge {
+        let m = _edges.count
+        assert(0 <= i && i < m)
+        return _edges[i]
     }
-    public mutating func flow<Index: FixedWidthInteger>(_ s: Index,_ t: Index,_ flow_limit: Cap) -> (Cap,Cost) {
-        return slope(s, t, flow_limit).last!;
+    
+    func edges() -> [edge] { return _edges; }
+    
+    mutating func flow(_ s: Int,_ t: Int) -> (Cap,Cost) {
+        return flow(s, t, Cap.max)
     }
-    public mutating func slope<Index: FixedWidthInteger>(_ s: Index,_ t: Index) -> [(Cap,Cost)] {
-        return slope(s, t, Cap.max);
+    mutating func flow(_ s: Int,_ t: Int,_ flow_limit: Cap) -> (Cap,Cost) {
+        return slope(s, t, flow_limit).last!
     }
-    public mutating func slope<Index: FixedWidthInteger>(_ s: Index,_ t: Index,_ flow_limit: Cap) -> [(Cap,Cost)] {
-        let s = Int(s)
-        let t = Int(t)
-        assert(0 <= s && s < _n);
-        assert(0 <= t && t < _n);
-        assert(s != t);
-
-        let m = _edges.count;
-        var edge_idx = [Int](repeating:0, count:m);
-
+    mutating func slope(_ s: Int,_ t: Int) -> [(Cap,Cost)] {
+        return slope(s, t, Cap.max)
+    }
+    mutating func slope(_ s: Int,_ t: Int,_ flow_limit: Cap) -> [(Cap,Cost)] {
+        assert(0 <= s && s < _n)
+        assert(0 <= t && t < _n)
+        assert(s != t)
+        
+        let m = _edges.count
+        var edge_idx = [Int](repeating:0, count:m)
+        
         var g = {
-            var degree = [Int](repeating:0, count:_n), redge_idx = [Int](repeating: 0, count: m);
-            var elist: [(Int,_edge)] = [];
-            elist.reserveCapacity(2 * m);
-            // for (int i = 0; i < m; i++) {
-            for i in 0..<m {
-                let e = _edges[i];
+            var degree = [Int](repeating:0, count:_n), redge_idx = [Int](repeating: 0, count: m)
+            var elist: [(Int,_edge)] = []
+            elist.reserveCapacity(2 * m)
+            for i in 0 ..< m {
+                let e = _edges[i]
                 edge_idx[i] = degree[e.from]; degree[e.from] += 1
                 redge_idx[i] = degree[e.to]; degree[e.to] += 1
-                elist.append((e.from, .init(to: e.to, rev: -1, cap: e.cap - e.flow, cost: e.cost)));
-                elist.append((e.to, .init(to: e.from, rev: -1, cap: e.flow, cost: -e.cost)));
+                elist.append((e.from, .init(to: e.to, rev: -1, cap: e.cap - e.flow, cost: e.cost)))
+                elist.append((e.to, .init(to: e.from, rev: -1, cap: e.flow, cost: -e.cost)))
             }
-            var _g = _Internal.csr<_edge>(_n, elist);
-            // for (int i = 0; i < m; i++) {
-            for i in 0..<m {
-                let e = _edges[i];
-                edge_idx[i] += _g.start[e.from];
-                redge_idx[i] += _g.start[e.to];
-                _g.elist[edge_idx[i]]!.rev = redge_idx[i];
-                _g.elist[redge_idx[i]]!.rev = edge_idx[i];
+            var _g = _Internal.csr<_edge>(_n, elist)
+            for i in 0 ..< m {
+                let e = _edges[i]
+                edge_idx[i] += _g.start[e.from]
+                redge_idx[i] += _g.start[e.to]
+                _g.elist[edge_idx[i]]!.rev = redge_idx[i]
+                _g.elist[redge_idx[i]]!.rev = edge_idx[i]
             }
-            return _g;
-        }();
-
-        let result = slope(&g, s, t, flow_limit);
-
-        // for (int i = 0; i < m; i++) {
+            return _g
+        }()
+        
+        let result = slope(&g, s, t, flow_limit)
+        
         for i in 0..<m {
-            let e = g.elist[edge_idx[i]]!;
-            _edges[i].flow = _edges[i].cap - e.cap;
+            let e = g.elist[edge_idx[i]]!
+            _edges[i].flow = _edges[i].cap - e.cap
         }
         
-        return result;
+        return result
     }
+}
 
-//  private:
-    private var _n: Int;
-    private var _edges: [edge] = [];
+extension mcf_graph {
 
     // inside edge
     struct _edge {
@@ -233,7 +222,7 @@ public struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
         }
         return result;
     }
-};
+}
 
 extension Array where Element: Comparable {
     

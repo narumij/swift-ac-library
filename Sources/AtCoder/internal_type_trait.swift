@@ -7,11 +7,13 @@ public protocol HandleUnsigned {
 }
 
 extension SignedInteger {
+    @inlinable @inline(__always)
     public var unsigned: Magnitude { magnitude }
 }
 
 extension UnsignedInteger {
     public init(unsigned: Self) { self = unsigned }
+    @inlinable @inline(__always)
     public var unsigned: Self { self }
 }
 

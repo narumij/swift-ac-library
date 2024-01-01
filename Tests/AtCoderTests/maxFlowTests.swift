@@ -8,15 +8,19 @@
 import XCTest
 @testable import AtCoder
 
+extension mf_graph.edge {
+    init() { self.init(from: 0,to: 0,cap: 0,flow: 0) }
+}
+
 extension mf_graph.edge: ExpressibleByArrayLiteral where Cap == Int {
     public init(arrayLiteral elements: Int...) {
-        self.init(elements[0], elements[1], elements[2], elements[3])
+        self.init(from: elements[0], to: elements[1], cap: elements[2], flow: elements[3])
     }
 }
 
 extension mf_graph._edge: ExpressibleByArrayLiteral where Cap == Int {
     public init(arrayLiteral elements: Int...) {
-        self.init(elements[0],elements[1],elements[2])
+        self.init(to: elements[0],rev: elements[1],cap: elements[2])
     }
 }
 

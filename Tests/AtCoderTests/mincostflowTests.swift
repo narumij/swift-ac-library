@@ -10,7 +10,7 @@ import XCTest
 
 extension mcf_graph.edge: ExpressibleByArrayLiteral where Value == Int {
     public init(arrayLiteral elements: Int...) {
-        self.init(elements[0], elements[1], elements[2], elements[3], elements[4])
+        self.init(from: elements[0], to: elements[1], cap: elements[2], flow: elements[3], cost: elements[4])
     }
     var values: (Int,Int,mcf_graph.Cap,mcf_graph.Cap,mcf_graph.Cost) { (from,to,cap,flow,cost) }
 }

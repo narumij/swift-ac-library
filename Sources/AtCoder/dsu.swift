@@ -9,7 +9,6 @@ public struct dsu {
 
 extension dsu._UnsafeHandle {
     
-    @inlinable @inline(__always)
     func merge(_ a: Int,_ b: Int) -> Int {
         assert(0 <= a && a < _n)
         assert(0 <= b && b < _n)
@@ -21,14 +20,12 @@ extension dsu._UnsafeHandle {
         return x
     }
 
-    @inlinable @inline(__always)
     func same(_ a: Int,_ b: Int) -> Bool {
         assert(0 <= a && a < _n)
         assert(0 <= b && b < _n)
         return leader(a) == leader(b)
     }
 
-    @inlinable @inline(__always)
     func leader(_ a: Int) -> Int {
         assert(0 <= a && a < _n)
         if (parent_or_size[a] < 0) { return a }
@@ -36,13 +33,11 @@ extension dsu._UnsafeHandle {
         return parent_or_size[a]
     }
 
-    @inlinable @inline(__always)
     func size(_ a: Int) -> Int {
         assert(0 <= a && a < _n)
         return -parent_or_size[leader(a)]
     }
 
-    @inlinable @inline(__always)
     func groups() -> [[Int]] {
         var leader_buf = [Int](repeating: -1, count:_n), group_size = [Int](repeating: -1, count:_n)
         for i in 0..<_n {
@@ -70,8 +65,8 @@ extension dsu {
             self._n = _n
             self.parent_or_size = parent_or_size
         }
-        @usableFromInline let _n: Int;
-        @usableFromInline let parent_or_size: UnsafeMutablePointer<Int>
+        public let _n: Int;
+        public let parent_or_size: UnsafeMutablePointer<Int>
     }
     
     @inlinable @inline(__always)

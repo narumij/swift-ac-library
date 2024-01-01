@@ -9,63 +9,64 @@ public extension fenwick_tree {
 
     typealias U = T.Unsigned
     init() { _n = 0; data = [] }
-    init(_ n: Int) { _n = n; data = .init(repeating: 0, count: n) }
-
-    mutating func add(_ p: Int,_ x: T) {
-        _update{ $0.add(p,x) }
-    }
-
-    mutating func sum(_ l: Int,_ r: Int) -> T {
-        _update{ $0.sum(l,r) }
-    }
+    init(_ n: Int) { _n = n; data = [U](repeating: 0, count: n) }
 }
 
 extension fenwick_tree {
     
     @usableFromInline
     struct _UnsafeHandle<U: FixedWidthInteger & UnsignedInteger> where T.Unsigned == U {
-        @usableFromInline @inline(__always)
-        internal init(_n: Int, data: UnsafeMutablePointer<fenwick_tree<T>.U>) {
+        @inlinable @inline(__always)
+        init(_n: Int, data: UnsafeMutablePointer<fenwick_tree<T>.U>) {
             self._n = _n
             self.data = data
         }
-        
         @usableFromInline let _n: Int
         @usableFromInline let data: UnsafeMutablePointer<U>
-        
-        @inlinable @inline(__always)
-        func add(_ p: Int,_ x: T) {
-            var p = p
-            assert(0 <= p && p < _n)
-            p += 1
-            while (p <= _n) {
-                data[p - 1] &+= x.unsigned
-                p += p & -p
-            }
-        }
+    }
+}
 
-        @inlinable @inline(__always)
-        func sum(_ l: Int,_ r: Int) -> T {
-            assert(0 <= l && l <= r && r <= _n)
-            return T(unsigned: sum(r) &- sum(l))
-        }
-
-        @inlinable @inline(__always)
-        func sum(_ r: Int) -> U {
-            var r = r
-            var s: U = 0
-            while (r > 0) {
-                s &+= data[r - 1]
-                r -= r & -r
-            }
-            return s
+extension fenwick_tree._UnsafeHandle {
+    
+    func add(_ p: Int,_ x: T) {
+        var p = p
+        assert(0 <= p && p < _n)
+        p += 1
+        while p <= _n {
+            data[p - 1] &+= x.unsigned
+            p += p & -p
         }
     }
+
+    func sum(_ l: Int,_ r: Int) -> T {
+        assert(0 <= l && l <= r && r <= _n)
+        return T(unsigned: sum(r) &- sum(l))
+    }
+
+    func sum(_ r: Int) -> U {
+        var r = r
+        var s: U = 0
+        while r > 0 {
+            s &+= data[r - 1]
+            r -= r & -r
+        }
+        return s
+    }
+}
+
+extension fenwick_tree {
     
     @inlinable @inline(__always)
     mutating func _update<R>(_ body: (_UnsafeHandle<U>) -> R) -> R {
         data.withUnsafeMutableBufferPointer { data in
-            body(_UnsafeHandle<U>(_n: _n, data: data.baseAddress!))
+            let handle = _UnsafeHandle<U>(_n: _n, data: data.baseAddress!)
+            return body(handle)
         }
+    }
+    mutating func add(_ p: Int,_ x: T) {
+        _update{ $0.add(p,x) }
+    }
+    mutating func sum(_ l: Int,_ r: Int) -> T {
+        _update{ $0.sum(l,r) }
     }
 }
