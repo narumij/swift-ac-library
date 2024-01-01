@@ -1,19 +1,19 @@
 import Foundation
 import Collections
 
-public struct mf_graph<Cap: FixedWidthInteger> {
+public struct MFGraph<Cap: FixedWidthInteger> {
     let _n: Int
     var pos: [(first: Int, second: Int)] = []
-    var g: [[_edge]]
+    var g: [[_Edge]]
 }
 
-public extension mf_graph {
+public extension MFGraph {
     
     init() { _n = 0; g = [] }
-    init(_ n: Int) { _n = n; g = [[_edge]].init(repeating: [], count: n) }
+    init(_ n: Int) { _n = n; g = [[_Edge]].init(repeating: [], count: n) }
 
     @discardableResult
-    mutating func add_edge(_ from: Int,_ to: Int,_ cap: Cap) -> Int {
+    mutating func addEdge(_ from: Int,_ to: Int,_ cap: Cap) -> Int {
         assert(0 <= from && from < _n)
         assert(0 <= to && to < _n)
         assert(0 <= cap)
@@ -22,34 +22,34 @@ public extension mf_graph {
         let from_id = g[from].count
         var to_id = g[to].count
         if from == to { to_id += 1 }
-        g[from].append(_edge(to: to, rev: to_id, cap: cap))
-        g[to].append(_edge(to: from, rev: from_id, cap: 0))
+        g[from].append(_Edge(to: to, rev: to_id, cap: cap))
+        g[to].append(_Edge(to: from, rev: from_id, cap: 0))
         return m;
     }
 
-    struct edge {
+    struct Edge {
         public let from, to: Int
         public let cap, flow: Cap
     }
 
-    func get_edge(_ i: Int) -> edge {
+    func getEdge(_ i: Int) -> Edge {
         let m = pos.count
         assert(0 <= i && i < m)
         let _e = g[pos[i].first][pos[i].second]
         let _re = g[_e.to][_e.rev]
-        return edge(from: pos[i].first, to: _e.to, cap: _e.cap + _re.cap, flow: _re.cap)
+        return Edge(from: pos[i].first, to: _e.to, cap: _e.cap + _re.cap, flow: _re.cap)
     }
     
-    func edges() -> [edge] {
+    func edges() -> [Edge] {
         let m = pos.count
-        var result: [edge] = []
+        var result: [Edge] = []
         for i in 0 ..< m {
-            result.append(get_edge(i))
+            result.append(getEdge(i))
         }
         return result
     }
     
-    mutating func change_edge(_ i: Int,_ new_cap: Cap,_ new_flow: Cap) {
+    mutating func changeEdge(_ i: Int,_ new_cap: Cap,_ new_flow: Cap) {
         let m = pos.count
         assert(0 <= i && i < m)
         assert(0 <= new_flow && new_flow <= new_cap)
@@ -122,7 +122,7 @@ public extension mf_graph {
         return flow
     }
 
-    func min_cut(_ s: Int) -> [Bool] {
+    func minCut(_ s: Int) -> [Bool] {
         var visited = [Bool](repeating: false, count:_n)
         var que = Deque<Int>()
         que.append(s)
@@ -139,8 +139,8 @@ public extension mf_graph {
     }
 }
 
-extension mf_graph {
-    struct _edge {
+extension MFGraph {
+    struct _Edge {
         let to, rev: Int
         var cap: Cap
     }

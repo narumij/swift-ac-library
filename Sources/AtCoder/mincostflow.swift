@@ -1,11 +1,11 @@
 import Foundation
 
-public struct mcf_graph<Value: FixedWidthInteger & SignedInteger> {
+public struct MCFGraph<Value: FixedWidthInteger & SignedInteger> {
     var _n: Int
-    var _edges: [edge] = []
+    var _edges: [Edge] = []
 }
 
-public extension mcf_graph {
+public extension MCFGraph {
     
     typealias Cap = Value
     typealias Cost = Value
@@ -14,33 +14,33 @@ public extension mcf_graph {
     init(_ n: Int) { _n = n }
 }
 
-public extension mcf_graph {
+public extension MCFGraph {
     
     @discardableResult
-    mutating func add_edge(_ from: Int,_ to: Int,_ cap: Cap,_ cost: Cost) -> Int {
+    mutating func addEdge(_ from: Int,_ to: Int,_ cap: Cap,_ cost: Cost) -> Int {
         assert(0 <= from && from < _n)
         assert(0 <= to && to < _n)
         assert(0 <= cap)
         assert(0 <= cost)
         let m = _edges.count
-        _edges.append(edge(from: from, to: to, cap: cap, flow: 0, cost: cost))
+        _edges.append(Edge(from: from, to: to, cap: cap, flow: 0, cost: cost))
         return m
     }
     
-    struct edge {
+    struct Edge {
         public let from, to: Int
         public let cap: Cap
         public var flow: Cap
         public let cost: Cost
     }
     
-    func get_edge(_ i: Int) -> edge {
+    func getEdge(_ i: Int) -> Edge {
         let m = _edges.count
         assert(0 <= i && i < m)
         return _edges[i]
     }
     
-    func edges() -> [edge] { return _edges; }
+    func edges() -> [Edge] { return _edges; }
     
     mutating func flow(_ s: Int,_ t: Int) -> (Cap,Cost) {
         return flow(s, t, Cap.max)
@@ -61,7 +61,7 @@ public extension mcf_graph {
         
         var g = {
             var degree = [Int](repeating:0, count:_n), redge_idx = [Int](repeating: 0, count: m)
-            var elist: [(Int,_edge)] = []
+            var elist: [(Int,_Edge)] = []
             elist.reserveCapacity(2 * m)
             for i in 0 ..< m {
                 let e = _edges[i]
@@ -70,7 +70,7 @@ public extension mcf_graph {
                 elist.append((e.from, .init(to: e.to, rev: -1, cap: e.cap - e.flow, cost: e.cost)))
                 elist.append((e.to, .init(to: e.from, rev: -1, cap: e.flow, cost: -e.cost)))
             }
-            var _g = _Internal.csr<_edge>(_n, elist)
+            var _g = _Internal.csr<_Edge>(_n, elist)
             for i in 0 ..< m {
                 let e = _edges[i]
                 edge_idx[i] += _g.start[e.from]
@@ -92,10 +92,10 @@ public extension mcf_graph {
     }
 }
 
-extension mcf_graph {
+extension MCFGraph {
 
     // inside edge
-    struct _edge {
+    struct _Edge {
         let to: Int
         var rev: Int
         var cap: Cap
@@ -109,7 +109,7 @@ extension mcf_graph {
         static func <(lhs: Q, rhs: Q) -> Bool { return lhs.key > rhs.key }
     }
 
-    private func slope(_ g: inout _Internal.csr<_edge>,
+    func slope(_ g: inout _Internal.csr<_Edge>,
                _ s: Int,
                _ t: Int,
                _ flow_limit: Cap) -> [(Cap, Cost)] {

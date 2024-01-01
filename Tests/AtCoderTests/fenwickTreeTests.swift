@@ -27,6 +27,8 @@ final class fenwickTreeTests: XCTestCase {
         XCTAssertEqual(lhs, rhs)
     }
     
+    typealias fenwick_tree = FenwickTree
+    
     func testEmpty() throws {
         var fw_ll = fenwick_tree<ll>();
         ASSERT_EQ(0, fw_ll.sum(0, 0));

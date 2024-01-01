@@ -1,32 +1,34 @@
 import Foundation
 
-public struct fenwick_tree<T: AdditiveArithmetic & HandleUnsigned> where T: HandleUnsigned {
+public struct FenwickTree<T: AdditiveArithmetic & HandleUnsigned> where T: HandleUnsigned {
     @usableFromInline var _n: Int
     @usableFromInline var data: [U]
 }
 
-public extension fenwick_tree {
+public extension FenwickTree {
 
     typealias U = T.Unsigned
     init() { _n = 0; data = [] }
     init(_ n: Int) { _n = n; data = [U](repeating: 0, count: n) }
 }
 
-extension fenwick_tree {
+extension FenwickTree {
     
     @usableFromInline
-    struct _UnsafeHandle<U: FixedWidthInteger & UnsignedInteger> where T.Unsigned == U {
+    struct _UnsafeHandle {
         @inlinable @inline(__always)
-        init(_n: Int, data: UnsafeMutablePointer<fenwick_tree<T>.U>) {
+        init(_n: Int, data: UnsafeMutablePointer<U>) {
             self._n = _n
             self.data = data
         }
         @usableFromInline let _n: Int
         @usableFromInline let data: UnsafeMutablePointer<U>
+        
+        @usableFromInline typealias U = T.Unsigned
     }
 }
 
-extension fenwick_tree._UnsafeHandle {
+extension FenwickTree._UnsafeHandle {
     
     func add(_ p: Int,_ x: T) {
         var p = p
@@ -54,15 +56,19 @@ extension fenwick_tree._UnsafeHandle {
     }
 }
 
-extension fenwick_tree {
+extension FenwickTree {
     
     @inlinable @inline(__always)
-    mutating func _update<R>(_ body: (_UnsafeHandle<U>) -> R) -> R {
+    mutating func _update<R>(_ body: (_UnsafeHandle) -> R) -> R {
         data.withUnsafeMutableBufferPointer { data in
-            let handle = _UnsafeHandle<U>(_n: _n, data: data.baseAddress!)
+            let handle = _UnsafeHandle(_n: _n, data: data.baseAddress!)
             return body(handle)
         }
     }
+}
+
+public extension FenwickTree {
+
     mutating func add(_ p: Int,_ x: T) {
         _update{ $0.add(p,x) }
     }

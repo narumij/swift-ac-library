@@ -1,13 +1,13 @@
 import Foundation
 
-public struct dsu {
+public struct DSU {
     public init() { _n = 0; parent_or_size = [] }
     public init(_ n: Int) { _n = n; parent_or_size = .init(repeating: -1, count: n) }
     @usableFromInline let _n: Int
     @usableFromInline var parent_or_size: [Int]
 }
 
-extension dsu._UnsafeHandle {
+extension DSU._UnsafeHandle {
     
     func merge(_ a: Int,_ b: Int) -> Int {
         assert(0 <= a && a < _n)
@@ -56,7 +56,7 @@ extension dsu._UnsafeHandle {
     }
 }
 
-extension dsu {
+extension DSU {
     
     @usableFromInline
     struct _UnsafeHandle {
@@ -77,7 +77,7 @@ extension dsu {
     }
 }
 
-public extension dsu {
+public extension DSU {
     
     @discardableResult
     mutating func merge(_ a: Int,_ b: Int) -> Int {

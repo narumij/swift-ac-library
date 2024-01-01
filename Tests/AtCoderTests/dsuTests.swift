@@ -18,7 +18,9 @@ final class dsuTests: XCTestCase {
         // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
         // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
     }
-        
+    
+    typealias dsu = DSU
+    
     func testSimple() throws {
         var uf = dsu(2);
         XCTAssertFalse(uf.same(0, 1));
