@@ -313,41 +313,41 @@ public func convolution_ll(_ a: [CLongLong],
     typealias LL = CLongLong
     
     enum const {
-        static let MOD1: LL = 754974721;  // 2^24
-        static let MOD2: LL = 167772161;  // 2^25
-        static let MOD3: LL = 469762049;  // 2^26
-        static let M2M3: LL = MOD2 &* MOD3;
-        static let M1M3: LL = MOD1 &* MOD3;
-        static let M1M2: LL = MOD1 &* MOD2;
-        static let M1M2M3: LL = MOD1 &* MOD2 &* MOD3;
+        static let MOD1: ULL = 754974721;  // 2^24
+        static let MOD2: ULL = 167772161;  // 2^25
+        static let MOD3: ULL = 469762049;  // 2^26
+        static let M2M3: ULL = MOD2 &* MOD3;
+        static let M1M3: ULL = MOD1 &* MOD3;
+        static let M1M2: ULL = MOD1 &* MOD2;
+        static let M1M2M3: ULL = MOD1 &* MOD2 &* MOD3;
         enum mod1: static_mod { static let mod = mod_value(MOD1) }
         enum mod2: static_mod { static let mod = mod_value(MOD2) }
         enum mod3: static_mod { static let mod = mod_value(MOD3) }
-        static let i1 = ULL(_Internal.inv_gcd(MOD2 * MOD3, MOD1).second);
-        static let i2 = ULL(_Internal.inv_gcd(MOD1 * MOD3, MOD2).second);
-        static let i3 = ULL(_Internal.inv_gcd(MOD1 * MOD2, MOD3).second);
+        static let i1 = ULL(_Internal.inv_gcd(LL(MOD2) * LL(MOD3), LL(MOD1)).second);
+        static let i2 = ULL(_Internal.inv_gcd(LL(MOD1) * LL(MOD3), LL(MOD2)).second);
+        static let i3 = ULL(_Internal.inv_gcd(LL(MOD1) * LL(MOD2), LL(MOD3)).second);
     }
     
     typealias mod1 = const.mod1
     typealias mod2 = const.mod2
     typealias mod3 = const.mod3
 
-    let MOD1: LL = const.MOD1;
-    let MOD2: LL = const.MOD2;
-    let MOD3: LL = const.MOD3;
-    let M2M3: LL = const.M2M3;
-    let M1M3: LL = const.M1M3;
-    let M1M2: LL = const.M1M2;
-    let M1M2M3: LL = const.M1M2M3;
+    let MOD1: ULL = const.MOD1;
+    let MOD2: ULL = const.MOD2;
+    let MOD3: ULL = const.MOD3;
+    let M2M3: ULL = const.M2M3;
+    let M1M3: ULL = const.M1M3;
+    let M1M2: ULL = const.M1M2;
+    let M1M2M3: ULL = const.M1M2M3;
 
     let i1: ULL = const.i1
     let i2: ULL = const.i2
     let i3: ULL = const.i3
 
-    let MAX_AB_BIT: CInt = 24;
-    assert(ULL(MOD1) % (ULL(1) << MAX_AB_BIT) == 1, "MOD1 isn't enough to support an array length of 2^24.");
-    assert(ULL(MOD2) % (ULL(1) << MAX_AB_BIT) == 1, "MOD2 isn't enough to support an array length of 2^24.");
-    assert(ULL(MOD3) % (ULL(1) << MAX_AB_BIT) == 1, "MOD3 isn't enough to support an array length of 2^24.");
+    let MAX_AB_BIT: ULL = 24;
+    assert(MOD1 % (1 << MAX_AB_BIT) == 1, "MOD1 isn't enough to support an array length of 2^24.");
+    assert(MOD2 % (1 << MAX_AB_BIT) == 1, "MOD2 isn't enough to support an array length of 2^24.");
+    assert(MOD3 % (1 << MAX_AB_BIT) == 1, "MOD3 isn't enough to support an array length of 2^24.");
     assert(n + m - 1 <= (1 << MAX_AB_BIT));
     
     let c1 = convolution(mod1.self, a, b);
@@ -358,9 +358,9 @@ public func convolution_ll(_ a: [CLongLong],
 //    for (int i = 0; i < n + m - 1; i++) {
     for i in 0..<(n + m - 1) {
         var x: ULL = 0;
-        x &+= ULL(bitPattern: (c1[i] * LL(i1)) % MOD1 &* M2M3);
-        x &+= ULL(bitPattern: (c2[i] * LL(i2)) % MOD2 &* M1M3);
-        x &+= ULL(bitPattern: (c3[i] * LL(i3)) % MOD3 &* M1M2);
+        x &+= (ULL(bitPattern: c1[i]) * i1) % MOD1 &* M2M3;
+        x &+= (ULL(bitPattern: c2[i]) * i2) % MOD2 &* M1M3;
+        x &+= (ULL(bitPattern: c3[i]) * i3) % MOD3 &* M1M2;
         // B = 2^63, -B <= x, r(real value) < B
         // (x, x - M, x - 2M, or x - 3M) = r (mod 2B)
         // r = c1[i] (mod MOD1)
@@ -379,11 +379,11 @@ public func convolution_ll(_ a: [CLongLong],
         //   ((2) mod MOD1) mod 5 = 3
         //   ((3) mod MOD1) mod 5 = 4
         var diff: LL =
-        c1[i] - _Internal.safe_mod(LL(bitPattern: x), LL(MOD1));
-        if (diff < 0) { diff += MOD1; }
+        c1[i] - _Internal.safe_mod(LL(bitPattern: x), LL(bitPattern: MOD1));
+        if (diff < 0) { diff += LL(bitPattern: MOD1); }
         let offset: [ULL] = [
-            0, 0, ULL(M1M2M3), ULL(2 * M1M2M3), ULL(3 * M1M2M3)];
-        x &-= offset[Int(diff) % 5];
+            0, 0, M1M2M3, 2 * M1M2M3, 3 * M1M2M3];
+        x &-= offset[Int(diff % 5)];
         c[i] = LL(bitPattern: x);
     }
  
