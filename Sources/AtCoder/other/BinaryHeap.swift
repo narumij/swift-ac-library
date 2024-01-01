@@ -2,7 +2,7 @@ import Foundation
 
 extension Array: BinaryHeap {
     @inlinable @inline(__always)
-    mutating func _update<R>(_ comp: @escaping (Element, Element) -> Bool,
+    mutating func __update_binary_heap<R>(_ comp: @escaping (Element, Element) -> Bool,
                              _ body: (BinaryHeapUnsafeHandle<Element>) -> R) -> R {
       withUnsafeMutableBufferPointer { buffer in
         body(BinaryHeapUnsafeHandle(buffer, comp))
@@ -12,19 +12,19 @@ extension Array: BinaryHeap {
 
 protocol BinaryHeap: Sequence {
     @inlinable @inline(__always)
-    mutating func _update<R>(_ comp: @escaping (Element, Element) -> Bool,
-                             _ body: (BinaryHeapUnsafeHandle<Element>) -> R) -> R
+    mutating func __update_binary_heap<R>(_ comp: @escaping (Element, Element) -> Bool,
+                                          _ body: (BinaryHeapUnsafeHandle<Element>) -> R) -> R
 }
 
 extension BinaryHeap {
     mutating func make_heap(_ end: Int,_ comp: @escaping (Element, Element) -> Bool) {
-        _update(comp) { $0.make_heap(end) }
+        __update_binary_heap(comp) { $0.make_heap(end) }
     }
     mutating func push_heap(_ end: Int,_ comp: @escaping (Element, Element) -> Bool) {
-        _update(comp) { $0.push_heap(end) }
+        __update_binary_heap(comp) { $0.push_heap(end) }
     }
     mutating func pop_heap(_ comp: @escaping (Element, Element) -> Bool) {
-        _update(comp) { $0.pop_heap($0.buffer.endIndex) }
+        __update_binary_heap(comp) { $0.pop_heap($0.buffer.endIndex) }
     }
 }
 
