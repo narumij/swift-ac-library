@@ -122,3 +122,30 @@ public extension modint_base {
 @usableFromInline func __modint_umod<T: UnsignedInteger>(_ umod: CUnsignedInt) -> T { T(umod) }
 @usableFromInline func __modint_mod<T: FixedWidthInteger>(_ umod: CUnsignedInt) -> T { T(truncatingIfNeeded: umod) }
 @usableFromInline func __modint_mod<T: FixedWidthInteger>(_ mod: CInt) -> T { T(truncatingIfNeeded: mod) }
+
+extension modint_base {
+    typealias ULL = CUnsignedLongLong
+    typealias LL = CLongLong
+    typealias UINT = CUnsignedInt
+}
+
+public extension modint_base {
+    @inlinable @inline(__always)
+    var description: String { val().description }
+}
+
+public protocol modint_raw {
+    init(raw: CUnsignedInt)
+    var _v: CUnsignedInt { get set }
+    func val() -> CUnsignedInt
+    static func mod() -> CInt
+    static func umod() -> CUnsignedInt
+}
+
+extension modint_raw {
+    @inlinable @inline(__always)
+    public init(integerLiteral value: CInt) {
+        self.init(raw: ___modint_v(value, mod: __modint_mod(Self.mod())))
+    }
+}
+
