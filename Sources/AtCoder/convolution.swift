@@ -131,7 +131,7 @@ static func butterfly_inv<mint: static_modint_base>(_ a: UnsafeMutableBufferPoin
     let h: CInt = _Internal.countr_zero(CUnsignedInt(n));
 
 //    static const fft_info<mint> info;
-    let info = fft_info<mint>(); // 挙動に関して注意
+    let info = fft_info<mint>();
 
     typealias ULL = CUnsignedLongLong
 
