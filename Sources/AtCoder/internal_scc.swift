@@ -52,7 +52,6 @@ extension _Internal {
 
         func scc() -> [[Int]] {
             let ids = scc_ids()
-#if false
             let group_num = ids.first
             var counts = [Int](repeating: 0, count: group_num)
             for x in ids.second { counts[x] += 1 }
@@ -64,13 +63,6 @@ extension _Internal {
                 groups[ids.second[i]].append(i)
             }
             return groups
-#else
-            var groups = [[Int]](repeating: [], count: ids.first)
-            for i in 0 ..< _n {
-                groups[ids.second[i]].append(i)
-            }
-            return groups
-#endif
         }
 
 //      private:
