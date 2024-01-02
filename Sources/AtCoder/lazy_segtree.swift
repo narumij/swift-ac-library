@@ -127,17 +127,7 @@ extension _LazySegtree {
         @usableFromInline let d: UnsafeMutablePointer<Base.S>
         @usableFromInline let lz: UnsafeMutablePointer<Base.F>
 
-#if true
-        typealias S = Base.S
-        func op(_ l: S,_ r: S) -> S { Base.op(l,r) }
-        func e() -> S { Base.e }
-        
-        typealias F = Base.F
-        func mapping(_ l: F,_ r: S) -> S { Base.mapping(l,r) }
-        func composition(_ l: F,_ r: F) -> F { Base.composition(l,r) }
-        func id() -> F { Base.id }
-#else
-        // Swift 5.9以後は以下にする。
+#if swift(>=5.9)
         // protocolにまつわる分岐が減り、パフォーマンスが改善する
         typealias S = Base.S
         var op: (S,S) -> S = { Base.op }()
@@ -146,6 +136,15 @@ extension _LazySegtree {
         typealias F = Base.F
         var mapping: (F,S) -> S = { Base.mapping }()
         var composition: (F,F) -> F = { Base.composition }()
+        func id() -> F { Base.id }
+#else
+        typealias S = Base.S
+        func op(_ l: S,_ r: S) -> S { Base.op(l,r) }
+        func e() -> S { Base.e }
+        
+        typealias F = Base.F
+        func mapping(_ l: F,_ r: S) -> S { Base.mapping(l,r) }
+        func composition(_ l: F,_ r: F) -> F { Base.composition(l,r) }
         func id() -> F { Base.id }
 #endif
     }
@@ -157,16 +156,16 @@ extension _LazySegtree._UnsafeHandle {
         var p = p
         assert(0 <= p && p < _n)
         p += size
-        for i in log ..>= 1 { push(p >> i) }
+        for i in stride(from: log, through: 1, by: -1) { push(p >> i) }
         d[p] = x
-        for i in 1 ..<= log { update(p >> i) }
+        for i in stride(from: 1, through: log, by: 1) { update(p >> i) }
     }
     
     func get(_ p: Int) -> S {
         var p = p
         assert(0 <= p && p < _n)
         p += size
-        for i in log ..>= 1 { push(p >> i) }
+        for i in stride(from: log, through: 1, by: -1) { push(p >> i) }
         return d[p]
     }
     
@@ -179,7 +178,7 @@ extension _LazySegtree._UnsafeHandle {
         l += size
         r += size
         
-        for i in log ..>= 1 {
+        for i in stride(from: log, through: 1, by: -1) {
             if ((l >> i) << i) != l { push(l >> i) }
             if ((r >> i) << i) != r { push((r - 1) >> i) }
         }
@@ -201,9 +200,9 @@ extension _LazySegtree._UnsafeHandle {
         var p = p
         assert(0 <= p && p < _n)
         p += size
-        for i in log ..>= 1 { push(p >> i) }
+        for i in stride(from: log, through: 1, by: -1) { push(p >> i) }
         d[p] = mapping(f, d[p])
-        for i in 1 ..<= log { update(p >> i) }
+        for i in stride(from: 1, through: log, by: 1) { update(p >> i) }
     }
 
     func apply(_ l: Int,_ r: Int,_ f: F) {
@@ -215,7 +214,7 @@ extension _LazySegtree._UnsafeHandle {
         l += size
         r += size
 
-        for i in log ..>= 1 {
+        for i in stride(from: log, through: 1, by: -1) {
             if ((l >> i) << i) != l { push(l >> i) }
             if ((r >> i) << i) != r { push((r - 1) >> i) }
         }
@@ -232,7 +231,7 @@ extension _LazySegtree._UnsafeHandle {
             r = r2
         }
 
-        for i in 1 ..<= log {
+        for i in stride(from: 1, through: log, by: 1) {
             if ((l >> i) << i) != l { update(l >> i) }
             if ((r >> i) << i) != r { update((r - 1) >> i) }
         }
@@ -244,7 +243,7 @@ extension _LazySegtree._UnsafeHandle {
         assert(g(e()))
         if l == _n { return _n }
         l += size
-        for i in log ..>= 1 { push(l >> i) }
+        for i in stride(from: log, through: 1, by: -1) { push(l >> i) }
         var sm = e()
         repeat {
             while l % 2 == 0 { l >>= 1 }
@@ -271,7 +270,7 @@ extension _LazySegtree._UnsafeHandle {
         assert(g(e()))
         if r == 0 { return 0 }
         r += size
-        for i in log ..>= 1 { push((r - 1) >> i) }
+        for i in stride(from: log, through: 1, by: -1) { push((r - 1) >> i) }
         var sm = e()
         repeat {
             r -= 1
