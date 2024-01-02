@@ -260,6 +260,59 @@ final class fenwickTreeTests: XCTestCase {
          }
          */
     }
+    
+    func testHandleUnsigned() throws {
+        XCTAssertEqual(18446744073709551615, Int(-1).unsigned)
+    }
+    
+    func testSome() throws {
+        let M = 3
+        let Q = 9
+        let t = [1, 3, 2, 3, 3, 1, 3, 3, 3]
+        let a = [0, 1, 2, 2, 2, 1, 2, 1, 0]
+        let b = [2, 2, 2, 3, 1, 3, 2, 3, 2]
+        let c = [1, 0, 0, 1, 2, 3, 3, 4, 5]
+        let subt = [[],[],[3,4,6],[],[],[],[],[],[]]
+        let ans = [0, 2, 2, 2, 0, 0]
+        
+        var fen = FenwickTree<Int>(M + 1)
+        
+        do {
+            let i = 0
+            fen.add(a[i], c[i])
+            XCTAssertEqual([1, 1, 0, 1], fen.data)
+            fen.add(b[i], -c[i])
+            XCTAssertEqual([1, 1, 18446744073709551615, 0], fen.data)
+        }
+        
+        do {
+            let i = 1
+            XCTAssertEqual(1, fen.sum(0, b[i]))
+        }
+
+        do {
+            let i = 2
+            XCTAssertEqual(0, fen.sum(0, b[subt[i][0]]))
+            XCTAssertEqual(1, fen.sum(0, b[subt[i][1]]))
+            XCTAssertEqual(1, fen.sum(0, b[subt[i][2]]))
+        }
+
+#if false
+        for i in 0..<Q {
+            switch t[i] {
+            case 1:
+                fen.add(a[i], .init(c[i]))
+                fen.add(b[i], .init(-c[i]))
+            case 2:
+                for j in subt[i] {
+                    let s = fen.sum(0, b[j])
+                }
+            default:
+                let s = fen.sum(0, b[i])
+            }
+        }
+#endif
+    }
 
     func testPerformanceExample() throws {
         // This is an example of a performance test case.

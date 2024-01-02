@@ -6,28 +6,36 @@ public protocol HandleUnsigned {
     var unsigned: Unsigned { get }
 }
 
-extension SignedInteger {
-    @inlinable @inline(__always)
-    public var unsigned: Magnitude { magnitude }
-}
+//extension SignedInteger {
+//    @inlinable @inline(__always)
+//    public var unsigned: Magnitude { magnitude }
+//}
 
 extension UnsignedInteger {
     public init(unsigned: Self) { self = unsigned }
-    @inlinable @inline(__always)
-    public var unsigned: Self { self }
+//    @inlinable @inline(__always)
 }
 
 extension Int32: HandleUnsigned {
     public init(unsigned: Magnitude) { self.init(bitPattern: unsigned) }
+    public var unsigned: Magnitude { .init(bitPattern: self) }
 }
 extension Int64: HandleUnsigned {
     public init(unsigned: Magnitude) { self.init(bitPattern: unsigned) }
+    public var unsigned: Magnitude { .init(bitPattern: self)  }
 }
 extension Int: HandleUnsigned {
     public init(unsigned: Magnitude) { self.init(bitPattern: unsigned) }
+    public var unsigned: Magnitude { .init(bitPattern: self)  }
 }
 
-extension UInt32: HandleUnsigned { }
-extension UInt64: HandleUnsigned { }
-extension UInt: HandleUnsigned { }
+extension UInt32: HandleUnsigned { 
+    public var unsigned: Self { self }
+}
+extension UInt64: HandleUnsigned {
+    public var unsigned: Self { self }
+}
+extension UInt: HandleUnsigned { 
+    public var unsigned: Self { self }
+}
 

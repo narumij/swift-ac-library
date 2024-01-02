@@ -75,3 +75,9 @@ public extension FenwickTree {
         _update{ $0.sum(l,r) }
     }
 }
+
+extension FenwickTree {
+    mutating func sum(_ l: Int) -> U {
+        _update{ $0.sum(l) }
+    }
+}
