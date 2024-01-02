@@ -7,5 +7,5 @@ extension modint_raw where Self: HandleUnsigned {
     public init(unsigned: CUnsignedInt) {
         self.init(raw: __modint_v(unsigned, umod: __modint_umod(Self.umod())))
     }
-    public var unsigned: CInt.Magnitude { val() }
+    public var unsigned: CUnsignedInt { val() }
 }
