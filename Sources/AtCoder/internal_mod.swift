@@ -53,7 +53,7 @@ extension dynamic_mod {
         bt.mul(a,b)
     }
     public static func set_mod(_ m: CInt) {
-        assert(1 <= m);
+        assert(1 <= m)
         bt = .init(m)
     }
 }
@@ -109,7 +109,7 @@ public extension modint_base {
 
 @usableFromInline func __modint_v<T: UnsignedInteger>(_ v: T, umod: T) -> CUnsignedInt {
     let x = v % umod
-    return CUnsignedInt(truncatingIfNeeded: x);
+    return CUnsignedInt(truncatingIfNeeded: x)
 }
 
 @usableFromInline func ___modint_v<T: FixedWidthInteger>(_ v: T, mod: T) -> CUnsignedInt {

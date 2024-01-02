@@ -83,7 +83,7 @@ public extension MCFGraph {
         
         let result = slope(&g, s, t, flow_limit)
         
-        for i in 0..<m {
+        for i in 0 ..< m {
             let e = g.elist[edge_idx[i]]!
             _edges[i].flow = _edges[i].cap - e.cap
         }
@@ -118,113 +118,113 @@ extension MCFGraph {
         // reduced cost (= e.cost + dual[e.from] - dual[e.to]) >= 0 for all edge
 
         // dual_dist[i] = (dual[i], dist[i])
-        var dual_dist = [(first: Cost,second: Cost)](repeating: (0,0), count: _n);
-        var prev_e = [Int](repeating: 0, count:_n);
-        var vis = [Bool](repeating: false, count: _n);
+        var dual_dist = [(first: Cost,second: Cost)](repeating: (0,0), count: _n)
+        var prev_e = [Int](repeating: 0, count:_n)
+        var vis = [Bool](repeating: false, count: _n)
 //        struct Q {
 //            Cost key;
 //            int to;
 //            bool operator<(Q r) const { return key > r.key; }
 //        };
-        var que_min = [Int]();
-        var que = [Q]();
+        var que_min = [Int]()
+        var que = [Q]()
         func dual_ref() -> Bool {
             // for (int i = 0; i < _n; i++) {
-            for i in 0..<_n {
-                dual_dist[i].second = Cost.max;
+            for i in 0 ..< _n {
+                dual_dist[i].second = Cost.max
             }
             // std::fill(vis.begin(), vis.end(), false);
             vis.withUnsafeMutableBufferPointer{ $0.update(repeating: false) }
-            que_min.removeAll();
-            que.removeAll();
+            que_min.removeAll()
+            que.removeAll()
 
             // que[0..heap_r) was heapified
-            var heap_r = 0;
+            var heap_r = 0
 
-            dual_dist[s].second = 0;
-            que_min.append(s);
-            while (!que_min.isEmpty || !que.isEmpty) {
-                var v: Int;
-                if (!que_min.isEmpty) {
-                    v = que_min.popLast()!;
+            dual_dist[s].second = 0
+            que_min.append(s)
+            while !que_min.isEmpty || !que.isEmpty {
+                var v: Int
+                if !que_min.isEmpty {
+                    v = que_min.popLast()!
                 } else {
-                    while (heap_r < que.count) {
-                        heap_r += 1;
-                        que.push_heap(que.startIndex, que.startIndex + heap_r);
+                    while heap_r < que.count {
+                        heap_r += 1
+                        que.push_heap(que.startIndex, que.startIndex + heap_r)
                     }
-                    v = que.pop_heap()!.to;
-                    heap_r -= 1;
+                    v = que.pop_heap()!.to
+                    heap_r -= 1
                 }
-                if (vis[v]) { continue; }
+                if vis[v] { continue }
                 vis[v] = true;
-                if (v == t) { break; }
+                if v == t { break }
                 // dist[v] = shortest(s, v) + dual[s] - dual[v]
                 // dist[v] >= 0 (all reduced cost are positive)
                 // dist[v] <= (n-1)C
-                let dual_v = dual_dist[v].first, dist_v = dual_dist[v].second;
+                let dual_v = dual_dist[v].first, dist_v = dual_dist[v].second
                 // for (int i = g.start[v]; i < g.start[v + 1]; i++) {
                 do { var i = g.start[v]; while i < g.start[v + 1] { defer { i += 1 }
-                    let e = g.elist[i]!;
-                    if ((e.cap == 0)) { continue; }
+                    let e = g.elist[i]!
+                    if e.cap == 0 { continue }
                     // |-dual[e.to] + dual[v]| <= (n-1)C
                     // cost <= C - -(n-1)C + 0 = nC
-                    let cost = e.cost - dual_dist[e.to].first + dual_v;
-                    if (dual_dist[e.to].second - dist_v > cost) {
-                        let dist_to = dist_v + cost;
-                        dual_dist[e.to].second = dist_to;
-                        prev_e[e.to] = e.rev;
-                        if (dist_to == dist_v) {
-                            que_min.append(e.to);
+                    let cost = e.cost - dual_dist[e.to].first + dual_v
+                    if dual_dist[e.to].second - dist_v > cost {
+                        let dist_to = dist_v + cost
+                        dual_dist[e.to].second = dist_to
+                        prev_e[e.to] = e.rev
+                        if dist_to == dist_v {
+                            que_min.append(e.to)
                         } else {
-                            que.append(Q(key: dist_to, to: e.to));
+                            que.append(Q(key: dist_to, to: e.to))
                         }
                     }
                 } }
             }
-            if (!vis[t]) {
-                return false;
+            if !vis[t] {
+                return false
             }
 
             // for (int v = 0; v < _n; v++) {
-            for v in 0..<_n {
-                if (!vis[v]) { continue; }
+            for v in 0 ..< _n {
+                if !vis[v] { continue }
                 // dual[v] = dual[v] - dist[t] + dist[v]
                 //         = dual[v] - (shortest(s, t) + dual[s] - dual[t]) +
                 //         (shortest(s, v) + dual[s] - dual[v]) = - shortest(s,
                 //         t) + dual[t] + shortest(s, v) = shortest(s, v) -
                 //         shortest(s, t) >= 0 - (n-1)C
-                dual_dist[v].first -= dual_dist[t].second - dual_dist[v].second;
+                dual_dist[v].first -= dual_dist[t].second - dual_dist[v].second
             }
-            return true;
-        };
+            return true
+        }
         
-        var flow: Cap = 0;
-        var cost: Cost = 0, prev_cost_per_flow: Cost = -1;
-        var result: [(Cap,Cost)] = [(0, 0)];
-        while (flow < flow_limit) {
-            if (!dual_ref()) { break; }
-            var c = flow_limit - flow;
+        var flow: Cap = 0
+        var cost: Cost = 0, prev_cost_per_flow: Cost = -1
+        var result: [(Cap,Cost)] = [(0, 0)]
+        while flow < flow_limit {
+            if !dual_ref() { break }
+            var c = flow_limit - flow
             // for (int v = t; v != s; v = g.elist[prev_e[v]].to) {
-            do { var v = t; while v != s { defer { v = g.elist[prev_e[v]]!.to; }
-                c = min(c, g.elist[g.elist[prev_e[v]]!.rev]!.cap);
+            do { var v = t; while v != s { defer { v = g.elist[prev_e[v]]!.to }
+                c = min(c, g.elist[g.elist[prev_e[v]]!.rev]!.cap)
             } }
             // for (int v = t; v != s; v = g.elist[prev_e[v]].to) {
-            do { var v = t; while v != s { defer { v = g.elist[prev_e[v]]!.to; }
+            do { var v = t; while v != s { defer { v = g.elist[prev_e[v]]!.to }
                 // auto& e = g.elist[prev_e[v]];
                 var e = g.elist[prev_e[v]]!; defer { g.elist[prev_e[v]] = e }
                 e.cap += c
-                g.elist[e.rev]!.cap -= c;
+                g.elist[e.rev]!.cap -= c
             } }
-            let d = -dual_dist[s].first;
-            flow += c;
-            cost += c * d;
-            if (prev_cost_per_flow == d) {
-                result.removeLast();
+            let d = -dual_dist[s].first
+            flow += c
+            cost += c * d
+            if prev_cost_per_flow == d {
+                result.removeLast()
             }
-            result.append((flow, cost));
-            prev_cost_per_flow = d;
+            result.append((flow, cost))
+            prev_cost_per_flow = d
         }
-        return result;
+        return result
     }
 }
 
@@ -240,5 +240,3 @@ extension Array where Element: Comparable {
         return removeLast()
     }
 }
-
-
