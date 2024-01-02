@@ -12,15 +12,15 @@ extension UnsignedInteger {
 
 extension Int32: HandleUnsigned {
     public init(unsigned: UInt32) { self.init(bitPattern: unsigned) }
-    public var unsigned: UInt32 { .init(bitPattern: self) }
+    public var unsigned: UInt32 { Unsigned(bitPattern: self) }
 }
 extension Int64: HandleUnsigned {
     public init(unsigned: UInt64) { self.init(bitPattern: unsigned) }
-    public var unsigned: UInt64 { .init(bitPattern: self)  }
+    public var unsigned: UInt64 { Unsigned(bitPattern: self)  }
 }
 extension Int: HandleUnsigned {
     public init(unsigned: UInt) { self.init(bitPattern: unsigned) }
-    public var unsigned: UInt { .init(bitPattern: self)  }
+    public var unsigned: UInt { Unsigned(bitPattern: self)  }
 }
 
 extension UInt32: HandleUnsigned { 
