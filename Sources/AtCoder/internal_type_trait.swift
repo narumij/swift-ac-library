@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol HandleUnsigned {
-    associatedtype Unsigned: FixedWidthInteger & UnsignedInteger
+    associatedtype Unsigned: UnsignedInteger & FixedWidthInteger
     init(unsigned: Unsigned)
     var unsigned: Unsigned { get }
 }

@@ -23,7 +23,7 @@ public extension TwoSAT {
     mutating func satisfiable() -> Bool {
         let id = scc.scc_ids().second
         for i in 0 ..< _n {
-            if (id[2 * i] == id[2 * i + 1]) { return false }
+            if id[2 * i] == id[2 * i + 1] { return false }
             _answer[i] = id[2 * i] < id[2 * i + 1]
         }
         return true
