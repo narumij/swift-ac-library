@@ -14,37 +14,26 @@ dependencies: [
 
 提出時は、コピペで頑張ってください。
 
-## セグ木の作り方
+## セグ木の使い方
 
-プロトコル適用をすることで、構造体をセグ木にして利用することができます。
-適用の際に行う必要があるのは、単位元、二項演算、ストレージの三つを書くことです。
-集合Sについては型推論が働くため書く必要がありません。
+使い勝手が悪かったので、Python版に寄せました。
 
 例: 集合SがInt、単位元が0、二項演算がmax関数の場合
 ```swift
-struct segtree: SegtreeProtocol {
-    static let e = 0
-    static let op: (Int, Int) -> Int = max
-    var storage: Storage
-}
+let N: Int
+var segtree = segtree<Int>(op: max, e: 0, N)
 ```
 
 例: 集合SがInt、単位元が0、二項演算が加算の場合
 ```swift
-struct segtree: SegtreeProtocol {
-    static let e: Int = 0
-    static let op: (Int, Int) -> Int = (+)
-    var storage: Storage
-}
+let N: Int
+var segtree = segtree<Int>(op: (+), e: 0, N)
 ```
 
 例: 集合SがInt、単位元が1、二項演算が乗算の場合
 ```swift
-struct segtree: SegtreeProtocol {
-    static let e = 1
-    static let op: (Int, Int) -> Int = (*)
-    var storage: Storage
-}
+let N: Int
+var segtree = segtree<Int>(op: (*), e: 1, N)
 ```
 
 ## 遅延セグ木の作り方
