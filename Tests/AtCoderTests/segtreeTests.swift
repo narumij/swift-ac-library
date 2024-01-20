@@ -20,7 +20,7 @@ fileprivate extension segtree where S == String {
     static var e: String { "$" }
 }
 
-fileprivate extension segtree_naive_v3 where S == String {
+fileprivate extension segtree_naive where S == String {
     init() {
         self.init(op: Self.op, e: Self.e, 0 )
     }
@@ -66,7 +66,7 @@ final class segtreeTests: XCTestCase {
         
         throw XCTSkip("配列のfatalをSwiftのみでハンドリングする方法が、まだない。SE-0403以後に、テストするように切り替えます。")
         
-        XCTAssertThrowsError(segtree_naive_v3(-1))
+        XCTAssertThrowsError(segtree_naive(-1))
         
         let s = segtree(10)
         
@@ -102,7 +102,7 @@ final class segtreeTests: XCTestCase {
 
 //        for (int n = 0; n < 30; n++) {
         for n in 0..<30 {
-            var seg0 = segtree_naive_v3(n);
+            var seg0 = segtree_naive(n);
             var seg1 = segtree(n);
 //            for (int i = 0; i < n; i++) {
             for i in 0..<n {

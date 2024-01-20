@@ -24,73 +24,56 @@ fileprivate struct time_manager {
     }
 };
 
-fileprivate struct S {
-    internal init(_ l: Int,_ r: Int,_ time: Int) {
-        self.l = l
-        self.r = r
-        self.time = time
+fileprivate struct seg {
+    struct S {
+        internal init(_ l: Int,_ r: Int,_ time: Int) {
+            self.l = l
+            self.r = r
+            self.time = time
+        }
+        var l, r, time: Int;
+    };
+    struct T {
+        internal init(_ new_time: Int) {
+            self.new_time = new_time
+        }
+        var new_time: Int;
+    };
+    static func op_ss(_ l: S,_ r: S) -> S {
+        if (l.l == -1) { return r; }
+        if (r.l == -1) { return l; }
+        assert(l.r == r.l);
+        return S(l.l, r.r, max(l.time, r.time));
     }
-    var l, r, time: Int;
-};
-fileprivate struct T {
-    internal init(_ new_time: Int) {
-        self.new_time = new_time
+    static func op_ts(_ l: T,_ r: S) -> S {
+        if (l.new_time == -1) { return r; }
+        assert(r.time < l.new_time);
+        return S(r.l, r.r, l.new_time);
     }
-    var new_time: Int;
-};
-fileprivate func op_ss(_ l: S,_ r: S) -> S {
-    if (l.l == -1) { return r; }
-    if (r.l == -1) { return l; }
-    assert(l.r == r.l);
-    return S(l.l, r.r, max(l.time, r.time));
-}
-fileprivate func op_ts(_ l: T,_ r: S) -> S {
-    if (l.new_time == -1) { return r; }
-    assert(r.time < l.new_time);
-    return S(r.l, r.r, l.new_time);
-}
-fileprivate func op_tt(_ l: T,_ r: T) -> T {
-    if (l.new_time == -1) { return r; }
-    if (r.new_time == -1) { return l; }
-    assert(l.new_time > r.new_time);
-    return l;
-}
-fileprivate func e_s() -> S { return S(-1, -1, -1); }
-fileprivate func e_t() -> T { return T(-1); }
-
-fileprivate extension lazy_segtree where S == AtCoderTests.S, F == AtCoderTests.T {
-    init() {
-        self.init(op: op_ss,
-                  e: e_s(),
-                  mapping: op_ts,
-                  composition: op_tt,
-                  id: e_t())
+    static func op_tt(_ l: T,_ r: T) -> T {
+        if (l.new_time == -1) { return r; }
+        if (r.new_time == -1) { return l; }
+        assert(l.new_time > r.new_time);
+        return l;
     }
-    init(_ n: Int) {
-        self.init(op: op_ss,
-                  e: e_s(),
-                  mapping: op_ts,
-                  composition: op_tt,
-                  id: e_t(),
-                  n )
-    }
-    init(_ v: [S]) {
-        self.init(op: op_ss,
-                  e: e_s(),
-                  mapping: op_ts,
-                  composition: op_tt,
-                  id: e_t(),
-                  v )
-    }
+    static func e_s() -> S { return S(-1, -1, -1); }
+    static func e_t() -> T { return T(-1); }
+    var storage: Storage
 }
 
-fileprivate typealias seg = lazy_segtree<S,T>
+extension seg: LazySegtreeProtocol {
+    typealias F = T
+    static let op: (S,S) -> S = op_ss
+    static let e: S = e_s()
+    static let mapping: (F,S) -> S = op_ts
+    static let composition: (F,F) -> F = op_tt
+    static let id: F = e_t()
+}
 
+final class lazySegtreeStressTests_v2: XCTestCase {
 
-final class lazySegtreeStressTests: XCTestCase {
-
-//    fileprivate typealias S = _seg.S
-//    fileprivate typealias T = _seg.T
+    fileprivate typealias S = seg.S
+    fileprivate typealias T = seg.T
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -173,7 +156,7 @@ final class lazySegtreeStressTests: XCTestCase {
                     var l, r: Int;
                     (l, r) = randpair(0, n);
                     if (ty == 0) {
-                        XCTAssertEqual(r, seg0.max_right(l) { s in
+                        XCTAssertEqual(r, seg0.maxRight(l) { s in
                             if (s.l == -1) { return true; }
                             assert(s.l == l);
                             assert(s.time == tm.prod(l, s.r));
@@ -212,7 +195,7 @@ final class lazySegtreeStressTests: XCTestCase {
                     var l, r: Int;
                     (l, r) = randpair(0, n);
                     if (ty == 0) {
-                        XCTAssertEqual(l, seg0.min_left(r) { s in
+                        XCTAssertEqual(l, seg0.minLeft(r) { s in
                             if (s.l == -1) { return true; }
                             assert(s.r == r);
                             assert(s.time == tm.prod(s.l, r));

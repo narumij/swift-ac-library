@@ -4,7 +4,7 @@ swift-ac-libraryは、[AC(AtCoder) Library][ac-library]のSwift移植版です�
 
 ## 利用の仕方
 
-SwiftPM パッケージで swift-ac-libraryを利用する場合は、以下をPackage.swift に追加してください。
+SwiftPMで swift-ac-libraryを利用する場合は、以下をPackage.swift に追加してください。
 
 ```
 dependencies: [
@@ -20,37 +20,34 @@ dependencies: [
 
 例: 集合SがInt、単位元が0、二項演算がmax関数の場合
 ```swift
-let N: Int
-var segtree = segtree<Int>(op: max, e: 0, N)
+var segtree = segtree<Int>(op: max, e: 0)
+```
+
+```swift
+var segtree = segtree(op: max, e: 0)
 ```
 
 例: 集合SがInt、単位元が0、二項演算が加算の場合
 ```swift
-let N: Int
-var segtree = segtree<Int>(op: (+), e: 0, N)
+var segtree = segtree<Int>(op: +, e: 0)
 ```
 
 例: 集合SがInt、単位元が1、二項演算が乗算の場合
 ```swift
-let N: Int
-var segtree = segtree<Int>(op: (*), e: 1, N)
+var segtree = segtree<Int>(op: *, e: 1)
 ```
 
 ## 遅延セグ木の作り方
 
-プロトコル適用をすることで、構造体をセグ木にして利用することができます。
-適用の際に行う必要があるのは、単位元、二項演算、作用関数、作用の合成関数、作用の単位元、ストレージの六つを書くことです。
+使い勝手が悪かったので、Python版に寄せました。
 
-例: モノイドの型S、写像の型FがInt。単位元が0、二項演算がmax関数、作用関数が加算、作用の合成関数が加算、作用の単位元が0の場合。
+例: モノイドの型S、写像の型FがInt。単位元がIntの最小値、二項演算がmax関数、作用関数が加算、作用の合成関数が加算、作用の単位元が0の場合。
 ```swift
-struct lazy_segtree: LazySegtreeProtocol {
-    static let op: (Int,Int) -> Int = max
-    static let e: Int = Int.min
-    static var mapping: (Int,Int) -> Int = (+)
-    static var composition: (Int,Int) -> Int = (+)
-    static let id: Int = 0
-    var storage: Storage
-}
+var lazy_segtree = lazy_segtree<Int,Int>(op: max, e: Int.min, mapping: +, composition: +, id: 0)
+```
+
+```swift
+var lazy_segtree = lazy_segtree(op: max, e: Int.min, mapping: +, composition: +, id: 0)
 ```
 
 ## 公式情報
@@ -90,6 +87,10 @@ SwiftはいろいろとIntに集約するような言語デザインになって
 ### Arrayか、ContiguousArrayか
 
 将来的にもコンパイラや標準ライブラリの改善が享受できるArrayを積極的に採用していくことにしています。
+
+### 遅延セグ木の性能
+
+まだ以前の版のものに性能が追いついていません。
 
 ## ライセンス
 

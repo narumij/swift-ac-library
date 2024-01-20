@@ -37,7 +37,7 @@ final class segtreeTests_v0: XCTestCase {
         
         throw XCTSkip("配列のfatalをSwiftのみでハンドリングする方法が、まだない。SE-0403以後に、テストするように切り替えます。")
         
-        XCTAssertThrowsError(segtree_naive<fixture>(-1))
+        XCTAssertThrowsError(segtree_naive_v0<fixture>(-1))
         
         let s = segtree_v0<fixture>(10)
         
@@ -73,7 +73,7 @@ final class segtreeTests_v0: XCTestCase {
 
 //        for (int n = 0; n < 30; n++) {
         for n in 0..<30 {
-            var seg0 = segtree_naive<fixture>(n);
+            var seg0 = segtree_naive_v0<fixture>(n);
             var seg1 = segtree_v0<fixture>(n);
 //            for (int i = 0; i < n; i++) {
             for i in 0..<n {

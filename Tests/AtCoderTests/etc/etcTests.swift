@@ -26,6 +26,27 @@ final class etcTests: XCTestCase {
     func testPowerMode1() throws {
         XCTAssertEqual(0, _Internal.pow_mod_constexpr(2, 32, 1))
     }
+    
+    func some() throws {
+        do {
+            var segtree = segtree<Int>(op: max, e: 0)
+        }
+        do {
+            var segtree = segtree(op: max, e: 0)
+        }
+        do {
+            var segtree = segtree<Int>(op: +, e: 0)
+        }
+        do {
+            var segtree = segtree<Int>(op: *, e: 1)
+        }
+        do {
+            var lazy_segtree = lazy_segtree<Int,Int>(op: max, e: 0, mapping: +, composition: +, id: 0)
+        }
+        do {
+            var lazy_segtree = lazy_segtree(op: max, e: 0, mapping: +, composition: +, id: 0)
+        }
+    }
 
     func testPerformanceExample() throws {
         // This is an example of a performance test case.

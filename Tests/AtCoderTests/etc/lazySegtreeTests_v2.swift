@@ -7,34 +7,17 @@ fileprivate struct lazy_segtree_starry {
     static func op_tt(_ a: Int,_ b: Int) -> Int { return a + b; }
     static func e_s() -> Int { return -1_000_000_000; }
     static func e_t() -> Int { return 0; }
-    typealias S = Int
-    typealias F = Int
+    var storage: Storage
 };
 
-fileprivate extension lazy_segtree where S == lazy_segtree_starry.S, F == lazy_segtree_starry.F {
-    init() {
-        self.init(op: max,
-                  e: -1_000_000_000,
-                  mapping: (+),
-                  composition: (+),
-                  id: 0)
-    }
-    init(_ n: Int) {
-        self.init(op: lazy_segtree_starry.op_ss,
-                  e: lazy_segtree_starry.e_s(),
-                  mapping: lazy_segtree_starry.op_ts,
-                  composition: lazy_segtree_starry.op_tt,
-                  id: lazy_segtree_starry.e_t(),
-                  n )
-    }
-    init(_ v: [S]) {
-        self.init(op: lazy_segtree_starry.op_ss,
-                  e: lazy_segtree_starry.e_s(),
-                  mapping: lazy_segtree_starry.op_ts,
-                  composition: lazy_segtree_starry.op_tt,
-                  id: lazy_segtree_starry.e_t(),
-                  v )
-    }
+extension lazy_segtree_starry: LazySegtreeProtocol {
+    typealias S = Int
+    static let op: (S,S) -> S = op_ss
+    static let e: S = e_s()
+    typealias F = Int
+    static var mapping: (F,S) -> S = { a, b in lazy_segtree_starry.op_ts(a,b) }
+    static var composition: (F,F) -> F = { a, b in lazy_segtree_starry.op_tt(a,b) }
+    static let id: F = e_t()
 }
 
 fileprivate struct lazy_segtree_starry2: LazySegtreeProtocol {
@@ -46,9 +29,9 @@ fileprivate struct lazy_segtree_starry2: LazySegtreeProtocol {
     var storage: Storage
 }
 
-fileprivate typealias starry_seg = lazy_segtree<lazy_segtree_starry.S,lazy_segtree_starry.F>
+fileprivate typealias starry_seg = lazy_segtree_starry
 
-final class lazySegtreeTests: XCTestCase {
+final class ManagedBufferLazySegtreeTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -60,16 +43,16 @@ final class lazySegtreeTests: XCTestCase {
 
     func test0() throws {
         do {
-            var s = starry_seg(0);
-            XCTAssertEqual(-1_000_000_000, s.all_prod());
+            let s = starry_seg(0);
+            XCTAssertEqual(-1_000_000_000, s.allProd());
         }
         do {
-            var s = starry_seg();
-            XCTAssertEqual(-1_000_000_000, s.all_prod());
+            let s = starry_seg();
+            XCTAssertEqual(-1_000_000_000, s.allProd());
         }
         do {
-            var s = starry_seg(10);
-            XCTAssertEqual(-1_000_000_000, s.all_prod());
+            let s = starry_seg(10);
+            XCTAssertEqual(-1_000_000_000, s.allProd());
         }
     }
     
@@ -125,9 +108,9 @@ final class lazySegtreeTests: XCTestCase {
         
         var seg = starry_seg([Int](repeating: 0, count: 10));
         
-        XCTAssertEqual(0, seg.all_prod());
+        XCTAssertEqual(0, seg.allProd());
         seg.apply(0, 3, 5);
-        XCTAssertEqual(5, seg.all_prod());
+        XCTAssertEqual(5, seg.allProd());
         seg.apply(2, -10);
         XCTAssertEqual(-5, seg.prod(2, 3));
         XCTAssertEqual(0, seg.prod(2, 4));

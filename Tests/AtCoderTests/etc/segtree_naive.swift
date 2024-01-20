@@ -2,17 +2,17 @@ import Foundation
 @testable import AtCoder
 
 // from https://github.com/atcoder/ac-library/blob/master/test/unittest/segtree_test.cpp
-struct segtree_naive<T: SegtreeParameter> {
-    typealias S = T.S
-    func op(_ l: S,_ r: S) -> S { T.op(l,r) }
-    func e() -> S { T.e }
-    
+struct segtree_naive<S> {
+    let op: (S,S) -> S
+    let _e: S
     let n: Int
     var d: [S]
-    init() { self.init(0) }
-    init(_ _n: Int) {
+    init(op: @escaping (S,S) ->S, e: S) { self.init(op:op,e:e,0) }
+    init(op: @escaping (S,S) ->S, e: S,_ _n: Int) {
+        self.op = op
+        _e = e
         n = _n
-        d = [S](repeating: T.e, count: n)
+        d = [S](repeating: e, count: n)
     }
     mutating func set(_ p: Int,_ x: S) { d[p] = x; }
     func get(_ p: Int) -> S { return d[p]; }
@@ -47,4 +47,6 @@ struct segtree_naive<T: SegtreeParameter> {
         }
         return 0;
     }
+    
+    func e() -> S { _e }
 }
