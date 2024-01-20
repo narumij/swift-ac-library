@@ -37,7 +37,7 @@ var segtree = segtree<Int>(op: +, e: 0)
 var segtree = segtree<Int>(op: *, e: 1)
 ```
 
-## 遅延セグ木の作り方
+## 遅延セグ木の使い方
 
 使い勝手が悪かったので、Python版に寄せました。
 
