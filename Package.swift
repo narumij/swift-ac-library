@@ -27,8 +27,8 @@ let package = Package(
             name: "AtCoderTests",
             dependencies: [
                 "AtCoder",
-                .product(name: "Collections", package: "swift-collections"),
                 .product(name: "Algorithms", package: "swift-algorithms"),
+                .product(name: "Collections", package: "swift-collections"),
             ]),
     ]
 )
