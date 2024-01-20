@@ -43,11 +43,21 @@ var segtree = segtree<Int>(op: *, e: 1)
 
 例: モノイドの型S、写像の型FがInt。単位元がIntの最小値、二項演算がmax関数、作用関数が加算、作用の合成関数が加算、作用の単位元が0の場合。
 ```swift
-var lazy_segtree = lazy_segtree<Int,Int>(op: max, e: Int.min, mapping: +, composition: +, id: 0)
+var lazy_segtree = lazy_segtree<Int,Int>(
+    op: max,
+    e: 0,
+    mapping: +,
+    composition: +,
+    id: 0)
 ```
 
 ```swift
-var lazy_segtree = lazy_segtree(op: max, e: Int.min, mapping: +, composition: +, id: 0)
+var lazy_segtree = lazy_segtree(
+    op: max,
+    e: 0,
+    mapping: +,
+    composition: +,
+    id: 0)
 ```
 
 ## 公式情報

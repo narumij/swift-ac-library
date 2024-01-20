@@ -41,10 +41,20 @@ final class etcTests: XCTestCase {
             var segtree = segtree<Int>(op: *, e: 1)
         }
         do {
-            var lazy_segtree = lazy_segtree<Int,Int>(op: max, e: 0, mapping: +, composition: +, id: 0)
+            var lazy_segtree = lazy_segtree<Int,Int>(
+                op: max,
+                e: 0,
+                mapping: +,
+                composition: +,
+                id: 0)
         }
         do {
-            var lazy_segtree = lazy_segtree(op: max, e: 0, mapping: +, composition: +, id: 0)
+            var lazy_segtree = lazy_segtree(
+                op: max,
+                e: 0,
+                mapping: +,
+                composition: +,
+                id: 0)
         }
     }
 
