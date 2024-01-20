@@ -59,10 +59,7 @@ extension FenwickTree {
     
     @inlinable @inline(__always)
     mutating func _update<R>(_ body: (_UnsafeHandle) -> R) -> R {
-        data.withUnsafeMutableBufferPointer { data in
-            let handle = _UnsafeHandle(_n: _n, data: data.baseAddress!)
-            return body(handle)
-        }
+        body(_UnsafeHandle(_n: _n, data: &data))
     }
 }
 

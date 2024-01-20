@@ -71,9 +71,7 @@ extension DSU {
     
     @inlinable @inline(__always)
     mutating func _update<R>(_ body: (_UnsafeHandle) -> R) -> R {
-        parent_or_size.withUnsafeMutableBufferPointer { parent_or_size in
-            body(_UnsafeHandle(_n: _n, parent_or_size: parent_or_size.baseAddress!))
-        }
+        body(_UnsafeHandle(_n: _n, parent_or_size: &parent_or_size))
     }
 }
 
