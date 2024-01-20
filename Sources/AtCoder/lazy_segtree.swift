@@ -14,8 +14,12 @@ public struct lazy_segtree<S,F> {
 
 public extension lazy_segtree {
     
-    init(op: @escaping (S, S) -> S, e: S, mapping: @escaping (F, S) -> S, composition: @escaping (F, F) -> F, id: F) { self.init(op: op, e: e, mapping: mapping, composition: composition, id: id, 0) }
-    init(op: @escaping (S, S) -> S, e: S, mapping: @escaping (F, S) -> S, composition: @escaping (F, F) -> F, id: F,_ n: Int) { self.init(op: op, e: e, mapping: mapping, composition: composition, id: id,[S](repeating: e, count: n)) }
+    init(op: @escaping (S, S) -> S, e: S, mapping: @escaping (F, S) -> S, composition: @escaping (F, F) -> F, id: F) {
+        self.init(op: op, e: e, mapping: mapping, composition: composition, id: id, 0)
+    }
+    init(op: @escaping (S, S) -> S, e: S, mapping: @escaping (F, S) -> S, composition: @escaping (F, F) -> F, id: F,_ n: Int) {
+        self.init(op: op, e: e, mapping: mapping, composition: composition, id: id, [S](repeating: e, count: n))
+    }
     init(op: @escaping (S, S) -> S, e: S, mapping: @escaping (F, S) -> S, composition: @escaping (F, F) -> F, id: F,_ v: [S]) {
         self.op = op
         _e = e
@@ -250,15 +254,15 @@ extension lazy_segtree {
             self.lz = lz
         }
 
-        @usableFromInline let op: (S,S) -> S
-        @usableFromInline let _e: S
-        @usableFromInline let mapping: (F,S) -> S
-        @usableFromInline let composition: (F,F) -> F
-        @usableFromInline let _id: F
+        public let op: (S,S) -> S
+        public let _e: S
+        public let mapping: (F,S) -> S
+        public let composition: (F,F) -> F
+        public let _id: F
 
-        @usableFromInline let _n, size, log: Int
-        @usableFromInline let d: UnsafeMutablePointer<S>
-        @usableFromInline let lz: UnsafeMutablePointer<F>
+        public let _n, size, log: Int
+        public let d: UnsafeMutablePointer<S>
+        public let lz: UnsafeMutablePointer<F>
     }
 }
 
