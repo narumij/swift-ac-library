@@ -1,52 +1,63 @@
 import XCTest
 @testable import AtCoder
 
-fileprivate struct lazy_segtree_starry {
-    static func op_ss(_ a: Int,_ b: Int) -> Int { return max(a, b); }
-    static func op_ts(_ a: Int,_ b: Int) -> Int { return a + b; }
-    static func op_tt(_ a: Int,_ b: Int) -> Int { return a + b; }
-    static func e_s() -> Int { return -1_000_000_000; }
-    static func e_t() -> Int { return 0; }
-    typealias S = Int
-    typealias F = Int
-};
+fileprivate let op_ss: lazy_segtree<Int,Int>.Op = max
+fileprivate let op_ts: lazy_segtree<Int,Int>.Mapping = (+)
+fileprivate let op_tt: lazy_segtree<Int,Int>.Composition = (+)
+fileprivate let e_s: lazy_segtree<Int,Int>.S = -1_000_000_000
+fileprivate let e_t: lazy_segtree<Int,Int>.F = 0
+fileprivate typealias S = Int
+fileprivate typealias F = Int
 
-fileprivate extension lazy_segtree where S == lazy_segtree_starry.S, F == lazy_segtree_starry.F {
+protocol LazySegtreeMonoid {
+    associatedtype S
+    static var op: (S,S) -> S { get }
+    static var e: S { get }
+    associatedtype F
+    static var mapping: (F,S) -> S { get }
+    static var composition: (F,F) -> F { get }
+    static var id: F { get }
+}
+
+extension lazy_segtree {
+    init<T>(_ monoid: T) where T: LazySegtreeMonoid, S == T.S, F == T.F {
+        self.init(op: T.op, e: T.e, mapping: T.mapping, composition: T.composition, id: T.id)
+    }
+    init<T>(_ monoid: T,_ n: Int) where T: LazySegtreeMonoid, S == T.S, F == T.F {
+        self.init(op: T.op, e: T.e, mapping: T.mapping, composition: T.composition, id: T.id, n)
+    }
+    init<T>(_ monoid: T,_ v: [S]) where T: LazySegtreeMonoid, S == T.S, F == T.F {
+        self.init(op: T.op, e: T.e, mapping: T.mapping, composition: T.composition, id: T.id, v)
+    }
+}
+
+fileprivate extension lazy_segtree where S == AtCoderTests.S, F == AtCoderTests.F {
     init() {
         self.init(op: max,
                   e: -1_000_000_000,
-                  mapping: (+),
-                  composition: (+),
+                  mapping: +,
+                  composition: +,
                   id: 0)
     }
     init(_ n: Int) {
-        self.init(op: lazy_segtree_starry.op_ss,
-                  e: lazy_segtree_starry.e_s(),
-                  mapping: lazy_segtree_starry.op_ts,
-                  composition: lazy_segtree_starry.op_tt,
-                  id: lazy_segtree_starry.e_t(),
+        self.init(op: max,
+                  e: -1_000_000_000,
+                  mapping: +,
+                  composition: +,
+                  id: 0,
                   n )
     }
     init(_ v: [S]) {
-        self.init(op: lazy_segtree_starry.op_ss,
-                  e: lazy_segtree_starry.e_s(),
-                  mapping: lazy_segtree_starry.op_ts,
-                  composition: lazy_segtree_starry.op_tt,
-                  id: lazy_segtree_starry.e_t(),
+        self.init(op: max,
+                  e: -1_000_000_000,
+                  mapping: +,
+                  composition: +,
+                  id: 0,
                   v )
     }
 }
 
-fileprivate struct lazy_segtree_starry2: LazySegtreeProtocol {
-    static let op: (Int,Int) -> Int = max
-    static let e: Int = Int.min
-    static var mapping: (Int,Int) -> Int = (+)
-    static var composition: (Int,Int) -> Int = (+)
-    static let id: Int = 0
-    var storage: Storage
-}
-
-fileprivate typealias starry_seg = lazy_segtree<lazy_segtree_starry.S,lazy_segtree_starry.F>
+fileprivate typealias starry_seg = lazy_segtree<S,F>
 
 final class lazySegtreeTests: XCTestCase {
 

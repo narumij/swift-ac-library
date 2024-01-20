@@ -302,3 +302,11 @@ public extension lazy_segtree {
         __update{ $0.min_left(r, g) }
     }
 }
+
+public extension lazy_segtree {
+    typealias S = S
+    typealias Op = (S,S) -> S
+    typealias F = F
+    typealias Mapping = (F,S) -> S
+    typealias Composition = (F,F) -> F
+}

@@ -9,7 +9,7 @@ import XCTest
 @testable import AtCoder
 
 fileprivate typealias ll = CLongLong;
-fileprivate typealias  ull = CUnsignedLongLong;
+fileprivate typealias ull = CUnsignedLongLong;
 
 final class two_satTests: XCTestCase {
 

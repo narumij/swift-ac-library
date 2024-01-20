@@ -1,39 +1,46 @@
 import XCTest
 @testable import AtCoder
 
+fileprivate func op(a: String,b: String) -> String {
+    assert(a == "$" || b == "$" || a <= b);
+    if (a == "$") { return b; }
+    if (b == "$") { return a; }
+    return a + b;
+}
+
+fileprivate let e: String = "$"
+
+protocol SegtreeMonoid {
+    associatedtype S
+    static var op: (S,S) -> S { get }
+    static var e: S { get }
+}
+
+extension segtree {
+    init<T>(_ monoid: T) where T: SegtreeMonoid, S == T.S {
+        self.init(op: T.op, e: T.e)
+    }
+    init<T>(_ monoid: T,_ n: Int) where T: SegtreeMonoid, S == T.S {
+        self.init(op: T.op, e: T.e, n)
+    }
+    init<T>(_ monoid: T,_ v: [S]) where T: SegtreeMonoid, S == T.S {
+        self.init(op: T.op, e: T.e, v)
+    }
+}
+
 fileprivate extension segtree where S == String {
     init() {
-        self.init(op: Self.op, e: Self.e, 0 )
+        self.init(op: AtCoderTests.op, e: AtCoderTests.e)
     }
     init(_ n: Int) {
-        self.init(op: Self.op, e: Self.e, n )
+        self.init(op: AtCoderTests.op, e: AtCoderTests.e, n )
     }
-    init(_ v: [S]) {
-        self.init(op: Self.op, e: Self.e, v )
-    }
-    static var op: (String,String) -> String { { a, b in
-        assert(a == "$" || b == "$" || a <= b);
-        if (a == "$") { return b; }
-        if (b == "$") { return a; }
-        return a + b;
-    } }
-    static var e: String { "$" }
 }
 
 fileprivate extension segtree_naive where S == String {
-    init() {
-        self.init(op: Self.op, e: Self.e, 0 )
-    }
     init(_ n: Int) {
-        self.init(op: Self.op, e: Self.e, n )
+        self.init(op: AtCoderTests.op, e: AtCoderTests.e, n )
     }
-    static var op: (String,String) -> String { { a, b in
-        assert(a == "$" || b == "$" || a <= b);
-        if (a == "$") { return b; }
-        if (b == "$") { return a; }
-        return a + b;
-    } }
-    static var e: String { "$" }
 }
 
 final class segtreeTests: XCTestCase {

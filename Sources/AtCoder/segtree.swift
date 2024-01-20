@@ -122,3 +122,8 @@ extension segtree {
 
     func e() -> S { _e }
 }
+
+public extension segtree {
+    typealias S = S
+    typealias Op = (S,S) -> S
+}
