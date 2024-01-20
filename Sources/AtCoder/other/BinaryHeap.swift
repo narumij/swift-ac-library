@@ -60,7 +60,7 @@ struct BinaryHeapUnsafeHandle<Element> {
 
 extension BinaryHeapUnsafeHandle {
     @usableFromInline
-    typealias Index = UnsafeMutableBufferPointer<Element>.Index
+    typealias Index = Int
     
     @inlinable @inline(__always)
     func push_heap(_ limit: Index) {
