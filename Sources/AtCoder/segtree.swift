@@ -2,26 +2,36 @@ import Foundation
 
 public struct segtree<S> {
     let op: (S,S) -> S
-    let _e: S
+    let e: () -> S
     let _n, size, log: Int
     var d: [S]
 }
 
 public extension segtree {
     
-    init(op: @escaping (S,S) ->S, e: S) {
-        self.init(op: op, e: e, 0 )
+    init(op: @escaping (S,S) ->S,
+         e: @autoclosure @escaping () -> S)
+    {
+        self.init(op: op, e: e(), 0 )
     }
-    init(op: @escaping (S,S) ->S, e: S,_ n: Int) {
-        self.init(op: op, e: e, [S](repeating: e, count: n) )
+    
+    init(op: @escaping (S,S) ->S,
+         e: @autoclosure @escaping () -> S,
+         _ n: Int)
+    {
+        self.init(op: op, e: e(), [S](repeating: e(), count: n) )
     }
-    init(op: @escaping (S,S) ->S, e: S,_ v: [S]) {
+    
+    init(op: @escaping (S,S) ->S,
+         e: @autoclosure @escaping () -> S,
+         _ v: [S])
+    {
         self.op = op
-        self._e = e
+        self.e = e
         _n = v.count
         size = _Internal.bit_ceil(UInt64(_n))
         log = _Internal.countr_zero(UInt64(size))
-        d = [S](repeating: e, count: 2 * size)
+        d = [S](repeating: e(), count: 2 * size)
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         for i in 0..<_n { d[size + i] = v[i] }
         // for (int i = size - 1; i >= 1; i--) {
@@ -119,11 +129,10 @@ extension segtree {
     mutating func update(_ k: Int) {
         d[k] = op(d[2 * k], d[2 * k + 1])
     }
-
-    func e() -> S { _e }
 }
 
 public extension segtree {
     typealias S = S
     typealias Op = (S,S) -> S
+    typealias E = () -> S
 }

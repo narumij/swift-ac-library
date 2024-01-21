@@ -143,6 +143,16 @@ final class lazySegtreeTests: XCTestCase {
         XCTAssertEqual(-5, seg.prod(2, 3));
         XCTAssertEqual(0, seg.prod(2, 4));
     }
+    
+    func testString() throws {
+        
+        do {
+            var seg = lazy_segtree(op: +, e: "$", mapping: +, composition: +, id: "")
+        }
+        do {
+            var seg = lazy_segtree(op: +, e: "$", mapping: +, composition: +, id: "",12)
+        }
+    }
 
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
