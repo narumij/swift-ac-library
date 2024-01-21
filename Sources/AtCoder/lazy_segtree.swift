@@ -61,17 +61,16 @@ public extension lazy_segtree {
         _log = _Internal.countr_zero(UInt64(_size))
         let (__size,__n) = (_size, _n)
         d = [S](unsafeUninitializedCapacity: 2 * __size) { buffer, initializedCount in
-            let d = buffer.baseAddress!
-            d.update(repeating: e(), count: __size)
-            (d + __size).update(from: v, count: __n)
-            (d + __size + __n).update(repeating: e(), count: __size - __n)
+            buffer.baseAddress?.update(repeating: e(), count: __size)
+            (buffer.baseAddress! + __size).update(from: v, count: __n)
+            (buffer.baseAddress! + __size + __n).update(repeating: e(), count: __size - __n)
             initializedCount = 2 * __size
         }
         lz = [F](repeating: id(), count: __size)
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         __update { unsafeHandle in
-            stride(from: __size - 1, through: 1, by: -1).forEach {
-                unsafeHandle.update($0)
+            var i = __size - 1; while i >= 1 { defer { i -= 1 }
+                unsafeHandle.update(i)
             }
         }
     }
