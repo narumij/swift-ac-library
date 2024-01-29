@@ -5,24 +5,28 @@ public struct segtree<S> {
     let e: () -> S
     let _n, size, log: Int
     var d: [S]
+    
+    typealias S = S
+    typealias Op = (S,S) -> S
+    typealias E = () -> S
 }
 
 public extension segtree {
     
-    init(op: @escaping (S,S) ->S,
+    init(op: @escaping (S,S) -> S,
          e: @autoclosure @escaping () -> S)
     {
         self.init(op: op, e: e(), 0 )
     }
     
-    init(op: @escaping (S,S) ->S,
+    init(op: @escaping (S,S) -> S,
          e: @autoclosure @escaping () -> S,
          _ n: Int)
     {
         self.init(op: op, e: e(), [S](repeating: e(), count: n) )
     }
     
-    init(op: @escaping (S,S) ->S,
+    init(op: @escaping (S,S) -> S,
          e: @autoclosure @escaping () -> S,
          _ v: [S])
     {
@@ -71,9 +75,9 @@ public extension segtree {
         return op(sml, smr);
     }
     
-    func all_prod() -> S { return d[1]; }
+    func allProd() -> S { return d[1]; }
     
-    func max_right(_ l: Int,_ f: (S) -> Bool) -> Int {
+    func maxRight(_ l: Int,_ f: (S) -> Bool) -> Int {
         var l = Int(l)
         assert(0 <= l && l <= _n);
         assert(f(e()));
@@ -98,7 +102,7 @@ public extension segtree {
         return _n;
     }
     
-    func min_left(_ r: Int,_ f: (S) -> Bool ) -> Int {
+    func minLeft(_ r: Int,_ f: (S) -> Bool ) -> Int {
         var r = Int(r)
         assert(0 <= r && r <= _n);
         assert(f(e()));
@@ -131,8 +135,3 @@ extension segtree {
     }
 }
 
-public extension segtree {
-    typealias S = S
-    typealias Op = (S,S) -> S
-    typealias E = () -> S
-}

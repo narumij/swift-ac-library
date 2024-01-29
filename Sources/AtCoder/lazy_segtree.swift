@@ -10,6 +10,12 @@ public struct lazy_segtree<S,F> {
     @usableFromInline let _n, _size, _log: Int
     @usableFromInline var d: [S]
     @usableFromInline var lz: [F]
+    
+    typealias S = S
+    typealias Op = (S,S) -> S
+    typealias F = F
+    typealias Mapping = (F,S) -> S
+    typealias Composition = (F,F) -> F
 }
 
 public extension lazy_segtree {
@@ -298,7 +304,7 @@ public extension lazy_segtree {
     mutating func prod(_ l: Int,_ r: Int) -> S {
         __update{ $0.prod(l, r) }
     }
-    mutating func all_prod() -> S {
+    mutating func allProd() -> S {
         __update{ $0.all_prod() }
     }
     mutating func apply(_ p: Int,_ f: F) {
@@ -307,18 +313,11 @@ public extension lazy_segtree {
     mutating func apply(_ l: Int,_ r: Int,_ f: F) {
         __update{ $0.apply(l, r, f) }
     }
-    mutating func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
+    mutating func maxRight(_ l: Int,_ g: (S) -> Bool) -> Int {
         __update{ $0.max_right(l, g) }
     }
-    mutating func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
+    mutating func minLeft(_ r: Int,_ g: (S) -> Bool) -> Int {
         __update{ $0.min_left(r, g) }
     }
 }
 
-public extension lazy_segtree {
-    typealias S = S
-    typealias Op = (S,S) -> S
-    typealias F = F
-    typealias Mapping = (F,S) -> S
-    typealias Composition = (F,F) -> F
-}

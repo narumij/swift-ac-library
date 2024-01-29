@@ -72,15 +72,15 @@ final class lazySegtreeTests: XCTestCase {
     func test0() throws {
         do {
             var s = starry_seg(0);
-            XCTAssertEqual(-1_000_000_000, s.all_prod());
+            XCTAssertEqual(-1_000_000_000, s.allProd());
         }
         do {
             var s = starry_seg();
-            XCTAssertEqual(-1_000_000_000, s.all_prod());
+            XCTAssertEqual(-1_000_000_000, s.allProd());
         }
         do {
             var s = starry_seg(10);
-            XCTAssertEqual(-1_000_000_000, s.all_prod());
+            XCTAssertEqual(-1_000_000_000, s.allProd());
         }
     }
     
@@ -136,9 +136,9 @@ final class lazySegtreeTests: XCTestCase {
         
         var seg = starry_seg([Int](repeating: 0, count: 10));
         
-        XCTAssertEqual(0, seg.all_prod());
+        XCTAssertEqual(0, seg.allProd());
         seg.apply(0, 3, 5);
-        XCTAssertEqual(5, seg.all_prod());
+        XCTAssertEqual(5, seg.allProd());
         seg.apply(2, -10);
         XCTAssertEqual(-5, seg.prod(2, 3));
         XCTAssertEqual(0, seg.prod(2, 4));
