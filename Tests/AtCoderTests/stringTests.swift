@@ -105,6 +105,7 @@ final class stringTests: XCTestCase {
 
         XCTAssertEqual([], z_algorithm(""));
         XCTAssertEqual([], z_algorithm([Int]()));
+        XCTAssertEqual([], z_algorithm("".utf8CString.dropLast()));
     }
     
     func testSALCPNaive() throws {
