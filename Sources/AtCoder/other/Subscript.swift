@@ -6,10 +6,3 @@ public extension Array {
         set { self[Int(index)] = newValue }
     }
 }
-
-public extension UnsafeMutablePointer {
-    subscript<I: BinaryInteger>(index: I) -> Pointee {
-        get { self[Int(index)] }
-        set { self[Int(index)] = newValue }
-    }
-}

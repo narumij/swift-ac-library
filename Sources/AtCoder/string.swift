@@ -46,7 +46,6 @@ static func sa_doubling<int>(_ s: [int]) -> [Int] where int: FixedWidthInteger {
 // Reference:
 // G. Nong, S. Zhang, and W. H. Chan,
 // Two Efficient Algorithms for Linear Time Suffix Array Construction
-// template <int THRESHOLD_NAIVE = 10, int THRESHOLD_DOUBLING = 40>
 static func sa_is<int>(_ s: [int],_ upper: int,_ THRESHOLD_NAIVE: int = 10,_ THRESHOLD_DOUBLING: int = 40) -> [Int]
     where int: FixedWidthInteger {
     let n = s.count;
