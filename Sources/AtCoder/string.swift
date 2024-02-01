@@ -182,7 +182,7 @@ static func sa_is<int>(_ s: [int],_ upper: int,_ THRESHOLD_NAIVE: int = 10,_ THR
 
 }  // namespace internal
 
-public func suffix_array(_ s: [Int],_ upper: Int) -> [Int] {
+public func suffix_array<int>(_ s: [int],_ upper: int) -> [Int] where int: FixedWidthInteger {
     assert(0 <= upper);
     // for (int d : s) {
     for d in s {
@@ -208,17 +208,7 @@ public func suffix_array<V>(_ s: V) -> [Int] where V: Collection, V.Element: Com
 }
 
 public func suffix_array(_ s: String) -> [Int] {
-#if false
-    let n = s.count;
-    var s2 = [Int](repeating: 0, count: n);
-    // for (int i = 0; i < n; i++) {
-    for i in 0..<n {
-        s2[i] = Int(s[s.index(s.startIndex, offsetBy: i)].asciiValue!);
-    }
-    return _Internal.sa_is(s2, 255);
-#else
-    return _Internal.sa_is(s.utf8CString.dropLast().map(UInt8.init), 255);
-#endif
+    _Internal.sa_is(s.utf8CString.dropLast().map(UInt8.init), 255);
 }
 
 // Reference:
@@ -252,17 +242,7 @@ where V: Collection, V.Element: Equatable, V.Index == Int
 }
 
 public func lcp_array(_ s: String,_ sa: [Int]) -> [Int] {
-#if false
-    let n = s.count;
-    var s2 = [Int](repeating: 0, count: n);
-    // for (int i = 0; i < n; i++) {
-    for i in 0..<n {
-        s2[i] = Int(s[s.index(s.startIndex, offsetBy: i)].asciiValue!);
-    }
-    return lcp_array(s2, sa);
-#else
-    return lcp_array(s.utf8CString.dropLast(), sa)
-#endif
+    lcp_array(s.utf8CString.dropLast(), sa)
 }
 
 // Reference:
@@ -290,15 +270,5 @@ public func z_algorithm<V>(_ s: V) -> [Int] where V: Collection, V.Element: Comp
 }
 
 public func z_algorithm(_ s: String) -> [Int] {
-#if false
-    let n = s.count;
-    var s2 = [Int](repeating: 0, count: n);
-    // for (int i = 0; i < n; i++) {
-    for i in 0..<n {
-        s2[i] = Int(s[s.index(s.startIndex, offsetBy: i)].asciiValue!);
-    }
-    return z_algorithm(s2);
-#else
-    return z_algorithm(s.utf8CString.dropLast())
-#endif
+    z_algorithm(s.utf8CString.dropLast())
 }
