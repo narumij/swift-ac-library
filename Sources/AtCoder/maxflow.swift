@@ -13,7 +13,7 @@ public extension MFGraph {
     init(_ n: Int) { _n = n; g = [[_Edge]].init(repeating: [], count: n) }
 
     @discardableResult
-    mutating func addEdge(_ from: Int,_ to: Int,_ cap: Cap) -> Int {
+    mutating func add_edge(_ from: Int,_ to: Int,_ cap: Cap) -> Int {
         assert(0 <= from && from < _n)
         assert(0 <= to && to < _n)
         assert(0 <= cap)
@@ -32,7 +32,7 @@ public extension MFGraph {
         public let cap, flow: Cap
     }
 
-    func getEdge(_ i: Int) -> Edge {
+    func get_edge(_ i: Int) -> Edge {
         let m = pos.count
         assert(0 <= i && i < m)
         let _e = g[pos[i].first][pos[i].second]
@@ -44,12 +44,12 @@ public extension MFGraph {
         let m = pos.count
         var result: [Edge] = []
         for i in 0 ..< m {
-            result.append(getEdge(i))
+            result.append(get_edge(i))
         }
         return result
     }
     
-    mutating func changeEdge(_ i: Int,_ new_cap: Cap,_ new_flow: Cap) {
+    mutating func change_edge(_ i: Int,_ new_cap: Cap,_ new_flow: Cap) {
         let m = pos.count
         assert(0 <= i && i < m)
         assert(0 <= new_flow && new_flow <= new_cap)
@@ -122,7 +122,7 @@ public extension MFGraph {
         return flow
     }
 
-    func minCut(_ s: Int) -> [Bool] {
+    func min_cut(_ s: Int) -> [Bool] {
         var visited = [Bool](repeating: false, count:_n)
         var que = Deque<Int>()
         que.append(s)

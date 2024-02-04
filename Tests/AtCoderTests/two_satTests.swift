@@ -35,19 +35,19 @@ final class two_satTests: XCTestCase {
     func testOne() throws {
         do {
             var ts = two_sat(1);
-            ts.addClause(0, true, 0, true);
-            ts.addClause(0, false, 0, false);
+            ts.add_clause(0, true, 0, true);
+            ts.add_clause(0, false, 0, false);
             XCTAssertFalse(ts.satisfiable());
         }
         do {
             var ts = two_sat(1);
-            ts.addClause(0, true, 0, true);
+            ts.add_clause(0, true, 0, true);
             XCTAssertTrue(ts.satisfiable());
             XCTAssertEqual([true], ts.answer());
         }
         do {
             var ts = two_sat(1);
-            ts.addClause(0, false, 0, false);
+            ts.add_clause(0, false, 0, false);
             XCTAssertTrue(ts.satisfiable());
             XCTAssertEqual([false], ts.answer());
         }
@@ -82,11 +82,11 @@ final class two_satTests: XCTestCase {
                 ys[i] = y;
                 types[i] = type;
                 if (type == 0) {
-                    ts.addClause(x, expect[x], y, expect[y]);
+                    ts.add_clause(x, expect[x], y, expect[y]);
                 } else if (type == 1) {
-                    ts.addClause(x, !expect[x], y, expect[y]);
+                    ts.add_clause(x, !expect[x], y, expect[y]);
                 } else {
-                    ts.addClause(x, expect[x], y, !expect[y]);
+                    ts.add_clause(x, expect[x], y, !expect[y]);
                 }
             }
             XCTAssertTrue(ts.satisfiable());

@@ -304,7 +304,7 @@ public extension lazy_segtree {
     mutating func prod(_ l: Int,_ r: Int) -> S {
         __update{ $0.prod(l, r) }
     }
-    mutating func allProd() -> S {
+    mutating func all_prod() -> S {
         __update{ $0.all_prod() }
     }
     mutating func apply(_ p: Int,_ f: F) {
@@ -313,10 +313,10 @@ public extension lazy_segtree {
     mutating func apply(_ l: Int,_ r: Int,_ f: F) {
         __update{ $0.apply(l, r, f) }
     }
-    mutating func maxRight(_ l: Int,_ g: (S) -> Bool) -> Int {
+    mutating func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
         __update{ $0.max_right(l, g) }
     }
-    mutating func minLeft(_ r: Int,_ g: (S) -> Bool) -> Int {
+    mutating func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
         __update{ $0.min_left(r, g) }
     }
 }

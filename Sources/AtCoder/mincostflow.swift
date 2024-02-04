@@ -17,7 +17,7 @@ public extension MCFGraph {
 public extension MCFGraph {
     
     @discardableResult
-    mutating func addEdge(_ from: Int,_ to: Int,_ cap: Cap,_ cost: Cost) -> Int {
+    mutating func add_edge(_ from: Int,_ to: Int,_ cap: Cap,_ cost: Cost) -> Int {
         assert(0 <= from && from < _n)
         assert(0 <= to && to < _n)
         assert(0 <= cap)
@@ -34,7 +34,7 @@ public extension MCFGraph {
         public let cost: Cost
     }
     
-    func getEdge(_ i: Int) -> Edge {
+    func get_edge(_ i: Int) -> Edge {
         let m = _edges.count
         assert(0 <= i && i < m)
         return _edges[i]

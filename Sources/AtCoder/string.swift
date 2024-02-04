@@ -2,7 +2,7 @@ import Foundation
 
 extension _Internal {
 
-static func sa_naive<int: FixedWidthInteger>(_ s: [int]) -> [Int] {
+static func sa_naive<int>(_ s: [int]) -> [Int] where int: FixedWidthInteger {
     let n = s.count;
     var sa = [Int](repeating: 0, count: n);
     sa = (0..<n).map{ $0 }
@@ -182,29 +182,34 @@ static func sa_is<int>(_ s: [int],_ upper: int,_ THRESHOLD_NAIVE: int = 10,_ THR
 
 }  // namespace internal
 
-public func suffix_array<int>(_ s: [int],_ upper: int) -> [Int] where int: FixedWidthInteger {
+public func suffix_array<int>(_ s: [int],_ upper: int) -> [Int]
+where int: FixedWidthInteger
+{
     assert(0 <= upper);
-    // for (int d : s) {
-    for d in s {
-        assert(0 <= d && d <= upper);
-    }
+    assert(s.allSatisfy{ d in (0...upper).contains(d) })
     let sa = _Internal.sa_is(s, upper);
     return sa;
 }
 
-public func suffix_array<V>(_ s: V) -> [Int] where V: Collection, V.Element: Comparable, V.Index == Int {
-    let n = s.count;
-    var idx = [Int](repeating: 0, count: n);
+public func suffix_array<V>(_ s: V) -> [Int]
+where V: Collection, V.Element: Comparable, V.Index == Int
+{
+    let n = s.count
+#if false
+    var idx = [Int](repeating: 0, count: n)
     idx = (0..<n).map { $0 }
-    idx.sort { l, r in return s[l] < s[r]; };
-    var s2 = [Int](repeating: 0, count: n);
-    var now = 0;
+    idx.sort { l, r in return s[l] < s[r]; }
+#else
+    let idx = (0..<n).sorted { l, r in return s[l] < s[r]; }
+#endif
+    var s2 = [Int](repeating: 0, count: n)
+    var now = 0
     // for (int i = 0; i < n; i++) {
-    for i in 0..<n {
-        if ((i != 0) && s[idx[i - 1]] != s[idx[i]]) { now += 1; }
-        s2[idx[i]] = now;
+    for i in 0 ..< n {
+        if i != 0, s[idx[i - 1]] != s[idx[i]] { now += 1 }
+        s2[idx[i]] = now
     }
-    return _Internal.sa_is(s2, now);
+    return _Internal.sa_is(s2, now)
 }
 
 public func suffix_array(_ s: String) -> [Int] {
@@ -218,27 +223,27 @@ public func suffix_array(_ s: String) -> [Int] {
 public func lcp_array<V>(_ s: V, _ sa: [Int]) -> [Int]
 where V: Collection, V.Element: Equatable, V.Index == Int
 {
-    let n = s.count;
-    assert(n >= 1);
-    var rnk = [Int](repeating: 0, count: n);
+    let n = s.count
+    assert(n >= 1)
+    var rnk = [Int](repeating: 0, count: n)
     // for (int i = 0; i < n; i++) {
     for i in 0..<n {
-        rnk[sa[i]] = i;
+        rnk[sa[i]] = i
     }
-    var lcp = [Int](repeating: 0, count: n - 1);
-    var h = 0;
+    var lcp = [Int](repeating: 0, count: n - 1)
+    var h = 0
     // for (int i = 0; i < n; i++) {
-    for i in 0..<n {
-        if (h > 0) { h -= 1; }
-        if (rnk[i] == 0) { continue; }
-        let j = Int(sa[rnk[i] - 1]);
+    for i in 0 ..< n {
+        if h > 0 { h -= 1 }
+        if rnk[i] == 0 { continue }
+        let j = Int(sa[rnk[i] - 1])
         // for (; j + h < n && i + h < n; h++) {
         while j + h < n && i + h < n { defer { h += 1 }
-            if (s[j + h] != s[i + h]) { h -= 1; /* defer分の補正 */ break; }
+            if (s[j + h] != s[i + h]) { h -= 1; /* defer分の補正 */ break }
         }
-        lcp[rnk[i] - 1] = h;
+        lcp[rnk[i] - 1] = h
     }
-    return lcp;
+    return lcp
 }
 
 public func lcp_array(_ s: String,_ sa: [Int]) -> [Int] {
@@ -249,24 +254,26 @@ public func lcp_array(_ s: String,_ sa: [Int]) -> [Int] {
 // D. Gusfield,
 // Algorithms on Strings, Trees, and Sequences: Computer Science and
 // Computational Biology
-public func z_algorithm<V>(_ s: V) -> [Int] where V: Collection, V.Element: Comparable, V.Index == Int {
-    let n = s.count;
-    if (n == 0) { return []; }
-    var z = [Int](repeating: 0, count: n);
-    z[0] = 0;
+public func z_algorithm<V>(_ s: V) -> [Int]
+where V: Collection, V.Element: Comparable, V.Index == Int
+{
+    let n = s.count
+    if (n == 0) { return [] }
+    var z = [Int](repeating: 0, count: n)
+    z[0] = 0
     // for (int i = 1, j = 0; i < n; i++) {
     var j = 0
-    for i in 0..<n {
+    for i in 0 ..< n {
         // int& k = z[i];
         // k = (j + z[j] <= i) ? 0 : std::min(j + z[j] - i, z[i - j]);
         // while (i + k < n && s[k] == s[i + k]) k++;
         // if (j + z[j] < i + z[i]) j = i;
-        z[i] = (j + z[j] <= i) ? 0 : min(j + z[j] - i, z[i - j]);
-        while (i + z[i] < n && s[z[i]] == s[i + z[i]]) { z[i] += 1; }
-        if (j + z[j] < i + z[i]) { j = i; }
+        z[i] = (j + z[j] <= i) ? 0 : min(j + z[j] - i, z[i - j])
+        while i + z[i] < n && s[z[i]] == s[i + z[i]] { z[i] += 1 }
+        if j + z[j] < i + z[i] { j = i }
     }
-    z[0] = n;
-    return z;
+    z[0] = n
+    return z
 }
 
 public func z_algorithm(_ s: String) -> [Int] {
