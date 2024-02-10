@@ -75,9 +75,9 @@ public extension segtree {
         return op(sml, smr);
     }
     
-    func all_prod() -> S { return d[1]; }
+    func allProd() -> S { return d[1]; }
     
-    func max_right(_ l: Int,_ f: (S) -> Bool) -> Int {
+    func maxRight(_ l: Int,_ f: (S) -> Bool) -> Int {
         var l = Int(l)
         assert(0 <= l && l <= _n);
         assert(f(e()));
@@ -102,7 +102,7 @@ public extension segtree {
         return _n;
     }
     
-    func min_left(_ r: Int,_ f: (S) -> Bool ) -> Int {
+    func minLeft(_ r: Int,_ f: (S) -> Bool ) -> Int {
         var r = Int(r)
         assert(0 <= r && r <= _n);
         assert(f(e()));

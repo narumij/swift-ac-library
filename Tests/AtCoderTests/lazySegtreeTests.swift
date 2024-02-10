@@ -1,11 +1,11 @@
 import XCTest
 @testable import AtCoder
 
-fileprivate let op_ss: lazy_segtree<Int,Int>.Op = max
-fileprivate let op_ts: lazy_segtree<Int,Int>.Mapping = (+)
-fileprivate let op_tt: lazy_segtree<Int,Int>.Composition = (+)
-fileprivate let e_s: lazy_segtree<Int,Int>.S = -1_000_000_000
-fileprivate let e_t: lazy_segtree<Int,Int>.F = 0
+fileprivate let op_ss: LazySegTree<Int,Int>.Op = max
+fileprivate let op_ts: LazySegTree<Int,Int>.Mapping = (+)
+fileprivate let op_tt: LazySegTree<Int,Int>.Composition = (+)
+fileprivate let e_s: LazySegTree<Int,Int>.S = -1_000_000_000
+fileprivate let e_t: LazySegTree<Int,Int>.F = 0
 fileprivate typealias S = Int
 fileprivate typealias F = Int
 
@@ -19,7 +19,7 @@ protocol LazySegtreeMonoid {
     static var id: F { get }
 }
 
-extension lazy_segtree {
+extension LazySegTree {
     init<T>(_ monoid: T) where T: LazySegtreeMonoid, S == T.S, F == T.F {
         self.init(op: T.op, e: T.e, mapping: T.mapping, composition: T.composition, id: T.id)
     }
@@ -31,7 +31,7 @@ extension lazy_segtree {
     }
 }
 
-fileprivate extension lazy_segtree where S == AtCoderTests.S, F == AtCoderTests.F {
+fileprivate extension LazySegTree where S == AtCoderTests.S, F == AtCoderTests.F {
     init() {
         self.init(op: max,
                   e: -1_000_000_000,
@@ -57,7 +57,7 @@ fileprivate extension lazy_segtree where S == AtCoderTests.S, F == AtCoderTests.
     }
 }
 
-fileprivate typealias starry_seg = lazy_segtree<S,F>
+fileprivate typealias starry_seg = LazySegTree<S,F>
 
 final class lazySegtreeTests: XCTestCase {
 
@@ -72,15 +72,15 @@ final class lazySegtreeTests: XCTestCase {
     func test0() throws {
         do {
             var s = starry_seg(0);
-            XCTAssertEqual(-1_000_000_000, s.allProd());
+            XCTAssertEqual(-1_000_000_000, s.all_prod());
         }
         do {
             var s = starry_seg();
-            XCTAssertEqual(-1_000_000_000, s.allProd());
+            XCTAssertEqual(-1_000_000_000, s.all_prod());
         }
         do {
             var s = starry_seg(10);
-            XCTAssertEqual(-1_000_000_000, s.allProd());
+            XCTAssertEqual(-1_000_000_000, s.all_prod());
         }
     }
     
@@ -136,9 +136,9 @@ final class lazySegtreeTests: XCTestCase {
         
         var seg = starry_seg([Int](repeating: 0, count: 10));
         
-        XCTAssertEqual(0, seg.allProd());
+        XCTAssertEqual(0, seg.all_prod());
         seg.apply(0, 3, 5);
-        XCTAssertEqual(5, seg.allProd());
+        XCTAssertEqual(5, seg.all_prod());
         seg.apply(2, -10);
         XCTAssertEqual(-5, seg.prod(2, 3));
         XCTAssertEqual(0, seg.prod(2, 4));
@@ -147,10 +147,10 @@ final class lazySegtreeTests: XCTestCase {
     func testString() throws {
         
         do {
-            var seg = lazy_segtree(op: +, e: "$", mapping: +, composition: +, id: "")
+            var seg = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "")
         }
         do {
-            var seg = lazy_segtree(op: +, e: "$", mapping: +, composition: +, id: "",12)
+            var seg = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "",12)
         }
     }
 

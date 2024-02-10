@@ -58,7 +58,7 @@ fileprivate func op_tt(_ l: T,_ r: T) -> T {
 fileprivate func e_s() -> S { return S(-1, -1, -1); }
 fileprivate func e_t() -> T { return T(-1); }
 
-fileprivate extension lazy_segtree where S == AtCoderTests.S, F == AtCoderTests.T {
+fileprivate extension LazySegTree where S == AtCoderTests.S, F == AtCoderTests.T {
     init() {
         self.init(op: op_ss,
                   e: e_s(),
@@ -84,7 +84,7 @@ fileprivate extension lazy_segtree where S == AtCoderTests.S, F == AtCoderTests.
     }
 }
 
-fileprivate typealias seg = lazy_segtree<S,T>
+fileprivate typealias seg = LazySegTree<S,T>
 
 
 final class lazySegtreeStressTests: XCTestCase {

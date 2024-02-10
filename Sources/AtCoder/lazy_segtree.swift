@@ -1,6 +1,6 @@
 import Foundation
 
-public struct lazy_segtree<S,F> {
+public struct LazySegTree<S,F> {
     @usableFromInline let _op: (S,S) -> S
     @usableFromInline let _e: () -> S
     @usableFromInline let _mapping: (F,S) -> S
@@ -18,7 +18,7 @@ public struct lazy_segtree<S,F> {
     typealias Composition = (F,F) -> F
 }
 
-public extension lazy_segtree {
+public extension LazySegTree {
     
     init(op: @escaping (S, S) -> S,
          e: @escaping @autoclosure () -> S,
@@ -82,7 +82,7 @@ public extension lazy_segtree {
     }
 }
 
-extension lazy_segtree._UnsafeHandle {
+extension LazySegTree._UnsafeHandle {
     
     func set(_ p: Int,_ x: S) {
         var p = p
@@ -238,7 +238,7 @@ extension lazy_segtree._UnsafeHandle {
     }
 }
 
-extension lazy_segtree {
+extension LazySegTree {
     
     @usableFromInline
     struct _UnsafeHandle {
@@ -281,7 +281,7 @@ extension lazy_segtree {
     }
 }
 
-extension lazy_segtree {
+extension LazySegTree {
     
     @inlinable @inline(__always)
     mutating func __update<R>(_ body: (_UnsafeHandle) -> R) -> R {
@@ -293,7 +293,7 @@ extension lazy_segtree {
     }
 }
 
-public extension lazy_segtree {
+public extension LazySegTree {
     
     mutating func set(_ p: Int,_ x: S) {
         __update{ $0.set(p,x) }
@@ -313,10 +313,10 @@ public extension lazy_segtree {
     mutating func apply(_ l: Int,_ r: Int,_ f: F) {
         __update{ $0.apply(l, r, f) }
     }
-    mutating func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
+    mutating func maxRight(_ l: Int,_ g: (S) -> Bool) -> Int {
         __update{ $0.max_right(l, g) }
     }
-    mutating func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
+    mutating func minLeft(_ r: Int,_ g: (S) -> Bool) -> Int {
         __update{ $0.min_left(r, g) }
     }
 }
