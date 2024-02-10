@@ -1,6 +1,6 @@
 import Foundation
 
-public struct segtree<S> {
+public struct SegTree<S> {
     let op: (S,S) -> S
     let e: () -> S
     let _n, size, log: Int
@@ -11,7 +11,7 @@ public struct segtree<S> {
     typealias E = () -> S
 }
 
-public extension segtree {
+public extension SegTree {
     
     init(op: @escaping (S,S) -> S,
          e: @autoclosure @escaping () -> S)
@@ -43,7 +43,7 @@ public extension segtree {
     }
 }
 
-public extension segtree {
+public extension SegTree {
     
     mutating func set(_ p: Int,_ x: S) {
         var p = Int(p)
@@ -75,9 +75,9 @@ public extension segtree {
         return op(sml, smr);
     }
     
-    func allProd() -> S { return d[1]; }
+    func all_prod() -> S { return d[1]; }
     
-    func maxRight(_ l: Int,_ f: (S) -> Bool) -> Int {
+    func max_right(_ l: Int,_ f: (S) -> Bool) -> Int {
         var l = Int(l)
         assert(0 <= l && l <= _n);
         assert(f(e()));
@@ -102,7 +102,7 @@ public extension segtree {
         return _n;
     }
     
-    func minLeft(_ r: Int,_ f: (S) -> Bool ) -> Int {
+    func min_left(_ r: Int,_ f: (S) -> Bool ) -> Int {
         var r = Int(r)
         assert(0 <= r && r <= _n);
         assert(f(e()));
@@ -128,7 +128,7 @@ public extension segtree {
     }
 }
 
-extension segtree {
+extension SegTree {
     
     mutating func update(_ k: Int) {
         d[k] = op(d[2 * k], d[2 * k + 1])

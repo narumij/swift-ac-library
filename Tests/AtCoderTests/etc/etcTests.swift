@@ -29,16 +29,16 @@ final class etcTests: XCTestCase {
     
     func some() throws {
         do {
-            var segtree = segtree<Int>(op: max, e: 0)
+            var segtree = SegTree<Int>(op: max, e: 0)
         }
         do {
-            var segtree = segtree(op: max, e: 0)
+            var segtree = SegTree(op: max, e: 0)
         }
         do {
-            var segtree = segtree<Int>(op: +, e: 0)
+            var segtree = SegTree<Int>(op: +, e: 0)
         }
         do {
-            var segtree = segtree<Int>(op: *, e: 1)
+            var segtree = SegTree<Int>(op: *, e: 1)
         }
         do {
             var lazy_segtree = LazySegTree<Int,Int>(

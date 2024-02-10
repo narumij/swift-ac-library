@@ -16,7 +16,7 @@ protocol SegtreeMonoid {
     static var e: S { get }
 }
 
-extension segtree {
+extension SegTree {
     init<T>(_ monoid: T) where T: SegtreeMonoid, S == T.S {
         self.init(op: T.op, e: T.e)
     }
@@ -28,7 +28,7 @@ extension segtree {
     }
 }
 
-fileprivate extension segtree where S == String {
+fileprivate extension SegTree where S == String {
     init() {
         self.init(op: AtCoderTests.op, e: AtCoderTests.e)
     }
@@ -65,8 +65,8 @@ final class segtreeTests: XCTestCase {
 //    }
     
     func test0() {
-        XCTAssertEqual("$", segtree(0).allProd())
-        XCTAssertEqual("$", segtree().allProd())
+        XCTAssertEqual("$", SegTree(0).all_prod())
+        XCTAssertEqual("$", SegTree().all_prod())
     }
     
     func testInvalid() throws {
@@ -75,7 +75,7 @@ final class segtreeTests: XCTestCase {
         
         XCTAssertThrowsError(segtree_naive(-1))
         
-        let s = segtree(10)
+        let s = SegTree(10)
         
         XCTAssertThrowsError(s.get(-1))
         XCTAssertThrowsError(s.get(10))
@@ -86,14 +86,14 @@ final class segtreeTests: XCTestCase {
         XCTAssertThrowsError(s.prod(0,11))
         XCTAssertThrowsError(s.prod(-1,11))
 
-        XCTAssertThrowsError(s.maxRight(11, { _ in true }))
-        XCTAssertThrowsError(s.minLeft(-1, { _ in true }))
-        XCTAssertThrowsError(s.maxRight(0, { _ in false }))
+        XCTAssertThrowsError(s.max_right(11, { _ in true }))
+        XCTAssertThrowsError(s.min_left(-1, { _ in true }))
+        XCTAssertThrowsError(s.max_right(0, { _ in false }))
     }
     
     func testOne() throws {
-        var s = segtree(1)
-        XCTAssertEqual("$", s.allProd());
+        var s = SegTree(1)
+        XCTAssertEqual("$", s.all_prod());
         XCTAssertEqual("$", s.get(0));
         XCTAssertEqual("$", s.prod(0, 1));
         s.set(0, "dummy");
@@ -110,7 +110,7 @@ final class segtreeTests: XCTestCase {
 //        for (int n = 0; n < 30; n++) {
         for n in 0..<30 {
             var seg0 = segtree_naive(n);
-            var seg1 = segtree(n);
+            var seg1 = SegTree(n);
 //            for (int i = 0; i < n; i++) {
             for i in 0..<n {
                 var s = ""
@@ -132,9 +132,9 @@ final class segtreeTests: XCTestCase {
 //                for (int r = l; r <= n; r++) {
                 for r in l..<=n {
                     y = seg1.prod(l, r);
-                    XCTAssertEqual(seg0.max_right(l, leq_y), seg1.maxRight(l,leq_y));
+                    XCTAssertEqual(seg0.max_right(l, leq_y), seg1.max_right(l,leq_y));
                     XCTAssertEqual(seg0.max_right(l, leq_y),
-                              seg1.maxRight(l, { x in
+                              seg1.max_right(l, { x in
                                   return x.count <= y.count;
                               }));
                 }
@@ -145,9 +145,9 @@ final class segtreeTests: XCTestCase {
 //                for (int l = 0; l <= r; l++) {
                 for l in 0..<=r {
                     y = seg1.prod(l, r);
-                    XCTAssertEqual(seg0.min_left(r,leq_y), seg1.minLeft(r,leq_y));
+                    XCTAssertEqual(seg0.min_left(r,leq_y), seg1.min_left(r,leq_y));
                     XCTAssertEqual(seg0.min_left(r,leq_y),
-                              seg1.minLeft(r, { x in
+                              seg1.min_left(r, { x in
                                   return x.count <= y.count;
                               }));
                 }
@@ -156,8 +156,8 @@ final class segtreeTests: XCTestCase {
     }
     
     func testAssign() throws {
-        var seg0 = segtree();
-        XCTAssertNoThrow(seg0 = segtree(10));
+        var seg0 = SegTree();
+        XCTAssertNoThrow(seg0 = SegTree(10));
     }
     
     func testPerformanceExample() throws {
