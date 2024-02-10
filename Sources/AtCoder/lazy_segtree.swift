@@ -313,10 +313,10 @@ public extension LazySegTree {
     mutating func apply(_ l: Int,_ r: Int,_ f: F) {
         __update{ $0.apply(l, r, f) }
     }
-    mutating func maxRight(_ l: Int,_ g: (S) -> Bool) -> Int {
+    mutating func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
         __update{ $0.max_right(l, g) }
     }
-    mutating func minLeft(_ r: Int,_ g: (S) -> Bool) -> Int {
+    mutating func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
         __update{ $0.min_left(r, g) }
     }
 }
