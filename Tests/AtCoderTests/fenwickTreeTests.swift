@@ -301,8 +301,8 @@ final class fenwickTreeTests: XCTestCase {
         for i in 0..<Q {
             switch t[i] {
             case 1:
-                fen.add(a[i], .init(c[i]))
-                fen.add(b[i], .init(-c[i]))
+                fen.add(a[i], .init(count: c[i]))
+                fen.add(b[i], .init(count: -c[i]))
             case 2:
                 for j in subt[i] {
                     let s = fen.sum(0, b[j])

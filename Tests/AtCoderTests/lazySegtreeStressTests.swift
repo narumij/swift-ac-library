@@ -72,7 +72,7 @@ fileprivate extension LazySegTree where S == AtCoderTests.S, F == AtCoderTests.T
                   mapping: op_ts,
                   composition: op_tt,
                   id: e_t(),
-                  n )
+                  count: n )
     }
     init(_ v: [S]) {
         self.init(op: op_ss,

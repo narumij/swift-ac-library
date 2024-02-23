@@ -31,7 +31,7 @@ public extension LazySegTree {
                   mapping: mapping,
                   composition: composition,
                   id: id(),
-                  0)
+                  count: 0)
     }
     
     init(op: @escaping (S, S) -> S,
@@ -39,7 +39,7 @@ public extension LazySegTree {
          mapping: @escaping (F, S) -> S,
          composition: @escaping (F, F) -> F,
          id: @escaping @autoclosure () -> F,
-         _ n: Int)
+         count n: Int)
     {
         self.init(op: op,
                   e: e(),

@@ -247,7 +247,7 @@ where V: Collection, V.Element: Equatable, V.Index == Int
 }
 
 public func lcp_array(_ s: String,_ sa: [Int]) -> [Int] {
-    lcp_array(s.utf8CString.dropLast(), sa)
+    lcp_array(s.map{ $0 }, sa)
 }
 
 // Reference:
@@ -277,5 +277,5 @@ where V: Collection, V.Element: Comparable, V.Index == Int
 }
 
 public func z_algorithm(_ s: String) -> [Int] {
-    z_algorithm(s.utf8CString.dropLast())
+    z_algorithm(s.map{ $0 })
 }

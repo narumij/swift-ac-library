@@ -54,9 +54,15 @@ final class dsuTests: XCTestCase {
     }
 
     func testPerformanceExample() throws {
+        let n = 100000
+        let pairs = (0..<n).map{ _ in ((0..<n).randomElement()!,(0..<n).randomElement()!) }
         // This is an example of a performance test case.
         self.measure {
             // Put the code you want to measure the time of here.
+            var dsu = DSU(n)
+            for (i,j) in pairs {
+                dsu.merge(i, j)
+            }
         }
     }
 }

@@ -16,12 +16,12 @@ public extension SegTree {
     init(op: @escaping (S,S) -> S,
          e: @autoclosure @escaping () -> S)
     {
-        self.init(op: op, e: e(), 0 )
+        self.init(op: op, e: e(), count: 0 )
     }
     
     init(op: @escaping (S,S) -> S,
          e: @autoclosure @escaping () -> S,
-         _ n: Int)
+         count n: Int)
     {
         self.init(op: op, e: e(), [S](repeating: e(), count: n) )
     }

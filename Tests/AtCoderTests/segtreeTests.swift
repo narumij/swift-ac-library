@@ -21,7 +21,7 @@ extension SegTree {
         self.init(op: T.op, e: T.e)
     }
     init<T>(_ monoid: T,_ n: Int) where T: SegtreeMonoid, S == T.S {
-        self.init(op: T.op, e: T.e, n)
+        self.init(op: T.op, e: T.e, count: n)
     }
     init<T>(_ monoid: T,_ v: [S]) where T: SegtreeMonoid, S == T.S {
         self.init(op: T.op, e: T.e, v)
@@ -33,7 +33,7 @@ fileprivate extension SegTree where S == String {
         self.init(op: AtCoderTests.op, e: AtCoderTests.e)
     }
     init(_ n: Int) {
-        self.init(op: AtCoderTests.op, e: AtCoderTests.e, n )
+        self.init(op: AtCoderTests.op, e: AtCoderTests.e, count: n )
     }
 }
 

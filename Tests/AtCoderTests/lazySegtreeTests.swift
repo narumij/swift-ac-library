@@ -24,7 +24,7 @@ extension LazySegTree {
         self.init(op: T.op, e: T.e, mapping: T.mapping, composition: T.composition, id: T.id)
     }
     init<T>(_ monoid: T,_ n: Int) where T: LazySegtreeMonoid, S == T.S, F == T.F {
-        self.init(op: T.op, e: T.e, mapping: T.mapping, composition: T.composition, id: T.id, n)
+        self.init(op: T.op, e: T.e, mapping: T.mapping, composition: T.composition, id: T.id, count: n)
     }
     init<T>(_ monoid: T,_ v: [S]) where T: LazySegtreeMonoid, S == T.S, F == T.F {
         self.init(op: T.op, e: T.e, mapping: T.mapping, composition: T.composition, id: T.id, v)
@@ -45,7 +45,7 @@ fileprivate extension LazySegTree where S == AtCoderTests.S, F == AtCoderTests.F
                   mapping: +,
                   composition: +,
                   id: 0,
-                  n )
+                  count: n )
     }
     init(_ v: [S]) {
         self.init(op: max,
@@ -150,7 +150,7 @@ final class lazySegtreeTests: XCTestCase {
             var seg = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "")
         }
         do {
-            var seg = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "",12)
+            var seg = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "",count: 12)
         }
     }
 
