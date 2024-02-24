@@ -2,8 +2,7 @@ import Foundation
 
 extension _Internal {
 
-static func sa_naive<int>(_ s: [int]) -> [Int] where int: FixedWidthInteger {
-    let n = s.count;
+static func sa_naive<Element>(pointer s: UnsafePointer<Element>, count n: Int) -> [Int] where Element: Comparable {
     var sa = [Int](repeating: 0, count: n);
     sa = (0..<n).map{ $0 }
     sa.sort(by: { l, r in
@@ -19,9 +18,13 @@ static func sa_naive<int>(_ s: [int]) -> [Int] where int: FixedWidthInteger {
     return sa;
 }
 
-static func sa_doubling<int>(_ s: [int]) -> [Int] where int: FixedWidthInteger {
+static func sa_naive(_ s: [Int]) -> [Int] {
+    s.withUnsafeBufferPointer { sa_naive(pointer: $0.baseAddress!, count: s.count) }
+}
+
+static func sa_doubling<Element>(_ s: [Element]) -> [Int] where Element: FixedWidthInteger {
     let n = s.count;
-    var sa = [Int](repeating: 0, count: n), rnk = s, tmp = [int](repeating: 0, count: n);
+    var sa = [Int](repeating: 0, count: n), rnk = s, tmp = [Element](repeating: 0, count: n);
     sa = (0..<n).map{ $0 }
     // for (int k = 1; k < n; k *= 2) {
     do { var k = 1; while k < n { defer { k *= 2 }
@@ -42,13 +45,15 @@ static func sa_doubling<int>(_ s: [int]) -> [Int] where int: FixedWidthInteger {
     return sa;
 }
 
+static func sa_doubling<Element>(pointer s: UnsafePointer<Element>, count n: Int) -> [Int] where Element: FixedWidthInteger {
+    sa_doubling((0..<n).map{ s[$0] })
+}
+
 // SA-IS, linear-time suffix array construction
 // Reference:
 // G. Nong, S. Zhang, and W. H. Chan,
 // Two Efficient Algorithms for Linear Time Suffix Array Construction
-static func sa_is<int>(_ s: [int],_ upper: int,_ THRESHOLD_NAIVE: int = 10,_ THRESHOLD_DOUBLING: int = 40) -> [Int]
-    where int: FixedWidthInteger {
-    let n = s.count;
+static func sa_is<Element>(_ s: UnsafePointer<Element>, count n: Int,_ upper: Int,_ THRESHOLD_NAIVE: Int = 10,_ THRESHOLD_DOUBLING: Int = 40) -> [Int] where Element: FixedWidthInteger {
     if (n == 0) { return []; }
     if (n == 1) { return [0]; }
     if (n == 2) {
@@ -59,10 +64,10 @@ static func sa_is<int>(_ s: [int],_ upper: int,_ THRESHOLD_NAIVE: int = 10,_ THR
         }
     }
     if (n < THRESHOLD_NAIVE) {
-        return sa_naive(s);
+        return sa_naive(pointer: s, count: n);
     }
     if (n < THRESHOLD_DOUBLING) {
-        return sa_doubling(s);
+        return sa_doubling(pointer: s, count: n);
     }
     
     var sa = [Int](repeating: 0, count: n);
@@ -71,7 +76,7 @@ static func sa_is<int>(_ s: [int],_ upper: int,_ THRESHOLD_NAIVE: int = 10,_ THR
     for i in (n - 2)..>=0 {
         ls[i] = (s[i] == s[i + 1]) ? ls[i + 1] : (s[i] < s[i + 1]);
     }
-    var sum_l = [int](repeating: 0, count: Int(upper + 1)), sum_s = [int](repeating: 0, count: Int(upper + 1));
+    var sum_l = [Int](repeating: 0, count: upper + 1), sum_s = [Int](repeating: 0, count: upper + 1);
     // for (int i = 0; i < n; i++) {
     for i in 0..<n {
         if (!ls[i]) {
@@ -86,15 +91,15 @@ static func sa_is<int>(_ s: [int],_ upper: int,_ THRESHOLD_NAIVE: int = 10,_ THR
         if (i < upper) { sum_l[i + 1] += sum_s[i]; }
     }
 
-    func induce(_ lms: [int]) {
+    func induce(_ lms: [Int]) {
         sa.withUnsafeMutableBufferPointer{ $0.update(repeating: -1) }
-        var buf = [int](repeating: 0, count: Int(upper + 1));
+        var buf = [Int](repeating: 0, count: upper + 1);
         // std::copy(sum_s.begin(), sum_s.end(), buf.begin());
         buf = sum_s
         // for (auto d : lms) {
         for d in lms {
             if (d == n) { continue; }
-            sa[buf[s[d]]] = Int(d); buf[s[d]] += 1
+            sa[buf[s[d]]] = d; buf[s[d]] += 1
         }
         // std::copy(sum_l.begin(), sum_l.end(), buf.begin());
         buf = sum_l
@@ -117,18 +122,18 @@ static func sa_is<int>(_ s: [int],_ upper: int,_ THRESHOLD_NAIVE: int = 10,_ THR
         }
     };
 
-    var lms_map = [int](repeating: -1, count: n + 1);
-    var m: int = 0;
+    var lms_map = [Int](repeating: -1, count: n + 1);
+    var m: Int = 0;
     // for (int i = 1; i < n; i++) {
     for i in 1..<n {
         if (!ls[i - 1] && ls[i]) {
             lms_map[i] = m; m += 1
         }
     }
-    var lms = [int]();
-    lms.reserveCapacity(Int(m));
+    var lms = [Int]();
+    lms.reserveCapacity(m);
     // for (int i = 1; i < n; i++) {
-    for i in 1..<int(n) {
+    for i in 1..<n {
         if (!ls[i - 1] && ls[i]) {
             lms.append(i);
         }
@@ -137,20 +142,20 @@ static func sa_is<int>(_ s: [int],_ upper: int,_ THRESHOLD_NAIVE: int = 10,_ THR
     induce(lms);
 
     if ((m) != 0) {
-        var sorted_lms = [int]();
-        sorted_lms.reserveCapacity(Int(m));
+        var sorted_lms = [Int]();
+        sorted_lms.reserveCapacity(m);
         // for (int v : sa) {
         for v in sa {
-            if (lms_map[v] != -1) { sorted_lms.append(int(v)); }
+            if (lms_map[v] != -1) { sorted_lms.append(v); }
         }
-        var rec_s = [int](repeating: 0, count: Int(m));
-        var rec_upper: int = 0;
+        var rec_s = [Int](repeating: 0, count: m);
+        var rec_upper: Int = 0;
         rec_s[lms_map[sorted_lms[0]]] = 0;
         // for (int i = 1; i < m; i++) {
         for i in 1..<m {
             var l = sorted_lms[i - 1], r = sorted_lms[i];
-            let end_l = (lms_map[l] + 1 < m) ? lms[lms_map[l] + 1] : int(n);
-            let end_r = (lms_map[r] + 1 < m) ? lms[lms_map[r] + 1] : int(n);
+            let end_l = (lms_map[l] + 1 < m) ? lms[lms_map[l] + 1] : n;
+            let end_r = (lms_map[r] + 1 < m) ? lms[lms_map[r] + 1] : n;
             var same = true;
             if (end_l - l != end_r - r) {
                 same = false;
@@ -179,12 +184,16 @@ static func sa_is<int>(_ s: [int],_ upper: int,_ THRESHOLD_NAIVE: int = 10,_ THR
     }
     return sa;
 }
+    
+static func sa_is(_ s: [Int],_ upper: Int,_ THRESHOLD_NAIVE: Int = 10,_ THRESHOLD_DOUBLING: Int = 40) -> [Int] {
+    s.withUnsafeBufferPointer {
+        sa_is($0.baseAddress!, count: s.count, upper, THRESHOLD_NAIVE, THRESHOLD_DOUBLING)
+    }
+}
 
 }  // namespace internal
 
-public func suffix_array<int>(_ s: [int],_ upper: int) -> [Int]
-where int: FixedWidthInteger
-{
+func suffix_array(_ s: [Int],_ upper: Int) -> [Int] {
     assert(0 <= upper);
     assert(s.allSatisfy{ d in (0...upper).contains(d) })
     let sa = _Internal.sa_is(s, upper);
@@ -200,7 +209,7 @@ where V: Collection, V.Element: Comparable, V.Index == Int
     idx = (0..<n).map { $0 }
     idx.sort { l, r in return s[l] < s[r]; }
 #else
-    let idx = (0..<n).sorted { l, r in return s[l] < s[r]; }
+    let idx = (0..<n).sorted { return s[$0] < s[$1]; }
 #endif
     var s2 = [Int](repeating: 0, count: n)
     var now = 0
@@ -213,17 +222,16 @@ where V: Collection, V.Element: Comparable, V.Index == Int
 }
 
 public func suffix_array(_ s: String) -> [Int] {
-    _Internal.sa_is(s.utf8CString.dropLast().map(UInt8.init), 255);
+    s.withCString { _Internal.sa_is( $0, count: s.count, 255) }
 }
 
 // Reference:
 // T. Kasai, G. Lee, H. Arimura, S. Arikawa, and K. Park,
 // Linear-Time Longest-Common-Prefix Computation in Suffix Arrays and Its
 // Applications
-public func lcp_array<V>(_ s: V, _ sa: [Int]) -> [Int]
-where V: Collection, V.Element: Equatable, V.Index == Int
+public func lcp_array<Element>(pointer s: UnsafePointer<Element>, count n: Int, _ sa: [Int]) -> [Int]
+where Element: Equatable
 {
-    let n = s.count
     assert(n >= 1)
     var rnk = [Int](repeating: 0, count: n)
     // for (int i = 0; i < n; i++) {
@@ -246,18 +254,22 @@ where V: Collection, V.Element: Equatable, V.Index == Int
     return lcp
 }
 
+public func lcp_array<V>(_ s: V, _ sa: [Int]) -> [Int]
+where V: Collection, V.Element: Equatable, V.Index == Int {
+    s.map{ $0 }.withUnsafeBufferPointer { lcp_array(pointer: $0.baseAddress!, count: s.count, sa) }
+}
+
 public func lcp_array(_ s: String,_ sa: [Int]) -> [Int] {
-    lcp_array(s.map{ $0 }, sa)
+    s.withCString { lcp_array(pointer: $0, count: s.count, sa) }
 }
 
 // Reference:
 // D. Gusfield,
 // Algorithms on Strings, Trees, and Sequences: Computer Science and
 // Computational Biology
-public func z_algorithm<V>(_ s: V) -> [Int]
-where V: Collection, V.Element: Comparable, V.Index == Int
+public func z_algorithm<Element>(pointer s: UnsafePointer<Element>, count n: Int) -> [Int]
+where Element: Comparable
 {
-    let n = s.count
     if (n == 0) { return [] }
     var z = [Int](repeating: 0, count: n)
     z[0] = 0
@@ -276,6 +288,11 @@ where V: Collection, V.Element: Comparable, V.Index == Int
     return z
 }
 
+public func z_algorithm<V>(_ s: V) -> [Int]
+where V: Collection, V.Element: Comparable, V.Index == Int {
+    s.map{ $0 }.withUnsafeBufferPointer { z_algorithm(pointer: $0.baseAddress!, count: s.count) }
+}
+
 public func z_algorithm(_ s: String) -> [Int] {
-    z_algorithm(s.map{ $0 })
+    s.withCString { z_algorithm(pointer: $0, count: s.count) }
 }
