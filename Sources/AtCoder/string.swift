@@ -3,19 +3,18 @@ import Foundation
 extension _Internal {
     
     static func sa_naive<Element>(pointer s: UnsafePointer<Element>, count n: Int) -> [Int] where Element: Comparable {
-        var sa = [Int](repeating: 0, count: n)
-        sa = (0..<n).map{ $0 }
-        sa.sort(by: { l, r in
-            var l = l, r = r
-            if (l == r) { return false }
-            while (l < n && r < n) {
-                if (s[l] != s[r]) { return s[l] < s[r] }
-                l += 1
-                r += 1
+        
+        (0 ..< n)
+            .sorted { l, r in
+                if (l == r) { return false }
+                var l = l, r = r
+                while (l < n && r < n) {
+                    if (s[l] != s[r]) { return s[l] < s[r] }
+                    l += 1
+                    r += 1
+                }
+                return l == n
             }
-            return l == n
-        })
-        return sa
     }
     
     static func sa_naive(_ s: [Int]) -> [Int] {
@@ -24,29 +23,37 @@ extension _Internal {
     
     static func sa_doubling<Element>(_ s: [Element]) -> [Int] where Element: FixedWidthInteger {
         let n = s.count
-        var sa = [Int](repeating: 0, count: n), rnk = s, tmp = [Element](repeating: 0, count: n)
-        sa = (0..<n).map{ $0 }
-        // for (int k = 1; k < n; k *= 2) {
-        do { var k = 1; while k < n { defer { k *= 2 }
-            func cmp(_ x: Int,_ y: Int) -> Bool {
-                if (rnk[x] != rnk[y]) { return rnk[x] < rnk[y] }
-                let rx = x + k < n ? rnk[x + k] : -1
-                let ry = y + k < n ? rnk[y + k] : -1
-                return rx < ry
+        var sa = (0 ..< n) + [], rnk = s, tmp = [Element](repeating: 0, count: n)
+        
+        do {
+            // for (int k = 1; k < n; k *= 2) {
+            var k = 1
+            while k < n {
+                defer { k *= 2 }
+                
+                func cmp(_ x: Int,_ y: Int) -> Bool {
+                    if (rnk[x] != rnk[y]) { return rnk[x] < rnk[y] }
+                    let rx = x + k < n ? rnk[x + k] : -1
+                    let ry = y + k < n ? rnk[y + k] : -1
+                    return rx < ry
+                }
+                
+                sa.sort(by: cmp)
+                tmp[sa[0]] = 0
+                
+                // for (int i = 1; i < n; i++) {
+                for i in 1 ..< n {
+                    tmp[sa[i]] = tmp[sa[i - 1]] + (cmp(sa[i - 1], sa[i]) ? 1 : 0)
+                }
+                swap(&tmp, &rnk)
             }
-            sa.sort(by: cmp)
-            tmp[sa[0]] = 0
-            // for (int i = 1; i < n; i++) {
-            for i in 1..<n {
-                tmp[sa[i]] = tmp[sa[i - 1]] + (cmp(sa[i - 1], sa[i]) ? 1 : 0)
-            }
-            swap(&tmp, &rnk)
-        } }
+        }
+        
         return sa
     }
     
     static func sa_doubling<Element>(pointer s: UnsafePointer<Element>, count n: Int) -> [Int] where Element: FixedWidthInteger {
-        sa_doubling((0..<n).map{ s[$0] })
+        sa_doubling((0 ..< n).map{ s[$0] })
     }
     
     // SA-IS, linear-time suffix array construction
@@ -73,12 +80,12 @@ extension _Internal {
         var sa = [Int](repeating: 0, count: n)
         var ls = [Bool](repeating: false, count: n)
         //        for (int i = n - 2; i >= 0; i--) {
-        for i in (n - 2)..>=0 {
+        for i in (n - 2) ..>= 0 {
             ls[i] = (s[i] == s[i + 1]) ? ls[i + 1] : (s[i] < s[i + 1])
         }
         var sum_l = [Int](repeating: 0, count: upper + 1), sum_s = [Int](repeating: 0, count: upper + 1)
         // for (int i = 0; i < n; i++) {
-        for i in 0..<n {
+        for i in 0 ..< n {
             if (!ls[i]) {
                 sum_s[s[i]] += 1
             } else {
@@ -86,7 +93,7 @@ extension _Internal {
             }
         }
         //  for (int i = 0; i <= upper; i++) {
-        for i in 0..<=upper {
+        for i in 0 ..<= upper {
             sum_s[i] += sum_l[i]
             if (i < upper) { sum_l[i + 1] += sum_s[i] }
         }
@@ -105,7 +112,7 @@ extension _Internal {
             buf = sum_l
             sa[buf[s[n - 1]]] = n - 1; buf[s[n - 1]] += 1
             // for (int i = 0; i < n; i++) {
-            for i in 0..<n {
+            for i in 0 ..< n {
                 let v = sa[i]
                 if (v >= 1 && !ls[v - 1]) {
                     sa[buf[s[v - 1]]] = v - 1; buf[s[v - 1]] += 1
@@ -114,7 +121,7 @@ extension _Internal {
             // std::copy(sum_l.begin(), sum_l.end(), buf.begin());
             buf = sum_l
             // for (int i = n - 1; i >= 0; i--) {
-            for i in (n - 1)..>=0 {
+            for i in (n - 1) ..>= 0 {
                 let v = sa[i]
                 if (v >= 1 && ls[v - 1]) {
                     buf[s[v - 1] + 1] -= 1; sa[buf[s[v - 1] + 1]] = v - 1
@@ -125,7 +132,7 @@ extension _Internal {
         var lms_map = [Int](repeating: -1, count: n + 1)
         var m: Int = 0
         // for (int i = 1; i < n; i++) {
-        for i in 1..<n {
+        for i in 1 ..< n {
             if (!ls[i - 1] && ls[i]) {
                 lms_map[i] = m; m += 1
             }
@@ -133,7 +140,7 @@ extension _Internal {
         var lms = [Int]()
         lms.reserveCapacity(m)
         // for (int i = 1; i < n; i++) {
-        for i in 1..<n {
+        for i in 1 ..< n {
             if (!ls[i - 1] && ls[i]) {
                 lms.append(i)
             }
@@ -152,7 +159,7 @@ extension _Internal {
             var rec_upper: Int = 0
             rec_s[lms_map[sorted_lms[0]]] = 0
             // for (int i = 1; i < m; i++) {
-            for i in 1..<m {
+            for i in 1 ..< m {
                 var l = sorted_lms[i - 1], r = sorted_lms[i]
                 let end_l = (lms_map[l] + 1 < m) ? lms[lms_map[l] + 1] : n
                 let end_r = (lms_map[r] + 1 < m) ? lms[lms_map[r] + 1] : n
@@ -177,7 +184,7 @@ extension _Internal {
             sa_is(rec_s, rec_upper, THRESHOLD_NAIVE, THRESHOLD_DOUBLING)
             
             // for (int i = 0; i < m; i++) {
-            for i in 0..<m {
+            for i in 0 ..< m {
                 sorted_lms[i] = lms[rec_sa[i]]
             }
             induce(sorted_lms)
@@ -191,11 +198,11 @@ extension _Internal {
         }
     }
     
-}  // namespace internal
+}
 
 func suffix_array(_ s: [Int],_ upper: Int) -> [Int] {
     assert(0 <= upper)
-    assert(s.allSatisfy{ d in (0...upper).contains(d) })
+    assert(s.allSatisfy{ d in (0 ... upper).contains(d) })
     let sa = _Internal.sa_is(s, upper)
     return sa
 }
@@ -209,7 +216,7 @@ where V: Collection, V.Element: Comparable, V.Index == Int
     idx = (0..<n).map { $0 }
     idx.sort { l, r in return s[l] < s[r] }
 #else
-    let idx = (0..<n).sorted { return s[$0] < s[$1] }
+    let idx = (0 ..< n).sorted { return s[$0] < s[$1] }
 #endif
     var s2 = [Int](repeating: 0, count: n)
     var now = 0
@@ -235,7 +242,7 @@ where Element: Equatable
     assert(n >= 1)
     var rnk = [Int](repeating: 0, count: n)
     // for (int i = 0; i < n; i++) {
-    for i in 0..<n {
+    for i in 0 ..< n {
         rnk[sa[i]] = i
     }
     var lcp = [Int](repeating: 0, count: n - 1)
