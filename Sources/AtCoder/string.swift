@@ -21,7 +21,7 @@ extension _Internal {
         s.withUnsafeBufferPointer { sa_naive(pointer: $0.baseAddress!, count: s.count) }
     }
     
-    static func sa_doubling<Element>(_ s: [Element]) -> [Int] where Element: FixedWidthInteger {
+    static func sa_doubling<Element>(_ s: [Element]) -> [Int] where Element: Comparable & AdditiveArithmetic & ExpressibleByIntegerLiteral {
         let n = s.count
         var sa = (0 ..< n) + [], rnk = s, tmp = [Element](repeating: 0, count: n)
         
@@ -52,7 +52,7 @@ extension _Internal {
         return sa
     }
     
-    static func sa_doubling<Element>(pointer s: UnsafePointer<Element>, count n: Int) -> [Int] where Element: FixedWidthInteger {
+    static func sa_doubling<Element>(pointer s: UnsafePointer<Element>, count n: Int) -> [Int] where Element: Comparable & AdditiveArithmetic & ExpressibleByIntegerLiteral {
         sa_doubling((0 ..< n).map{ s[$0] })
     }
     
