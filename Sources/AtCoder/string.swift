@@ -61,19 +61,19 @@ extension _Internal {
     // G. Nong, S. Zhang, and W. H. Chan,
     // Two Efficient Algorithms for Linear Time Suffix Array Construction
     static func sa_is<Element>(_ s: UnsafePointer<Element>, count n: Int,_ upper: Int,_ THRESHOLD_NAIVE: Int = 10,_ THRESHOLD_DOUBLING: Int = 40) -> [Int] where Element: FixedWidthInteger {
-        if (n == 0) { return [] }
-        if (n == 1) { return [0] }
-        if (n == 2) {
-            if (s[0] < s[1]) {
+        if n == 0 { return [] }
+        if n == 1 { return [0] }
+        if n == 2 {
+            if s[0] < s[1] {
                 return [0, 1]
             } else {
                 return [1, 0]
             }
         }
-        if (n < THRESHOLD_NAIVE) {
+        if n < THRESHOLD_NAIVE {
             return sa_naive(pointer: s, count: n)
         }
-        if (n < THRESHOLD_DOUBLING) {
+        if n < THRESHOLD_DOUBLING {
             return sa_doubling(pointer: s, count: n)
         }
         
@@ -81,12 +81,12 @@ extension _Internal {
         var ls = [Bool](repeating: false, count: n)
         //        for (int i = n - 2; i >= 0; i--) {
         for i in (n - 2) ..>= 0 {
-            ls[i] = (s[i] == s[i + 1]) ? ls[i + 1] : (s[i] < s[i + 1])
+            ls[i] = s[i] == s[i + 1] ? ls[i + 1] : s[i] < s[i + 1]
         }
         var sum_l = [Int](repeating: 0, count: upper + 1), sum_s = [Int](repeating: 0, count: upper + 1)
         // for (int i = 0; i < n; i++) {
         for i in 0 ..< n {
-            if (!ls[i]) {
+            if !ls[i] {
                 sum_s[s[i]] += 1
             } else {
                 sum_l[s[i] + 1] += 1
@@ -95,7 +95,7 @@ extension _Internal {
         //  for (int i = 0; i <= upper; i++) {
         for i in 0 ..<= upper {
             sum_s[i] += sum_l[i]
-            if (i < upper) { sum_l[i + 1] += sum_s[i] }
+            if i < upper { sum_l[i + 1] += sum_s[i] }
         }
         
         func induce(_ lms: [Int]) {
@@ -105,7 +105,7 @@ extension _Internal {
             buf = sum_s
             // for (auto d : lms) {
             for d in lms {
-                if (d == n) { continue }
+                if d == n { continue }
                 sa[buf[s[d]]] = d; buf[s[d]] += 1
             }
             // std::copy(sum_l.begin(), sum_l.end(), buf.begin());
@@ -114,7 +114,7 @@ extension _Internal {
             // for (int i = 0; i < n; i++) {
             for i in 0 ..< n {
                 let v = sa[i]
-                if (v >= 1 && !ls[v - 1]) {
+                if v >= 1, !ls[v - 1] {
                     sa[buf[s[v - 1]]] = v - 1; buf[s[v - 1]] += 1
                 }
             }
@@ -123,7 +123,7 @@ extension _Internal {
             // for (int i = n - 1; i >= 0; i--) {
             for i in (n - 1) ..>= 0 {
                 let v = sa[i]
-                if (v >= 1 && ls[v - 1]) {
+                if v >= 1, ls[v - 1] {
                     buf[s[v - 1] + 1] -= 1; sa[buf[s[v - 1] + 1]] = v - 1
                 }
             }
@@ -133,7 +133,7 @@ extension _Internal {
         var m: Int = 0
         // for (int i = 1; i < n; i++) {
         for i in 1 ..< n {
-            if (!ls[i - 1] && ls[i]) {
+            if !ls[i - 1], ls[i] {
                 lms_map[i] = m; m += 1
             }
         }
@@ -141,19 +141,19 @@ extension _Internal {
         lms.reserveCapacity(m)
         // for (int i = 1; i < n; i++) {
         for i in 1 ..< n {
-            if (!ls[i - 1] && ls[i]) {
+            if !ls[i - 1], ls[i] {
                 lms.append(i)
             }
         }
         
         induce(lms)
         
-        if ((m) != 0) {
+        if m != 0 {
             var sorted_lms = [Int]()
             sorted_lms.reserveCapacity(m)
             // for (int v : sa) {
             for v in sa {
-                if (lms_map[v] != -1) { sorted_lms.append(v) }
+                if lms_map[v] != -1 { sorted_lms.append(v) }
             }
             var rec_s = [Int](repeating: 0, count: m)
             var rec_upper: Int = 0
@@ -161,22 +161,22 @@ extension _Internal {
             // for (int i = 1; i < m; i++) {
             for i in 1 ..< m {
                 var l = sorted_lms[i - 1], r = sorted_lms[i]
-                let end_l = (lms_map[l] + 1 < m) ? lms[lms_map[l] + 1] : n
-                let end_r = (lms_map[r] + 1 < m) ? lms[lms_map[r] + 1] : n
+                let end_l = lms_map[l] + 1 < m ? lms[lms_map[l] + 1] : n
+                let end_r = lms_map[r] + 1 < m ? lms[lms_map[r] + 1] : n
                 var same = true
-                if (end_l - l != end_r - r) {
+                if end_l - l != end_r - r {
                     same = false
                 } else {
-                    while (l < end_l) {
+                    while l < end_l {
                         if (s[l] != s[r]) {
                             break
                         }
                         l += 1
                         r += 1
                     }
-                    if (l == n || s[l] != s[r]) { same = false }
+                    if l == n || s[l] != s[r] { same = false }
                 }
-                if (!same) { rec_upper += 1 }
+                if !same { rec_upper += 1 }
                 rec_s[lms_map[sorted_lms[i]]] = rec_upper
             }
             
@@ -216,7 +216,7 @@ where V: Collection, V.Element: Comparable, V.Index == Int
     idx = (0..<n).map { $0 }
     idx.sort { l, r in return s[l] < s[r] }
 #else
-    let idx = (0 ..< n).sorted { return s[$0] < s[$1] }
+    let idx = (0 ..< n).sorted { s[$0] < s[$1] }
 #endif
     var s2 = [Int](repeating: 0, count: n)
     var now = 0
@@ -251,10 +251,10 @@ where Element: Equatable
     for i in 0 ..< n {
         if h > 0 { h -= 1 }
         if rnk[i] == 0 { continue }
-        let j = Int(sa[rnk[i] - 1])
+        let j = sa[rnk[i] - 1]
         // for (; j + h < n && i + h < n; h++) {
-        while j + h < n && i + h < n { defer { h += 1 }
-            if (s[j + h] != s[i + h]) { h -= 1; /* defer分の補正 */ break }
+        while j + h < n, i + h < n { defer { h += 1 }
+            if s[j + h] != s[i + h] { h -= 1; /* defer分の補正 */ break }
         }
         lcp[rnk[i] - 1] = h
     }
@@ -277,7 +277,7 @@ public func lcp_array(_ s: String,_ sa: [Int]) -> [Int] {
 public func z_algorithm<Element>(pointer s: UnsafePointer<Element>, count n: Int) -> [Int]
 where Element: Comparable
 {
-    if (n == 0) { return [] }
+    if n == 0 { return [] }
     var z = [Int](repeating: 0, count: n)
     z[0] = 0
     // for (int i = 1, j = 0; i < n; i++) {
@@ -287,8 +287,8 @@ where Element: Comparable
         // k = (j + z[j] <= i) ? 0 : std::min(j + z[j] - i, z[i - j]);
         // while (i + k < n && s[k] == s[i + k]) k++;
         // if (j + z[j] < i + z[i]) j = i;
-        z[i] = (j + z[j] <= i) ? 0 : min(j + z[j] - i, z[i - j])
-        while i + z[i] < n && s[z[i]] == s[i + z[i]] { z[i] += 1 }
+        z[i] = j + z[j] <= i ? 0 : min(j + z[j] - i, z[i - j])
+        while i + z[i] < n, s[z[i]] == s[i + z[i]] { z[i] += 1 }
         if j + z[j] < i + z[i] { j = i }
     }
     z[0] = n
