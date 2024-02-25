@@ -6,10 +6,10 @@ extension _Internal {
         
         (0 ..< n)
             .sorted { l, r in
-                if (l == r) { return false }
+                if l == r { return false }
                 var l = l, r = r
-                while (l < n && r < n) {
-                    if (s[l] != s[r]) { return s[l] < s[r] }
+                while l < n, r < n {
+                    if s[l] != s[r] { return s[l] < s[r] }
                     l += 1
                     r += 1
                 }
@@ -32,7 +32,7 @@ extension _Internal {
                 defer { k *= 2 }
                 
                 func cmp(_ x: Int,_ y: Int) -> Bool {
-                    if (rnk[x] != rnk[y]) { return rnk[x] < rnk[y] }
+                    if rnk[x] != rnk[y] { return rnk[x] < rnk[y] }
                     let rx = x + k < n ? rnk[x + k] : -1
                     let ry = y + k < n ? rnk[y + k] : -1
                     return rx < ry
