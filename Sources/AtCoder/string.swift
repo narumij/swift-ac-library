@@ -64,7 +64,7 @@ extension _Internal {
     // Reference:
     // G. Nong, S. Zhang, and W. H. Chan,
     // Two Efficient Algorithms for Linear Time Suffix Array Construction
-    static func sa_is<Element>(_ s: UnsafePointer<Element>, count n: Int,_ upper: Int,_ THRESHOLD_NAIVE: Int = 10,_ THRESHOLD_DOUBLING: Int = 40) -> [Int] where Element: FixedWidthInteger {
+    static func sa_is<Element>(_ s: UnsafePointer<Element>, count n: Int,_ upper: Int,_ THRESHOLD_NAIVE: Int = 10,_ THRESHOLD_DOUBLING: Int = 40) -> [Int] where Element: BinaryInteger {
         if n == 0 { return [] }
         if n == 1 { return [0] }
         if n == 2 {
@@ -90,9 +90,9 @@ extension _Internal {
         var sum_l = [Int](repeating: 0, count: upper + 1), sum_s = [Int](repeating: 0, count: upper + 1)
         for i in 0 ..< n {
             if !ls[i] {
-                sum_s[s[i]] += 1
+                sum_s[Int(s[i])] += 1
             } else {
-                sum_l[s[i] + 1] += 1
+                sum_l[Int(s[i] + 1)] += 1
             }
         }
         // for (int i = 0; i <= upper; i++) {
@@ -108,15 +108,15 @@ extension _Internal {
             buf = sum_s
             for d in lms {
                 if d == n { continue }
-                sa[buf[s[d]]] = d; buf[s[d]] += 1
+                sa[buf[Int(s[d])]] = d; buf[Int(s[d])] += 1
             }
             // std::copy(sum_l.begin(), sum_l.end(), buf.begin());
             buf = sum_l
-            sa[buf[s[n - 1]]] = n - 1; buf[s[n - 1]] += 1
+            sa[buf[Int(s[n - 1])]] = n - 1; buf[Int(s[n - 1])] += 1
             for i in 0 ..< n {
                 let v = sa[i]
                 if v >= 1, !ls[v - 1] {
-                    sa[buf[s[v - 1]]] = v - 1; buf[s[v - 1]] += 1
+                    sa[buf[Int(s[v - 1])]] = v - 1; buf[Int(s[v - 1])] += 1
                 }
             }
             // std::copy(sum_l.begin(), sum_l.end(), buf.begin());
@@ -125,7 +125,7 @@ extension _Internal {
             for i in stride(from: n - 1, through: 0, by: -1) {
                 let v = sa[i]
                 if v >= 1, ls[v - 1] {
-                    buf[s[v - 1] + 1] -= 1; sa[buf[s[v - 1] + 1]] = v - 1
+                    buf[Int(s[v - 1]) + 1] -= 1; sa[buf[Int(s[v - 1]) + 1]] = v - 1
                 }
             }
         }

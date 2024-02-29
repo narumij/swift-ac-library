@@ -1,5 +1,7 @@
 import Foundation
 
+// swift-collections 1.1.0以降は不要
+
 extension Array: BinaryHeap {
     @inlinable @inline(__always)
     mutating func __update_binary_heap<R>(_ comp: @escaping (Element, Element) -> Bool,

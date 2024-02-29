@@ -1,4 +1,5 @@
 import Foundation
+import Collections
 
 public struct MCFGraph<Value: FixedWidthInteger & SignedInteger> {
     var _n: Int
@@ -106,7 +107,9 @@ extension MCFGraph {
     struct Q: Comparable {
         let key: Cost
         let to: Int
-        static func <(lhs: Q, rhs: Q) -> Bool { return lhs.key > rhs.key }
+        static func <(lhs: Q, rhs: Q) -> Bool {
+            (lhs.key, lhs.to) < (rhs.key, rhs.to)
+        }
     }
 
     func slope(_ g: inout _Internal.csr<_Edge>,
@@ -121,13 +124,8 @@ extension MCFGraph {
         var dual_dist = [(first: Cost,second: Cost)](repeating: (0,0), count: _n)
         var prev_e = [Int](repeating: 0, count:_n)
         var vis = [Bool](repeating: false, count: _n)
-//        struct Q {
-//            Cost key;
-//            int to;
-//            bool operator<(Q r) const { return key > r.key; }
-//        };
         var que_min = [Int]()
-        var que = [Q]()
+        var que = Queue()
         func dual_ref() -> Bool {
             // for (int i = 0; i < _n; i++) {
             for i in 0 ..< _n {
@@ -136,7 +134,7 @@ extension MCFGraph {
             // std::fill(vis.begin(), vis.end(), false);
             vis.withUnsafeMutableBufferPointer{ $0.update(repeating: false) }
             que_min.removeAll()
-            que.removeAll()
+            que = []
 
             // que[0..heap_r) was heapified
             var heap_r = 0
@@ -152,7 +150,7 @@ extension MCFGraph {
                         heap_r += 1
                         que.push_heap(que.startIndex, que.startIndex + heap_r)
                     }
-                    v = que.pop_heap()!.to
+                    v = que.popMin()!.to
                     heap_r -= 1
                 }
                 if vis[v] { continue }
@@ -176,7 +174,7 @@ extension MCFGraph {
                         if dist_to == dist_v {
                             que_min.append(e.to)
                         } else {
-                            que.append(Q(key: dist_to, to: e.to))
+                            que.insert(Q(key: dist_to, to: e.to))
                         }
                     }
                 } }
@@ -226,17 +224,36 @@ extension MCFGraph {
         }
         return result
     }
+    
+#if false
+    // swift-collections 1.1.0以降はこちら。
+    typealias Queue = Heap<Q>
+#else
+    typealias Queue = Array<Q>
+#endif
 }
 
+#if false
+// swift-collections 1.1.0以降はこちら。
+extension Heap {
+    var startIndex: Int { 0 }
+    mutating func push_heap(_ start: Int, _ end: Int) { /* NOP */ }
+}
+#else
 extension Array where Element: Comparable {
     
     mutating func push_heap(_ start: Int, _ end: Int) {
-        push_heap(end, >)
+        push_heap(end, <)
     }
     
     @discardableResult
-    mutating func pop_heap() -> Element? {
-        pop_heap(>)
+    mutating func popMin() -> Element? {
+        pop_heap(<)
         return removeLast()
     }
+    
+    mutating public func insert(_ newElement: Element) {
+        append(newElement)
+    }
 }
+#endif
