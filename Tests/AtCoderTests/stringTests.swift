@@ -258,7 +258,7 @@ final class stringTests: XCTestCase {
                     g /= 4;
                 }
                 
-                let sa = _Internal.sa_is(s, max_c, -1, -1);
+                let sa = _Internal.sa_is(s, count: s.count, max_c, -1, -1);
                 XCTAssertEqual(sa_naive(s), sa);
             }
         }
@@ -279,7 +279,7 @@ final class stringTests: XCTestCase {
                     g /= 2;
                 }
 
-                let sa = _Internal.sa_is(s, max_c, -1, -1);
+                let sa = _Internal.sa_is(s, count: s.count, max_c, -1, -1);
                 XCTAssertEqual(sa_naive(s), sa);
             }
         }
@@ -334,10 +334,58 @@ final class stringTests: XCTestCase {
 
         XCTAssertEqual(answer.count, sa.count);
 
-//        for (int i = 0; i < int(sa.size()); i++) {
-        for i in 0..<sa.count {
-//            ASSERT_EQ(answer[i], s.substr(sa[i]));
-            XCTAssertEqual(answer[i], String(s.suffix(from: s.index(s.startIndex, offsetBy: sa[i]))));
+        for i in 0 ..< sa.count {
+            XCTAssertEqual(answer[i], String(s.map{$0}.suffix(from: sa[i])));
+        }
+    }
+    
+    func testSACharacter() throws {
+        let s = "missisippi".map{$0};
+
+        let sa = suffix_array(s);
+
+        let answer = [
+            "i",           // 9
+            "ippi",        // 6
+            "isippi",      // 4
+            "issisippi",   // 1
+            "missisippi",  // 0
+            "pi",          // 8
+            "ppi",         // 7
+            "sippi",       // 5
+            "sisippi",     // 3
+            "ssisippi",    // 2
+        ];
+
+        XCTAssertEqual(answer.count, sa.count);
+
+        for i in 0 ..< sa.count {
+            XCTAssertEqual(answer[i], String(s.map{$0}.suffix(from: sa[i])));
+        }
+    }
+    
+    func testSAUInt8() throws {
+        let s: [UInt8] = "missisippi".utf8.map{$0};
+
+        let sa = suffix_array(s);
+
+        let answer = [
+            "i",           // 9
+            "ippi",        // 6
+            "isippi",      // 4
+            "issisippi",   // 1
+            "missisippi",  // 0
+            "pi",          // 8
+            "ppi",         // 7
+            "sippi",       // 5
+            "sisippi",     // 3
+            "ssisippi",    // 2
+        ];
+
+        XCTAssertEqual(answer.count, sa.count);
+
+        for i in 0 ..< sa.count {
+            XCTAssertEqual(answer[i].utf8.map{$0}, s.suffix(from: sa[i]) + [])
         }
     }
     
@@ -350,10 +398,54 @@ final class stringTests: XCTestCase {
     }
     
     func testLCP() throws {
-        var s = "aab";
-        var sa = suffix_array(s);
+        let s = "aab";
+        let sa = suffix_array(s);
         XCTAssertEqual([0, 1, 2], sa);
-        var lcp = lcp_array(s, sa);
+        let lcp = lcp_array(s, sa);
+        XCTAssertEqual([1, 0], lcp);
+
+        XCTAssertEqual(lcp, lcp_array([0, 0, 1], sa));
+        XCTAssertEqual(lcp, lcp_array([-100, -100, 100], sa));
+        XCTAssertEqual(lcp,
+                       lcp_array([Int32.min,Int32.min,Int32.max], sa));
+
+        XCTAssertEqual(lcp,
+                       lcp_array([Int64.min,Int64.min,Int64.max], sa));
+        
+        XCTAssertEqual(lcp,
+                       lcp_array([UInt32.min,UInt32.min,UInt32.max], sa));
+
+        XCTAssertEqual(lcp,
+                       lcp_array([UInt64.min,UInt64.min,UInt64.max], sa));
+    }
+    
+    func testLCPCharacter() throws {
+        let s = "aab".map{$0};
+        let sa = suffix_array(s);
+        XCTAssertEqual([0, 1, 2], sa);
+        let lcp = lcp_array(s, sa);
+        XCTAssertEqual([1, 0], lcp);
+
+        XCTAssertEqual(lcp, lcp_array([0, 0, 1], sa));
+        XCTAssertEqual(lcp, lcp_array([-100, -100, 100], sa));
+        XCTAssertEqual(lcp,
+                       lcp_array([Int32.min,Int32.min,Int32.max], sa));
+
+        XCTAssertEqual(lcp,
+                       lcp_array([Int64.min,Int64.min,Int64.max], sa));
+        
+        XCTAssertEqual(lcp,
+                       lcp_array([UInt32.min,UInt32.min,UInt32.max], sa));
+
+        XCTAssertEqual(lcp,
+                       lcp_array([UInt64.min,UInt64.min,UInt64.max], sa));
+    }
+    
+    func testLCPUInt8() throws {
+        let s = "aab".utf8.map{$0};
+        let sa = suffix_array(s);
+        XCTAssertEqual([0, 1, 2], sa);
+        let lcp = lcp_array(s, sa);
         XCTAssertEqual([1, 0], lcp);
 
         XCTAssertEqual(lcp, lcp_array([0, 0, 1], sa));
@@ -373,6 +465,24 @@ final class stringTests: XCTestCase {
     
     func testZAlgo() throws {
         let s = "abab";
+        let z = z_algorithm(s);
+        XCTAssertEqual([4, 0, 2, 0], z);
+        XCTAssertEqual([4, 0, 2, 0],
+                  z_algorithm([1, 10, 1, 10]));
+        XCTAssertEqual(z_naive([0, 0, 0, 0, 0, 0, 0]), z_algorithm([0, 0, 0, 0, 0, 0, 0]));
+    }
+    
+    func testZAlgoCharacter() throws {
+        let s = "abab".map{ $0 };
+        let z = z_algorithm(s);
+        XCTAssertEqual([4, 0, 2, 0], z);
+        XCTAssertEqual([4, 0, 2, 0],
+                  z_algorithm([1, 10, 1, 10]));
+        XCTAssertEqual(z_naive([0, 0, 0, 0, 0, 0, 0]), z_algorithm([0, 0, 0, 0, 0, 0, 0]));
+    }
+    
+    func testZAlgoUInt8() throws {
+        let s = "abab".utf8.map{$0};
         let z = z_algorithm(s);
         XCTAssertEqual([4, 0, 2, 0], z);
         XCTAssertEqual([4, 0, 2, 0],

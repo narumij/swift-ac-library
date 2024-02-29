@@ -24,7 +24,7 @@ struct fft_info<mint: static_modint_base> {
         root[Int(rank2)] = mint(g).pow(CLongLong((mint.mod() - 1) >> rank2));
         iroot[Int(rank2)] = root[Int(rank2)].inv();
 //        for (int i = rank2 - 1; i >= 0; i--) {
-        for i in Int(rank2 - 1) ..>= 0 {
+        for i in stride(from: Int(rank2 - 1), through: 0, by: -1) {
             root[i] = root[i + 1] * root[i + 1];
             iroot[i] = iroot[i + 1] * iroot[i + 1];
         }
@@ -32,17 +32,18 @@ struct fft_info<mint: static_modint_base> {
         do {
             var prod: mint = 1; var iprod: mint = 1;
 //            for (int i = 0; i <= rank2 - 2; i++) {
-            for i in 0 ..<= Int(rank2 - 2) {
+            for i in stride(from: 0, through: Int(rank2 - 2), by: 1) {
                 rate2[i] = root[i + 2] * prod;
                 irate2[i] = iroot[i + 2] * iprod;
                 prod *= iroot[i + 2];
                 iprod *= root[i + 2];
             }
         }
+        
         do {
             var prod: mint = 1; var iprod: mint = 1;
 //            for (int i = 0; i <= rank2 - 3; i++) {
-            for i in 0 ..<= Int(rank2 - 3) {
+            for i in stride(from: 0, through: Int(rank2 - 3), by: 1) {
                 rate3[i] = root[i + 3] * prod;
                 irate3[i] = iroot[i + 3] * iprod;
                 prod *= iroot[i + 3];

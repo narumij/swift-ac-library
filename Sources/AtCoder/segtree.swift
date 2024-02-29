@@ -39,7 +39,7 @@ public extension SegTree {
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         for i in 0..<_n { d[size + i] = v[i] }
         // for (int i = size - 1; i >= 1; i--) {
-        for i in (size - 1)..>=1 { update(i) }
+        for i in stride(from: size - 1, through: 1, by: -1) { update(i) }
     }
 }
 
@@ -51,7 +51,7 @@ public extension SegTree {
         p += size;
         d[p] = x;
         // for (int i = 1; i <= log; i++) update(p >> i);
-        for i in 1..<=log { update(p >> i); }
+        for i in stride(from: 1, through: log, by: 1) { update(p >> i); }
     }
     
     func get(_ p: Int) -> S {
