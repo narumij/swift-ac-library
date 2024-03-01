@@ -53,11 +53,6 @@ TARGET_DIR="<クローンしたディレクトリ>/swift-ac-library/Sources/AtCo
 find "$TARGET_DIR" -type f -name "*.swift" -exec cat {} +
 ```
 
-## その他
-
-無保証です。破壊的変更の可能性があります。
-不具合等ありましたら、教えてくれると喜びます。
-
 ## ライセンス
 
 [CC0]
