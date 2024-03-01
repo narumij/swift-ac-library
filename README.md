@@ -4,15 +4,42 @@ swift-ac-libraryは、[AC(AtCoder) Library][ac-library]のSwift移植版です�
 
 ## 利用の仕方
 
-SwiftPMで swift-ac-libraryを利用する場合は、以下をPackage.swift に追加してください。
+SwiftPMで swift-ac-libraryを利用する場合は、
 
+以下をPackage.swift に追加してください。
 ```
 dependencies: [
   .package(url: "https://github.com/narumij/swift-ac-library.git", from: "0.0.5"),
 ],
 ```
 
-提出時は、コピペで頑張ってください。
+ビルドターゲットに以下を追加します。
+
+```
+    dependencies: [
+            .product(name: "AtCoder", package: "swift-ac-library")
+    ]
+```
+
+ファイルに以下を追加します。
+```
+import AtCoder
+```
+
+## 提出時
+
+一例ですが、全部連結しています。連結は以下のスクリプトで行うことができます。
+あとは各々の提出のオペレーションに併せてアレンジしてください。
+
+```
+#!/bin/zsh
+
+# 対象ディレクトリのパス
+TARGET_DIR="<クローンしたディレクトリ>/swift-ac-library/Sources/AtCoder"
+
+# 指定されたディレクトリ内のSwiftファイルを検索し、連結して標準出力に表示
+find "$TARGET_DIR" -type f -name "*.swift" -exec cat {} +
+```
 
 ## セグ木の使い方
 
@@ -90,18 +117,9 @@ ac-libraryとの目視照らし合わせで間違いを発見しやすいこと�
 Swiftの命名規則には反していますが、メソッド名に関してはPython版の名前に寄せることにしました。
 理由は、Pythonの解説コードがSwiftに有用な場合が多く、upsolveでのめんどくささを軽減したかったからです。
 
-### Intか、CIntか、あるいはFixedWithIntegerか
+### 雑感
 
-最初期はCIntを積極的に採用していて、テストコード等が楽に書けるようにFixedWithIntegerも使っていましたが、
-現在は、可能な範囲でIntへのシフトをし、キャストも減らす方向になっています。
-
-### Arrayか、ContiguousArrayか
-
-将来的な改善が享受できそうなArrayを、積極的に採用します。
-
-### 遅延セグ木の性能
-
-まだ以前の版のものに性能が追いついていません。目立って遅い部分というのも特にないので、以前ほどの性能にはならないままかもしれません。
+メソッドシグネチャ等は気の迷いでまだ修正する可能性がありますが、内容に関しては安定してきています。
 
 ## ライセンス
 
