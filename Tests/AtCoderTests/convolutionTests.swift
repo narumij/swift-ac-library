@@ -153,7 +153,7 @@ final class convolutionTests: XCTestCase {
                 for i in 0..<m as Range<int> {
                     b[Int(i)] = mt() % MOD1.value();
                 }
-                XCTAssertEqual(conv_naive(MOD1.value(), a, b), convolution(mod_998_244_353.self, a, b))
+                XCTAssertEqual(conv_naive(MOD1.value(), a, b), convolution(a, b))
                 // これがコンパイル通るのは、コンパイラのバグな気がする。あるいは5.9のマクロで緩んだ？
                 XCTAssertEqual(conv_naive(MOD1.value(), a, b), convolution<MOD1>(a, b))
                 XCTAssertEqual(conv_naive(MOD1.value(), a, b), (convolution(MOD1.self, a, b)))
