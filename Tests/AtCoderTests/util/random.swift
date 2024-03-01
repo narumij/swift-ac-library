@@ -9,7 +9,7 @@ func randbool() -> Bool {
 }
 
 func randpair(_ lower: Int,_ upper: Int) -> (Int,Int) {
-    assert(upper - lower >= 1);
+    assert(upper - lower >= 1)
     while true {
         let (x,y) = (randint(lower, upper), randint(lower, upper))
         guard x == y else { return x < y ? (x,y) : (y,x) }

@@ -50,11 +50,9 @@ final class segtreeTests: XCTestCase {
         XCTAssertEqual("$", SegTree().all_prod())
     }
     
-    func testInvalid() throws {
-        
-        throw XCTSkip("Swift Packageでは実施不可")
-        
 #if false
+    func testInvalid() throws {
+        throw XCTSkip("Swift Packageでは実施不可")
         XCTAssertThrowsError(segtree_naive(-1))
         let s = SegTree(10)
         XCTAssertThrowsError(s.get(-1))
@@ -66,9 +64,9 @@ final class segtreeTests: XCTestCase {
         XCTAssertThrowsError(s.max_right(11, { _ in true }))
         XCTAssertThrowsError(s.min_left(-1, { _ in true }))
         XCTAssertThrowsError(s.max_right(0, { _ in false }))
-#endif
     }
-    
+#endif
+
     func testOne() throws {
         var s = SegTree(1)
         XCTAssertEqual("$", s.all_prod());
@@ -125,11 +123,11 @@ final class segtreeTests: XCTestCase {
         }
     }
     
+#if false
     func testAssign() throws {
         throw XCTSkip("代入のオーバーロードはSwiftにはない。")
-#if false
         var seg0 = SegTree();
         XCTAssertNoThrow(seg0 = SegTree(10))
-#endif
     }
+#endif
 }

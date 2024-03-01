@@ -50,14 +50,6 @@ fileprivate func is_prime_naive(_ n: ll) -> Bool {
 
 final class mathTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-    
     func testPowMod() throws {
         
         // throw XCTSkip("時間がかかるのでスキップ。一度テストは通っている。")
@@ -275,13 +267,6 @@ final class mathTests: XCTestCase {
                 XCTAssertEqual(ans % (INF - 1), res.first);
                 XCTAssertEqual(INF - 1, res.second);
             }
-        }
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
         }
     }
 

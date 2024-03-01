@@ -25,6 +25,7 @@ final class fenwickTreeTests: XCTestCase {
         XCTAssertEqual(0, fw_modint.sum(0, 0));
     }
     
+#if false
     func testAssign() throws {
         throw XCTSkip("代入のオーバーロードはSwiftにはない。")
         /*
@@ -32,6 +33,7 @@ final class fenwickTreeTests: XCTestCase {
          fw = fenwick_tree<ll>(10);
          */
     }
+#endif
     
     func testZero() throws {
         var fw_ll = fenwick_tree<ll>(0);
@@ -117,6 +119,7 @@ final class fenwickTreeTests: XCTestCase {
         }
     }
     
+#if false
     func testInvalid() throws {
         throw XCTSkip("Swift Packageでは実施不可")
         /*
@@ -131,6 +134,7 @@ final class fenwickTreeTests: XCTestCase {
         EXPECT_DEATH(s.sum(5, 3), ".*");
          */
     }
+#endif
     
     func testBound() throws {
         var fw = fenwick_tree<int>(10);
@@ -182,6 +186,7 @@ final class fenwickTreeTests: XCTestCase {
          }
     }
     
+#if false
     func testInt128() throws {
         throw XCTSkip("__int128がSwiftにはない")
         /*
@@ -201,6 +206,7 @@ final class fenwickTreeTests: XCTestCase {
          }
          */
     }
+#endif
     
     func testInt() throws {
         var fw = fenwick_tree<Int>(20)

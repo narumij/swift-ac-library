@@ -3,22 +3,6 @@ import XCTest
 
 final class sccTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-    
     typealias scc_graph = SCCGraph
     
     func testEmpty() throws {
@@ -28,9 +12,11 @@ final class sccTests: XCTestCase {
         XCTAssertEqual([], graph1.scc());
     }
     
+#if false
     func testAssign() throws {
-        throw XCTSkip("C++固有のオーバーロードに関するテストなので、実施しない")
+        throw XCTSkip("代入のオーバーロードはSwiftにはない。")
     }
+#endif
     
     func testSimple() throws {
         var graph: scc_graph = .init(2);
@@ -49,21 +35,11 @@ final class sccTests: XCTestCase {
         XCTAssertEqual(2, scc.count);
     }
     
+#if false
     func testInvalid() throws {
-        throw XCTSkip("テスト自体がクラッシュするのでスキップ")
+        throw XCTSkip("Swift Packageでは実施不可")
         var graph: scc_graph = .init(2);
         XCTAssertThrowsError(graph.add_edge(0, 10), ".*");
     }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        
-//        let to = (0..<1_000_000).map{ _ in (Int.random(in: 0..<3000), `internal`.scc_graph.edge(to: Int.random(in: 0..<3000))) }
-        
-        self.measure {
-            // Put the code you want to measure the time of here.
-//            `internal`.csr(3000, to)
-        }
-    }
-
+#endif
 }

@@ -319,7 +319,7 @@ final class convolutionTests: XCTestCase {
     }
     
     func testSimpleInt128() throws {
-        throw XCTSkip("該当する型がない？")
+        throw XCTSkip("__int128はSwiftでは利用できないため")
         /*
         const int MOD1 = 998244353;
         const int MOD2 = 924844033;
@@ -354,7 +354,7 @@ final class convolutionTests: XCTestCase {
     }
     
     func testSimpleUInt128() throws {
-        throw XCTSkip("該当する型がない？")
+        throw XCTSkip("__int128はSwiftでは利用できないため")
         /*
          const int MOD1 = 998244353;
          const int MOD2 = 924844033;

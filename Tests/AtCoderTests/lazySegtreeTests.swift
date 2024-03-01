@@ -76,18 +76,18 @@ final class lazySegtreeTests: XCTestCase {
         }
     }
     
+#if false
     func testAssign() throws {
         throw XCTSkip("代入のオーバーロードはSwiftにはない。")
-#if false
         var seg0 = starry_seg();
         XCTAssertNoThrow(seg0 = starry_seg(10));
-#endif
     }
+#endif
 
+#if false
     func testInvalid() throws {
         
         throw XCTSkip("Swift Packageでは実施不可")
-#if false
         XCTAssertThrowsError(starry_seg(-1))
         
         var s = starry_seg(10)
@@ -100,9 +100,9 @@ final class lazySegtreeTests: XCTestCase {
         XCTAssertThrowsError(s.prod(3,2))
         XCTAssertThrowsError(s.prod(0,11))
         XCTAssertThrowsError(s.prod(-1,11))
-#endif
     }
-    
+#endif
+
     func testNaiveProd() throws {
         for n in 0...50 {
             var seg = starry_seg(n);

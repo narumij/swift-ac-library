@@ -147,7 +147,7 @@ final class internalMathTests: XCTestCase {
 
     func testSafeMod() throws {
         
-        throw XCTSkip("型が無く、同様の計算ができないためスキップ")
+        throw XCTSkip("__int128はSwiftでは利用できないため")
         
         /*
          std::vector<ll> preds;

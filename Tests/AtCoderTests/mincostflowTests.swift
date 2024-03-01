@@ -23,22 +23,6 @@ extension mcf_graph.Edge: ExpressibleByArrayLiteral where Value == Int {
 
 final class mincostflowTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
-    
     func test0() throws {
         var g1 = mcf_graph<Int>();
         var g2 = mcf_graph<Int>(count: 0);
@@ -100,20 +84,24 @@ final class mincostflowTests: XCTestCase {
         }
     }
     
+#if false
     func testAssign() throws {
-        throw XCTSkip("C++固有のオーバーロードに関するテストなので、実施しない")
+        throw XCTSkip("代入のオーバーロードはSwiftにはない。")
 //        TEST(MincostflowTest, Assign) {
 //            mcf_graph<int, int> g;
 //            g = mcf_graph<int, int>(10);
 //        }
     }
+#endif
     
+#if false
     func testOutrange() throws {
-        throw XCTSkip("テスト自体がクラッシュするのでスキップ")
+        throw XCTSkip("Swift Packageでは実施不可")
         var g = mcf_graph<Int>(count: 10);
         XCTAssertThrowsError(g.slope(-1, 3), ".*");
         XCTAssertThrowsError(g.slope(3, 3), ".*");
     }
+#endif
     
     func testSelfLoop() throws {
         
@@ -220,22 +208,21 @@ final class mincostflowTests: XCTestCase {
         }
     }
     
-#if false
     func testStressFailed() throws {
                 
         let (n,s,t) = (6,1,2)
         let data = [(1, 2, 4, 0, 8976), (4, 2, 7, 0, 6563), (1, 2, 4, 0, 5725), (3, 4, 1, 0, 2079), (1, 0, 7, 0, 1378), (1, 0, 7, 0, 3319), (1, 5, 9, 0, 4324), (2, 4, 9, 0, 7471), (1, 5, 5, 0, 1769), (2, 1, 10, 0, 6192), (3, 0, 6, 0, 9274), (1, 1, 7, 0, 6176), (1, 5, 7, 0, 9664), (0, 4, 8, 0, 1376), (5, 5, 10, 0, 5985), (3, 5, 7, 0, 2057), (3, 5, 0, 0, 4760), (3, 1, 5, 0, 2309), (4, 3, 4, 0, 165), (5, 3, 9, 0, 9696), (3, 2, 5, 0, 4227)]
         
-        var g_mf = mf_graph<Int>(n);
-        var g = mcf_graph<Int, Int>(n);
+        var g_mf = mf_graph<Int>(count: n);
+        var g = mcf_graph<Int>(count: n);
         data.forEach{g.add_edge($0.0, $0.1, $0.2, $0.4)}
         data.forEach{g_mf.add_edge($0.0, $0.1, $0.2)}
-        let flow, cost: Int;
-        (flow, cost) = g.flow(s, t)
+        let (flow, _) = g.flow(s, t)
         let mflow = g_mf.flow(s, t)
         XCTAssertEqual(mflow, flow)
     }
     
+#if false
     func testStressFailed2() throws {
         
         let (n,s,t) = (6,1,2)
@@ -245,8 +232,8 @@ final class mincostflowTests: XCTestCase {
         
 //        for (i,p) in zip(1...data.count, progress) {
         for (i,p) in zip([16], progress) {
-            var g_mf = mf_graph<Int>(n);
-            var g = mcf_graph<Int, Int>(n);
+            var g_mf = mf_graph<Int>(count: n);
+            var g = mcf_graph<Int>(count: n);
             data[0..<i].forEach{g.add_edge($0.0, $0.1, $0.2, $0.4)}
             data[0..<i].forEach{g_mf.add_edge($0.0, $0.1, $0.2)}
             let flow, cost: Int;
@@ -258,11 +245,4 @@ final class mincostflowTests: XCTestCase {
         }
     }
 #endif
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
 }

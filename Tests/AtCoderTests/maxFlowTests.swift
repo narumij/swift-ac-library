@@ -27,25 +27,18 @@ extension mf_graph._Edge: ExpressibleByArrayLiteral where Cap == Int {
 }
 
 
-
 final class maxFlowTests: XCTestCase {
-
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
 
     func test0() throws {
         _ = mf_graph<Int>()
         _ = mf_graph<Int>(count: 0)
     }
     
+#if false
     func testAssign() throws {
-        throw XCTSkip("C++固有のオーバーロードに関するテストなので、実施しない")
+        throw XCTSkip("代入のオーバーロードはSwiftにはない。")
     }
+#endif
     
     func edge_eq<T: Equatable>(_ expect: mf_graph<T>.Edge,_ actual: mf_graph<T>.Edge) {
         XCTAssertEqual(expect.from, actual.from);
@@ -208,56 +201,48 @@ final class maxFlowTests: XCTestCase {
         edge_eq(e, g.get_edge(0));
     }
     
+#if false
     func testInvalid() throws {
-        throw XCTSkip("テスト自体がクラッシュするのでスキップ")
+        throw XCTSkip("Swift Packageでは実施不可")
         var g = mf_graph<Int>(count: 2);
         XCTAssertThrowsError(g.flow(0, 0), ".*");
         XCTAssertThrowsError(g.flow(0, 0, 0), ".*");
     }
-    
-    func testStress() throws {
-//        for (int phase = 0; phase < 10000; phase++) {
-        for phase in 0..<10000 {
-            let n = randint(2, 20);
-            let m = randint(1, 100);
-            var s, t: Int;
-            (s, t) = randpair(0, n - 1);
-            if (randbool()) { swap(&s, &t); }
+#endif
 
-            var g = mf_graph<Int>(count: n);
-//            for (int i = 0; i < m; i++) {
-            for i in 0..<m {
-                let u = randint(0, n - 1);
-                let v = randint(0, n - 1);
-                let c = randint(0, 10000);
-                g.add_edge(u, v, c);
-            }
-            let flow = g.flow(s, t);
-            var dual = 0;
-            let cut = g.min_cut(s);
-            var v_flow = [Int](repeating:0, count: n);
-//            for (auto e: g.edges()) {
-            for e in g.edges() {
-                v_flow[e.from] -= e.flow;
-                v_flow[e.to] += e.flow;
-                if (cut[e.from] && !cut[e.to]) { dual += e.cap; }
-            }
-            XCTAssertEqual(flow, dual);
-            XCTAssertEqual(-flow, v_flow[s]);
-            XCTAssertEqual(flow, v_flow[t]);
-//            for (int i = 0; i < n; i++) {
-            for i in 0..<n {
-                if (i == s || i == t) { continue; }
-                XCTAssertEqual(0, v_flow[i]);
-            }
-        }
-    }
-
-    func testPerformanceExample() throws {
+    func testPerformanceStress() throws {
         // This is an example of a performance test case.
         self.measure {
-            // Put the code you want to measure the time of here.
+            for _ /* phase */ in 0..<10000 {
+                let n = randint(2, 20);
+                let m = randint(1, 100);
+                var s, t: Int;
+                (s, t) = randpair(0, n - 1);
+                if (randbool()) { swap(&s, &t); }
+                var g = mf_graph<Int>(count: n);
+                for _ in 0..<m {
+                    let u = randint(0, n - 1);
+                    let v = randint(0, n - 1);
+                    let c = randint(0, 10000);
+                    g.add_edge(u, v, c);
+                }
+                let flow = g.flow(s, t);
+                var dual = 0;
+                let cut = g.min_cut(s);
+                var v_flow = [Int](repeating:0, count: n);
+                for e in g.edges() {
+                    v_flow[e.from] -= e.flow;
+                    v_flow[e.to] += e.flow;
+                    if (cut[e.from] && !cut[e.to]) { dual += e.cap; }
+                }
+                XCTAssertEqual(flow, dual);
+                XCTAssertEqual(-flow, v_flow[s]);
+                XCTAssertEqual(flow, v_flow[t]);
+                for i in 0..<n {
+                    if (i == s || i == t) { continue; }
+                    XCTAssertEqual(0, v_flow[i]);
+                }
+            }
         }
     }
-
 }

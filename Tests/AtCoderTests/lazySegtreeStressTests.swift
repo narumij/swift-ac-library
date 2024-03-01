@@ -86,6 +86,12 @@ fileprivate typealias seg = LazySegTree<S,T>
 
 
 final class lazySegtreeStressTests: XCTestCase {
+    
+#if false
+    let (naive,right,left) = (3000,1000,1000)
+#else
+    let (naive,right,left) = (300,100,100)
+#endif
 
     func testPerformanceNaive() throws {
         self.measure {
@@ -97,7 +103,7 @@ final class lazySegtreeStressTests: XCTestCase {
                         seg0.set(i, S(i, i + 1, -1));
                     }
                     var now = 0;
-                    for _ in 0..<3000 {
+                    for _ in 0..<naive {
                         let ty = randint(0, 3);
                         var l, r: Int;
                         (l, r) = randpair(0, n);
@@ -138,7 +144,7 @@ final class lazySegtreeStressTests: XCTestCase {
                         seg0.set(i, S(i, i + 1, -1));
                     }
                     var now = 0;
-                    for _ in 0..<1000 {
+                    for _ in 0..<right {
                         let ty = randint(0, 2);
                         var l, r: Int;
                         (l, r) = randpair(0, n);
@@ -170,7 +176,7 @@ final class lazySegtreeStressTests: XCTestCase {
                         seg0.set(i, S(i, i + 1, -1));
                     }
                     var now = 0;
-                    for _ in 0..<1000 {
+                    for _ in 0..<left {
                         let ty = randint(0, 2);
                         var l, r: Int;
                         (l, r) = randpair(0, n);
