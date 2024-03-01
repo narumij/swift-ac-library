@@ -88,7 +88,7 @@ final class segtreeTests: XCTestCase {
             var seg1 = SegTree(n);
             for i in 0..<n {
                 var s = ""
-                s.append(String(cString:["a" + CChar(i),0]))
+                s.append(String(["a",Character(UnicodeScalar(i)!)]))
                 seg0.set(i, s);
                 seg1.set(i, s);
             }

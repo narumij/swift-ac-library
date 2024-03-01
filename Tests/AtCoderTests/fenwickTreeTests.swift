@@ -216,6 +216,20 @@ final class fenwickTreeTests: XCTestCase {
             }
         }
     }
+    
+    func testSum() throws {
+        var fw = fenwick_tree<Int>(20)
+        for i in 0 ..< 20 {
+            fw.add(i, i)
+        }
+        for l in 0 ... 20 {
+            var sum = 0
+            for i in 0 ..< l {
+                sum += i
+            }
+            XCTAssertEqual(sum, Int(fw.sum(l)))
+        }
+    }
 
     func testHandleUnsigned() throws {
         XCTAssertEqual(4294967295, CInt(-1).unsigned)

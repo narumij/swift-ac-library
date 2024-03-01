@@ -8,91 +8,6 @@
 import XCTest
 @testable import AtCoder
 
-/*
- 
-// fixture source code
- 
-#include<bits/stdc++.h>
-using namespace std;
-
-int main() {
-    
-    {
-        vector<int> heap = {0,1,2,3,4,5,6,7,8,9};
-        vector<int>::iterator iter;
-        make_heap(heap.begin(), heap.end());
-        cout <<"let makeHeapResult10: [Int] = [";
-        for (iter=heap.begin(); iter!=heap.end(); iter++) {
-            if (iter != heap.begin()) cout <<", ";
-            cout << *iter;
-        }
-        cout << "]" << endl;
-    }
-    
-    {
-        for (int i = 0; i < 10; ++i) {
-            vector<int> heap = {0,1,2,3,4,5,6,7,8,9};
-            vector<int>::iterator iter;
-            for (int j = 0; j < i; ++j) {
-                push_heap(heap.begin(), heap.begin() + j);
-            }
-            cout <<"let pushHeapResult_" << i << ": [Int] = [";
-            for (iter=heap.begin(); iter!=heap.end(); iter++) {
-                if (iter != heap.begin()) cout <<", ";
-                cout << *iter;
-            }
-            cout << "]" << endl;
-        }
-    }
-    
-    {
-        for(int i = 1; i < 11; ++i) {
-            vector<int> heap = {0,1,2,3,4,5,6,7,8,9};
-            vector<int>::iterator iter;
-            make_heap(heap.begin(), heap.end());
-            heap.push_back(i);
-            push_heap(heap.begin(), heap.end());
-            cout <<"let pushHeapEachResult_" << i << ": [Int] = [";
-            for (iter=heap.begin(); iter!=heap.end(); iter++) {
-                if (iter != heap.begin()) cout <<", ";
-                cout << *iter;
-            }
-            cout << "]" << endl;
-        }
-    }
-
-    {
-        vector<int> heap = {0,1,2,3,4,5,6,7,8,9};
-        vector<int>::iterator iter;
-        push_heap(heap.begin(), heap.end());
-        cout <<"let pushHeapResult10: [Int] = [";
-        for (iter=heap.begin(); iter!=heap.end(); iter++) {
-            if (iter != heap.begin()) cout <<", ";
-            cout << *iter;
-        }
-        cout << "]" << endl;
-    }
-
-    {
-        vector<int> heap = {0,1,2,3,4,5,6,7,8,9};
-        vector<int>::iterator iter;
-        make_heap(heap.begin(), heap.end());
-
-        for(int i = 0; i < 10; ++i) {
-            pop_heap(heap.begin(), heap.end());
-            heap.pop_back();
-            cout <<"let popHeapResult_" << i << ": [Int] = [";
-            for (iter=heap.begin(); iter!=heap.end(); iter++) {
-                if (iter != heap.begin()) cout <<", ";
-                cout << *iter;
-            }
-            cout << "]" << endl;
-        }
-    }
-}
-
-*/
-
 final class BinaryHeapTests: XCTestCase {
 
     let makeHeapResult10: [Int] = [9, 8, 6, 7, 4, 5, 2, 0, 3, 1]
@@ -248,3 +163,88 @@ final class BinaryHeapTests: XCTestCase {
     }
 
 }
+
+/*
+ 
+// fixture source code
+ 
+#include<bits/stdc++.h>
+using namespace std;
+
+int main() {
+    
+    {
+        vector<int> heap = {0,1,2,3,4,5,6,7,8,9};
+        vector<int>::iterator iter;
+        make_heap(heap.begin(), heap.end());
+        cout <<"let makeHeapResult10: [Int] = [";
+        for (iter=heap.begin(); iter!=heap.end(); iter++) {
+            if (iter != heap.begin()) cout <<", ";
+            cout << *iter;
+        }
+        cout << "]" << endl;
+    }
+    
+    {
+        for (int i = 0; i < 10; ++i) {
+            vector<int> heap = {0,1,2,3,4,5,6,7,8,9};
+            vector<int>::iterator iter;
+            for (int j = 0; j < i; ++j) {
+                push_heap(heap.begin(), heap.begin() + j);
+            }
+            cout <<"let pushHeapResult_" << i << ": [Int] = [";
+            for (iter=heap.begin(); iter!=heap.end(); iter++) {
+                if (iter != heap.begin()) cout <<", ";
+                cout << *iter;
+            }
+            cout << "]" << endl;
+        }
+    }
+    
+    {
+        for(int i = 1; i < 11; ++i) {
+            vector<int> heap = {0,1,2,3,4,5,6,7,8,9};
+            vector<int>::iterator iter;
+            make_heap(heap.begin(), heap.end());
+            heap.push_back(i);
+            push_heap(heap.begin(), heap.end());
+            cout <<"let pushHeapEachResult_" << i << ": [Int] = [";
+            for (iter=heap.begin(); iter!=heap.end(); iter++) {
+                if (iter != heap.begin()) cout <<", ";
+                cout << *iter;
+            }
+            cout << "]" << endl;
+        }
+    }
+
+    {
+        vector<int> heap = {0,1,2,3,4,5,6,7,8,9};
+        vector<int>::iterator iter;
+        push_heap(heap.begin(), heap.end());
+        cout <<"let pushHeapResult10: [Int] = [";
+        for (iter=heap.begin(); iter!=heap.end(); iter++) {
+            if (iter != heap.begin()) cout <<", ";
+            cout << *iter;
+        }
+        cout << "]" << endl;
+    }
+
+    {
+        vector<int> heap = {0,1,2,3,4,5,6,7,8,9};
+        vector<int>::iterator iter;
+        make_heap(heap.begin(), heap.end());
+
+        for(int i = 0; i < 10; ++i) {
+            pop_heap(heap.begin(), heap.end());
+            heap.pop_back();
+            cout <<"let popHeapResult_" << i << ": [Int] = [";
+            for (iter=heap.begin(); iter!=heap.end(); iter++) {
+                if (iter != heap.begin()) cout <<", ";
+                cout << *iter;
+            }
+            cout << "]" << endl;
+        }
+    }
+}
+
+*/
