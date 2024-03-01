@@ -9,9 +9,23 @@ import XCTest
 @testable import AtCoder
 import Numerics
 
+fileprivate typealias int = CInt;
 fileprivate typealias uint = CUnsignedInt;
 fileprivate typealias ll = CLongLong;
 fileprivate typealias ull = CUnsignedLongLong;
+
+extension barrett: Equatable {
+    public static func == (lhs: barrett, rhs: barrett) -> Bool {
+        (lhs.im,lhs.m) == (rhs.im, rhs.m)
+    }
+}
+
+extension dynamic_mod {
+    // 型の生存期間が各テストメソッドのスコープを超えるので、都度リセットする必要がある。
+    static func reset() {
+        bt = .default
+    }
+}
 
 final class modintTests: XCTestCase {
 
@@ -27,11 +41,11 @@ final class modintTests: XCTestCase {
         typealias mint = modint;
         let mod_upper = CUnsignedInt(CInt.max);
 //        for (unsigned int mod = mod_upper; mod >= mod_upper - 20; mod--) {
-        for mod in mod_upper..>=(mod_upper - 20) {
+        for mod in mod_upper ..>= (mod_upper - 20) {
             mint.set_mod(CInt(mod));
             var v: [ll] = [];
 //            for (int i = 0; i < 10; i++) {
-            for i in ll(0)..<10 {
+            for i in 0 ..< 10 as Range<ll> {
                 v.append(i);
                 v.append(ll(mod) - i);
                 v.append(ll(mod) / 2 + i);
@@ -49,6 +63,8 @@ final class modintTests: XCTestCase {
                 }
             }
         }
+        
+        mod_dynamic.reset()
     }
     
     func testDynamicBorderAlt() throws {
@@ -93,6 +109,8 @@ final class modintTests: XCTestCase {
                 XCTAssertEqual(ans4, (mint(a) * mint(b)).val(), "* mod = \(mod)");
             }
         }
+        
+        mod_dynamic.reset()
     }
 
     func testULL() throws {
@@ -113,67 +131,72 @@ final class modintTests: XCTestCase {
             XCTAssertNotEqual(UInt32(mint.mod()) - 1, mint(CUnsignedLongLong(bitPattern: CLongLong(-1))).val());
             XCTAssertNotEqual(0, (mint(CUnsignedLongLong(bitPattern: CLongLong(-1))) + mint(1)).val());
         }
+        mod_dynamic.reset()
     }
     
     func testMod1() throws {
-        modint.set_mod(1);
+        modint.set_mod(1)
 //        for (int i = 0; i < 100; i++) {
-        for i in CInt(0)..<100 {
+        for i in 0 ..< 100 as Range<int> {
 //            for (int j = 0; j < 100; j++) {
-            for j in CInt(0)..<100 {
-                XCTAssertEqual((modint(i) * modint(j)).val(), 0);
+            for j in 0 ..< 100 as Range<int> {
+                XCTAssertEqual((modint(i) * modint(j)).val(), 0)
             }
         }
-        XCTAssertEqual((modint(1234) + modint(5678)).val(), 0);
-        XCTAssertEqual((modint(1234) - modint(5678)).val(), 0);
-        XCTAssertEqual((modint(1234) * modint(5678)).val(), 0);
-        XCTAssertEqual((modint(1234).pow(5678)), 0);
-        XCTAssertEqual(0, modint(0).inv());
+        XCTAssertEqual((modint(1234) + modint(5678)).val(), 0)
+        XCTAssertEqual((modint(1234) - modint(5678)).val(), 0)
+        XCTAssertEqual((modint(1234) * modint(5678)).val(), 0)
+        XCTAssertEqual((modint(1234).pow(5678)), 0)
+        XCTAssertEqual(0, modint(0).inv())
 
-        XCTAssertEqual(0, modint(true).val());
+        XCTAssertEqual(0, modint(true).val())
 
-        typealias mint = static_modint<mod_1>;
+        typealias mint = static_modint<mod_1>
 //        for (int i = 0; i < 100; i++) {
-        for i in 0..<100 {
+        for i in 0 ..< 100 as Range<int> {
 //            for (int j = 0; j < 100; j++) {
-            for j in 0..<100 {
-                XCTAssertEqual((mint(i) * mint(j)).val(), 0);
+            for j in 0 ..< 100 as Range<int> {
+                XCTAssertEqual((mint(i) * mint(j)).val(), 0)
             }
         }
-        XCTAssertEqual((mint(1234) + mint(5678)).val(), 0);
-        XCTAssertEqual((mint(1234) - mint(5678)).val(), 0);
-        XCTAssertEqual((mint(1234) * mint(5678)).val(), 0);
-        XCTAssertEqual((mint(1234).pow(5678)), 0);
-        XCTAssertEqual(0, modint(0).inv());
+        XCTAssertEqual((mint(1234) + mint(5678)).val(), 0)
+        XCTAssertEqual((mint(1234) - mint(5678)).val(), 0)
+        XCTAssertEqual((mint(1234) * mint(5678)).val(), 0)
+        XCTAssertEqual((mint(1234).pow(5678)), 0)
+        XCTAssertEqual(0, modint(0).inv())
 
-        XCTAssertEqual(0, mint(true).val());
+        XCTAssertEqual(0, mint(true).val())
+        
+        mod_dynamic.reset()
     }
     
     func testModIntMax() throws {
-        modint.set_mod(CInt.max);
+        modint.set_mod(CInt.max)
 //        for (int i = 0; i < 100; i++) {
-        for i in CInt(0)..<100 {
+        for i in 0 ..< 100 as Range<int> {
 //            for (int j = 0; j < 100; j++) {
-            for j in CInt(0)..<100 {
-                XCTAssertEqual((modint(i) * modint(j)).val(), uint(i * j));
+            for j in 0 ..< 100 as Range<int> {
+                XCTAssertEqual((modint(i) * modint(j)).val(), uint(i * j))
             }
         }
-        XCTAssertEqual((modint(1234) + modint(5678)).val(), 1234 + 5678);
-        XCTAssertEqual((modint(1234) - modint(5678)).val(), uint(CInt.max - 5678 + 1234));
-        XCTAssertEqual((modint(1234) * modint(5678)).val(), 1234 * 5678);
+        XCTAssertEqual((modint(1234) + modint(5678)).val(), 1234 + 5678)
+        XCTAssertEqual((modint(1234) - modint(5678)).val(), uint(CInt.max - 5678 + 1234))
+        XCTAssertEqual((modint(1234) * modint(5678)).val(), 1234 * 5678)
         
-        typealias mint = static_modint<INT32_MAX>;
+        typealias mint = static_modint<INT32_MAX>
 //        for (int i = 0; i < 100; i++) {
-        for i in uint(0)..<100 {
+        for i in 0 ..< 100 as Range<int> {
 //            for (int j = 0; j < 100; j++) {
-            for j in uint(0)..<100 {
-                XCTAssertEqual((mint(i) * mint(j)).val(), i * j);
+            for j in 0 ..< 100 as Range<int> {
+                XCTAssertEqual((mint(i) * mint(j)).val(), uint(i * j))
             }
         }
-        XCTAssertEqual((mint(1234) + mint(5678)).val(), 1234 + 5678);
-        XCTAssertEqual((mint(1234) - mint(5678)).val(), uint(Int32.max - 5678 + 1234));
-        XCTAssertEqual((mint(1234) * mint(5678)).val(), 1234 * 5678);
-        XCTAssertEqual((mint(Int32.max) + mint(Int32.max)).val(), 0);
+        XCTAssertEqual((mint(1234) + mint(5678)).val(), 1234 + 5678)
+        XCTAssertEqual((mint(1234) - mint(5678)).val(), uint(Int32.max - 5678 + 1234))
+        XCTAssertEqual((mint(1234) * mint(5678)).val(), 1234 * 5678)
+        XCTAssertEqual((mint(Int32.max) + mint(Int32.max)).val(), 0)
+        
+        mod_dynamic.reset()
     }
     
 #if false
@@ -200,56 +223,51 @@ final class modintTests: XCTestCase {
     
     func testInv() throws {
         
-//        for (int i = 1; i < 10; i++) {
-        for i in uint(1)..<10 {
-            let x = static_modint<mod_11>(i).inv().val();
-            XCTAssertEqual(1, (x * i) % 11);
+        for i in 1 ..< 10 as Range<int> {
+            let x = static_modint<mod_11>(i).inv().val()
+            XCTAssertEqual(1, (int(x) * i) % 11)
         }
 
-//        for (int i = 1; i < 11; i++) {
-        for i in uint(1)..<11 {
-            if (gcd(ll(i), 12) != 1) { continue; }
-            let x = static_modint<mod_12>(i).inv().val();
-            XCTAssertEqual(1, (x * i) % 12);
+        for i in 1 ..< 11 as Range<int> {
+            if gcd(i, 12) != 1 { continue }
+            let x = static_modint<mod_12>(i).inv().val()
+            XCTAssertEqual(1, (int(x) * i) % 12)
         }
 
-//        for (int i = 1; i < 100000; i++) {
-        for i in ll(1)..<100_000 {
-            let x = static_modint<mod_1_000_000_007>(i).inv().val();
-            XCTAssertEqual(1, (ll(x) * i) % 1_000_000_007);
+        for i in 1 ..< 100_000 as Range<int> {
+            let x = static_modint<mod_1_000_000_007>(i).inv().val()
+            XCTAssertEqual(1, (ll(x) * ll(i)) % 1_000_000_007)
         }
 
-//        for (int i = 1; i < 100000; i++) {
-        for i in ll(1)..<100_000 {
-            if (gcd(ll(i), 1_000_000_008) != 1) { continue; }
-            let x = static_modint<mod_1_000_000_008>(i).inv().val();
-            XCTAssertEqual(1, (ll(x) * i) % 1_000_000_008);
+        for i in 1 ..< 100_000 as Range<int> {
+            if gcd(i, 1_000_000_008) != 1 { continue }
+            let x = static_modint<mod_1_000_000_008>(i).inv().val()
+            XCTAssertEqual(1, (ll(x) * ll(i)) % 1_000_000_008)
         }
         
         modint.set_mod(998244353);
-//        for (int i = 1; i < 100000; i++) {
-        for i in ll(1)..<100000 {
-            let x = modint(i).inv().val();
-            XCTAssertLessThanOrEqual(0, x);
-            XCTAssertGreaterThanOrEqual(998244353 - 1, x);
-            XCTAssertEqual(1, (ll(x) * i) % 998244353);
+        for i in 1 ..< 100000 as Range<int> {
+            let x = modint(i).inv().val()
+            XCTAssertLessThanOrEqual(0, x)
+            XCTAssertGreaterThanOrEqual(998244353 - 1, x)
+            XCTAssertEqual(1, (ll(x) * ll(i)) % 998244353)
         }
 
         modint.set_mod(1_000_000_008);
-//        for (int i = 1; i < 100000; i++) {
-        for i in ll(1)..<100000 {
-            if (gcd(i, 1_000_000_008) != 1) { continue; }
-            let x = modint(i).inv().val();
-            XCTAssertEqual(1, (ll(x) * i) % 1_000_000_008);
+        for i in 1 ..< 100000 as Range<int> {
+            if gcd(i, 1_000_000_008) != 1 { continue }
+            let x = modint(i).inv().val()
+            XCTAssertEqual(1, (ll(x) * ll(i)) % 1_000_000_008)
         }
 
         modint.set_mod(CInt.max);
-//        for (int i = 1; i < 100000; i++) {
-        for i in ll(1)..<100000 {
-            if (gcd(i, ll(CInt.max)) != 1) { continue; }
+        for i in 1 ..< 100000 as Range<int> {
+            if gcd(i, int.max) != 1 { continue }
             let x = modint(i).inv().val();
-            XCTAssertEqual(1, (ll(x) * i) % ll(CInt.max));
+            XCTAssertEqual(1, (ll(x) * ll(i) % ll(int.max)))
         }
+        
+        mod_dynamic.reset()
     }
     
     func testConstUsage() throws {
@@ -347,6 +365,7 @@ final class modintTests: XCTestCase {
         XCTAssertEqual(998244353, dynamic_modint<_12345>.mod())
         
         dynamic_modint<_12345>.set_mod(11)
+        XCTAssertNotEqual(mod_dynamic.bt, _12345.bt)
         XCTAssertNotEqual(modint.mod(), dynamic_modint<_12345>.mod())
 
         typealias mint = modint
@@ -376,6 +395,8 @@ final class modintTests: XCTestCase {
 
         // Swift Packageでは実施不可
         // XCTAssertThrowsError(mint(3).pow(-1), ".*");
+        
+        mod_dynamic.reset()
     }
     
     func testDynamicUsage2() throws {
@@ -410,6 +431,8 @@ final class modintTests: XCTestCase {
             m *= mint(5)
             XCTAssertEqual(4, m.val());
         }
+        
+        mod_dynamic.reset()
     }
 
     func testConstructor() throws {
@@ -437,6 +460,8 @@ final class modintTests: XCTestCase {
         
         let m = modint()
         XCTAssertEqual(0, m.val())
+        
+        mod_dynamic.reset()
     }
     
     func testConstructorStatic() throws {
@@ -517,6 +542,8 @@ final class modintTests: XCTestCase {
         a += 3
         a -= 2
         XCTAssertEqual(4, a)
+        
+        mod_dynamic.reset()
     }
 
     func testEtc() throws {
