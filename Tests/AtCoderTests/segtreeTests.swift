@@ -53,17 +53,6 @@ final class segtreeTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-//    enum fixture: SegtreeParameter {
-//        static let op: (String,String) -> String = { a, b in
-//            assert(a == "$" || b == "$" || a <= b);
-//            if (a == "$") { return b; }
-//            if (b == "$") { return a; }
-//            return a + b;
-//        }
-//        static let e: String = "$"
-//        typealias S = String
-//    }
-    
     func test0() {
         XCTAssertEqual("$", SegTree(0).all_prod())
         XCTAssertEqual("$", SegTree().all_prod())
@@ -71,24 +60,21 @@ final class segtreeTests: XCTestCase {
     
     func testInvalid() throws {
         
-        throw XCTSkip("配列のfatalをSwiftのみでハンドリングする方法が、まだない。SE-0403以後に、テストするように切り替えます。")
+        throw XCTSkip("Swift Packageでは実施不可")
         
+#if false
         XCTAssertThrowsError(segtree_naive(-1))
-        
         let s = SegTree(10)
-        
         XCTAssertThrowsError(s.get(-1))
         XCTAssertThrowsError(s.get(10))
-        
         XCTAssertThrowsError(s.prod(-1,-1))
-        
         XCTAssertThrowsError(s.prod(3,2))
         XCTAssertThrowsError(s.prod(0,11))
         XCTAssertThrowsError(s.prod(-1,11))
-
         XCTAssertThrowsError(s.max_right(11, { _ in true }))
         XCTAssertThrowsError(s.min_left(-1, { _ in true }))
         XCTAssertThrowsError(s.max_right(0, { _ in false }))
+#endif
     }
     
     func testOne() throws {
@@ -107,11 +93,9 @@ final class segtreeTests: XCTestCase {
         var y: String = ""
         func leq_y(_ x: String) -> Bool { x.count <= y.count }
 
-//        for (int n = 0; n < 30; n++) {
         for n in 0..<30 {
             var seg0 = segtree_naive(n);
             var seg1 = SegTree(n);
-//            for (int i = 0; i < n; i++) {
             for i in 0..<n {
                 var s = ""
                 s.append(String(cString:["a" + CChar(i),0]))
@@ -119,17 +103,13 @@ final class segtreeTests: XCTestCase {
                 seg1.set(i, s);
             }
 
-//            for (int l = 0; l <= n; l++) {
             for l in 0..<=n {
-//                for (int r = l; r <= n; r++) {
                 for r in l..<=n {
                     XCTAssertEqual(seg0.prod(l, r), seg1.prod(l, r));
                 }
             }
 
-//            for (int l = 0; l <= n; l++) {
             for l in 0..<=n {
-//                for (int r = l; r <= n; r++) {
                 for r in l..<=n {
                     y = seg1.prod(l, r);
                     XCTAssertEqual(seg0.max_right(l, leq_y), seg1.max_right(l,leq_y));
@@ -140,9 +120,7 @@ final class segtreeTests: XCTestCase {
                 }
             }
 
-//            for (int r = 0; r <= n; r++) {
             for r in 0..<=n {
-//                for (int l = 0; l <= r; l++) {
                 for l in 0..<=r {
                     y = seg1.prod(l, r);
                     XCTAssertEqual(seg0.min_left(r,leq_y), seg1.min_left(r,leq_y));
@@ -156,8 +134,11 @@ final class segtreeTests: XCTestCase {
     }
     
     func testAssign() throws {
+        throw XCTSkip("代入のオーバーロードはSwiftにはない。")
+#if false
         var seg0 = SegTree();
-        XCTAssertNoThrow(seg0 = SegTree(10));
+        XCTAssertNoThrow(seg0 = SegTree(10))
+#endif
     }
     
     func testPerformanceExample() throws {

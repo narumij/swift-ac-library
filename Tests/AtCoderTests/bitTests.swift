@@ -10,14 +10,6 @@ import XCTest
 
 final class bitTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
     func testBitCeil() throws {
         XCTAssertEqual(1, _Internal.bit_ceil(0))
         XCTAssertEqual(1, _Internal.bit_ceil(1))
@@ -66,12 +58,4 @@ final class bitTests: XCTestCase {
         XCTAssertEqual(31, _Internal.countr_zero_constexpr(1 << 31))
         XCTAssertEqual(0, _Internal.countr_zero_constexpr(UInt32(CInt.max)))
     }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-
 }

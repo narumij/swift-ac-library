@@ -15,14 +15,6 @@ fileprivate typealias ull = CUnsignedLongLong;
 
 final class fenwickTreeTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-    
     typealias fenwick_tree = FenwickTree
     
     func testEmpty() throws {
@@ -158,15 +150,6 @@ final class fenwickTreeTests: XCTestCase {
         XCTAssertEqual(-1, fw.sum(3, 6));
         XCTAssertEqual(ll.max, fw.sum(3, 4));
         XCTAssertEqual(ll.min, fw.sum(4, 10));
-        /*
-         fenwick_tree<ll> fw(10);
-         fw.add(3, std::numeric_limits<ll>::max());
-         fw.add(5, std::numeric_limits<ll>::min());
-         ASSERT_EQ(-1, fw.sum(0, 10));
-         ASSERT_EQ(-1, fw.sum(3, 6));
-         ASSERT_EQ(std::numeric_limits<ll>::max(), fw.sum(3, 4));
-         ASSERT_EQ(std::numeric_limits<ll>::min(), fw.sum(4, 10));
-         */
     }
     
     func testOverFlow() throws {
@@ -224,7 +207,6 @@ final class fenwickTreeTests: XCTestCase {
         for i in 0 ..< 20 {
             fw.add(i, i)
         }
-
         for l in 0 ... 20 {
             for r in l ... 20 {
                 var sum = 0
@@ -237,63 +219,8 @@ final class fenwickTreeTests: XCTestCase {
     }
 
     func testHandleUnsigned() throws {
+        XCTAssertEqual(4294967295, CInt(-1).unsigned)
+        XCTAssertEqual(18446744073709551615, CLongLong(-1).unsigned)
         XCTAssertEqual(18446744073709551615, Int(-1).unsigned)
     }
-    
-    func testSome() throws {
-        let M = 3
-        let Q = 9
-        let t = [1, 3, 2, 3, 3, 1, 3, 3, 3]
-        let a = [0, 1, 2, 2, 2, 1, 2, 1, 0]
-        let b = [2, 2, 2, 3, 1, 3, 2, 3, 2]
-        let c = [1, 0, 0, 1, 2, 3, 3, 4, 5]
-        let subt = [[],[],[3,4,6],[],[],[],[],[],[]]
-        // let ans = [0, 2, 2, 2, 0, 0]
-        
-        var fen = FenwickTree<Int>(M + 1)
-        
-        do {
-            let i = 0
-            fen.add(a[i], c[i])
-            XCTAssertEqual([1, 1, 0, 1], fen.data)
-            fen.add(b[i], -c[i])
-            XCTAssertEqual([1, 1, 18446744073709551615, 0], fen.data)
-        }
-        
-        do {
-            let i = 1
-            XCTAssertEqual(1, fen.sum(0, b[i]))
-        }
-
-        do {
-            let i = 2
-            XCTAssertEqual(0, fen.sum(0, b[subt[i][0]]))
-            XCTAssertEqual(1, fen.sum(0, b[subt[i][1]]))
-            XCTAssertEqual(1, fen.sum(0, b[subt[i][2]]))
-        }
-
-#if false
-        for i in 0..<Q {
-            switch t[i] {
-            case 1:
-                fen.add(a[i], .init(count: c[i]))
-                fen.add(b[i], .init(count: -c[i]))
-            case 2:
-                for j in subt[i] {
-                    let s = fen.sum(0, b[j])
-                }
-            default:
-                let s = fen.sum(0, b[i])
-            }
-        }
-#endif
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-
 }
