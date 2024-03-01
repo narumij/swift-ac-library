@@ -1,9 +1,5 @@
 import Foundation
 
-public protocol mod_id {
-    static var id: Int { get }
-}
-
 public struct mod_value {
     public init<Integer: FixedWidthInteger>(_ m: Integer) {
         self.mod = CUnsignedInt(m)
@@ -29,7 +25,7 @@ extension mod_value: ExpressibleByIntegerLiteral {
 
 // MARK: -
 
-public protocol static_mod: mod_id {
+public protocol static_mod {
     static var mod: mod_value { get }
 }
 
@@ -37,7 +33,6 @@ extension static_mod {
     @usableFromInline static var m: CUnsignedInt { mod.mod }
     @usableFromInline static var umod: CUnsignedInt { mod.mod }
     @usableFromInline static var isPrime: Bool { mod.isPrime }
-    public static var id: Int { Int(mod.mod) }
 }
 
 // MARK: -
@@ -48,7 +43,7 @@ extension barrett: ExpressibleByIntegerLiteral {
     }
 }
 
-public protocol dynamic_mod: mod_id {
+public protocol dynamic_mod {
     static var bt: barrett { get set }
 }
 
@@ -61,7 +56,6 @@ extension dynamic_mod {
         assert(1 <= m)
         bt = .init(m)
     }
-    public static var id: Int { -1 }
 }
 
 public enum mod_dynamic: dynamic_mod {
@@ -77,7 +71,6 @@ public enum mod_1_000_000_007: static_mod {
 }
 
 public protocol modint_base: AdditiveArithmetic, Hashable, ExpressibleByIntegerLiteral, CustomStringConvertible {
-    static var id: Int { get }
     static func mod() -> CInt
     static func umod() -> CUnsignedInt
     init()

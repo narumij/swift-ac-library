@@ -268,7 +268,7 @@ final class modintTests: XCTestCase {
     
 #if false
     func testIncrement() throws {
-        throw XCTSkip("Swiftには無い")
+        throw XCTSkip("Increment演算子がSwiftにはない")
         /*
          using sint = static_modint<11>;
          using dint = modint;
@@ -339,14 +339,17 @@ final class modintTests: XCTestCase {
         XCTAssertTrue(mint(1) == mint(12));
         XCTAssertFalse(mint(1) != mint(12));
 
-//        XCTAssertThrowsError(mint(3).pow(-1), ".*");
+        // Swift Packageでは実施不可
+        // XCTAssertThrowsError(mint(3).pow(-1), ".*");
     }
     
     func testDynamicUsage() throws {
-        // TODO: dynamic_modintにはidを割り当てる機能があるようなので、これの実装
-//        XCTAssertEqual(998244353, dynamic_modint<12345>.mod());
+        enum _12345 { static let id = 12345 }
+        // C++版では整数で型の区別をしていたようだが、Swiftでは型を挿入することにする。
+        XCTAssertEqual(998244353, dynamic_modint<_12345>.mod())
         
         typealias mint = modint;
+        
         mint.set_mod(998244353);
         XCTAssertEqual(998244353, mint.mod());
         XCTAssertEqual(3, (mint(1) + mint(2)).val());
@@ -370,7 +373,8 @@ final class modintTests: XCTestCase {
         XCTAssertTrue(mint(1) == mint(12));
         XCTAssertFalse(mint(1) != mint(12));
 
-//        XCTAssertThrowsError(mint(3).pow(-1), ".*");
+        // Swift Packageでは実施不可
+        // XCTAssertThrowsError(mint(3).pow(-1), ".*");
     }
     
     func testDynamicUsage2() throws {
@@ -427,8 +431,8 @@ final class modintTests: XCTestCase {
         XCTAssertEqual(1, modint((CLong)(-10)).val());
         XCTAssertEqual(1, modint((CLongLong)(-10)).val());
 
-//        XCTAssertEqual(2, (CInt(1) + modint(1)).val());
-//        XCTAssertEqual(2, (CShort(1) + modint(1)).val());
+        XCTAssertEqual(2, (CInt(1) + modint(1)).val());
+        XCTAssertEqual(2, (CShort(1) + modint(1)).val());
         
         let m = modint();
         XCTAssertEqual(0, m.val());
@@ -454,8 +458,8 @@ final class modintTests: XCTestCase {
         XCTAssertEqual(1, mint((CLong)(-10)).val());
         XCTAssertEqual(1, mint((CLongLong)(-10)).val());
 
-//        XCTAssertEqual(2, (CInt(1) + mint(1)).val());
-//        XCTAssertEqual(2, (CShort(1) + mint(1)).val());
+        XCTAssertEqual(2, (CInt(1) + mint(1)).val());
+        XCTAssertEqual(2, (CShort(1) + mint(1)).val());
 
         let m = mint();
         XCTAssertEqual(0, m.val());
@@ -467,10 +471,13 @@ final class modintTests: XCTestCase {
         XCTAssertEqual(4, (mint(9) / 2).val() - CUnsignedInt((mint.mod() + 1) / 2))
         XCTAssertEqual(18, (mint(36) / 2).val())
         
-        XCTAssertEqual(0, mint(false).val());
-        XCTAssertEqual(0, modint(false).val());
-        
-        XCTAssertEqual("0", modint(false).description);
+        XCTAssertEqual(0, mint(false).val())
+        XCTAssertEqual(0, modint(false).val())
+
+        XCTAssertEqual(0, mint(false))
+        XCTAssertEqual(0, modint(false))
+
+        XCTAssertEqual("0", modint(false).description)
     }
     
     func testEtc() throws {
@@ -481,7 +488,6 @@ final class modintTests: XCTestCase {
     
     func testUsageStaticWithInt() throws {
         typealias mint = modint998244353
-        XCTAssertEqual(998244353, mint.id)
         XCTAssertEqual(5, mint(2) + 3)
         XCTAssertEqual(5, 2 + mint(3))
         XCTAssertEqual(1, mint(3) - 2)
@@ -501,7 +507,6 @@ final class modintTests: XCTestCase {
     
     func testUsageDynamicWithInt() throws {
         typealias mint = modint
-        XCTAssertEqual(-1, mint.id)
         XCTAssertEqual(5, mint(2) + 3)
         XCTAssertEqual(5, 2 + mint(3))
         XCTAssertEqual(1, mint(3) - 2)

@@ -13,7 +13,6 @@ public struct static_modint<m: static_mod>: static_modint_base {
         _v = v
     }
     public var _v: CUnsignedInt
-    public static var id: Int { m.id }
 }
 
 public extension static_modint {
@@ -105,7 +104,7 @@ public extension static_modint {
 }
 
 
-public struct dynamic_modint: dynamic_modint_base {
+public struct dynamic_modint<Identifier>: dynamic_modint_base {
     public typealias bt = mod_dynamic
     public init(raw v: CUnsignedInt) {
         _v = v
@@ -114,7 +113,6 @@ public struct dynamic_modint: dynamic_modint_base {
     public static func set_mod(_ m: CInt) {
         bt.set_mod(m)
     }
-    public static var id: Int { bt.id }
 }
 
 extension dynamic_modint {
@@ -195,5 +193,7 @@ extension dynamic_modint {
 
 public typealias modint998244353 = static_modint<mod_998_244_353>
 public typealias modint1000000007 = static_modint<mod_1_000_000_007>
-public typealias modint = dynamic_modint
+
+public enum nameless { static let id: Int = -1 }
+public typealias modint = dynamic_modint<nameless>
 
