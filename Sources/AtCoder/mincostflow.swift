@@ -12,7 +12,7 @@ public extension MCFGraph {
     typealias Cost = Value
     
     init() { _n = 0 }
-    init(_ n: Int) { _n = n }
+    init(count n: Int) { _n = n }
 }
 
 public extension MCFGraph {

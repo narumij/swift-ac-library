@@ -41,7 +41,7 @@ final class mincostflowTests: XCTestCase {
     
     func test0() throws {
         var g1 = mcf_graph<Int>();
-        var g2 = mcf_graph<Int>(0);
+        var g2 = mcf_graph<Int>(count: 0);
     }
     
     func edge_eq(_ expect: mcf_graph<Int>.Edge,_ actual: mcf_graph<Int>.Edge) {
@@ -63,7 +63,7 @@ final class mincostflowTests: XCTestCase {
     
     func testSimple() throws {
         
-        var g = mcf_graph<Int>(4);
+        var g = mcf_graph<Int>(count: 4);
         g.add_edge(0, 1, 1, 1);
         g.add_edge(0, 2, 1, 1);
         g.add_edge(1, 3, 1, 1);
@@ -88,12 +88,12 @@ final class mincostflowTests: XCTestCase {
     
     func testUsage() throws {
         do {
-            var g = mcf_graph<Int>(2);
+            var g = mcf_graph<Int>(count: 2);
             g.add_edge(0, 1, 1, 2);
             tupleEqual((1, 2), g.flow(0, 1));
         }
         do {
-            var g = mcf_graph<Int>(2);
+            var g = mcf_graph<Int>(count: 2);
             g.add_edge(0, 1, 1, 2);
             let expect = [(0, 0), (1, 2)];
             tuplesEqual(expect, g.slope(0, 1));
@@ -110,14 +110,14 @@ final class mincostflowTests: XCTestCase {
     
     func testOutrange() throws {
         throw XCTSkip("テスト自体がクラッシュするのでスキップ")
-        var g = mcf_graph<Int>(10);
+        var g = mcf_graph<Int>(count: 10);
         XCTAssertThrowsError(g.slope(-1, 3), ".*");
         XCTAssertThrowsError(g.slope(3, 3), ".*");
     }
     
     func testSelfLoop() throws {
         
-        var g = mcf_graph<Int>(3);
+        var g = mcf_graph<Int>(count: 3);
         XCTAssertEqual(0, g.add_edge(0, 0, 100, 123));
 
         let e: mcf_graph<Int>.Edge = [0, 0, 100, 0, 123];
@@ -125,7 +125,7 @@ final class mincostflowTests: XCTestCase {
     }
     
     func testSameCostPath() throws {
-        var g = mcf_graph<Int>(3);
+        var g = mcf_graph<Int>(count: 3);
         XCTAssertEqual(0, g.add_edge(0, 1, 1, 1));
         XCTAssertEqual(1, g.add_edge(1, 2, 1, 0));
         XCTAssertEqual(2, g.add_edge(0, 2, 2, 1));
@@ -135,7 +135,7 @@ final class mincostflowTests: XCTestCase {
     
     func testInvalid() throws {
         
-        var g = mcf_graph<Int>(2);
+        var g = mcf_graph<Int>(count: 2);
         // https://github.com/atcoder/ac-library/issues/51
 //        XCTAssertThrowsError(g.add_edge(0, 0, -1, 0), ".*");
 //        XCTAssertThrowsError(g.add_edge(0, 0, 0, -1), ".*");
@@ -156,8 +156,8 @@ final class mincostflowTests: XCTestCase {
             (s, t) = randpair(0, n - 1);
             if (randbool()) { swap(&s, &t); }
 
-            var g_mf = mf_graph<Int>(n);
-            var g = mcf_graph<Int>(n);
+            var g_mf = mf_graph<Int>(count: n);
+            var g = mcf_graph<Int>(count: n);
 //            for (int i = 0; i < m; i++) {
             var data: [(Int,Int,Int,Int,Int)] = []
             for i in 0..<m {

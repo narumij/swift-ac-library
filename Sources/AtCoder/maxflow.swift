@@ -10,7 +10,7 @@ public struct MFGraph<Cap: FixedWidthInteger> {
 public extension MFGraph {
     
     init() { _n = 0; g = [] }
-    init(_ n: Int) { _n = n; g = [[_Edge]].init(repeating: [], count: n) }
+    init(count n: Int) { _n = n; g = [[_Edge]].init(repeating: [], count: n) }
 
     @discardableResult
     mutating func add_edge(_ from: Int,_ to: Int,_ cap: Cap) -> Int {
@@ -89,7 +89,7 @@ public extension MFGraph {
         }
         
         func dfs(_ v: Int,_ up: Cap) -> Cap {
-            if (v == s) { return up }
+            if v == s { return up }
             var res: Cap = 0
             let level_v = level[v]
             for i in iter[v] ..< g[v].count {
@@ -111,12 +111,12 @@ public extension MFGraph {
         }
 
         var flow: Cap = 0
-        while (flow < flow_limit) {
+        while flow < flow_limit {
             bfs()
             if level[t] == -1 { break }
             iter.withUnsafeMutableBufferPointer{ $0.update(repeating: 0) }
             let f = dfs(t, flow_limit - flow)
-            if !(f != 0) { break }
+            if f == 0 { break }
             flow += f
         }
         return flow

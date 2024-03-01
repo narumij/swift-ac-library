@@ -40,7 +40,7 @@ final class maxFlowTests: XCTestCase {
 
     func test0() throws {
         _ = mf_graph<Int>()
-        _ = mf_graph<Int>(0)
+        _ = mf_graph<Int>(count: 0)
     }
     
     func testAssign() throws {
@@ -56,7 +56,7 @@ final class maxFlowTests: XCTestCase {
     
     func testSimple() throws {
 //        throw XCTSkip()
-        var g = mf_graph<Int>(4);
+        var g = mf_graph<Int>(count: 4);
         XCTAssertEqual(0, g.add_edge(0, 1, 1));
         XCTAssertEqual(1, g.add_edge(0, 2, 1));
         XCTAssertEqual(2, g.add_edge(1, 3, 1));
@@ -80,7 +80,7 @@ final class maxFlowTests: XCTestCase {
     }
     
     func testNotSimple() throws {
-        var g = mf_graph<Int>(2);
+        var g = mf_graph<Int>(count: 2);
         XCTAssertEqual(0, g.add_edge(0, 1, 1));
         XCTAssertEqual(1, g.add_edge(0, 1, 2));
         XCTAssertEqual(2, g.add_edge(0, 1, 3));
@@ -106,7 +106,7 @@ final class maxFlowTests: XCTestCase {
     }
     
     func testCut() throws {
-        var g = mf_graph<Int>(3);
+        var g = mf_graph<Int>(count: 3);
         XCTAssertEqual(0, g.add_edge(0, 1, 2));
         XCTAssertEqual(1, g.add_edge(1, 2, 1));
         XCTAssertEqual(1, g.flow(0, 2));
@@ -124,7 +124,7 @@ final class maxFlowTests: XCTestCase {
 
         var e = mf_graph<Int>.Edge();
 
-        var g = mf_graph<Int>(3);
+        var g = mf_graph<Int>(count: 3);
         XCTAssertEqual(0, g.add_edge(0, 1, 1));
         XCTAssertEqual(1, g.add_edge(0, 2, 1));
         XCTAssertEqual(2, g.add_edge(1, 2, 1));
@@ -166,7 +166,7 @@ final class maxFlowTests: XCTestCase {
         var e = mf_graph<Int>.Edge();
 
         let INF = Int.max;
-        var g = mf_graph<Int>(3);
+        var g = mf_graph<Int>(count: 3);
         XCTAssertEqual(0, g.add_edge(0, 1, INF));
         XCTAssertEqual(1, g.add_edge(1, 0, INF));
         XCTAssertEqual(2, g.add_edge(0, 2, INF));
@@ -185,7 +185,7 @@ final class maxFlowTests: XCTestCase {
         var e = mf_graph<Int>.Edge();
 
         let INF = Int.max;
-        var g = mf_graph<Int>(3);
+        var g = mf_graph<Int>(count: 3);
         XCTAssertEqual(0, g.add_edge(0, 1, INF));
         XCTAssertEqual(1, g.add_edge(1, 0, INF));
         XCTAssertEqual(2, g.add_edge(0, 2, INF));
@@ -201,7 +201,7 @@ final class maxFlowTests: XCTestCase {
     }
     
     func testSelfLoop() throws {
-        var g = mf_graph<Int>(3);
+        var g = mf_graph<Int>(count: 3);
         XCTAssertEqual(0, g.add_edge(0, 0, 100));
 
         let e: mf_graph<Int>.Edge = [0, 0, 100, 0];
@@ -210,7 +210,7 @@ final class maxFlowTests: XCTestCase {
     
     func testInvalid() throws {
         throw XCTSkip("テスト自体がクラッシュするのでスキップ")
-        var g = mf_graph<Int>(2);
+        var g = mf_graph<Int>(count: 2);
         XCTAssertThrowsError(g.flow(0, 0), ".*");
         XCTAssertThrowsError(g.flow(0, 0, 0), ".*");
     }
@@ -224,7 +224,7 @@ final class maxFlowTests: XCTestCase {
             (s, t) = randpair(0, n - 1);
             if (randbool()) { swap(&s, &t); }
 
-            var g = mf_graph<Int>(n);
+            var g = mf_graph<Int>(count: n);
 //            for (int i = 0; i < m; i++) {
             for i in 0..<m {
                 let u = randint(0, n - 1);

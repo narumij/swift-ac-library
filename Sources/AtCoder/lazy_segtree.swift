@@ -154,8 +154,8 @@ extension LazySegTree._UnsafeHandle {
         r += size
         
         for i in stride(from: log, through: 1, by: -1) {
-            if ((l >> i) << i) != l { push(l >> i) }
-            if ((r >> i) << i) != r { push((r - 1) >> i) }
+            if (l >> i) << i != l { push(l >> i) }
+            if (r >> i) << i != r { push((r - 1) >> i) }
         }
         
         var sml = e(), smr = e()
@@ -190,8 +190,8 @@ extension LazySegTree._UnsafeHandle {
         r += size
 
         for i in stride(from: log, through: 1, by: -1) {
-            if ((l >> i) << i) != l { push(l >> i) }
-            if ((r >> i) << i) != r { push((r - 1) >> i) }
+            if (l >> i) << i != l { push(l >> i) }
+            if (r >> i) << i != r { push((r - 1) >> i) }
         }
 
         do {
@@ -207,8 +207,8 @@ extension LazySegTree._UnsafeHandle {
         }
 
         for i in stride(from: 1, through: log, by: 1) {
-            if ((l >> i) << i) != l { update(l >> i) }
-            if ((r >> i) << i) != r { update((r - 1) >> i) }
+            if (l >> i) << i != l { update(l >> i) }
+            if (r >> i) << i != r { update((r - 1) >> i) }
         }
     }
 
@@ -235,7 +235,7 @@ extension LazySegTree._UnsafeHandle {
             }
             sm = op(sm, d[l])
             l += 1
-        } while (l & -l) != l
+        } while l & -l != l
         return _n
     }
     
@@ -249,7 +249,7 @@ extension LazySegTree._UnsafeHandle {
         var sm = e()
         repeat {
             r -= 1
-            while r > 1 && (r % 2) != 0 { r >>= 1 }
+            while r > 1, r % 2 != 0 { r >>= 1 }
             if !g(op(d[r], sm)) {
                 while r < size {
                     push(r)
@@ -262,7 +262,7 @@ extension LazySegTree._UnsafeHandle {
                 return r + 1 - size
             }
             sm = op(d[r], sm)
-        } while (r & -r) != r
+        } while r & -r != r
         return 0
     }
     

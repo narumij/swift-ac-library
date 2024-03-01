@@ -5,14 +5,14 @@ extension _Internal {
     @usableFromInline
     static func bit_ceil<INT: FixedWidthInteger>(_ n: UInt32) -> INT {
         var x: CUnsignedInt = 1
-        while (x < n) { x *= 2 }
+        while x < n { x *= 2 }
         return INT(x)
     }
     
     @usableFromInline
     static func bit_ceil(_ n: UInt64) -> Int {
         var x = 1
-        while (x < n) { x *= 2 }
+        while x < n { x *= 2 }
         return x
     }
 

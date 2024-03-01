@@ -3,7 +3,7 @@ import Foundation
 extension _Internal {
     
     struct scc_graph {
-//      public:
+        
         init(_ n: Int) { _n = n }
 
         func num_vertices() -> Int { return _n }
@@ -65,7 +65,6 @@ extension _Internal {
             return groups
         }
 
-//      private:
         let _n: Int
         struct edge {
             let to: Int
