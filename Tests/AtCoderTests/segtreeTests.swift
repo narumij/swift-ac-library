@@ -45,14 +45,6 @@ fileprivate extension segtree_naive where S == String {
 
 final class segtreeTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
     func test0() {
         XCTAssertEqual("$", SegTree(0).all_prod())
         XCTAssertEqual("$", SegTree().all_prod())
@@ -139,12 +131,5 @@ final class segtreeTests: XCTestCase {
         var seg0 = SegTree();
         XCTAssertNoThrow(seg0 = SegTree(10))
 #endif
-    }
-    
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
     }
 }

@@ -61,14 +61,6 @@ fileprivate typealias starry_seg = LazySegTree<S,F>
 
 final class lazySegtreeTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
     func test0() throws {
         do {
             var s = starry_seg(0);
@@ -85,14 +77,17 @@ final class lazySegtreeTests: XCTestCase {
     }
     
     func testAssign() throws {
+        throw XCTSkip("代入のオーバーロードはSwiftにはない。")
+#if false
         var seg0 = starry_seg();
         XCTAssertNoThrow(seg0 = starry_seg(10));
+#endif
     }
 
     func testInvalid() throws {
         
-        throw XCTSkip("配列のfatalをSwiftのみでハンドリングする方法が、まだない。SE-0403以後に、テストするように切り替えます。")
-        
+        throw XCTSkip("Swift Packageでは実施不可")
+#if false
         XCTAssertThrowsError(starry_seg(-1))
         
         var s = starry_seg(10)
@@ -105,24 +100,20 @@ final class lazySegtreeTests: XCTestCase {
         XCTAssertThrowsError(s.prod(3,2))
         XCTAssertThrowsError(s.prod(0,11))
         XCTAssertThrowsError(s.prod(-1,11))
+#endif
     }
     
     func testNaiveProd() throws {
-//        for (int n = 0; n <= 50; n++) {
         for n in 0...50 {
             var seg = starry_seg(n);
             var p = [Int](repeating: 0, count: n)
-//            for (int i = 0; i < n; i++) {
             for i in 0..<n {
                 p[i] = (i * i + 100) % 31;
                 seg.set(i, p[i]);
             }
-//            for (int l = 0; l <= n; l++) {
             for l in 0..<=n {
-//                for (int r = l; r <= n; r++) {
                 for r in l..<=n {
                     var e = -1_000_000_000;
-//                    for (int i = l; i < r; i++) {
                     for i in l..<r {
                         e = max(e, p[i]);
                     }
