@@ -3,7 +3,7 @@ import Foundation
 extension _Internal {
     // @param m `1 <= m`
     // @return x mod m
-    static func safe_mod(_ x: CLongLong,_ m: CLongLong) -> CLongLong {
+    static func safe_mod(_ x: LL,_ m: LL) -> LL {
         var x = x
         x %= m
         if x < 0 { x += m }
@@ -64,12 +64,12 @@ extension _Internal {
     // @param n `0 <= n`
     // @param m `1 <= m`
     // @return `(x ** n) % m`
-    static func _pow_mod_constexpr(_ x: CLongLong,_ n: CLongLong,_ m: CInt) -> CLongLong {
+    static func _pow_mod_constexpr(_ x: LL,_ n: LL,_ m: INT) -> LL {
         var n = n
         if m == 1 { return 0 }
-        let _m = CLongLong(CUnsignedInt(m))
-        var r = 1 as CLongLong
-        var y = safe_mod(x, CLongLong(m))
+        let _m = LL(CUnsignedInt(m))
+        var r = 1 as LL
+        var y = safe_mod(x, LL(m))
         while (n) != 0 {
             if n & 1 != 0 { r = (r * y) % _m }
             y = (y &* y) % _m
@@ -79,23 +79,23 @@ extension _Internal {
     }
     
     static var memoized_pow_mod: Memoized3 = .init(source: _pow_mod_constexpr)
-    static func pow_mod_constexpr(_ x: CLongLong,_ n: CLongLong,_ m: CInt) -> CLongLong { memoized_pow_mod.get(x,n,m) }
+    static func pow_mod_constexpr(_ x: LL,_ n: LL,_ m: INT) -> LL { memoized_pow_mod.get(x,n,m) }
 
     // Reference:
     // M. Forisek and J. Jancina,
     // Fast Primality Testing for Integers That Fit into a Machine Word
     // @param n `0 <= n`
-    static func _is_prime_constexpr(_ n: CInt) -> Bool {
+    static func _is_prime_constexpr(_ n: INT) -> Bool {
         if n <= 1 { return false }
         if ((1 << n) & (1 << 2 | 1 << 7 | 1 << 61)) != 0 { return true }
         if 1 & n == 0 { return false }
-        var d = CLongLong(n - 1)
+        var d = LL(n - 1)
         while 1 & d == 0 { d >>= 1 }
-        let bases: [CLongLong] = [2, 7, 61]
+        let bases: [LL] = [2, 7, 61]
         for a in bases {
-            var t: CLongLong = d
-            var y: CLongLong = pow_mod_constexpr(a, t, n)
-            let n = CLongLong(n)
+            var t: LL = d
+            var y: LL = pow_mod_constexpr(a, t, n)
+            let n = LL(n)
             while t != n - 1, y != 1, y != n - 1 {
                 y = y * y % n
                 t <<= 1
@@ -108,12 +108,12 @@ extension _Internal {
     }
     
     static var memoized_is_prime: Memoized = .init(source: _is_prime_constexpr)
-    static func is_prime_constexpr(_ n: CInt) -> Bool { memoized_is_prime.get(n) }
-    static func is_prime(_ n: CInt) -> Bool { is_prime_constexpr(n) }
+    static func is_prime_constexpr(_ n: INT) -> Bool { memoized_is_prime.get(n) }
+    static func is_prime(_ n: INT) -> Bool { is_prime_constexpr(n) }
     
     // @param b `1 <= b`
     // @return pair(g, x) s.t. g = gcd(a, b), xa = g (mod b), 0 <= x < b/g
-    static func inv_gcd(_ a: CLongLong,_ b: CLongLong) -> (first: CLongLong, second: CLongLong) {
+    static func inv_gcd(_ a: LL,_ b: LL) -> (first: LL, second: LL) {
         let a = safe_mod(a, b)
         if a == 0 { return (b, 0) }
         
@@ -122,10 +122,10 @@ extension _Internal {
         // [2] t - m1 * a = 0 (mod b)
         // [3] s * |m1| + t * |m0| <= b
         var s = b, t = a
-        var m0: CLongLong = 0, m1: CLongLong = 1
+        var m0: LL = 0, m1: LL = 1
         
         while t != 0 {
-            let u: CLongLong = s / t
+            let u: LL = s / t
             s -= t * u
             m0 -= m1 * u  // |m1 * u| <= |m1| * s <= b
             
@@ -150,19 +150,19 @@ extension _Internal {
     // Compile time primitive root
     // @param m must be prime
     // @return primitive root (and minimum in now)
-    static func _primitive_root_constexpr(_ m: CInt) -> CInt {
+    static func _primitive_root_constexpr(_ m: INT) -> INT {
         if m == 2 { return 1 }
         if m == 167772161 { return 3 }
         if m == 469762049 { return 3 }
         if m == 754974721 { return 11 }
         if m == 998244353 { return 3 }
-        var divs = [CInt](repeating: 0, count: 20)
+        var divs = [INT](repeating: 0, count: 20)
         divs[0] = 2
         var cnt = 1
         var x = (m - 1) / 2
         while x % 2 == 0 { x /= 2 }
         //    for (int i = 3; (long long)(i)*i <= x; i += 2) {
-        do { var i: CInt = 3; while CLongLong(i)*CLongLong(i) <= x { defer { i += 2 }
+        do { var i: INT = 3; while LL(i)*LL(i) <= x { defer { i += 2 }
             if x % i == 0 {
                 divs[cnt] = i; cnt += 1
                 while x % i == 0 {
@@ -174,11 +174,11 @@ extension _Internal {
             divs[cnt] = x; cnt += 1
         }
         //    for (int g = 2;; g++) {
-        do { var g: CInt = 2; while true { defer { g += 1 }
+        do { var g: INT = 2; while true { defer { g += 1 }
             var ok = true
             //        for (int i = 0; i < cnt; i++) {
-            for i in 0..<CInt(cnt) {
-                if pow_mod_constexpr(CLongLong(g), CLongLong((m - 1) / divs[Int(i)]), m) == 1 {
+            for i in 0..<INT(cnt) {
+                if pow_mod_constexpr(LL(g), LL((m - 1) / divs[Int(i)]), m) == 1 {
                     ok = false
                     break
                 }
@@ -188,18 +188,18 @@ extension _Internal {
     }
     
     static var memoized_primitve_root: Memoized = .init(source: _primitive_root_constexpr)
-    static func primitive_root_constexpr(_ m: CInt) -> CInt { memoized_primitve_root.get(m) }
-    static func primitive_root(_ m: CInt) -> CInt { primitive_root_constexpr(m) }
+    static func primitive_root_constexpr(_ m: INT) -> INT { memoized_primitve_root.get(m) }
+    static func primitive_root(_ m: INT) -> INT { primitive_root_constexpr(m) }
 
     // @param n `n < 2^32`
     // @param m `1 <= m < 2^32`
     // @return sum_{i=0}^{n-1} floor((ai + b) / m) (mod 2^64)
-    static func floor_sum_unsigned(_ n: CUnsignedLongLong,
-                                   _ m: CUnsignedLongLong,
-                                   _ a: CUnsignedLongLong,
-                                   _ b: CUnsignedLongLong) -> CUnsignedLongLong {
+    static func floor_sum_unsigned(_ n: ULL,
+                                   _ m: ULL,
+                                   _ a: ULL,
+                                   _ b: ULL) -> ULL {
         var (n,m,a,b) = (n,m,a,b)
-        var ans: CUnsignedLongLong = 0
+        var ans: ULL = 0
         while true {
             if (a >= m) {
                 ans += n * (n &- 1) / 2 * (a / m)
