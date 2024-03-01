@@ -82,6 +82,49 @@ public extension LazySegTree {
     }
 }
 
+extension LazySegTree {
+    
+    @usableFromInline
+    struct _UnsafeHandle {
+        
+        @inlinable @inline(__always)
+        init(
+            op: @escaping (S, S) -> S,
+            e: @escaping () -> S,
+            mapping: @escaping (F, S) -> S,
+            composition: @escaping (F, F) -> F,
+            id: @escaping () -> F,
+            _n: Int,
+            size: Int,
+            log: Int,
+            d: UnsafeMutablePointer<S>,
+            lz: UnsafeMutablePointer<F>
+        ) {
+            self.op = op
+            self.e = e
+            self.mapping = mapping
+            self.composition = composition
+            self.id = id
+            
+            self._n = _n
+            self.size = size
+            self.log = log
+            self.d = d
+            self.lz = lz
+        }
+
+        @usableFromInline let op: (S,S) -> S
+        @usableFromInline let e: () -> S
+        @usableFromInline let mapping: (F,S) -> S
+        @usableFromInline let composition: (F,F) -> F
+        @usableFromInline let id: () -> F
+
+        @usableFromInline let _n, size, log: Int
+        @usableFromInline let d: UnsafeMutablePointer<S>
+        @usableFromInline let lz: UnsafeMutablePointer<F>
+    }
+}
+
 extension LazySegTree._UnsafeHandle {
     
     func set(_ p: Int,_ x: S) {
@@ -235,49 +278,6 @@ extension LazySegTree._UnsafeHandle {
         all_apply(2 * k, lz[k])
         all_apply(2 * k + 1, lz[k])
         lz[k] = id()
-    }
-}
-
-extension LazySegTree {
-    
-    @usableFromInline
-    struct _UnsafeHandle {
-        
-        @inlinable @inline(__always)
-        init(
-            op: @escaping (S, S) -> S,
-            e: @escaping () -> S,
-            mapping: @escaping (F, S) -> S,
-            composition: @escaping (F, F) -> F,
-            id: @escaping () -> F,
-            _n: Int,
-            size: Int,
-            log: Int,
-            d: UnsafeMutablePointer<S>,
-            lz: UnsafeMutablePointer<F>
-        ) {
-            self.op = op
-            self.e = e
-            self.mapping = mapping
-            self.composition = composition
-            self.id = id
-            
-            self._n = _n
-            self.size = size
-            self.log = log
-            self.d = d
-            self.lz = lz
-        }
-
-        @usableFromInline let op: (S,S) -> S
-        @usableFromInline let e: () -> S
-        @usableFromInline let mapping: (F,S) -> S
-        @usableFromInline let composition: (F,F) -> F
-        @usableFromInline let id: () -> F
-
-        @usableFromInline let _n, size, log: Int
-        @usableFromInline let d: UnsafeMutablePointer<S>
-        @usableFromInline let lz: UnsafeMutablePointer<F>
     }
 }
 
