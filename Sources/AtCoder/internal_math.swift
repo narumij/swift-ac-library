@@ -64,7 +64,7 @@ extension _Internal {
     // @param n `0 <= n`
     // @param m `1 <= m`
     // @return `(x ** n) % m`
-    static func pow_mod_constexpr(_ x: CLongLong,_ n: CLongLong,_ m: CInt) -> CLongLong {
+    static func _pow_mod_constexpr(_ x: CLongLong,_ n: CLongLong,_ m: CInt) -> CLongLong {
         var n = n
         if m == 1 { return 0 }
         let _m = CLongLong(CUnsignedInt(m))
@@ -78,11 +78,14 @@ extension _Internal {
         return r
     }
     
+    static var memoized_pow_mod: Memoized3 = .init(source: _pow_mod_constexpr)
+    static func pow_mod_constexpr(_ x: CLongLong,_ n: CLongLong,_ m: CInt) -> CLongLong { memoized_pow_mod.get(x,n,m) }
+
     // Reference:
     // M. Forisek and J. Jancina,
     // Fast Primality Testing for Integers That Fit into a Machine Word
     // @param n `0 <= n`
-    static func is_prime_constexpr(_ n: CInt) -> Bool {
+    static func _is_prime_constexpr(_ n: CInt) -> Bool {
         if n <= 1 { return false }
         if ((1 << n) & (1 << 2 | 1 << 7 | 1 << 61)) != 0 { return true }
         if 1 & n == 0 { return false }
@@ -104,7 +107,9 @@ extension _Internal {
         return true
     }
     
-    static func is_prime(_ n: CInt) -> Bool { is_prime_constexpr(n); }
+    static var memoized_is_prime: Memoized = .init(source: _is_prime_constexpr)
+    static func is_prime_constexpr(_ n: CInt) -> Bool { memoized_is_prime.get(n) }
+    static func is_prime(_ n: CInt) -> Bool { is_prime_constexpr(n) }
     
     // @param b `1 <= b`
     // @return pair(g, x) s.t. g = gcd(a, b), xa = g (mod b), 0 <= x < b/g
@@ -145,7 +150,7 @@ extension _Internal {
     // Compile time primitive root
     // @param m must be prime
     // @return primitive root (and minimum in now)
-    static func primitive_root_constexpr(_ m: CInt) -> CInt {
+    static func _primitive_root_constexpr(_ m: CInt) -> CInt {
         if m == 2 { return 1 }
         if m == 167772161 { return 3 }
         if m == 469762049 { return 3 }
@@ -182,8 +187,10 @@ extension _Internal {
         } }
     }
     
-    static func primitive_root(_ m: CInt) -> CInt { primitive_root_constexpr(m); }
-    
+    static var memoized_primitve_root: Memoized = .init(source: _primitive_root_constexpr)
+    static func primitive_root_constexpr(_ m: CInt) -> CInt { memoized_primitve_root.get(m) }
+    static func primitive_root(_ m: CInt) -> CInt { primitive_root_constexpr(m) }
+
     // @param n `n < 2^32`
     // @param m `1 <= m < 2^32`
     // @return sum_{i=0}^{n-1} floor((ai + b) / m) (mod 2^64)
@@ -212,5 +219,34 @@ extension _Internal {
             swap(&m, &a)
         }
         return ans
+    }
+}
+
+extension _Internal {
+    
+    struct Memoized<A: Hashable, Output> {
+        var cache: [A:Output] = [:]
+        let source: (A) -> Output
+        mutating func get(_ a: A) -> Output {
+            if let p = cache[a] { return p }
+            let p = source(a)
+            cache[a] = p
+            return p
+        }
+    }
+    
+    struct Memoized3<A: Hashable, B: Hashable, C: Hashable, Output> {
+        struct Key: Hashable {
+            var a: A; var b: B; var c: C
+        }
+        var cache: [Key:Output] = [:]
+        let source: (A,B,C) -> Output
+        mutating func get(_ a: A,_ b: B,_ c: C) -> Output {
+            let key = Key(a: a, b: b, c: c)
+            if let p = cache[key] { return p }
+            let p = source(a,b,c)
+            cache[key] = p
+            return p
+        }
     }
 }
