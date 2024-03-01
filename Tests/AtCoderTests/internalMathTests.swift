@@ -1,6 +1,7 @@
 import XCTest
 @testable import AtCoder
 import Numerics
+import BigInt
 
 fileprivate typealias uint = CUnsignedInt;
 fileprivate typealias ll = CLongLong;
@@ -686,9 +687,7 @@ final class internalMathTests: XCTestCase {
                 XCTAssertEqual(g, eg.first);
                 XCTAssertLessThanOrEqual(0, eg.second, "a - \(a), b - \(b)");
                 XCTAssertLessThanOrEqual(eg.second, b / eg.first, "a - \(a), b - \(b)");
-                // ASSERT_EQ(g % b, (unsigned __int128)(eg.second) * a2 % b);
-                // 再現できず
-                // XCTAssertEqual(Int64(g % b), eg.second.multipliedFullWidth(by: a2).high % Int64(b));
+                XCTAssertEqual(BigInt(g) % BigInt(b), BigInt(eg.second) * BigInt(a2) % BigInt(b))
             }
         }
     }

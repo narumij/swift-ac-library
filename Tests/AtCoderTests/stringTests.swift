@@ -1,57 +1,34 @@
 import XCTest
 @testable import AtCoder
 
-#if false
-// TESTコードの挙動が再現できない。
-func sa_naive(_ s: [Int]) -> [Int] {
-    let n = s.count;
-    var sa = [Int](repeating: 0, count: n);
-    sa = (0..<n).map{$0}
-    sa.sort { l, r in
-        return zip(s[(s.startIndex + l)..<s.endIndex],s[(s.startIndex + r)..<s.endIndex]).allSatisfy{ $0 < $1 }
-        || s[(s.startIndex + l)..<s.endIndex].count == s[(s.startIndex + r)..<s.endIndex].count
-    };
-    return sa;
+fileprivate extension Collection where Element: Comparable {
+    static func < (lhs: Self, rhs: Self) -> Bool {
+        zip(lhs, rhs).first{ $0 != $1 }.map{ $0 < $1 } ?? (lhs.count < rhs.count)
+    }
 }
-#else
+
 func sa_naive(_ s: [Int]) -> [Int] {
-    let n = s.count;
-    var sa = [Int](repeating: 0, count: n);
-    sa = (0..<n).map{ $0 }
-    sa.sort(by: { l, r in
-        var l = l, r = r
-        if (l == r) { return false; }
-        while (l < n && r < n) {
-            if (s[l] != s[r]) { return s[l] < s[r]; }
-            l += 1;
-            r += 1;
-        }
-        return l == n;
-    });
-    return sa;
+    s.indices.sorted { s[ $0 ..< s.endIndex ] < s[ $1 ..< s.endIndex ] }
 }
-#endif
 
 func lcp_naive(_ s: [Int],_ sa: [Int]) -> [Int] {
-    let n = s.count;
-    assert((n != 0));
-    var lcp = [Int](repeating: 0, count: n - 1);
-//    for (int i = 0; i < n - 1; i++) {
-    for i in 0..<(n - 1) {
-        let l = sa[i], r = sa[i + 1];
-        while (l + lcp[i] < n && r + lcp[i] < n && s[l + lcp[i]] == s[r + lcp[i]]) { lcp[i] += 1; }
+    let n = s.count
+    assert((n != 0))
+    var lcp = [Int](repeating: 0, count: n - 1)
+    for i in 0 ..< (n - 1) {
+        let (l, r) = (sa[i], sa[i + 1])
+        while l + lcp[i] < n, r + lcp[i] < n, s[l + lcp[i]] == s[r + lcp[i]] { lcp[i] += 1 }
     }
-    return lcp;
+    return lcp
 }
 
 func z_naive(_ s: [Int]) -> [Int] {
-    let n = s.count;
-    var z = [Int](repeating: 0, count: n);
-//    for (int i = 0; i < n; i++) {
-    for i in 0..<n {
-        while (i + z[i] < n && s[z[i]] == s[i + z[i]]) { z[i] += 1; }
+    let n = s.count
+    var z = [Int](repeating: 0, count: n)
+    for i in 0 ..< n {
+        while i + z[i] < n, s[z[i]] == s[i + z[i]] { z[i] += 1 }
     }
-    return z;
+    return z
 }
 
 final class stringTests: XCTestCase {
