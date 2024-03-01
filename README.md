@@ -2,6 +2,18 @@
 
 swift-ac-libraryは、[AC(AtCoder) Library][ac-library]のSwift移植版です。
 
+## 公式情報
+
+[AtCoder Library (ACL) - AtCoder][acl]
+
+## 関連
+
+[ac-library-csharp] - C#版
+
+[ac-library-python] - Python版
+
+[ac-library-swift] - Swift版
+
 ## 利用の仕方
 
 SwiftPMで swift-ac-libraryを利用する場合は、
@@ -40,18 +52,6 @@ TARGET_DIR="<クローンしたディレクトリ>/swift-ac-library/Sources/AtCo
 # 指定されたディレクトリ内のSwiftファイルを検索し、連結して標準出力に表示
 find "$TARGET_DIR" -type f -name "*.swift" -exec cat {} +
 ```
-
-## 公式情報
-
-[AtCoder Library (ACL) - AtCoder][acl]
-
-## 関連
-
-[ac-library-csharp] - C#版
-
-[ac-library-python] - Python版
-
-[ac-library-swift] - Swift版
 
 ## その他
 
