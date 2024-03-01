@@ -26,14 +26,6 @@ final class modintTests: XCTestCase {
     enum mod_1_000_000_008: static_mod { static let mod: mod_value = 1_000_000_008 }
     enum INT32_MAX:         static_mod { static let mod: mod_value = .mod_INT32_MAX }
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-    
     func testDynamicBorder() throws {
         
         typealias mint = modint;
@@ -188,8 +180,9 @@ final class modintTests: XCTestCase {
         XCTAssertEqual((mint(Int32.max) + mint(Int32.max)).val(), 0);
     }
     
+#if false
     func testInt128() throws {
-        throw XCTSkip("該当する型がない？")
+        throw XCTSkip("__int128がSwiftにはない")
         /*
          modint::set_mod(998244353);
          ASSERT_EQ(12345678, modint(__int128_t(12345678)).val());
@@ -207,6 +200,7 @@ final class modintTests: XCTestCase {
          ASSERT_EQ(mint(2).pow(100).val(), mint(__uint128_t(1) << 100).val());
          */
     }
+#endif
     
     func testInv() throws {
         
@@ -272,6 +266,7 @@ final class modintTests: XCTestCase {
         XCTAssertEqual(9, b.val());
     }
     
+#if false
     func testIncrement() throws {
         throw XCTSkip("Swiftには無い")
         /*
@@ -331,6 +326,7 @@ final class modintTests: XCTestCase {
          }
          */
     }
+#endif
     
     func testStaticUsage() throws {
         typealias mint = static_modint<mod_11>;
@@ -347,7 +343,9 @@ final class modintTests: XCTestCase {
     }
     
     func testDynamicUsage() throws {
-//        XCTAssertEqual(998244353, dynamic_modint<12345>::mod());
+        // TODO: dynamic_modintにはidを割り当てる機能があるようなので、これの実装
+//        XCTAssertEqual(998244353, dynamic_modint<12345>.mod());
+        
         typealias mint = modint;
         mint.set_mod(998244353);
         XCTAssertEqual(998244353, mint.mod());
@@ -478,10 +476,10 @@ final class modintTests: XCTestCase {
     func testEtc() throws {
         typealias mint = modint998244353
         let K = 2
-        var p = mint(1) / K
+        _ = mint(1) / K
     }
     
-    func testIntOperatorsStatic() throws {
+    func testUsageStaticWithInt() throws {
         typealias mint = modint998244353
         XCTAssertEqual(998244353, mint.id)
         XCTAssertEqual(5, mint(2) + 3)
@@ -501,7 +499,7 @@ final class modintTests: XCTestCase {
         XCTAssertEqual(4, a)
     }
     
-    func testIntOperatorsDynamic() throws {
+    func testUsageDynamicWithInt() throws {
         typealias mint = modint
         XCTAssertEqual(-1, mint.id)
         XCTAssertEqual(5, mint(2) + 3)
@@ -519,13 +517,6 @@ final class modintTests: XCTestCase {
         a += 3
         a -= 2
         XCTAssertEqual(4, a)
-    }
-    
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
     }
 
 }
