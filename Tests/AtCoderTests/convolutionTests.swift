@@ -1,6 +1,8 @@
 import XCTest
 @testable import AtCoder
 
+// TODO: C++のメルセンヌツイスターの挙動の確認
+
 extension static_mod {
     public static func value<T: FixedWidthInteger>() -> T { T(umod) }
 }
@@ -49,14 +51,6 @@ fileprivate func conv_naive<MOD: static_mod, T: FixedWidthInteger>(_ t: MOD.Type
 }
 
 final class convolutionTests: XCTestCase {
-    
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-    
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
     
     func testEmpty() throws {
         XCTAssertEqual([] as [CInt],
@@ -465,64 +459,3 @@ final class convolutionTests: XCTestCase {
     }
     
 }
-
-/*
-
-// testSimpleIntの調査コード
-
-#include<bits/stdc++.h>
-#include<atcoder/convolution>
-#include<atcoder/modint>
-using namespace std;
-using namespace atcoder;
-using uint = unsigned int;
-using ll = long long;
-using ull = unsigned long long;
-
-template <int MOD,
-          class T,
-          std::enable_if_t<internal::is_integral<T>::value>* = nullptr>
-std::vector<T> conv_naive(std::vector<T> a, std::vector<T> b) {
-    int n = int(a.size()), m = int(b.size());
-    std::vector<T> c(n + m - 1);
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < m; j++) {
-            c[i + j] += (T)((ll)a[i] * (ll)b[j] % MOD);
-            if (c[i + j] >= MOD) c[i + j] -= MOD;
-        }
-    }
-    return c;
-}
-
-int main() {
-    
-    const int MOD1 = 998244353;
-    std::vector<int> a = {-366508063, -606130801, 425354724, -16101483, 936317027, 75824908};
-    std::vector<int> b = {723102387, -348770447};
-    std::vector<int> c = conv_naive<MOD1>(a, b);
-    std::vector<int> d = convolution(a, b);
-    std::vector<int> e = (convolution<MOD1>(a, b));
-
-        cout << "let c: [CInt] = [";
-        for (auto iter=c.begin(); iter!=c.end(); iter++) {
-            if (iter != c.begin()) cout <<", ";
-            cout << *iter;
-        }
-        cout << "]" << endl;
-
-        cout << "let d: [CInt] = [";
-        for (auto iter=d.begin(); iter!=d.end(); iter++) {
-            if (iter != d.begin()) cout <<", ";
-            cout << *iter;
-        }
-        cout << "]" << endl;
-
-        cout << "let e: [CInt] = [";
-        for (auto iter=e.begin(); iter!=e.end(); iter++) {
-            if (iter != e.begin()) cout <<", ";
-            cout << *iter;
-        }
-        cout << "]" << endl;
-}
-
- */
