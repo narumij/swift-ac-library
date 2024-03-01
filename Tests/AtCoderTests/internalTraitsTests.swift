@@ -1,10 +1,3 @@
-//
-//  internalTraitsTests.swift
-//  
-//
-//  Created by narumij on 2024/03/01.
-//
-
 import XCTest
 @testable import AtCoder
 

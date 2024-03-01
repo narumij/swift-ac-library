@@ -1,10 +1,3 @@
-//
-//  two_satTests.swift
-//  
-//
-//  Created by narumij on 2023/11/11.
-//
-
 import XCTest
 @testable import AtCoder
 

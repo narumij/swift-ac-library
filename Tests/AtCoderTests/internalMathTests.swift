@@ -1,38 +1,26 @@
-//
-//  internalMathTests.swift
-//  
-//
-//  Created by narumij on 2023/11/11.
-//
-
 import XCTest
 @testable import AtCoder
+import Numerics
 
 fileprivate typealias uint = CUnsignedInt;
 fileprivate typealias ll = CLongLong;
 fileprivate typealias ull = CUnsignedLongLong;
 
-fileprivate func gcd(_ a: ll,_ b: ll) -> ll {
-    assert(0 <= a && 0 <= b);
-    if (b == 0) { return a; }
-    return gcd(b, a % b);
-}
-
 fileprivate func pow_mod_naive(_ x: ll,_ n: ull,_ mod: uint) -> ll {
-    let y: ull = ull((x % ll(mod) + ll(mod)) % ll(mod));
-    var z: ull = 1;
+    let y: ull = ull((x % ll(mod) + ll(mod)) % ll(mod))
+    var z: ull = 1
 //    for (ull i = 0; i < n; i++) {
     for _ in 0..<ull(n) {
-        z = (z * y) % ull(mod);
+        z = (z * y) % ull(mod)
     }
-    return ll(z % ull(mod));
+    return ll(z % ull(mod))
 }
 
 fileprivate func floor_sum_naive(_ n: ll,_ m: ll,_ a: ll,_ b: ll) -> ll {
     var sum: ll = 0;
 //    for (ll i = 0; i < n; i++) {
     for i in 0..<ll(n) {
-        sum += (a * i + b) / m;
+        sum += (a * i + b) / m
     }
     return sum;
 }
@@ -145,6 +133,7 @@ final class internalMathTests: XCTestCase {
         }
     }
 
+#if false
     func testSafeMod() throws {
         
         throw XCTSkip("__int128はSwiftでは利用できないため")
@@ -168,6 +157,7 @@ final class internalMathTests: XCTestCase {
          }
          */
     }
+#endif
     
     func testSafeModAlt() throws {
         let ab: [(a: ll,b: ll, ans: ll)] = [

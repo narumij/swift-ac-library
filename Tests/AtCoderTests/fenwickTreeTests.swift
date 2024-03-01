@@ -1,10 +1,3 @@
-//
-//  fenwickTreeTests.swift
-//  
-//
-//  Created by narumij on 2023/11/14.
-//
-
 import XCTest
 @testable import AtCoder
 
