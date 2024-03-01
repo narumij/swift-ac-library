@@ -47,11 +47,11 @@ find "$TARGET_DIR" -type f -name "*.swift" -exec cat {} +
 
 ## 関連
 
-[ac-library-swift] - Swift版。128bitの乗算部分など、いくつか参考にさせていただきました。
+[ac-library-csharp] - C#版
 
-[ac-library-csharp] - C#版。命名等に関して、今後参考にさせていただこうと思っています。
+[ac-library-python] - Python版
 
-[ac-library-python] - Python版。こちらも参考にさせていただこうと思っています。
+[ac-library-swift] - Swift版
 
 ## その他
 
