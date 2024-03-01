@@ -227,7 +227,7 @@ extension _Internal {
 }
 
 public func convolution<mint: static_modint_base>(_ a: [mint],_ b: [mint]) -> [mint] {
-    let n = a.count, m = b.count
+    let (n,m) = (a.count, b.count)
     if n == 0 || m == 0 { return [] }
     
     let z: CInt = _Internal.bit_ceil(CUnsignedInt(n + m - 1))
@@ -237,7 +237,7 @@ public func convolution<mint: static_modint_base>(_ a: [mint],_ b: [mint]) -> [m
     return _Internal.convolution_fft(a, b)
 }
 
-public func convolution<T: FixedWidthInteger, mod: static_mod>(_ t: mod.Type,_ a: [T],_ b: [T]) -> [T] {
+public func convolution<mod: static_mod, T: FixedWidthInteger>(_ t: mod.Type,_ a: [T],_ b: [T]) -> [T] {
     
     let n = a.count, m = b.count
     if n == 0 || m == 0 { return [] }
