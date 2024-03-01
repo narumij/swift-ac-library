@@ -1,9 +1,15 @@
 import Foundation
 
+/// Implement (union by size) + (path compression)
+/// Reference:
+/// Zvi Galil and Giuseppe F. Italiano,
+/// Data structures and algorithms for disjoint set union problems
 public struct DSU {
     public init() { _n = 0; parent_or_size = [] }
     public init(_ n: Int) { _n = n; parent_or_size = .init(repeating: -1, count: n) }
     @usableFromInline let _n: Int
+    /// root node: -1 * component size
+    /// otherwise: parent
     @usableFromInline var parent_or_size: [Int]
 }
 

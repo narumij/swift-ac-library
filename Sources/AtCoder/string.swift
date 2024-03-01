@@ -60,10 +60,10 @@ extension _Internal {
         sa_doubling((0 ..< n).map{ s[$0] })
     }
     
-    // SA-IS, linear-time suffix array construction
-    // Reference:
-    // G. Nong, S. Zhang, and W. H. Chan,
-    // Two Efficient Algorithms for Linear Time Suffix Array Construction
+    /// SA-IS, linear-time suffix array construction
+    /// Reference:
+    /// G. Nong, S. Zhang, and W. H. Chan,
+    /// Two Efficient Algorithms for Linear Time Suffix Array Construction
     static func sa_is<Element>(_ s: UnsafePointer<Element>, count n: Int,_ upper: Int,_ THRESHOLD_NAIVE: Int = 10,_ THRESHOLD_DOUBLING: Int = 40) -> [Int] where Element: BinaryInteger {
         if n == 0 { return [] }
         if n == 1 { return [0] }
@@ -226,10 +226,10 @@ public func suffix_array(_ s: String) -> [Int] {
     }
 }
 
-// Reference:
-// T. Kasai, G. Lee, H. Arimura, S. Arikawa, and K. Park,
-// Linear-Time Longest-Common-Prefix Computation in Suffix Arrays and Its
-// Applications
+/// Reference:
+/// T. Kasai, G. Lee, H. Arimura, S. Arikawa, and K. Park,
+/// Linear-Time Longest-Common-Prefix Computation in Suffix Arrays and Its
+/// Applications
 func lcp_array<Element>(pointer s: UnsafePointer<Element>, count n: Int, _ sa: [Int]) -> [Int]
 where Element: Equatable
 {
@@ -266,10 +266,10 @@ public func lcp_array(_ s: String,_ sa: [Int]) -> [Int] {
     }
 }
 
-// Reference:
-// D. Gusfield,
-// Algorithms on Strings, Trees, and Sequences: Computer Science and
-// Computational Biology
+/// Reference:
+/// D. Gusfield,
+/// Algorithms on Strings, Trees, and Sequences: Computer Science and
+/// Computational Biology
 func z_algorithm<Element>(pointer s: UnsafePointer<Element>, count n: Int) -> [Int]
 where Element: Comparable
 {

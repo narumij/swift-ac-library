@@ -2,6 +2,9 @@ import Foundation
 
 extension _Internal {
     
+    /// Reference:
+    /// R. Tarjan,
+    /// Depth-First Search and Linear Graph Algorithms
     struct scc_graph {
         
         init(_ n: Int) { _n = n }
@@ -12,8 +15,8 @@ extension _Internal {
             edges.append((from, .init(to: to)))
         }
 
-        // @return pair of (# of scc, scc id)
-        func scc_ids() -> (first: Int, second: [Int]) {
+        /// @return pair of (# of scc, scc id)
+        func scc_ids() -> (number: Int, id: [Int]) {
             let g = csr<edge>(_n, edges)
             var now_ord = 0, group_num = 0
             var visited = [Int](), low = [Int](repeating: 0, count:_n)
@@ -52,15 +55,15 @@ extension _Internal {
 
         func scc() -> [[Int]] {
             let ids = scc_ids()
-            let group_num = ids.first
+            let group_num = ids.number
             var counts = [Int](repeating: 0, count: group_num)
-            for x in ids.second { counts[x] += 1 }
-            var groups = [[Int]](repeating: [], count: ids.first)
+            for x in ids.id { counts[x] += 1 }
+            var groups = [[Int]](repeating: [], count: ids.number)
             for i in 0 ..< group_num {
                 groups[i].reserveCapacity(counts[i])
             }
             for i in 0 ..< _n {
-                groups[ids.second[i]].append(i)
+                groups[ids.id[i]].append(i)
             }
             return groups
         }

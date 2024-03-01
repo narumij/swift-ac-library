@@ -1,5 +1,9 @@
 import Foundation
 
+/// Reference:
+/// B. Aspvall, M. Plass, and R. Tarjan,
+/// A Linear-Time Algorithm for Testing the Truth of Certain Quantified Boolean
+/// Formulas
 public struct TwoSAT {
     var _n: Int
     var _answer: [Bool]
@@ -21,7 +25,7 @@ public extension TwoSAT {
         scc.add_edge(2 * j + (g ? 0 : 1), 2 * i + (f ? 1 : 0))
     }
     mutating func satisfiable() -> Bool {
-        let id = scc.scc_ids().second
+        let id = scc.scc_ids().id
         for i in 0 ..< _n {
             if id[2 * i] == id[2 * i + 1] { return false }
             _answer[i] = id[2 * i] < id[2 * i + 1]

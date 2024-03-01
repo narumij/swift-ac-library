@@ -1,5 +1,6 @@
 import Foundation
 
+/// Reference: https://en.wikipedia.org/wiki/Fenwick_tree
 public struct FenwickTree<T: AdditiveArithmetic & HandleUnsigned> where T: HandleUnsigned {
     @usableFromInline var _n: Int
     @usableFromInline var data: [U]

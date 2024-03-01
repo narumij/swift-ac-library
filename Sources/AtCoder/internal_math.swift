@@ -1,8 +1,8 @@
 import Foundation
 
 extension _Internal {
-    // @param m `1 <= m`
-    // @return x mod m
+    /// @param m `1 <= m`
+    /// @return x mod m
     static func safe_mod(_ x: LL,_ m: LL) -> LL {
         var x = x
         x %= m
@@ -20,9 +20,9 @@ func imValue(_ _m: CInt) -> CUnsignedLongLong {
     imValue(CUnsignedInt(bitPattern: _m))
 }
 
-// Fast modular multiplication by barrett reduction
-// Reference: https://en.wikipedia.org/wiki/Barrett_reduction
-// NOTE: reconsider after Ice Lake
+/// Fast modular multiplication by barrett reduction
+/// Reference: https://en.wikipedia.org/wiki/Barrett_reduction
+/// NOTE: reconsider after Ice Lake
 public struct barrett {
     let m: CUnsignedInt
     let im: CUnsignedLongLong
@@ -35,11 +35,11 @@ public struct barrett {
         im = imValue(CInt(_m))
     }
     
-    // @return m
-    @usableFromInline func umod() -> CUnsignedInt { return m; }
-    // @param a `0 <= a < m`
-    // @param b `0 <= b < m`
-    // @return `a * b % m`
+    /// @return m
+    @usableFromInline func umod() -> CUnsignedInt { return m }
+    /// @param a `0 <= a < m`
+    /// @param b `0 <= b < m`
+    /// @return `a * b % m`
     func mul(_ a: CUnsignedInt,_ b: CUnsignedInt) -> CUnsignedInt {
         // [1] m = 1
         // a = b = im = 0, so okay
@@ -61,9 +61,9 @@ public struct barrett {
 
 extension _Internal {
     
-    // @param n `0 <= n`
-    // @param m `1 <= m`
-    // @return `(x ** n) % m`
+    /// @param n `0 <= n`
+    /// @param m `1 <= m`
+    /// @return `(x ** n) % m`
     static func _pow_mod_constexpr(_ x: LL,_ n: LL,_ m: INT) -> LL {
         var n = n
         if m == 1 { return 0 }
@@ -81,10 +81,10 @@ extension _Internal {
     static var memoized_pow_mod: Memoized3 = .init(source: _pow_mod_constexpr)
     static func pow_mod_constexpr(_ x: LL,_ n: LL,_ m: INT) -> LL { memoized_pow_mod.get(x,n,m) }
 
-    // Reference:
-    // M. Forisek and J. Jancina,
-    // Fast Primality Testing for Integers That Fit into a Machine Word
-    // @param n `0 <= n`
+    /// Reference:
+    /// M. Forisek and J. Jancina,
+    /// Fast Primality Testing for Integers That Fit into a Machine Word
+    /// @param n `0 <= n`
     static func _is_prime_constexpr(_ n: INT) -> Bool {
         if n <= 1 { return false }
         if ((1 << n) & (1 << 2 | 1 << 7 | 1 << 61)) != 0 { return true }
@@ -111,8 +111,8 @@ extension _Internal {
     static func is_prime_constexpr(_ n: INT) -> Bool { memoized_is_prime.get(n) }
     static func is_prime(_ n: INT) -> Bool { is_prime_constexpr(n) }
     
-    // @param b `1 <= b`
-    // @return pair(g, x) s.t. g = gcd(a, b), xa = g (mod b), 0 <= x < b/g
+    /// @param b `1 <= b`
+    /// @return pair(g, x) s.t. g = gcd(a, b), xa = g (mod b), 0 <= x < b/g
     static func inv_gcd(_ a: LL,_ b: LL) -> (first: LL, second: LL) {
         let a = safe_mod(a, b)
         if a == 0 { return (b, 0) }
@@ -147,9 +147,9 @@ extension _Internal {
         return (s, m0)
     }
     
-    // Compile time primitive root
-    // @param m must be prime
-    // @return primitive root (and minimum in now)
+    /// Compile time primitive root
+    /// @param m must be prime
+    /// @return primitive root (and minimum in now)
     static func _primitive_root_constexpr(_ m: INT) -> INT {
         if m == 2 { return 1 }
         if m == 167772161 { return 3 }
@@ -191,9 +191,9 @@ extension _Internal {
     static func primitive_root_constexpr(_ m: INT) -> INT { memoized_primitve_root.get(m) }
     static func primitive_root(_ m: INT) -> INT { primitive_root_constexpr(m) }
 
-    // @param n `n < 2^32`
-    // @param m `1 <= m < 2^32`
-    // @return sum_{i=0}^{n-1} floor((ai + b) / m) (mod 2^64)
+    /// @param n `n < 2^32`
+    /// @param m `1 <= m < 2^32`
+    /// @return sum_{i=0}^{n-1} floor((ai + b) / m) (mod 2^64)
     static func floor_sum_unsigned(_ n: ULL,
                                    _ m: ULL,
                                    _ a: ULL,

@@ -139,7 +139,7 @@ public extension MFGraph {
     }
 }
 
-extension MFGraph {
+extension MFGraph {    
     struct _Edge {
         let to, rev: Int
         var cap: Cap

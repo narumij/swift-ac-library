@@ -21,14 +21,13 @@ public func inv_mod(_ x: CLongLong,_ m: CLongLong) -> CLongLong {
     return z.second
 }
 
-// (rem, mod)
+/// (rem, mod)
 public func crt(_ r: [CLongLong],
-                _ m: [CLongLong]) -> (first: CLongLong, second: CLongLong) {
+                _ m: [CLongLong]) -> (rem: CLongLong, mod: CLongLong) {
     assert(r.count == m.count)
     let n = r.count
     // Contracts: 0 <= r0 < m0
     var r0 = 0 as CLongLong, m0 = 1 as CLongLong
-//    for (int i = 0; i < n; i++) {
     for i in 0 ..< n {
         assert(1 <= m[i])
         var r1 = _Internal.safe_mod(r[i], m[i]), m1 = m[i]

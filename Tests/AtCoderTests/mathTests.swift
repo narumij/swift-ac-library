@@ -121,8 +121,8 @@ final class mathTests: XCTestCase {
     
     func testCRTHand() throws {
         let res = crt([1, 2, 1], [2, 3, 2]);
-        XCTAssertEqual(5, res.first);
-        XCTAssertEqual(6, res.second);
+        XCTAssertEqual(5, res.rem);
+        XCTAssertEqual(6, res.mod);
     }
     
     func testCRT2() throws {
@@ -135,16 +135,16 @@ final class mathTests: XCTestCase {
 //                    for (int d = -10; d <= 10; d++) {
                     for d in ll(-10)..<10 {
                         let res = crt([c, d], [a, b]);
-                        if (res.second == 0) {
+                        if (res.mod == 0) {
 //                            for (int x = 0; x < a * b / gcd(a, b); x++) {
                             do { var x: ll = 0; while x < a * b / gcd(a, b) { defer { x += 1 }
                                 XCTAssertTrue(x % a != c || x % b != d);
                             } }
                             continue;
                         }
-                        XCTAssertEqual(a * b / gcd(a, b), res.second);
-                        XCTAssertEqual(_Internal.safe_mod(c, a), res.first % a);
-                        XCTAssertEqual(_Internal.safe_mod(d, b), res.first % b);
+                        XCTAssertEqual(a * b / gcd(a, b), res.mod);
+                        XCTAssertEqual(_Internal.safe_mod(c, a), res.rem % a);
+                        XCTAssertEqual(_Internal.safe_mod(d, b), res.rem % b);
                     }
                 }
             }
@@ -167,7 +167,7 @@ final class mathTests: XCTestCase {
                                 let res = crt([d, e, f], [a, b, c]);
                                 var lcm = a * b / gcd(a, b);
                                 lcm = lcm * c / gcd(lcm, c);
-                                if (res.second == 0) {
+                                if (res.mod == 0) {
 //                                    for (int x = 0; x < lcm; x++) {
                                     for x in 0..<lcm {
                                         XCTAssertTrue(x % a != d || x % b != e ||
@@ -175,10 +175,10 @@ final class mathTests: XCTestCase {
                                     }
                                     continue;
                                 }
-                                XCTAssertEqual(lcm, res.second);
-                                XCTAssertEqual(_Internal.safe_mod(d, a), res.first % a);
-                                XCTAssertEqual(_Internal.safe_mod(e, b), res.first % b);
-                                XCTAssertEqual(_Internal.safe_mod(f, c), res.first % c);
+                                XCTAssertEqual(lcm, res.mod);
+                                XCTAssertEqual(_Internal.safe_mod(d, a), res.rem % a);
+                                XCTAssertEqual(_Internal.safe_mod(e, b), res.rem % b);
+                                XCTAssertEqual(_Internal.safe_mod(f, c), res.rem % c);
                             }
                         }
                     }
@@ -193,9 +193,9 @@ final class mathTests: XCTestCase {
         let m0: ll = 900577;
         let m1: ll = 1_000_000_000_000;
         let res = crt([r0, r1], [m0, m1]);
-        XCTAssertEqual(m0 * m1, res.second);
-        XCTAssertEqual(r0, res.first % m0);
-        XCTAssertEqual(r1, res.first % m1);
+        XCTAssertEqual(m0 * m1, res.mod);
+        XCTAssertEqual(r0, res.rem % m0);
+        XCTAssertEqual(r1, res.rem % m1);
     }
     
     func testCRTBound() throws {
@@ -224,8 +224,8 @@ final class mathTests: XCTestCase {
                 for ans in pred {
                     let res = crt([ans % a, ans % b], [a, b]);
                     let lcm = a / gcd(a, b) * b;
-                    XCTAssertEqual(lcm, res.second);
-                    XCTAssertEqual(ans % lcm, res.first);
+                    XCTAssertEqual(lcm, res.mod);
+                    XCTAssertEqual(ans % lcm, res.rem);
                 }
                 swap(&a, &b);
             }
@@ -241,8 +241,8 @@ final class mathTests: XCTestCase {
                     m.append(f);
                 }
                 let res = crt(r, m);
-                XCTAssertEqual(ans % INF, res.first);
-                XCTAssertEqual(INF, res.second);
+                XCTAssertEqual(ans % INF, res.rem);
+                XCTAssertEqual(INF, res.mod);
             }
         }
         let factor_infn1 = ([2, 3, 715827883, 2147483647] as [ll]).permutations();
@@ -257,8 +257,8 @@ final class mathTests: XCTestCase {
                     m.append(f);
                 }
                 let res = crt(r, m);
-                XCTAssertEqual(ans % (INF - 1), res.first);
-                XCTAssertEqual(INF - 1, res.second);
+                XCTAssertEqual(ans % (INF - 1), res.rem);
+                XCTAssertEqual(INF - 1, res.mod);
             }
         }
     }

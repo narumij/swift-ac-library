@@ -95,7 +95,7 @@ public extension MCFGraph {
 
 extension MCFGraph {
 
-    // inside edge
+    /// inside edge
     struct _Edge {
         let to: Int
         var rev: Int
