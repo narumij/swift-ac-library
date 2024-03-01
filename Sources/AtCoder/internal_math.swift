@@ -194,27 +194,26 @@ extension _Internal {
     // @param n `n < 2^32`
     // @param m `1 <= m < 2^32`
     // @return sum_{i=0}^{n-1} floor((ai + b) / m) (mod 2^64)
-    static func floor_sum_unsigned(_ n: CLongLong,
-                                   _ m: CLongLong,
-                                   _ a: CLongLong,
-                                   _ b: CLongLong) -> CLongLong {
-        var a = a, b = b, n = n, m = m
-        var ans: CLongLong = 0
+    static func floor_sum_unsigned(_ n: CUnsignedLongLong,
+                                   _ m: CUnsignedLongLong,
+                                   _ a: CUnsignedLongLong,
+                                   _ b: CUnsignedLongLong) -> CUnsignedLongLong {
+        var (n,m,a,b) = (n,m,a,b)
+        var ans: CUnsignedLongLong = 0
         while true {
             if (a >= m) {
-                ans += n * (n - 1) / 2 * (a / m)
+                ans += n * (n &- 1) / 2 * (a / m)
                 a %= m
             }
             if b >= m {
                 ans += n * (b / m)
                 b %= m
             }
-            
-            let y_max: CLongLong = a * n + b
+            let y_max = a * n + b
             if y_max < m { break }
             // y_max < m * (n + 1)
             // floor(y_max / m) <= n
-            n = CLongLong(y_max / m)
+            n = y_max / m
             b = y_max % m
             swap(&m, &a)
         }

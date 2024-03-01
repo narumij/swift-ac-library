@@ -17,7 +17,7 @@ extension _Internal {
     
     struct fft_info<mint: static_modint_base> {
         static var g: CInt { _Internal.primitive_root(mint.mod()) }
-        static var rank2: CInt { _Internal.countr_zero(UInt32(mint.mod()) - 1) }
+        static var rank2: CInt { _Internal.countr_zero_constexpr(UInt32(mint.mod()) - 1) }
         var g: CInt { Self.g }
         var rank2: CInt { Self.rank2 }
         

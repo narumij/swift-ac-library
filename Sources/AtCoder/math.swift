@@ -72,6 +72,8 @@ public func crt(_ r: [CLongLong],
 }
 
 public func floor_sum(_ n: CLongLong,_ m: CLongLong,_ a: CLongLong,_ b: CLongLong) -> CLongLong {
+    typealias ULL = CUnsignedLongLong
+    typealias LL = CLongLong
     var (a,b) = (a,b)
     assert(0 <= n && n < ((1 as CLongLong) << 32))
     assert(1 <= m && m < ((1 as CLongLong) << 32))
@@ -86,5 +88,5 @@ public func floor_sum(_ n: CLongLong,_ m: CLongLong,_ a: CLongLong,_ b: CLongLon
         ans -= 1 * n * ((b2 - b) / m)
         b = b2
     }
-    return ans + _Internal.floor_sum_unsigned(n, m, a, b)
+    return ans + LL(_Internal.floor_sum_unsigned(ULL(n), ULL(m), ULL(a), ULL(b)))
 }

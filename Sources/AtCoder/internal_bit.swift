@@ -28,6 +28,11 @@ extension _Internal {
         return INT(n - x & 1)
     }
     
+    static var memoize_countr_zero: Memoized<UInt32,UInt32> = .init(source: countr_zero)
+    static func countr_zero_constexpr<INT: FixedWidthInteger>(_ x: UInt32) -> INT {
+        INT(memoize_countr_zero.get(x))
+    }
+
     @usableFromInline
     static func countr_zero(_ x: UInt64) -> Int {
         if x == 0 { return 64 }
