@@ -104,8 +104,8 @@ public extension static_modint {
 }
 
 
-public struct dynamic_modint<Identifier>: dynamic_modint_base {
-    public typealias bt = mod_dynamic
+public struct dynamic_modint<bt: dynamic_mod>: dynamic_modint_base {
+//    public typealias bt = bt
     public init(raw v: CUnsignedInt) {
         _v = v
     }
@@ -194,6 +194,5 @@ extension dynamic_modint {
 public typealias modint998244353 = static_modint<mod_998_244_353>
 public typealias modint1000000007 = static_modint<mod_1_000_000_007>
 
-public enum nameless { static let id: Int = -1 }
-public typealias modint = dynamic_modint<nameless>
+public typealias modint = dynamic_modint<mod_dynamic>
 

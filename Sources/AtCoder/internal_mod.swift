@@ -58,8 +58,12 @@ extension dynamic_mod {
     }
 }
 
+extension barrett {
+    static var `default`: Self { 998_244_353 }
+}
+
 public enum mod_dynamic: dynamic_mod {
-    public static var bt: barrett = 998_244_353
+    public static var bt: barrett = .default
 }
 
 public enum mod_998_244_353: static_mod {

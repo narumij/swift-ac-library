@@ -7,15 +7,11 @@
 
 import XCTest
 @testable import AtCoder
+import Numerics
 
 fileprivate typealias uint = CUnsignedInt;
 fileprivate typealias ll = CLongLong;
 fileprivate typealias ull = CUnsignedLongLong;
-
-fileprivate func gcd(_ a: ll,_ b: ll) -> ll{
-    if (b == 0) { return a; }
-    return gcd(b, a % b);
-}
 
 final class modintTests: XCTestCase {
 
@@ -257,13 +253,13 @@ final class modintTests: XCTestCase {
     }
     
     func testConstUsage() throws {
-        typealias sint = static_modint<mod_11>;
-        let a: sint  = 9;
-        XCTAssertEqual(9, a.val());
-        typealias dint = modint;
-        dint.set_mod(11);
-        let b: dint = 9;
-        XCTAssertEqual(9, b.val());
+        typealias sint = static_modint<mod_11>
+        let a: sint = 9
+        XCTAssertEqual(9, a.val())
+        typealias dint = modint
+        dint.set_mod(11)
+        let b: dint = 9
+        XCTAssertEqual(9, b.val())
     }
     
 #if false
@@ -344,34 +340,39 @@ final class modintTests: XCTestCase {
     }
     
     func testDynamicUsage() throws {
-        enum _12345 { static let id = 12345 }
+        
         // C++版では整数で型の区別をしていたようだが、Swiftでは型を挿入することにする。
+        // generics型ではstored propertyを使えないため、non genericsのdynamic_mod派生にbtを持たせている。
+        enum _12345: dynamic_mod { static var bt: barrett = .default }
         XCTAssertEqual(998244353, dynamic_modint<_12345>.mod())
         
-        typealias mint = modint;
+        dynamic_modint<_12345>.set_mod(11)
+        XCTAssertNotEqual(modint.mod(), dynamic_modint<_12345>.mod())
+
+        typealias mint = modint
         
-        mint.set_mod(998244353);
-        XCTAssertEqual(998244353, mint.mod());
-        XCTAssertEqual(3, (mint(1) + mint(2)).val());
-        XCTAssertEqual(3, (1 + mint(2)).val());
-        XCTAssertEqual(3, (mint(1) + 2).val());
+        mint.set_mod(998244353)
+        XCTAssertEqual(998244353, mint.mod())
+        XCTAssertEqual(3, (mint(1) + mint(2)).val())
+        XCTAssertEqual(3, (1 + mint(2)).val())
+        XCTAssertEqual(3, (mint(1) + 2).val())
 
-        mint.set_mod(3);
-        XCTAssertEqual(3, mint.mod());
-        XCTAssertEqual(1, (mint(2) - mint(1)).val());
-        XCTAssertEqual(0, (mint(1) + mint(2)).val());
+        mint.set_mod(3)
+        XCTAssertEqual(3, mint.mod())
+        XCTAssertEqual(1, (mint(2) - mint(1)).val())
+        XCTAssertEqual(0, (mint(1) + mint(2)).val())
 
-        mint.set_mod(11);
-        XCTAssertEqual(11, mint.mod());
-        XCTAssertEqual(4, (mint(3) * mint(5)).val());
+        mint.set_mod(11)
+        XCTAssertEqual(11, mint.mod())
+        XCTAssertEqual(4, (mint(3) * mint(5)).val())
 
-        XCTAssertEqual(4, +mint(4));
-        XCTAssertEqual(7, -mint(4));
+        XCTAssertEqual(4, +mint(4))
+        XCTAssertEqual(7, -mint(4))
 
-        XCTAssertFalse(mint(1) == mint(3));
-        XCTAssertTrue(mint(1) != mint(3));
-        XCTAssertTrue(mint(1) == mint(12));
-        XCTAssertFalse(mint(1) != mint(12));
+        XCTAssertFalse(mint(1) == mint(3))
+        XCTAssertTrue(mint(1) != mint(3))
+        XCTAssertTrue(mint(1) == mint(12))
+        XCTAssertFalse(mint(1) != mint(12))
 
         // Swift Packageでは実施不可
         // XCTAssertThrowsError(mint(3).pow(-1), ".*");
@@ -412,57 +413,57 @@ final class modintTests: XCTestCase {
     }
 
     func testConstructor() throws {
-        modint.set_mod(11);
-        XCTAssertEqual(1, modint(true).val());
-        XCTAssertEqual(3, modint((CChar)(3)).val());
-        XCTAssertEqual(3, modint((CSignedChar)(3)).val());
-        XCTAssertEqual(3, modint((CUnsignedChar)(3)).val());
-        XCTAssertEqual(3, modint((CShort)(3)).val());
-        XCTAssertEqual(3, modint((CUnsignedShort)(3)).val());
-        XCTAssertEqual(3, modint((CInt)(3)).val());
-        XCTAssertEqual(3, modint((CUnsignedInt)(3)).val());
-        XCTAssertEqual(3, modint((CLong)(3)).val());
-        XCTAssertEqual(3, modint((CUnsignedLong)(3)).val());
-        XCTAssertEqual(3, modint((CLongLong)(3)).val());
-        XCTAssertEqual(3, modint((CUnsignedLongLong)(3)).val());
-        XCTAssertEqual(1, modint((CSignedChar)(-10)).val());
-        XCTAssertEqual(1, modint((CShort)(-10)).val());
-        XCTAssertEqual(1, modint((CInt)(-10)).val());
-        XCTAssertEqual(1, modint((CLong)(-10)).val());
-        XCTAssertEqual(1, modint((CLongLong)(-10)).val());
+        modint.set_mod(11)
+        XCTAssertEqual(1, modint(true).val())
+        XCTAssertEqual(3, modint((CChar)(3)).val())
+        XCTAssertEqual(3, modint((CSignedChar)(3)).val())
+        XCTAssertEqual(3, modint((CUnsignedChar)(3)).val())
+        XCTAssertEqual(3, modint((CShort)(3)).val())
+        XCTAssertEqual(3, modint((CUnsignedShort)(3)).val())
+        XCTAssertEqual(3, modint((CInt)(3)).val())
+        XCTAssertEqual(3, modint((CUnsignedInt)(3)).val())
+        XCTAssertEqual(3, modint((CLong)(3)).val())
+        XCTAssertEqual(3, modint((CUnsignedLong)(3)).val())
+        XCTAssertEqual(3, modint((CLongLong)(3)).val())
+        XCTAssertEqual(3, modint((CUnsignedLongLong)(3)).val())
+        XCTAssertEqual(1, modint((CSignedChar)(-10)).val())
+        XCTAssertEqual(1, modint((CShort)(-10)).val())
+        XCTAssertEqual(1, modint((CInt)(-10)).val())
+        XCTAssertEqual(1, modint((CLong)(-10)).val())
+        XCTAssertEqual(1, modint((CLongLong)(-10)).val())
 
-        XCTAssertEqual(2, (CInt(1) + modint(1)).val());
-        XCTAssertEqual(2, (CShort(1) + modint(1)).val());
+        XCTAssertEqual(2, (CInt(1) + modint(1)).val())
+        XCTAssertEqual(2, (CShort(1) + modint(1)).val())
         
-        let m = modint();
-        XCTAssertEqual(0, m.val());
+        let m = modint()
+        XCTAssertEqual(0, m.val())
     }
     
     func testConstructorStatic() throws {
-        typealias mint = static_modint<mod_11>;
-        XCTAssertEqual(1, mint(true).val());
-        XCTAssertEqual(3, mint((CChar)(3)).val());
-        XCTAssertEqual(3, mint((CSignedChar)(3)).val());
-        XCTAssertEqual(3, mint((CUnsignedChar)(3)).val());
-        XCTAssertEqual(3, mint((CShort)(3)).val());
-        XCTAssertEqual(3, mint((CUnsignedShort)(3)).val());
-        XCTAssertEqual(3, mint((CInt)(3)).val());
-        XCTAssertEqual(3, mint((CUnsignedInt)(3)).val());
-        XCTAssertEqual(3, mint((CLong)(3)).val());
-        XCTAssertEqual(3, mint((CUnsignedLong)(3)).val());
-        XCTAssertEqual(3, mint((CLongLong)(3)).val());
-        XCTAssertEqual(3, mint((CUnsignedLongLong)(3)).val());
-        XCTAssertEqual(1, mint((CSignedChar)(-10)).val());
-        XCTAssertEqual(1, mint((CShort)(-10)).val());
-        XCTAssertEqual(1, mint((CInt)(-10)).val());
-        XCTAssertEqual(1, mint((CLong)(-10)).val());
-        XCTAssertEqual(1, mint((CLongLong)(-10)).val());
+        typealias mint = static_modint<mod_11>
+        XCTAssertEqual(1, mint(true).val())
+        XCTAssertEqual(3, mint((CChar)(3)).val())
+        XCTAssertEqual(3, mint((CSignedChar)(3)).val())
+        XCTAssertEqual(3, mint((CUnsignedChar)(3)).val())
+        XCTAssertEqual(3, mint((CShort)(3)).val())
+        XCTAssertEqual(3, mint((CUnsignedShort)(3)).val())
+        XCTAssertEqual(3, mint((CInt)(3)).val())
+        XCTAssertEqual(3, mint((CUnsignedInt)(3)).val())
+        XCTAssertEqual(3, mint((CLong)(3)).val())
+        XCTAssertEqual(3, mint((CUnsignedLong)(3)).val())
+        XCTAssertEqual(3, mint((CLongLong)(3)).val())
+        XCTAssertEqual(3, mint((CUnsignedLongLong)(3)).val())
+        XCTAssertEqual(1, mint((CSignedChar)(-10)).val())
+        XCTAssertEqual(1, mint((CShort)(-10)).val())
+        XCTAssertEqual(1, mint((CInt)(-10)).val())
+        XCTAssertEqual(1, mint((CLong)(-10)).val())
+        XCTAssertEqual(1, mint((CLongLong)(-10)).val())
 
-        XCTAssertEqual(2, (CInt(1) + mint(1)).val());
-        XCTAssertEqual(2, (CShort(1) + mint(1)).val());
+        XCTAssertEqual(2, (CInt(1) + mint(1)).val())
+        XCTAssertEqual(2, (CShort(1) + mint(1)).val())
 
         let m = mint();
-        XCTAssertEqual(0, m.val());
+        XCTAssertEqual(0, m.val())
     }
     
     func testSome() throws {
@@ -478,12 +479,6 @@ final class modintTests: XCTestCase {
         XCTAssertEqual(0, modint(false))
 
         XCTAssertEqual("0", modint(false).description)
-    }
-    
-    func testEtc() throws {
-        typealias mint = modint998244353
-        let K = 2
-        _ = mint(1) / K
     }
     
     func testUsageStaticWithInt() throws {
@@ -524,4 +519,9 @@ final class modintTests: XCTestCase {
         XCTAssertEqual(4, a)
     }
 
+    func testEtc() throws {
+        typealias mint = modint998244353
+        let K = 2
+        _ = mint(1) / K
+    }
 }
