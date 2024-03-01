@@ -23,18 +23,14 @@ final class fenwickTreeTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
-    func ASSERT_EQ<T: Equatable>(_ lhs: T, _ rhs: T) {
-        XCTAssertEqual(lhs, rhs)
-    }
-    
     typealias fenwick_tree = FenwickTree
     
     func testEmpty() throws {
         var fw_ll = fenwick_tree<ll>();
-        ASSERT_EQ(0, fw_ll.sum(0, 0));
+        XCTAssertEqual(0, fw_ll.sum(0, 0));
 
         var fw_modint = fenwick_tree<modint>();
-        ASSERT_EQ(0, fw_modint.sum(0, 0));
+        XCTAssertEqual(0, fw_modint.sum(0, 0));
     }
     
     func testAssign() throws {
@@ -47,24 +43,20 @@ final class fenwickTreeTests: XCTestCase {
     
     func testZero() throws {
         var fw_ll = fenwick_tree<ll>(0);
-        ASSERT_EQ(0, fw_ll.sum(0, 0));
+        XCTAssertEqual(0, fw_ll.sum(0, 0));
 
         var fw_modint = fenwick_tree<modint>(0);
-        ASSERT_EQ(0, fw_modint.sum(0, 0));
+        XCTAssertEqual(0, fw_modint.sum(0, 0));
     }
     
     func testOverFlowULL() throws {
         var fw = fenwick_tree<ull>(10);
-//        for (int i = 0; i < 10; i++) {
         for i in 0..<10 {
             fw.add(i, ull(bitPattern: 1 << 63) + ull(i));
         }
-//        for (int i = 0; i <= 10; i++) {
         for i in 0..<=10 {
-//            for (int j = i; j <= 10; j++) {
             for j in 0..<=10 {
                 var sum: ull = 0;
-//                for (int k = i; k < j; k++) {
                 for k in stride(from: i, to: j, by: 1) {
                     sum += ull(k);
                 }
@@ -77,23 +69,18 @@ final class fenwickTreeTests: XCTestCase {
     }
     
     func testNaiveTest() throws {
-//        for (int n = 0; n <= 50; n++) {
         for n in 0..<=50 {
             var fw = fenwick_tree<ll>(n);
-//            for (int i = 0; i < n; i++) {
             for i in 0..<n {
                 fw.add(i, ll(i * i));
             }
-//            for (int l = 0; l <= n; l++) {
             for l in 0..<=n {
-//                for (int r = l; r <= n; r++) {
                 for r in l..<=n {
                     var sum: ll = 0;
-//                    for (int i = l; i < r; i++) {
                     for i in l..<r {
                         sum += ll(i * i);
                     }
-                    ASSERT_EQ(sum, fw.sum(l, r));
+                    XCTAssertEqual(sum, fw.sum(l, r));
                 }
             }
         }
@@ -104,16 +91,12 @@ final class fenwickTreeTests: XCTestCase {
         typealias mint = static_modint<mod_11>;
         for n in 0..<=5 {
             var fw = fenwick_tree<mint>(n);
-//            for (int i = 0; i < n; i++) {
             for i in 0..<n {
                 fw.add(i, mint(i * i));
             }
-//            for (int l = 0; l <= n; l++) {
             for l in 0..<=n {
-//                for (int r = l; r <= n; r++) {
                 for r in l..<=n {
                     var sum = 0;
-//                    for (int i = l; i < r; i++) {
                     for i in l..<r {
                         sum += i * i;
                     }
@@ -127,20 +110,16 @@ final class fenwickTreeTests: XCTestCase {
         typealias mint = modint;
         for n in 0..<=50 {
             var fw = fenwick_tree<mint>(n);
-//            for (int i = 0; i < n; i++) {
             for i in 0..<n {
                 fw.add(i, mint(i * i));
             }
-//            for (int l = 0; l <= n; l++) {
             for l in 0..<=n {
-//                for (int r = l; r <= n; r++) {
                 for r in l..<=n {
                     var sum = 0;
-//                    for (int i = l; i < r; i++) {
                     for i in l..<r {
                         sum += i * i;
                     }
-                    ASSERT_EQ(mint(sum), fw.sum(l, r));
+                    XCTAssertEqual(mint(sum), fw.sum(l, r));
                 }
             }
         }
@@ -148,7 +127,6 @@ final class fenwickTreeTests: XCTestCase {
     
     func testInvalid() throws {
         throw XCTSkip("Swift Packageでは実施不可")
-        
         /*
         EXPECT_THROW(auto s = fenwick_tree<int>(-1), std::exception);
         fenwick_tree<int> s(10);
@@ -173,7 +151,6 @@ final class fenwickTreeTests: XCTestCase {
     }
     
     func testBoundll() throws {
-        
         var fw = fenwick_tree<ll>(10);
         fw.add(3, ll.max);
         fw.add(5, ll.min);
@@ -193,38 +170,28 @@ final class fenwickTreeTests: XCTestCase {
     }
     
     func testOverFlow() throws {
-        
-//         fenwick_tree<int> fw(20);
         var fw = fenwick_tree<int>(20);
-//         std::vector<ll> a(20);
         var a = [ll](repeating: 0, count: 20)
-//         for (int i = 0; i < 10; i++) {
         for i in 0..<10 {
-//             int x = std::numeric_limits<int>::max();
-            var x = int.max
+            let x = int.max
              a[i] += ll(x);
              fw.add(i, x);
          }
-//         for (int i = 10; i < 20; i++) {
         for i in 10..<20 {
-//             int x = std::numeric_limits<int>::min();
-            var x = int.min
+            let x = int.min
              a[i] += ll(x);
              fw.add(i, x);
          }
          a[5] += 11111;
          fw.add(5, 11111);
 
-//         for (int l = 0; l <= 20; l++) {
         for l in 0..<=20 {
-//             for (int r = l; r <= 20; r++) {
             for r in l..<=20 {
                 var sum: ll = 0;
-//                 for (int i = l; i < r; i++) {
                 for i in l..<r {
                      sum &+= ll(a[i]);
                  }
-                 var dif = sum - ll(fw.sum(l, r));
+                let dif = sum - ll(fw.sum(l, r));
                 if dif != 0 {
                     XCTAssertEqual(0, dif % ll(bitPattern: 1 << 32));
                 }
@@ -233,9 +200,7 @@ final class fenwickTreeTests: XCTestCase {
     }
     
     func testInt128() throws {
-        
         throw XCTSkip("__int128がSwiftにはない")
-
         /*
          fenwick_tree<__int128> fw(20);
          for (int i = 0; i < 20; i++) {
@@ -283,7 +248,7 @@ final class fenwickTreeTests: XCTestCase {
         let b = [2, 2, 2, 3, 1, 3, 2, 3, 2]
         let c = [1, 0, 0, 1, 2, 3, 3, 4, 5]
         let subt = [[],[],[3,4,6],[],[],[],[],[],[]]
-        let ans = [0, 2, 2, 2, 0, 0]
+        // let ans = [0, 2, 2, 2, 0, 0]
         
         var fen = FenwickTree<Int>(M + 1)
         
