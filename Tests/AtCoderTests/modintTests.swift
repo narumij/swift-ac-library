@@ -481,6 +481,46 @@ final class modintTests: XCTestCase {
         var p = mint(1) / K
     }
     
+    func testIntOperatorsStatic() throws {
+        typealias mint = modint998244353
+        XCTAssertEqual(998244353, mint.id)
+        XCTAssertEqual(5, mint(2) + 3)
+        XCTAssertEqual(5, 2 + mint(3))
+        XCTAssertEqual(1, mint(3) - 2)
+        XCTAssertEqual(1, 3 - mint(2))
+        XCTAssertEqual(4, mint(2) * 2)
+        XCTAssertEqual(4, 2 * mint(2))
+        XCTAssertEqual(3, mint(12) / 4)
+        XCTAssertEqual(3, 12 / mint(4))
+        
+        var a: mint = 2
+        a *= 6
+        a /= 4
+        a += 3
+        a -= 2
+        XCTAssertEqual(4, a)
+    }
+    
+    func testIntOperatorsDynamic() throws {
+        typealias mint = modint
+        XCTAssertEqual(-1, mint.id)
+        XCTAssertEqual(5, mint(2) + 3)
+        XCTAssertEqual(5, 2 + mint(3))
+        XCTAssertEqual(1, mint(3) - 2)
+        XCTAssertEqual(1, 3 - mint(2))
+        XCTAssertEqual(4, mint(2) * 2)
+        XCTAssertEqual(4, 2 * mint(2))
+        XCTAssertEqual(3, mint(12) / 4)
+        XCTAssertEqual(3, 12 / mint(4))
+        
+        var a: mint = 2
+        a *= 6
+        a /= 4
+        a += 3
+        a -= 2
+        XCTAssertEqual(4, a)
+    }
+    
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
         self.measure {

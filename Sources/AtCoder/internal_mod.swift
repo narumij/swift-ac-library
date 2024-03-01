@@ -1,9 +1,7 @@
 import Foundation
 
-extension barrett: ExpressibleByIntegerLiteral {
-    public init(integerLiteral value: CInt) {
-        self.init(value)
-    }
+public protocol mod_id {
+    static var id: Int { get }
 }
 
 public struct mod_value {
@@ -31,7 +29,7 @@ extension mod_value: ExpressibleByIntegerLiteral {
 
 // MARK: -
 
-public protocol static_mod {
+public protocol static_mod: mod_id {
     static var mod: mod_value { get }
 }
 
@@ -39,11 +37,18 @@ extension static_mod {
     @usableFromInline static var m: CUnsignedInt { mod.mod }
     @usableFromInline static var umod: CUnsignedInt { mod.mod }
     @usableFromInline static var isPrime: Bool { mod.isPrime }
+    public static var id: Int { Int(mod.mod) }
 }
 
 // MARK: -
 
-public protocol dynamic_mod {
+extension barrett: ExpressibleByIntegerLiteral {
+    public init(integerLiteral value: CInt) {
+        self.init(value)
+    }
+}
+
+public protocol dynamic_mod: mod_id {
     static var bt: barrett { get set }
 }
 
@@ -56,10 +61,11 @@ extension dynamic_mod {
         assert(1 <= m)
         bt = .init(m)
     }
+    public static var id: Int { -1 }
 }
 
 public enum mod_dynamic: dynamic_mod {
-    public static var bt: barrett = -1
+    public static var bt: barrett = 998_244_353
 }
 
 public enum mod_998_244_353: static_mod {
@@ -71,6 +77,7 @@ public enum mod_1_000_000_007: static_mod {
 }
 
 public protocol modint_base: AdditiveArithmetic, Hashable, ExpressibleByIntegerLiteral, CustomStringConvertible {
+    static var id: Int { get }
     static func mod() -> CInt
     static func umod() -> CUnsignedInt
     init()

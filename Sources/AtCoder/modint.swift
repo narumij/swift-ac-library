@@ -13,6 +13,7 @@ public struct static_modint<m: static_mod>: static_modint_base {
         _v = v
     }
     public var _v: CUnsignedInt
+    public static var id: Int { m.id }
 }
 
 public extension static_modint {
@@ -113,6 +114,7 @@ public struct dynamic_modint: dynamic_modint_base {
     public static func set_mod(_ m: CInt) {
         bt.set_mod(m)
     }
+    public static var id: Int { bt.id }
 }
 
 extension dynamic_modint {

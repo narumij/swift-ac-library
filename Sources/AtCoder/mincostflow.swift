@@ -101,7 +101,6 @@ extension MCFGraph {
         var rev: Int
         var cap: Cap
         let cost: Cost
-        static var zero: Self { Self.init(to: 0, rev: 0, cap: 0, cost: 0) }
     }
 
     struct Q: Comparable {

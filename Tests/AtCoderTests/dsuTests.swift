@@ -21,6 +21,10 @@ final class dsuTests: XCTestCase {
     
     typealias dsu = DSU
     
+    func test0() {
+        XCTAssertEqual([], dsu().parent_or_size)
+    }
+    
     func testSimple() throws {
         var uf = dsu(2);
         XCTAssertFalse(uf.same(0, 1));
