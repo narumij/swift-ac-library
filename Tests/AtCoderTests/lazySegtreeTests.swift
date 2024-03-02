@@ -148,7 +148,7 @@ final class lazySegtreeTests: XCTestCase {
         XCTAssertEqual(1, _size)
         XCTAssertEqual(0, _log)
         
-#if false
+#if true
         do {
             _ = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "")
         }
