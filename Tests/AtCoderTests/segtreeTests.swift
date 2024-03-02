@@ -130,4 +130,14 @@ final class segtreeTests: XCTestCase {
         XCTAssertNoThrow(seg0 = SegTree(10))
     }
 #endif
+    
+    func testString() throws {
+        
+        do {
+            _ = SegTree(op: +, e: "$")
+        }
+        do {
+            _ = SegTree(op: +, e: "$", count: 12)
+        }
+    }
 }
