@@ -2,6 +2,8 @@
 
 swift-ac-libraryは、[AC(AtCoder) Library][ac-library]のSwift移植版です。
 
+[![Swift](https://github.com/narumij/swift-ac-library/actions/workflows/swift.yml/badge.svg?branch=main)](https://github.com/narumij/swift-ac-library/actions/workflows/swift.yml)
+
 ## 公式情報
 
 [AtCoder Library (ACL) - AtCoder][acl]
