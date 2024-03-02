@@ -72,6 +72,7 @@ public extension LazySegTree {
         lz = [F](repeating: id(), count: _size)
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         for i in 0..<_n { d[_size + i] = v[i]; }
+#elseif false
 #else
         // CI環境でサイズ0で初期化した場合に、問題が発生する。
         d = [S](unsafeUninitializedCapacity: 2 * __size) { buffer, initializedCount in
@@ -92,9 +93,8 @@ public extension LazySegTree {
             initializedCount = __size
         }
 #endif
-
-        // for (int i = size - 1; i >= 1; i--) {
         __update { unsafeHandle in
+            // for (int i = size - 1; i >= 1; i--) {
             for i in stride(from: __size - 1, through: 1, by: -1) {
                 unsafeHandle.update(i)
             }
