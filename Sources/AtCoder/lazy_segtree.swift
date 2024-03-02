@@ -46,7 +46,7 @@ public extension LazySegTree {
                   mapping: mapping,
                   composition: composition,
                   id: id(),
-                  [S](repeating: e(), count: n))
+                  n == 0 ? [] : [S](repeating: e(), count: n))
     }
     
     init(op: @escaping (S, S) -> S,
