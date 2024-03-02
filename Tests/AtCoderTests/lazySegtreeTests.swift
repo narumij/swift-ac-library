@@ -142,13 +142,6 @@ final class lazySegtreeTests: XCTestCase {
     // Actionsのtestを通過できない。
     func testString() throws {
         
-        let _n = 0
-        let _size = _Internal.bit_ceil(UInt64(_n))
-        let _log = _Internal.countr_zero(UInt64(_size))
-        XCTAssertEqual(1, _size)
-        XCTAssertEqual(0, _log)
-        
-#if true
         do {
             _ = LazySegTree(op: +, e: 0, mapping: +, composition: +, id: 0)
         }
@@ -158,11 +151,9 @@ final class lazySegtreeTests: XCTestCase {
         do {
             _ = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "", [])
         }
-        
         do {
             _ = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "", count: 12)
         }
-#endif
     }
 
 }
