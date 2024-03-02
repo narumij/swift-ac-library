@@ -83,9 +83,9 @@ public extension LazySegTree {
         }
 //        lz = [F](repeating: id(), count: __size)
 #endif
-        lz = [F](unsafeUninitializedCapacity: max(32, __size)) { buffer, initializedCount in
+        lz = [F](unsafeUninitializedCapacity: max(0, __size)) { buffer, initializedCount in
             for i in 0..<__size {
-                buffer[i] = id()
+                buffer.initializeElement(at: i, to: id())
             }
             initializedCount = __size
         }
