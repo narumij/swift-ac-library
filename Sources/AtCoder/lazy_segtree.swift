@@ -65,6 +65,17 @@ public extension LazySegTree {
         _n = v.count
         _size = _Internal.bit_ceil(UInt64(_n))
         _log = _Internal.countr_zero(UInt64(_size))
+#if false
+        d = [S](repeating: e(), count: 2 * _size)
+        lz = [F](repeating: id(), count: _size)
+        // for (int i = 0; i < _n; i++) d[size + i] = v[i];
+        for i in 0..<_n { d[_size + i] = v[i]; }
+        // for (int i = size - 1; i >= 1; i--) {
+        let (__size,__n) = (_size, _n)
+        for i in stride(from: __size - 1, through: 1, by: -1) {
+            update(i)
+        }
+#else
         let (__size,__n) = (_size, _n)
         d = [S](unsafeUninitializedCapacity: 2 * __size) { buffer, initializedCount in
             buffer.baseAddress?.update(repeating: e(), count: __size)
@@ -75,11 +86,15 @@ public extension LazySegTree {
         lz = [F](repeating: id(), count: __size)
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         __update { unsafeHandle in
-            var i = __size - 1; while i >= 1 { defer { i -= 1 }
+            for i in stride(from: __size - 1, through: 1, by: -1) {
+//            var i = __size - 1; while i >= 1 { defer { i -= 1 }
                 unsafeHandle.update(i)
             }
         }
+#endif
     }
+    
+    mutating func update(_ k: Int) { d[k] = _op(d[2 * k], d[2 * k + 1]) }
 }
 
 extension LazySegTree {
