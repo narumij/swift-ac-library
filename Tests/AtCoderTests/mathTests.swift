@@ -46,13 +46,24 @@ fileprivate func is_prime_naive(_ n: ll) -> Bool {
     return true;
 }
 
+fileprivate func safe_mod(_ x: ll,_ m: ll) -> ll {
+    var x = x
+    x %= m
+    if x < 0 { x += m }
+    return x
+}
+
+
 final class mathTests: XCTestCase {
 
-#if DEBUG
     func testPowMod() throws {
         
         func naive(_ x: ll,_ n: ll,_ mod: CInt) -> ll {
+#if DEBUG
             let y: ll = _Internal.safe_mod(x, ll(mod))
+#else
+            let y: ll = safe_mod(x, ll(mod))
+#endif
             var z: ull = 1 % ull(mod)
             for _ in 0 ..< n as Range<ll> {
                 z = (z * ull(y)) % ull(mod)
@@ -60,15 +71,7 @@ final class mathTests: XCTestCase {
             return ll(z)
         }
         
-#if false
-        for a in -100 ..< 100 as Range<int> {
-            for b in 0 ..<= 100 as StrideThrough<int> {
-                for c in 1..<=100 as StrideThrough<int> {
-                    XCTAssertEqual(naive(ll(a), ll(b), c), pow_mod(ll(a), ll(b), c));
-                }
-            }
-        }
-#else
+#if DEBUG
         for a in (-100 ..< 100 as Range<int>).randomSample(count: 20) {
             for b in (0 ..<= 100 as StrideThrough<int>).randomSample(count: 20) {
                 for c in (1..<=100 as StrideThrough<int>).randomSample(count: 20) {
@@ -76,9 +79,16 @@ final class mathTests: XCTestCase {
                 }
             }
         }
+#else
+        for a in -100 ..< 100 as Range<ll> {
+            for b in 0 ..<= 100 as StrideThrough<ll> {
+                for c in 1..<=100 as StrideThrough<int> {
+                    XCTAssertEqual(naive(a, b, c), pow_mod(a, b, c))
+                }
+            }
+        }
 #endif
     }
-#endif
     
     func testInvBoundHand() throws {
         let minll = ll.min;
