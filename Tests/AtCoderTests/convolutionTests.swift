@@ -1,6 +1,7 @@
 import XCTest
 import AtCoder
-// TODO: C++のメルセンヌツイスターの挙動の確認
+
+// TODO: [issue #8] C++のメルセンヌツイスターの挙動の確認
 
 extension static_mod {
     public static func value<T: FixedWidthInteger>() -> T { T(umod) }
