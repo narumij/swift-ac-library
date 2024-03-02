@@ -1,17 +1,11 @@
 import XCTest
-@testable import AtCoder
+import AtCoder
 import Numerics
 
 fileprivate typealias int = CInt;
 fileprivate typealias uint = CUnsignedInt;
 fileprivate typealias ll = CLongLong;
 fileprivate typealias ull = CUnsignedLongLong;
-
-extension barrett: Equatable {
-    public static func == (lhs: barrett, rhs: barrett) -> Bool {
-        (lhs.im,lhs.m) == (rhs.im, rhs.m)
-    }
-}
 
 extension dynamic_mod {
     // 型の生存期間が各テストメソッドのスコープを超えるので、都度リセットする必要がある。

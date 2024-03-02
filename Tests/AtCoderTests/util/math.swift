@@ -1,5 +1,7 @@
 import Foundation
+#if DEBUG
 @testable import AtCoder
+#endif
 
 func factors(_ m: CInt) -> [CInt] {
     var m = m
@@ -17,6 +19,7 @@ func factors(_ m: CInt) -> [CInt] {
     return result;
 }
 
+#if DEBUG
 func is_primitive_root(_ m: CInt,_ g: CInt) -> Bool {
     assert(1 <= g && g < m)
     for x in factors(m - 1) {
@@ -24,3 +27,4 @@ func is_primitive_root(_ m: CInt,_ g: CInt) -> Bool {
     }
     return true;
 }
+#endif

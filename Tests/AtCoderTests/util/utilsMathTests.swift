@@ -1,5 +1,7 @@
 import XCTest
+#if DEBUG
 @testable import AtCoder
+#endif
 
 func is_primitive_root_naive(_ m: CInt,_ g: CInt) -> Bool {
     assert(1 <= g && g < m)
@@ -28,6 +30,7 @@ final class utilsMathTests: XCTestCase {
         }
     }
 
+#if DEBUG
     func testIsPrimitiveRootTest() throws {
         for m in CInt(2)..<=500 {
             if (!_Internal.is_prime_constexpr(m)) { continue }
@@ -36,5 +39,5 @@ final class utilsMathTests: XCTestCase {
             }
         }
     }
-
+#endif
 }

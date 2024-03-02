@@ -1,5 +1,9 @@
 import XCTest
+#if DEBUG
 @testable import AtCoder
+#else
+import AtCoder
+#endif
 import Algorithms
 
 fileprivate typealias int = CInt
@@ -22,6 +26,7 @@ fileprivate func pow_mod_naive(_ x: ll,_ n: ull,_ mod: uint) -> ll {
     return ll(z % ull(mod))
 }
 
+#if DEBUG
 fileprivate func floor_sum_naive(_ n: ll,_ m: ll,_ a: ll,_ b: ll) -> ll {
     var sum: ll = 0
     for i in 0..<n {
@@ -30,6 +35,7 @@ fileprivate func floor_sum_naive(_ n: ll,_ m: ll,_ a: ll,_ b: ll) -> ll {
     }
     return sum
 }
+#endif
 
 fileprivate func is_prime_naive(_ n: ll) -> Bool {
     assert(0 <= n && n <= CInt.max)
@@ -42,6 +48,7 @@ fileprivate func is_prime_naive(_ n: ll) -> Bool {
 
 final class mathTests: XCTestCase {
 
+#if DEBUG
     func testPowMod() throws {
         
         func naive(_ x: ll,_ n: ll,_ mod: CInt) -> ll {
@@ -71,6 +78,7 @@ final class mathTests: XCTestCase {
         }
 #endif
     }
+#endif
     
     func testInvBoundHand() throws {
         let minll = ll.min;
@@ -81,6 +89,7 @@ final class mathTests: XCTestCase {
         XCTAssertEqual(2, inv_mod(maxll / 2 + 1, maxll));
     }
     
+#if DEBUG
     func testInvMod() throws {
 //        for (int a = -100; a <= 100; a++) {
         for a in ll(-100)..<=100 {
@@ -94,6 +103,7 @@ final class mathTests: XCTestCase {
             }
         }
     }
+#endif
     
     func testInvModZero() throws {
         XCTAssertEqual(0, inv_mod(0, 1));
@@ -106,6 +116,7 @@ final class mathTests: XCTestCase {
         }
     }
     
+#if DEBUG
     func testFloorSum() throws {
 //        for (int n = 0; n < 20; n++) {
         for n in ll(0)..<20 {
@@ -122,6 +133,7 @@ final class mathTests: XCTestCase {
             }
         }
     }
+#endif
     
     func testCRTHand() throws {
         let res = crt([1, 2, 1], [2, 3, 2]);
@@ -129,6 +141,7 @@ final class mathTests: XCTestCase {
         XCTAssertEqual(6, res.mod);
     }
     
+#if DEBUG
     func testCRT2() throws {
 //        for (int a = 1; a <= 20; a++) {
         for a in ll(1)..<=20 {
@@ -154,7 +167,9 @@ final class mathTests: XCTestCase {
             }
         }
     }
+#endif
     
+#if DEBUG
     func testCRT3() throws {
 //        for (int a = 1; a <= 5; a++) {
         for a in ll(1)..<=5 {
@@ -190,6 +205,7 @@ final class mathTests: XCTestCase {
             }
         }
     }
+#endif
     
     func testCRTOverflow() throws {
         let r0: ll = 0

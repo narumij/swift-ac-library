@@ -11,11 +11,11 @@ public struct LazySegTree<S,F> {
     @usableFromInline var d: [S]
     @usableFromInline var lz: [F]
     
-    typealias S = S
-    typealias Op = (S,S) -> S
-    typealias F = F
-    typealias Mapping = (F,S) -> S
-    typealias Composition = (F,F) -> F
+    public typealias S = S
+    public typealias Op = (S,S) -> S
+    public typealias F = F
+    public typealias Mapping = (F,S) -> S
+    public typealias Composition = (F,F) -> F
 }
 
 public extension LazySegTree {

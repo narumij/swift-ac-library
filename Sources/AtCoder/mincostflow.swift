@@ -29,6 +29,13 @@ public extension MCFGraph {
     }
     
     struct Edge {
+        public init(from: Int, to: Int, cap: MCFGraph<Value>.Cap, flow: MCFGraph<Value>.Cap, cost: MCFGraph<Value>.Cost) {
+            self.from = from
+            self.to = to
+            self.cap = cap
+            self.flow = flow
+            self.cost = cost
+        }
         public let from, to: Int
         public let cap: Cap
         public var flow: Cap

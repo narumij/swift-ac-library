@@ -1,5 +1,5 @@
 import XCTest
-@testable import AtCoder
+import AtCoder
 
 fileprivate let op_ss: LazySegTree<Int,Int>.Op = max
 fileprivate let op_ts: LazySegTree<Int,Int>.Mapping = (+)
@@ -142,13 +142,6 @@ final class lazySegtreeTests: XCTestCase {
         }
         do {
             _ = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "",count: 12)
-        }
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
         }
     }
 

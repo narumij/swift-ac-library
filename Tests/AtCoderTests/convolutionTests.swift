@@ -1,6 +1,5 @@
 import XCTest
-@testable import AtCoder
-
+import AtCoder
 // TODO: C++のメルセンヌツイスターの挙動の確認
 
 extension static_mod {

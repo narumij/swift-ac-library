@@ -1,5 +1,9 @@
 import XCTest
+#if DEBUG
 @testable import AtCoder
+#else
+import AtCoder
+#endif
 import Numerics
 import BigInt
 
@@ -35,6 +39,7 @@ fileprivate func is_prime_naive(_ n: ll) -> Bool {
 
 final class internalMathTests: XCTestCase {
 
+#if DEBUG
     func testBarrett() throws {
 //        for (int m = 1; m <= 100; m++) {
         for m in 1..<=CInt(100) {
@@ -1160,12 +1165,6 @@ final class internalMathTests: XCTestCase {
                 is_primitive_root(x, (_Internal.primitive_root_constexpr(x))))
         }
     }
-    
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
+#endif
 
 }

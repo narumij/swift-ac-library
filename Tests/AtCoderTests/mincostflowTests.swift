@@ -1,14 +1,14 @@
 import XCTest
-@testable import AtCoder
+import AtCoder
 
 typealias mcf_graph = MCFGraph
 
-extension mcf_graph.Edge {
-    init() { self.init(from: 0, to: 0, cap: 0, flow: 0, cost: 0) }
-}
-
 extension mcf_graph.Edge: ExpressibleByArrayLiteral where Value == Int {
     public init(arrayLiteral elements: Int...) {
+        if elements.isEmpty {
+            self.init(from: 0, to: 0, cap: 0, flow: 0, cost: 0)
+            return
+        }
         self.init(from: elements[0], to: elements[1], cap: elements[2], flow: elements[3], cost: elements[4])
     }
     var values: (Int,Int,MCFGraph.Cap,MCFGraph.Cap,MCFGraph.Cost) { (from,to,cap,flow,cost) }
@@ -124,9 +124,16 @@ final class mincostflowTests: XCTestCase {
     }
 #endif
     
-    func testPerformanceStress() throws {
+    func testStress() throws {
+        
+#if DEBUG
+        let phases = 100
+#else
+        let phases = 10000
+#endif
+        
         self.measure {
-            for phase in 0 ..< 1000 {
+            for phase in 0 ..< phases {
                 let n = randint(2, 20);
                 let m = randint(1, 100);
                 if m > 40 { continue }
@@ -194,42 +201,4 @@ final class mincostflowTests: XCTestCase {
             }
         }
     }
-    
-    func testStressFailed() throws {
-                
-        let (n,s,t) = (6,1,2)
-        let data = [(1, 2, 4, 0, 8976), (4, 2, 7, 0, 6563), (1, 2, 4, 0, 5725), (3, 4, 1, 0, 2079), (1, 0, 7, 0, 1378), (1, 0, 7, 0, 3319), (1, 5, 9, 0, 4324), (2, 4, 9, 0, 7471), (1, 5, 5, 0, 1769), (2, 1, 10, 0, 6192), (3, 0, 6, 0, 9274), (1, 1, 7, 0, 6176), (1, 5, 7, 0, 9664), (0, 4, 8, 0, 1376), (5, 5, 10, 0, 5985), (3, 5, 7, 0, 2057), (3, 5, 0, 0, 4760), (3, 1, 5, 0, 2309), (4, 3, 4, 0, 165), (5, 3, 9, 0, 9696), (3, 2, 5, 0, 4227)]
-        
-        var g_mf = mf_graph<Int>(count: n)
-        var g = mcf_graph<Int>(count: n)
-        data.forEach{g.add_edge($0.0, $0.1, $0.2, $0.4)}
-        data.forEach{g_mf.add_edge($0.0, $0.1, $0.2)}
-        let (flow, _) = g.flow(s, t)
-        let mflow = g_mf.flow(s, t)
-        XCTAssertEqual(mflow, flow)
-    }
-    
-#if false
-    func testStressFailed2() throws {
-        
-        let (n,s,t) = (6,1,2)
-        let data = [(1, 2, 4, 0, 8976), (4, 2, 7, 0, 6563), (1, 2, 4, 0, 5725), (3, 4, 1, 0, 2079), (1, 0, 7, 0, 1378), (1, 0, 7, 0, 3319), (1, 5, 9, 0, 4324), (2, 4, 9, 0, 7471), (1, 5, 5, 0, 1769), (2, 1, 10, 0, 6192), (3, 0, 6, 0, 9274), (1, 1, 7, 0, 6176), (1, 5, 7, 0, 9664), (0, 4, 8, 0, 1376), (5, 5, 10, 0, 5985), (3, 5, 7, 0, 2057), (3, 5, 0, 0, 4760), (3, 1, 5, 0, 2309), (4, 3, 4, 0, 165), (5, 3, 9, 0, 9696), (3, 2, 5, 0, 4227)]
-        
-        let progress: [(flow:Int,cost:Int,mflow:Int)] = [(4,35904,4),(4,35904,4),(8,58804,8),(8,58804,8),(8,58804,8),(8,58804,8),(8,58804,8),(8,58804,8),(8,58804,8),(8,58804,8),(8,58804,8),(8,58804,8),(8,58804,8),(15,124023,15),(15,124023,15),(15,124023,15),(15,124023,15),(15,124023,15),(15,124023,15),(15,124023,15),(20,195878,20)]
-        
-//        for (i,p) in zip(1...data.count, progress) {
-        for (i,p) in zip([16], progress) {
-            var g_mf = mf_graph<Int>(count: n);
-            var g = mcf_graph<Int>(count: n);
-            data[0..<i].forEach{g.add_edge($0.0, $0.1, $0.2, $0.4)}
-            data[0..<i].forEach{g_mf.add_edge($0.0, $0.1, $0.2)}
-            let flow, cost: Int;
-            (flow, cost) = g.flow(s, t)
-            let mflow = g_mf.flow(s, t)
-            XCTAssertEqual(p.flow, flow, "No. \(i)")
-            XCTAssertEqual(p.cost, cost, "No. \(i)")
-            XCTAssertEqual(p.mflow, mflow, "No. \(i)")
-        }
-    }
-#endif
 }

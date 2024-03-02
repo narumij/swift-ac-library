@@ -1,5 +1,5 @@
 import XCTest
-@testable import AtCoder
+import AtCoder
 
 fileprivate typealias int = CInt;
 fileprivate typealias uint = CUnsignedInt;

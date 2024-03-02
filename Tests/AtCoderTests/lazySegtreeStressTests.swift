@@ -1,5 +1,5 @@
 import XCTest
-@testable import AtCoder
+import AtCoder
 import Algorithms
 
 // time manager
@@ -87,13 +87,13 @@ fileprivate typealias seg = LazySegTree<S,T>
 
 final class lazySegtreeStressTests: XCTestCase {
     
-#if false
-    let (naive,right,left) = (3000,1000,1000)
-#else
+#if DEBUG
     let (naive,right,left) = (300,100,100)
+#else
+    let (naive,right,left) = (3000,1000,1000)
 #endif
 
-    func testNaive() throws {
+    func testStressNaive() throws {
         self.measure {
             for n in 1..<=30 {
                 for _ in 0..<10 {
@@ -134,7 +134,7 @@ final class lazySegtreeStressTests: XCTestCase {
         }
     }
 
-    func testMaxRight() throws {
+    func testStressMaxRight() throws {
         self.measure {
             for n in 1..<=30 {
                 for _ in 0..<10 {
@@ -166,7 +166,7 @@ final class lazySegtreeStressTests: XCTestCase {
         }
     }
 
-    func testMinLeft() throws {
+    func testStressMinLeft() throws {
         self.measure {
             for n in 1..<=30 {
                 for _ in 0..<10 {

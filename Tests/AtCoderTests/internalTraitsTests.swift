@@ -1,5 +1,5 @@
 import XCTest
-@testable import AtCoder
+import AtCoder
 
 final class internalTraitsTests: XCTestCase {
 

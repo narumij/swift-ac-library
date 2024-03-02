@@ -30,9 +30,9 @@ public protocol static_mod {
 }
 
 extension static_mod {
-    @usableFromInline static var m: CUnsignedInt { mod.mod }
-    @usableFromInline static var umod: CUnsignedInt { mod.mod }
-    @usableFromInline static var isPrime: Bool { mod.isPrime }
+    public static var m: CUnsignedInt { mod.mod }
+    public static var umod: CUnsignedInt { mod.mod }
+    public static var isPrime: Bool { mod.isPrime }
 }
 
 // MARK: -
@@ -58,8 +58,14 @@ extension dynamic_mod {
     }
 }
 
-extension barrett {
+public extension barrett {
     static var `default`: Self { 998_244_353 }
+}
+
+extension barrett: Equatable {
+    public static func == (lhs: barrett, rhs: barrett) -> Bool {
+        (lhs.im,lhs.m) == (rhs.im, rhs.m)
+    }
 }
 
 public enum mod_dynamic: dynamic_mod {

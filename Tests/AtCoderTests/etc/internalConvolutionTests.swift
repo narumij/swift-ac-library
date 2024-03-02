@@ -6,7 +6,11 @@
 //
 
 import XCTest
+#if DEBUG
 @testable import AtCoder
+#else
+import AtCoder
+#endif
 
 fileprivate typealias uint = CUnsignedInt;
 fileprivate typealias ll = CLongLong;
@@ -27,6 +31,7 @@ fileprivate extension Array where Element: AdditiveArithmetic {
 
 final class internalConvolutionTests: XCTestCase {
 
+#if DEBUG
     func testFFTINFO() throws {
         typealias mint = modint998244353;
         let info = _Internal.fft_info<mint>()
@@ -62,5 +67,6 @@ final class internalConvolutionTests: XCTestCase {
         XCTAssertEqual(b.count, bb.count)
         XCTAssertEqual(bi, bb)
     }
+#endif
 
 }

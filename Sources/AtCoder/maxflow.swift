@@ -28,6 +28,12 @@ public extension MFGraph {
     }
 
     struct Edge {
+        public init(from: Int, to: Int, cap: Cap, flow: Cap) {
+            self.from = from
+            self.to = to
+            self.cap = cap
+            self.flow = flow
+        }
         public let from, to: Int
         public let cap, flow: Cap
     }

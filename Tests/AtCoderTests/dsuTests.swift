@@ -1,13 +1,19 @@
 import XCTest
+#if DEBUG
 @testable import AtCoder
+#else
+import AtCoder
+#endif
 
 final class dsuTests: XCTestCase {
 
     typealias dsu = DSU
     
+#if DEBUG
     func test0() {
         XCTAssertEqual([], dsu().parent_or_size)
     }
+#endif
     
     func testSimple() throws {
         var uf = dsu(2);

@@ -1,8 +1,11 @@
 import XCTest
+#if DEBUG
 @testable import AtCoder
+#endif
 
 final class bitTests: XCTestCase {
 
+#if DEBUG
     func testBitCeil() throws {
         XCTAssertEqual(1, _Internal.bit_ceil(0))
         XCTAssertEqual(1, _Internal.bit_ceil(1))
@@ -51,4 +54,5 @@ final class bitTests: XCTestCase {
         XCTAssertEqual(31, _Internal.countr_zero_constexpr(1 << 31))
         XCTAssertEqual(0, _Internal.countr_zero_constexpr(UInt32(CInt.max)))
     }
+#endif
 }

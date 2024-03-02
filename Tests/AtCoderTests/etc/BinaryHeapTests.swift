@@ -6,7 +6,11 @@
 //
 
 import XCTest
+#if DEBUG
 @testable import AtCoder
+#else
+import AtCoder
+#endif
 
 final class BinaryHeapTests: XCTestCase {
 
@@ -52,6 +56,7 @@ final class BinaryHeapTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
+#if DEBUG
     func testMake() throws {
         var actual: [Int] = (0..<10) + []
         actual.make_heap(actual.endIndex, >)
@@ -153,7 +158,7 @@ final class BinaryHeapTests: XCTestCase {
         XCTAssertEqual(13, 6.leftChild)
         XCTAssertEqual(14, 6.rightChild)
     }
-
+#endif
 
     func testPerformanceExample() throws {
         // This is an example of a performance test case.

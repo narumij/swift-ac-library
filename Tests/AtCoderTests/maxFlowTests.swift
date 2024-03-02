@@ -1,24 +1,17 @@
 import XCTest
-@testable import AtCoder
+import AtCoder
 
 typealias mf_graph = MFGraph
 
-extension mf_graph.Edge {
-    init() { self.init(from: 0,to: 0,cap: 0,flow: 0) }
-}
-
 extension mf_graph.Edge: ExpressibleByArrayLiteral where Cap == Int {
     public init(arrayLiteral elements: Int...) {
+        if elements.isEmpty {
+            self.init(from: 0, to: 0, cap: 0, flow: 0)
+            return
+        }
         self.init(from: elements[0], to: elements[1], cap: elements[2], flow: elements[3])
     }
 }
-
-extension mf_graph._Edge: ExpressibleByArrayLiteral where Cap == Int {
-    public init(arrayLiteral elements: Int...) {
-        self.init(to: elements[0],rev: elements[1],cap: elements[2])
-    }
-}
-
 
 final class maxFlowTests: XCTestCase {
 
@@ -205,10 +198,10 @@ final class maxFlowTests: XCTestCase {
 
     func testStress() throws {
         // This is an example of a performance test case.
-#if false
-        let phases = 10000
+#if DEBUG
+        let phases = 100
 #else
-        let phases = 1000
+        let phases = 10000
 #endif
         
         self.measure {

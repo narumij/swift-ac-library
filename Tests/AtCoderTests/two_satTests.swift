@@ -1,5 +1,5 @@
 import XCTest
-@testable import AtCoder
+import AtCoder
 
 fileprivate typealias ll = CLongLong;
 fileprivate typealias ull = CUnsignedLongLong;
@@ -50,10 +50,10 @@ final class two_satTests: XCTestCase {
     
     func testStress() throws {
         // This is an example of a performance test case.
-#if false
-        let phases = 10000
-#else
+#if DEBUG
         let phases = 1000
+#else
+        let phases = 10000
 #endif
         self.measure {
             for _ /* phase */ in 0 ..< phases {

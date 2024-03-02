@@ -1,5 +1,9 @@
 import XCTest
+#if DEBUG
 @testable import AtCoder
+#else
+import AtCoder
+#endif
 
 fileprivate extension Collection where Element: Comparable {
     static func < (lhs: Self, rhs: Self) -> Bool {
@@ -57,7 +61,7 @@ final class stringTests: XCTestCase {
         XCTAssertEqual(lcpResult, lcp_naive(s, saResult))
     }
 
-
+#if DEBUG
     func testEmpty() throws {
         
         XCTAssertEqual([], suffix_array(""))
@@ -240,6 +244,7 @@ final class stringTests: XCTestCase {
             XCTAssertEqual(sa_naive(s), suffix_array(s, 3))
         }
     }
+#endif
     
     func testSA() throws {
         let s = "missisippi"
@@ -316,6 +321,7 @@ final class stringTests: XCTestCase {
         }
     }
     
+#if DEBUG
     func testSASingle() throws {
         XCTAssertEqual([0], suffix_array([0]))
         XCTAssertEqual([0], suffix_array([-1]))
@@ -323,6 +329,7 @@ final class stringTests: XCTestCase {
         XCTAssertEqual([0], suffix_array([Int32.min]))
         XCTAssertEqual([0], suffix_array([Int32.max]))
     }
+#endif
     
     func testLCP() throws {
         let s = "aab"
