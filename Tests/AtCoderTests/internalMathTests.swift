@@ -10,57 +10,46 @@ fileprivate typealias ull = CUnsignedLongLong;
 fileprivate func pow_mod_naive(_ x: ll,_ n: ull,_ mod: uint) -> ll {
     let y: ull = ull((x % ll(mod) + ll(mod)) % ll(mod))
     var z: ull = 1
-//    for (ull i = 0; i < n; i++) {
-    for _ in 0..<ull(n) {
+    for _ in 0 ..< n as Range<ull> {
         z = (z * y) % ull(mod)
     }
     return ll(z % ull(mod))
 }
 
 fileprivate func floor_sum_naive(_ n: ll,_ m: ll,_ a: ll,_ b: ll) -> ll {
-    var sum: ll = 0;
-//    for (ll i = 0; i < n; i++) {
-    for i in 0..<ll(n) {
+    var sum: ll = 0
+    for i in 0 ..< n as Range<ll> {
         sum += (a * i + b) / m
     }
     return sum;
 }
 
 fileprivate func is_prime_naive(_ n: ll) -> Bool {
-    assert(0 <= n && n <= ll(CInt.max));
-    if (n == 0 || n == 1) { return false; }
-//    for (ll i = 2; i * i <= n; i++) {
+    assert(0 <= n && n <= ll(CInt.max))
+    if (n == 0 || n == 1) { return false }
     do { var i: ll = 2; while i &* i <= n { defer { i += 1 }
-        if (n % i == 0) { return false; }
+        if n % i == 0 { return false }
     } }
     return true;
 }
 
 final class internalMathTests: XCTestCase {
 
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
     func testBarrett() throws {
 //        for (int m = 1; m <= 100; m++) {
         for m in 1..<=CInt(100) {
-            let bt = barrett(CUnsignedInt(m));
+            let bt = barrett(CUnsignedInt(m))
 //            for (int a = 0; a < m; a++) {
             for a in 0..<CInt(m) {
 //                for (int b = 0; b < m; b++) {
                 for b in 0..<CInt(m) {
-                    XCTAssertEqual((a * b) % m, CInt(bt.mul(CUnsignedInt(a), CUnsignedInt(b))));
+                    XCTAssertEqual((a * b) % m, CInt(bt.mul(CUnsignedInt(a), CUnsignedInt(b))))
                 }
             }
         }
 
-        let bt = barrett(1);
-        XCTAssertEqual(0, bt.mul(0, 0));
+        let bt = barrett(1)
+        XCTAssertEqual(0, bt.mul(0, 0))
     }
     
     func testBarrettIntBorder() throws {
@@ -68,22 +57,22 @@ final class internalMathTests: XCTestCase {
         
 //        for (unsigned int mod = mod_upper; mod >= mod_upper - 20; mod--) {
         for mod in stride(from: mod_upper, through: mod_upper - 20, by: -1) {
-            let bt = barrett(UInt32(mod));
-            var v: [CUnsignedInt] = [];
+            let bt = barrett(UInt32(mod))
+            var v: [CUnsignedInt] = []
 //            for (int i = 0; i < 10; i++) {
             for i in CUnsignedInt(0)..<CUnsignedInt(10) {
-                v.append(i);
-                v.append(mod - i);
-                v.append(mod / 2 + i);
-                v.append(mod / 2 - i);
+                v.append(i)
+                v.append(mod - i)
+                v.append(mod / 2 + i)
+                v.append(mod / 2 - i)
             }
             
             for a in v {
                 let a2 = ll(a);
-                XCTAssertEqual(((a2 &* a2) % ll(mod) &* a2) % ll(mod), ll(bt.mul(a, bt.mul(a, a))));
+                XCTAssertEqual(((a2 &* a2) % ll(mod) &* a2) % ll(mod), ll(bt.mul(a, bt.mul(a, a))))
                 for b in v {
-                    let b2 = ll(b);
-                    XCTAssertEqual((a2 * b2) % ll(mod), ll(bt.mul(UInt32(a), UInt32(b))));
+                    let b2 = ll(b)
+                    XCTAssertEqual((a2 * b2) % ll(mod), ll(bt.mul(UInt32(a), UInt32(b))))
                 }
             }
         }
@@ -93,24 +82,24 @@ final class internalMathTests: XCTestCase {
         
 //        throw XCTSkip()
 
-        let mod_upper = CUnsignedInt.max;
+        let mod_upper = CUnsignedInt.max
 //        for (unsigned int mod = mod_upper; mod >= mod_upper - 20; mod--) {
         for mod in stride(from: mod_upper, through: mod_upper - 20, by: -1) {
-            let bt = barrett(mod);
-            var v: [CUnsignedInt] = [];
+            let bt = barrett(mod)
+            var v: [CUnsignedInt] = []
 //            for (int i = 0; i < 10; i++) {
             for i in CUnsignedInt(0)..<CUnsignedInt(10) {
-                v.append(i);
-                v.append(mod - i);
-                v.append(mod / 2 + i);
-                v.append(mod / 2 - i);
+                v.append(i)
+                v.append(mod - i)
+                v.append(mod / 2 + i)
+                v.append(mod / 2 - i)
             }
             for a in v {
-                let a2 = ull(a);
-                XCTAssertEqual(((a2 &* a2) % ull(mod) &* a2) % ull(mod), ull(bt.mul(a, bt.mul(a, a))));
+                let a2 = ull(a)
+                XCTAssertEqual(((a2 &* a2) % ull(mod) &* a2) % ull(mod), ull(bt.mul(a, bt.mul(a, a))))
                 for b in v {
-                    let b2 = ull(b);
-                    XCTAssertEqual((a2 &* b2) % ull(mod), ull(bt.mul(a, b)));
+                    let b2 = ull(b)
+                    XCTAssertEqual((a2 &* b2) % ull(mod), ull(bt.mul(a, b)))
                 }
             }
         }
@@ -118,19 +107,19 @@ final class internalMathTests: XCTestCase {
     
     func testIsPrime() throws {
         
-        XCTAssertFalse(_Internal.is_prime(121));
-        XCTAssertFalse(_Internal.is_prime(11 * 13));
-        XCTAssertTrue(_Internal.is_prime(1_000_000_007));
-        XCTAssertFalse(_Internal.is_prime(1_000_000_008));
-        XCTAssertTrue(_Internal.is_prime(1_000_000_009));
+        XCTAssertFalse(_Internal.is_prime(121))
+        XCTAssertFalse(_Internal.is_prime(11 * 13))
+        XCTAssertTrue(_Internal.is_prime(1_000_000_007))
+        XCTAssertFalse(_Internal.is_prime(1_000_000_008))
+        XCTAssertTrue(_Internal.is_prime(1_000_000_009))
 //        for (int i = 0; i <= 10000; i++) {
         for i in 0..<=ll(10000) {
-            XCTAssertEqual(is_prime_naive(i), _Internal.is_prime_constexpr(CInt(i)));
+            XCTAssertEqual(is_prime_naive(i), _Internal.is_prime_constexpr(CInt(i)))
         }
 //        for (int i = 0; i <= 10000; i++) {
         for i in 0..<=ll(10000) {
-            let x = ll(CInt.max) - i;
-            XCTAssertEqual(is_prime_naive(x), _Internal.is_prime_constexpr(CInt(x)));
+            let x = ll(CInt.max) - i
+            XCTAssertEqual(is_prime_naive(x), _Internal.is_prime_constexpr(CInt(x)))
         }
     }
 
@@ -645,7 +634,7 @@ final class internalMathTests: XCTestCase {
         ]
 
         for (a,b,ans) in ab {
-            XCTAssertEqual(ans, _Internal.safe_mod(a, b));
+            XCTAssertEqual(ans, _Internal.safe_mod(a, b))
         }
     }
     
@@ -653,40 +642,40 @@ final class internalMathTests: XCTestCase {
         
 //        throw XCTSkip()
         
-        var pred = [ll]();
+        var pred = [ll]()
 //        for i in 0..<=10 {
         for i in 0..<=ll(10) {
-            pred.append(i);
-            pred.append(-i);
-            pred.append(ll.min + i);
-            pred.append(ll.max - i);
+            pred.append(i)
+            pred.append(-i)
+            pred.append(ll.min + i)
+            pred.append(ll.max - i)
 
-            pred.append(ll.min / 2 + i);
-            pred.append(ll.min / 2 - i);
-            pred.append(ll.max / 2 + i);
-            pred.append(ll.max / 2 - i);
+            pred.append(ll.min / 2 + i)
+            pred.append(ll.min / 2 - i)
+            pred.append(ll.max / 2 + i)
+            pred.append(ll.max / 2 - i)
 
-            pred.append(ll.min / 3 + i);
-            pred.append(ll.min / 3 - i);
-            pred.append(ll.max / 3 + i);
-            pred.append(ll.max / 3 - i);
+            pred.append(ll.min / 3 + i)
+            pred.append(ll.min / 3 - i)
+            pred.append(ll.max / 3 + i)
+            pred.append(ll.max / 3 - i)
         }
-        pred.append(998244353);
-        pred.append(1_000_000_007);
-        pred.append(1_000_000_009);
-        pred.append(-998244353);
-        pred.append(-1_000_000_007);
-        pred.append(-1_000_000_009);
+        pred.append(998244353)
+        pred.append(1_000_000_007)
+        pred.append(1_000_000_009)
+        pred.append(-998244353)
+        pred.append(-1_000_000_007)
+        pred.append(-1_000_000_009)
         
         for a in pred {
             for b in pred {
-                if (b <= 0) { continue; }
-                let a2 = _Internal.safe_mod(a, b);
-                let eg = _Internal.inv_gcd(a, b);
-                let g = gcd(a2, b);
-                XCTAssertEqual(g, eg.first);
-                XCTAssertLessThanOrEqual(0, eg.second, "a - \(a), b - \(b)");
-                XCTAssertLessThanOrEqual(eg.second, b / eg.first, "a - \(a), b - \(b)");
+                if (b <= 0) { continue }
+                let a2 = _Internal.safe_mod(a, b)
+                let eg = _Internal.inv_gcd(a, b)
+                let g = gcd(a2, b)
+                XCTAssertEqual(g, eg.first)
+                XCTAssertLessThanOrEqual(0, eg.second, "a - \(a), b - \(b)")
+                XCTAssertLessThanOrEqual(eg.second, b / eg.first, "a - \(a), b - \(b)")
                 XCTAssertEqual(BigInt(g) % BigInt(b), BigInt(eg.second) * BigInt(a2) % BigInt(b))
             }
         }
@@ -1166,9 +1155,9 @@ final class internalMathTests: XCTestCase {
 //        for (int i = 0; i < 1000; i++) {
         for i in CInt(0)..<1000 {
             let x = CInt.max - i
-            if (!_Internal.is_prime_constexpr(x)) { continue; }
+            if (!_Internal.is_prime_constexpr(x)) { continue }
             XCTAssertTrue(
-                is_primitive_root(x, (_Internal.primitive_root_constexpr(x))));
+                is_primitive_root(x, (_Internal.primitive_root_constexpr(x))))
         }
     }
     

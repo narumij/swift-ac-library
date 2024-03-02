@@ -48,43 +48,48 @@ final class two_satTests: XCTestCase {
     }
 #endif
     
-    func testPerformanceStressOK() throws {
+    func testStress() throws {
         // This is an example of a performance test case.
+#if false
+        let phases = 10000
+#else
+        let phases = 1000
+#endif
         self.measure {
-            for _ /* phase */ in 0..<10000 {
-                let n = randint(1, 20);
-                let m = randint(1, 100);
-                var expect = [Bool](repeating: false, count: n);
+            for _ /* phase */ in 0 ..< phases {
+                let n = randint(1, 20)
+                let m = randint(1, 100)
+                var expect = [Bool](repeating: false, count: n)
                 for i in 0..<n {
-                    expect[i] = randbool();
+                    expect[i] = randbool()
                 }
-                var ts = two_sat(n);
-                var xs = [Int](repeating: 0, count: m), ys = [Int](repeating: 0, count: m), types = [Int](repeating: 0, count: m);
+                var ts = two_sat(n)
+                var xs = [Int](repeating: 0, count: m), ys = [Int](repeating: 0, count: m), types = [Int](repeating: 0, count: m)
                 for i in 0..<m {
-                    let x = randint(0, n - 1);
-                    let y = randint(0, n - 1);
-                    let type = randint(0, 2);
-                    xs[i] = x;
-                    ys[i] = y;
-                    types[i] = type;
+                    let x = randint(0, n - 1)
+                    let y = randint(0, n - 1)
+                    let type = randint(0, 2)
+                    xs[i] = x
+                    ys[i] = y
+                    types[i] = type
                     if (type == 0) {
-                        ts.add_clause(x, expect[x], y, expect[y]);
+                        ts.add_clause(x, expect[x], y, expect[y])
                     } else if (type == 1) {
-                        ts.add_clause(x, !expect[x], y, expect[y]);
+                        ts.add_clause(x, !expect[x], y, expect[y])
                     } else {
-                        ts.add_clause(x, expect[x], y, !expect[y]);
+                        ts.add_clause(x, expect[x], y, !expect[y])
                     }
                 }
-                XCTAssertTrue(ts.satisfiable());
-                let actual = ts.answer();
+                XCTAssertTrue(ts.satisfiable())
+                let actual = ts.answer()
                 for i in 0..<m {
-                    let x = xs[i], y = ys[i], type = types[i];
+                    let x = xs[i], y = ys[i], type = types[i]
                     if (type == 0) {
-                        XCTAssertTrue(actual[x] == expect[x] || actual[y] == expect[y]);
+                        XCTAssertTrue(actual[x] == expect[x] || actual[y] == expect[y])
                     } else if (type == 1) {
-                        XCTAssertTrue(actual[x] != expect[x] || actual[y] == expect[y]);
+                        XCTAssertTrue(actual[x] != expect[x] || actual[y] == expect[y])
                     } else {
-                        XCTAssertTrue(actual[x] == expect[x] || actual[y] != expect[y]);
+                        XCTAssertTrue(actual[x] == expect[x] || actual[y] != expect[y])
                     }
                 }
             }

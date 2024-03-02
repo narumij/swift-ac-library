@@ -39,7 +39,7 @@ final class dsuTests: XCTestCase {
         XCTAssertEqual(1, uf.groups().count);
     }
 
-    func testPerformanceExample() throws {
+    func testPerformance() throws {
         let n = 100000
         let pairs = (0..<n).map{ _ in ((0..<n).randomElement()!,(0..<n).randomElement()!) }
         // This is an example of a performance test case.

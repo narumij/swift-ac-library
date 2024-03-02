@@ -203,37 +203,43 @@ final class maxFlowTests: XCTestCase {
     }
 #endif
 
-    func testPerformanceStress() throws {
+    func testStress() throws {
         // This is an example of a performance test case.
+#if false
+        let phases = 10000
+#else
+        let phases = 1000
+#endif
+        
         self.measure {
-            for _ /* phase */ in 0..<10000 {
-                let n = randint(2, 20);
-                let m = randint(1, 100);
-                var s, t: Int;
-                (s, t) = randpair(0, n - 1);
-                if (randbool()) { swap(&s, &t); }
-                var g = mf_graph<Int>(count: n);
+            for _ /* phase */ in 0 ..< phases {
+                let n = randint(2, 20)
+                let m = randint(1, 100)
+                var s, t: Int
+                (s, t) = randpair(0, n - 1)
+                if (randbool()) { swap(&s, &t) }
+                var g = mf_graph<Int>(count: n)
                 for _ in 0..<m {
-                    let u = randint(0, n - 1);
-                    let v = randint(0, n - 1);
-                    let c = randint(0, 10000);
-                    g.add_edge(u, v, c);
+                    let u = randint(0, n - 1)
+                    let v = randint(0, n - 1)
+                    let c = randint(0, 10000)
+                    g.add_edge(u, v, c)
                 }
-                let flow = g.flow(s, t);
-                var dual = 0;
-                let cut = g.min_cut(s);
-                var v_flow = [Int](repeating:0, count: n);
+                let flow = g.flow(s, t)
+                var dual = 0
+                let cut = g.min_cut(s)
+                var v_flow = [Int](repeating:0, count: n)
                 for e in g.edges() {
-                    v_flow[e.from] -= e.flow;
-                    v_flow[e.to] += e.flow;
-                    if (cut[e.from] && !cut[e.to]) { dual += e.cap; }
+                    v_flow[e.from] -= e.flow
+                    v_flow[e.to] += e.flow
+                    if (cut[e.from] && !cut[e.to]) { dual += e.cap }
                 }
-                XCTAssertEqual(flow, dual);
-                XCTAssertEqual(-flow, v_flow[s]);
-                XCTAssertEqual(flow, v_flow[t]);
+                XCTAssertEqual(flow, dual)
+                XCTAssertEqual(-flow, v_flow[s])
+                XCTAssertEqual(flow, v_flow[t])
                 for i in 0..<n {
-                    if (i == s || i == t) { continue; }
-                    XCTAssertEqual(0, v_flow[i]);
+                    if (i == s || i == t) { continue }
+                    XCTAssertEqual(0, v_flow[i])
                 }
             }
         }

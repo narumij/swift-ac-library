@@ -93,40 +93,40 @@ final class lazySegtreeStressTests: XCTestCase {
     let (naive,right,left) = (300,100,100)
 #endif
 
-    func testPerformanceNaive() throws {
+    func testNaive() throws {
         self.measure {
             for n in 1..<=30 {
                 for _ in 0..<10 {
-                    var seg0 = seg(n);
-                    var tm = time_manager(n);
+                    var seg0 = seg(n)
+                    var tm = time_manager(n)
                     for i in 0..<n {
-                        seg0.set(i, S(i, i + 1, -1));
+                        seg0.set(i, S(i, i + 1, -1))
                     }
                     var now = 0;
                     for _ in 0..<naive {
-                        let ty = randint(0, 3);
-                        var l, r: Int;
-                        (l, r) = randpair(0, n);
+                        let ty = randint(0, 3)
+                        var l, r: Int
+                        (l, r) = randpair(0, n)
                         if (ty == 0) {
-                            let res = seg0.prod(l, r);
-                            XCTAssertEqual(l, res.l, "test 0");
-                            XCTAssertEqual(r, res.r, "test 1");
-                            XCTAssertEqual(tm.prod(l, r), res.time, "test 2");
+                            let res = seg0.prod(l, r)
+                            XCTAssertEqual(l, res.l, "test 0")
+                            XCTAssertEqual(r, res.r, "test 1")
+                            XCTAssertEqual(tm.prod(l, r), res.time, "test 2")
                         } else if (ty == 1) {
-                            let res = seg0.get(l);
-                            XCTAssertEqual(l, res.l, "test 3");
-                            XCTAssertEqual(l + 1, res.r, "test 4");
-                            XCTAssertEqual(tm.prod(l, l + 1), res.time, "test 5");
+                            let res = seg0.get(l)
+                            XCTAssertEqual(l, res.l, "test 3")
+                            XCTAssertEqual(l + 1, res.r, "test 4")
+                            XCTAssertEqual(tm.prod(l, l + 1), res.time, "test 5")
                         } else if (ty == 2) {
-                            now += 1;
-                            seg0.apply(l, r, T(now));
-                            tm.action(l, r, now);
+                            now += 1
+                            seg0.apply(l, r, T(now))
+                            tm.action(l, r, now)
                         } else if (ty == 3) {
-                            now += 1;
-                            seg0.apply(l, T(now));
-                            tm.action(l, l + 1, now);
+                            now += 1
+                            seg0.apply(l, T(now))
+                            tm.action(l, l + 1, now)
                         } else {
-                            assert(false);
+                            assert(false)
                         }
                     }
                 }
@@ -134,31 +134,31 @@ final class lazySegtreeStressTests: XCTestCase {
         }
     }
 
-    func testPerformanceMaxRight() throws {
+    func testMaxRight() throws {
         self.measure {
             for n in 1..<=30 {
                 for _ in 0..<10 {
-                    var seg0 = seg(n);
-                    var tm = time_manager(n);
+                    var seg0 = seg(n)
+                    var tm = time_manager(n)
                     for i in 0..<n {
-                        seg0.set(i, S(i, i + 1, -1));
+                        seg0.set(i, S(i, i + 1, -1))
                     }
-                    var now = 0;
+                    var now = 0
                     for _ in 0..<right {
-                        let ty = randint(0, 2);
-                        var l, r: Int;
-                        (l, r) = randpair(0, n);
+                        let ty = randint(0, 2)
+                        var l, r: Int
+                        (l, r) = randpair(0, n)
                         if (ty == 0) {
                             XCTAssertEqual(r, seg0.max_right(l) { s in
-                                if (s.l == -1) { return true; }
-                                assert(s.l == l);
-                                assert(s.time == tm.prod(l, s.r));
-                                return s.r <= r;
+                                if (s.l == -1) { return true }
+                                assert(s.l == l)
+                                assert(s.time == tm.prod(l, s.r))
+                                return s.r <= r
                             });
                         } else {
-                            now += 1;
-                            seg0.apply(l, r, T(now));
-                            tm.action(l, r, now);
+                            now += 1
+                            seg0.apply(l, r, T(now))
+                            tm.action(l, r, now)
                         }
                     }
                 }
@@ -166,31 +166,31 @@ final class lazySegtreeStressTests: XCTestCase {
         }
     }
 
-    func testPerformanceMinLeft() throws {
+    func testMinLeft() throws {
         self.measure {
             for n in 1..<=30 {
                 for _ in 0..<10 {
-                    var seg0 = seg(n);
-                    var tm = time_manager(n);
+                    var seg0 = seg(n)
+                    var tm = time_manager(n)
                     for i in 0..<n {
-                        seg0.set(i, S(i, i + 1, -1));
+                        seg0.set(i, S(i, i + 1, -1))
                     }
-                    var now = 0;
+                    var now = 0
                     for _ in 0..<left {
-                        let ty = randint(0, 2);
-                        var l, r: Int;
-                        (l, r) = randpair(0, n);
+                        let ty = randint(0, 2)
+                        var l, r: Int
+                        (l, r) = randpair(0, n)
                         if (ty == 0) {
                             XCTAssertEqual(l, seg0.min_left(r) { s in
-                                if (s.l == -1) { return true; }
-                                assert(s.r == r);
-                                assert(s.time == tm.prod(s.l, r));
-                                return l <= s.l;
+                                if (s.l == -1) { return true }
+                                assert(s.r == r)
+                                assert(s.time == tm.prod(s.l, r))
+                                return l <= s.l
                             });
                         } else {
-                            now += 1;
-                            seg0.apply(l, r, T(now));
-                            tm.action(l, r, now);
+                            now += 1
+                            seg0.apply(l, r, T(now))
+                            tm.action(l, r, now)
                         }
                     }
                 }

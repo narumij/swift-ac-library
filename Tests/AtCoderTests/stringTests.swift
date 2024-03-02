@@ -60,226 +60,191 @@ final class stringTests: XCTestCase {
 
     func testEmpty() throws {
         
-        // throw XCTSkip()
+        XCTAssertEqual([], suffix_array(""))
+        XCTAssertEqual([], suffix_array("".map{ $0 }))
+        XCTAssertEqual([], suffix_array("".utf8.map{ $0 }))
+        XCTAssertEqual([], suffix_array([Int]()))
 
-        XCTAssertEqual([], suffix_array(""));
-        XCTAssertEqual([], suffix_array([Int]()));
-
-        XCTAssertEqual([], z_algorithm(""));
-        XCTAssertEqual([], z_algorithm([Int]()));
-        XCTAssertEqual([], z_algorithm("".utf8CString.dropLast()));
+        XCTAssertEqual([], z_algorithm(""))
+        XCTAssertEqual([], z_algorithm("".map{ $0 }))
+        XCTAssertEqual([], z_algorithm("".utf8.map{ $0 }))
+        XCTAssertEqual([], z_algorithm([Int]()))
     }
     
     func testSALCPNaive() throws {
         
-//        for (int n = 1; n <= 5; n++) {
-        for n in 1..<=5 {
-            var m = 1;
-//            for (int i = 0; i < n; i++) m *= 4;
-            for i in 0..<n { m *= 4 }
-//            for (int f = 0; f < m; f++) {
-            for f in 0..<m {
-                var s = [Int](repeating: 0, count: n);
-                var g = f;
-                var max_c = 0;
-//                for (int i = 0; i < n; i++) {
-                for i in 0..<n {
-                    s[i] = g % 4;
-                    max_c = max(max_c, s[i]);
-                    g /= 4;
+        for n in 1 ..<= 5 {
+            var m = 1
+            for _ in 0 ..< n { m *= 4 }
+            for f in 0 ..< m {
+                var s = [Int](repeating: 0, count: n)
+                var g = f
+                var max_c = 0
+                for i in 0 ..< n {
+                    s[i] = g % 4
+                    max_c = max(max_c, s[i])
+                    g /= 4
                 }
-                let sa = sa_naive(s);
-                XCTAssertEqual(sa, suffix_array(s));
-                XCTAssertEqual(sa, suffix_array(s, max_c));
-                XCTAssertEqual(lcp_naive(s, sa), lcp_array(s, sa));
+                let sa = sa_naive(s)
+                XCTAssertEqual(sa, suffix_array(s))
+                XCTAssertEqual(sa, suffix_array(s, max_c))
+                XCTAssertEqual(lcp_naive(s, sa), lcp_array(s, sa))
             }
         }
         
-//        for (int n = 1; n <= 10; n++) {
-        for n in 1..<=10 {
-            var m = 1;
-//            for (int i = 0; i < n; i++) m *= 2;
-            for _ in 0..<n { m *= 2 }
-//            for (int f = 0; f < m; f++) {
-            for f in 0..<m {
-                var s = [Int](repeating: 0, count: n);
-                var g = f;
-                var max_c = 0;
-//                for (int i = 0; i < n; i++) {
-                for i in 0..<n {
-                    s[i] = g % 2;
-                    max_c = max(max_c, s[i]);
-                    g /= 2;
+        for n in 1 ..<= 10 {
+            var m = 1
+            for _ in 0 ..< n { m *= 2 }
+            for f in 0 ..< m {
+                var s = [Int](repeating: 0, count: n)
+                var g = f
+                var max_c = 0
+                for i in 0 ..< n {
+                    s[i] = g % 2
+                    max_c = max(max_c, s[i])
+                    g /= 2
                 }
-                let sa = sa_naive(s);
-                XCTAssertEqual(sa, suffix_array(s));
-                XCTAssertEqual(sa, suffix_array(s, max_c));
-                XCTAssertEqual(lcp_naive(s, sa), lcp_array(s, sa));
+                let sa = sa_naive(s)
+                XCTAssertEqual(sa, suffix_array(s))
+                XCTAssertEqual(sa, suffix_array(s, max_c))
+                XCTAssertEqual(lcp_naive(s, sa), lcp_array(s, sa))
             }
         }
     }
     
     func testInternalSANaiveNaive() throws {
-//        for (int n = 1; n <= 5; n++) {
-        for n in 1..<=5 {
-            var m = 1;
-//            for (int i = 0; i < n; i++) m *= 4;
-            for i in 0..<n { m *= 4 }
-//            for (int f = 0; f < m; f++) {
-            for f in 0..<m {
-                var s = [Int](repeating: 0, count: n);
-                var g = f;
-                var max_c = 0;
-//                for (int i = 0; i < n; i++) {
-                for i in 0..<n {
-                    s[i] = g % 4;
-                    max_c = max(max_c, s[i]);
-                    g /= 4;
+        for n in 1 ..<= 5 {
+            var m = 1
+            for _ in 0 ..< n { m *= 4 }
+            for f in 0 ..< m {
+                var s = [Int](repeating: 0, count: n)
+                var g = f
+                var max_c = 0
+                for i in 0 ..< n {
+                    s[i] = g % 4
+                    max_c = max(max_c, s[i])
+                    g /= 4
                 }
 
-                let sa = _Internal.sa_naive(s);
-                XCTAssertEqual(sa_naive(s), sa);
+                let sa = _Internal.sa_naive(s)
+                XCTAssertEqual(sa_naive(s), sa)
             }
         }
-//        for (int n = 1; n <= 10; n++) {
-        for n in 1..<=10 {
+        for n in 1 ..<= 10 {
             var m = 1;
-//            for (int i = 0; i < n; i++) m *= 2;
-            for i in 0..<n { m *= 2 }
-//            for (int f = 0; f < m; f++) {
-            for f in 0..<m {
-                var s = [Int](repeating: 0, count: n);
-                var g = f;
-//                for (int i = 0; i < n; i++) {
-                for i in 0..<n {
-                    s[i] = g % 2;
-                    g /= 2;
+            for _ in 0 ..< n { m *= 2 }
+            for f in 0 ..< m {
+                var s = [Int](repeating: 0, count: n)
+                var g = f
+                for i in 0 ..< n {
+                    s[i] = g % 2
+                    g /= 2
                 }
 
-                let sa = _Internal.sa_naive(s);
-                XCTAssertEqual(sa_naive(s), sa);
+                let sa = _Internal.sa_naive(s)
+                XCTAssertEqual(sa_naive(s), sa)
             }
         }
     }
     
     func testInternalSADoublingNaive() throws {
-//        for (int n = 1; n <= 5; n++) {
-        for n in 1..<=5 {
-            var m = 1;
-//            for (int i = 0; i < n; i++) m *= 4;
-            for i in 0..<n { m *= 4 }
-//            for (int f = 0; f < m; f++) {
-            for f in 0..<m {
-                var s = [Int](repeating: 0, count: n);
-                var g = f;
-//                for (int i = 0; i < n; i++) {
-                for i in 0..<n {
-                    s[i] = g % 4;
-                    g /= 4;
+        for n in 1 ..<= 5 {
+            var m = 1
+            for _ in 0 ..< n { m *= 4 }
+            for f in 0 ..< m {
+                var s = [Int](repeating: 0, count: n)
+                var g = f
+                for i in 0 ..< n {
+                    s[i] = g % 4
+                    g /= 4
                 }
 
-                let sa = _Internal.sa_doubling(s);
-                XCTAssertEqual(sa_naive(s), sa);
+                let sa = _Internal.sa_doubling(s)
+                XCTAssertEqual(sa_naive(s), sa)
             }
         }
-//        for (int n = 1; n <= 10; n++) {
-        for n in 1..<=10 {
-            var m = 1;
-//            for (int i = 0; i < n; i++) m *= 2;
-            for i in 0..<n { m *= 2 }
-//            for (int f = 0; f < m; f++) {
-            for f in 0..<m {
-                var s = [Int](repeating: 0, count: n);
-                var g = f;
-                for i in 0..<n {
-                    s[i] = g % 2;
-                    g /= 2;
+        for n in 1 ..<= 10 {
+            var m = 1
+            for _ in 0 ..< n { m *= 2 }
+            for f in 0 ..< m {
+                var s = [Int](repeating: 0, count: n)
+                var g = f
+                for i in 0 ..< n {
+                    s[i] = g % 2
+                    g /= 2
                 }
 
-                let sa = _Internal.sa_doubling(s);
-                XCTAssertEqual(sa_naive(s), sa);
+                let sa = _Internal.sa_doubling(s)
+                XCTAssertEqual(sa_naive(s), sa)
             }
         }
     }
     
     func testInternalSAISNaive() throws {
-//        for (int n = 1; n <= 5; n++) {
-        for n in 1..<=5 {
-            var m = 1;
-//            for (int i = 0; i < n; i++) m *= 4;
-            for i in 0..<n { m *= 4 }
-//            for (int f = 0; f < m; f++) {
-            for f in 0..<m {
-                var s = [Int](repeating: 0, count: n);
-                var g = f;
-                var max_c = 0;
-//                for (int i = 0; i < n; i++) {
-                for i in 0..<n {
-                    s[i] = g % 4;
-                    max_c = max(max_c, s[i]);
-                    g /= 4;
+        for n in 1 ..<= 5 {
+            var m = 1
+            for _ in 0 ..< n { m *= 4 }
+            for f in 0 ..< m {
+                var s = [Int](repeating: 0, count: n)
+                var g = f
+                var max_c = 0
+                for i in 0 ..< n {
+                    s[i] = g % 4
+                    max_c = max(max_c, s[i])
+                    g /= 4
                 }
                 
-                let sa = _Internal.sa_is(s, count: s.count, max_c, -1, -1);
-                XCTAssertEqual(sa_naive(s), sa);
+                let sa = _Internal.sa_is(s, count: s.count, max_c, -1, -1)
+                XCTAssertEqual(sa_naive(s), sa)
             }
         }
-//        for (int n = 1; n <= 10; n++) {
-        for n in 1..<=10 {
-            var m = 1;
-//            for (int i = 0; i < n; i++) m *= 2;
-            for i in 0..<n { m *= 2 }
-//            for (int f = 0; f < m; f++) {
-            for f in 0..<m {
-                var s = [Int](repeating: 0, count: n);
-                var g = f;
-                var max_c = 0;
-//                for (int i = 0; i < n; i++) {
-                for i in 0..<n {
-                    s[i] = g % 2;
-                    max_c = max(max_c, s[i]);
-                    g /= 2;
+        for n in 1 ..<= 10 {
+            var m = 1
+            for _ in 0 ..< n { m *= 2 }
+            for f in 0 ..< m {
+                var s = [Int](repeating: 0, count: n)
+                var g = f
+                var max_c = 0
+                for i in 0 ..< n {
+                    s[i] = g % 2
+                    max_c = max(max_c, s[i])
+                    g /= 2
                 }
 
-                let sa = _Internal.sa_is(s, count: s.count, max_c, -1, -1);
-                XCTAssertEqual(sa_naive(s), sa);
+                let sa = _Internal.sa_is(s, count: s.count, max_c, -1, -1)
+                XCTAssertEqual(sa_naive(s), sa)
             }
         }
     }
     
     func testSAAllATest() throws {
-//        for (int n = 1; n <= 100; n++) {
-        for n in 1..<=100 {
-            let s = [Int](repeating: 10, count: n);
-            XCTAssertEqual(sa_naive(s), suffix_array(s));
-            XCTAssertEqual(sa_naive(s), suffix_array(s, 10));
-            XCTAssertEqual(sa_naive(s), suffix_array(s, 12));
+        for n in 1 ..<= 100 {
+            let s = [Int](repeating: 10, count: n)
+            XCTAssertEqual(sa_naive(s), suffix_array(s))
+            XCTAssertEqual(sa_naive(s), suffix_array(s, 10))
+            XCTAssertEqual(sa_naive(s), suffix_array(s, 12))
         }
     }
     
     func testSAAllABTest() throws {
-//        for (int n = 1; n <= 100; n++) {
-        for n in 1..<=100 {
-            var s = [Int](repeating: 0, count: n);
-//           for (int i = 0; i < n; i++) s[i] = (i % 2);
-            for i in 0..<n { s[i] = (i % 2); }
-            XCTAssertEqual(sa_naive(s), suffix_array(s));
-            XCTAssertEqual(sa_naive(s), suffix_array(s, 3));
+        for n in 1 ..<= 100 {
+            var s = [Int](repeating: 0, count: n)
+            for i in 0..<n { s[i] = (i % 2) }
+            XCTAssertEqual(sa_naive(s), suffix_array(s))
+            XCTAssertEqual(sa_naive(s), suffix_array(s, 3))
         }
-//        for (int n = 1; n <= 100; n++) {
-        for n in 1..<=100 {
-            var s = [Int](repeating: 0, count: n);
-//            for (int i = 0; i < n; i++) s[i] = 1 - (i % 2);
-            for i in 0..<n { s[i] = 1 - (i % 2); }
-            XCTAssertEqual(sa_naive(s), suffix_array(s));
-            XCTAssertEqual(sa_naive(s), suffix_array(s, 3));
+        for n in 1 ..<= 100 {
+            var s = [Int](repeating: 0, count: n)
+            for i in 0..<n { s[i] = 1 - (i % 2) }
+            XCTAssertEqual(sa_naive(s), suffix_array(s))
+            XCTAssertEqual(sa_naive(s), suffix_array(s, 3))
         }
     }
     
     func testSA() throws {
-        let s = "missisippi";
+        let s = "missisippi"
 
-        let sa = suffix_array(s);
+        let sa = suffix_array(s)
 
         let answer = [
             "i",           // 9
@@ -294,17 +259,17 @@ final class stringTests: XCTestCase {
             "ssisippi",    // 2
         ];
 
-        XCTAssertEqual(answer.count, sa.count);
+        XCTAssertEqual(answer.count, sa.count)
 
         for i in 0 ..< sa.count {
-            XCTAssertEqual(answer[i], String(s.map{$0}.suffix(from: sa[i])));
+            XCTAssertEqual(answer[i], String(s.map{$0}.suffix(from: sa[i])))
         }
     }
     
     func testSACharacter() throws {
-        let s = "missisippi".map{$0};
+        let s = "missisippi".map{$0}
 
-        let sa = suffix_array(s);
+        let sa = suffix_array(s)
 
         let answer = [
             "i",           // 9
@@ -319,17 +284,17 @@ final class stringTests: XCTestCase {
             "ssisippi",    // 2
         ];
 
-        XCTAssertEqual(answer.count, sa.count);
+        XCTAssertEqual(answer.count, sa.count)
 
         for i in 0 ..< sa.count {
-            XCTAssertEqual(answer[i], String(s.map{$0}.suffix(from: sa[i])));
+            XCTAssertEqual(answer[i], String(s.map{$0}.suffix(from: sa[i])))
         }
     }
     
     func testSAUInt8() throws {
-        let s: [UInt8] = "missisippi".utf8.map{$0};
+        let s: [UInt8] = "missisippi".utf8.map{$0}
 
-        let sa = suffix_array(s);
+        let sa = suffix_array(s)
 
         let answer = [
             "i",           // 9
@@ -344,7 +309,7 @@ final class stringTests: XCTestCase {
             "ssisippi",    // 2
         ];
 
-        XCTAssertEqual(answer.count, sa.count);
+        XCTAssertEqual(answer.count, sa.count)
 
         for i in 0 ..< sa.count {
             XCTAssertEqual(answer[i].utf8.map{$0}, s.suffix(from: sa[i]) + [])
@@ -352,77 +317,77 @@ final class stringTests: XCTestCase {
     }
     
     func testSASingle() throws {
-        XCTAssertEqual([0], suffix_array([0]));
-        XCTAssertEqual([0], suffix_array([-1]));
-        XCTAssertEqual([0], suffix_array([1]));
-        XCTAssertEqual([0], suffix_array([Int32.min]));
-        XCTAssertEqual([0], suffix_array([Int32.max]));
+        XCTAssertEqual([0], suffix_array([0]))
+        XCTAssertEqual([0], suffix_array([-1]))
+        XCTAssertEqual([0], suffix_array([1]))
+        XCTAssertEqual([0], suffix_array([Int32.min]))
+        XCTAssertEqual([0], suffix_array([Int32.max]))
     }
     
     func testLCP() throws {
-        let s = "aab";
-        let sa = suffix_array(s);
-        XCTAssertEqual([0, 1, 2], sa);
-        let lcp = lcp_array(s, sa);
-        XCTAssertEqual([1, 0], lcp);
+        let s = "aab"
+        let sa = suffix_array(s)
+        XCTAssertEqual([0, 1, 2], sa)
+        let lcp = lcp_array(s, sa)
+        XCTAssertEqual([1, 0], lcp)
 
-        XCTAssertEqual(lcp, lcp_array([0, 0, 1], sa));
-        XCTAssertEqual(lcp, lcp_array([-100, -100, 100], sa));
+        XCTAssertEqual(lcp, lcp_array([0, 0, 1], sa))
+        XCTAssertEqual(lcp, lcp_array([-100, -100, 100], sa))
         XCTAssertEqual(lcp,
-                       lcp_array([Int32.min,Int32.min,Int32.max], sa));
+                       lcp_array([Int32.min,Int32.min,Int32.max], sa))
 
         XCTAssertEqual(lcp,
-                       lcp_array([Int64.min,Int64.min,Int64.max], sa));
+                       lcp_array([Int64.min,Int64.min,Int64.max], sa))
         
         XCTAssertEqual(lcp,
-                       lcp_array([UInt32.min,UInt32.min,UInt32.max], sa));
+                       lcp_array([UInt32.min,UInt32.min,UInt32.max], sa))
 
         XCTAssertEqual(lcp,
-                       lcp_array([UInt64.min,UInt64.min,UInt64.max], sa));
+                       lcp_array([UInt64.min,UInt64.min,UInt64.max], sa))
     }
     
     func testLCPCharacter() throws {
-        let s = "aab".map{$0};
-        let sa = suffix_array(s);
-        XCTAssertEqual([0, 1, 2], sa);
-        let lcp = lcp_array(s, sa);
-        XCTAssertEqual([1, 0], lcp);
+        let s = "aab".map{$0}
+        let sa = suffix_array(s)
+        XCTAssertEqual([0, 1, 2], sa)
+        let lcp = lcp_array(s, sa)
+        XCTAssertEqual([1, 0], lcp)
 
-        XCTAssertEqual(lcp, lcp_array([0, 0, 1], sa));
-        XCTAssertEqual(lcp, lcp_array([-100, -100, 100], sa));
+        XCTAssertEqual(lcp, lcp_array([0, 0, 1], sa))
+        XCTAssertEqual(lcp, lcp_array([-100, -100, 100], sa))
         XCTAssertEqual(lcp,
-                       lcp_array([Int32.min,Int32.min,Int32.max], sa));
+                       lcp_array([Int32.min,Int32.min,Int32.max], sa))
 
         XCTAssertEqual(lcp,
-                       lcp_array([Int64.min,Int64.min,Int64.max], sa));
+                       lcp_array([Int64.min,Int64.min,Int64.max], sa))
         
         XCTAssertEqual(lcp,
-                       lcp_array([UInt32.min,UInt32.min,UInt32.max], sa));
+                       lcp_array([UInt32.min,UInt32.min,UInt32.max], sa))
 
         XCTAssertEqual(lcp,
-                       lcp_array([UInt64.min,UInt64.min,UInt64.max], sa));
+                       lcp_array([UInt64.min,UInt64.min,UInt64.max], sa))
     }
     
     func testLCPUInt8() throws {
-        let s = "aab".utf8.map{$0};
-        let sa = suffix_array(s);
-        XCTAssertEqual([0, 1, 2], sa);
-        let lcp = lcp_array(s, sa);
-        XCTAssertEqual([1, 0], lcp);
+        let s = "aab".utf8.map{$0}
+        let sa = suffix_array(s)
+        XCTAssertEqual([0, 1, 2], sa)
+        let lcp = lcp_array(s, sa)
+        XCTAssertEqual([1, 0], lcp)
 
-        XCTAssertEqual(lcp, lcp_array([0, 0, 1], sa));
-        XCTAssertEqual(lcp, lcp_array([-100, -100, 100], sa));
+        XCTAssertEqual(lcp, lcp_array([0, 0, 1], sa))
+        XCTAssertEqual(lcp, lcp_array([-100, -100, 100], sa))
         XCTAssertEqual(lcp,
-                       lcp_array([Int32.min,Int32.min,Int32.max], sa));
+                       lcp_array([Int32.min,Int32.min,Int32.max], sa))
 
         XCTAssertEqual(lcp,
-                       lcp_array([Int64.min,Int64.min,Int64.max], sa));
+                       lcp_array([Int64.min,Int64.min,Int64.max], sa))
         
         XCTAssertEqual(lcp,
-                       lcp_array([UInt32.min,UInt32.min,UInt32.max], sa));
+                       lcp_array([UInt32.min,UInt32.min,UInt32.max], sa))
 
         XCTAssertEqual(lcp,
-                       lcp_array([UInt64.min,UInt64.min,UInt64.max], sa));
+                       lcp_array([UInt64.min,UInt64.min,UInt64.max], sa))
     }
     
     func testZAlgo() throws {
@@ -453,38 +418,30 @@ final class stringTests: XCTestCase {
     }
 
     func testZNaive() throws {
-//        for (int n = 1; n <= 6; n++) {
-        for n in 1..<=6 {
-            var m = 1;
-//            for (int i = 0; i < n; i++) m *= 4;
-            for i in 0..<n { m *= 4 }
-//            for (int f = 0; f < m; f++) {
-            for f in 0..<m {
+        for n in 1 ..<= 6 {
+            var m = 1
+            for _ in 0 ..< n { m *= 4 }
+            for f in 0 ..< m {
                 var s = [Int](repeating: 0, count: n)
-                var g = f;
-//                for (int i = 0; i < n; i++) {
-                for i in 0..<n {
-                    s[i] = g % 4;
-                    g /= 4;
+                var g = f
+                for i in 0 ..< n {
+                    s[i] = g % 4
+                    g /= 4
                 }
-                XCTAssertEqual(z_naive(s), z_algorithm(s));
+                XCTAssertEqual(z_naive(s), z_algorithm(s))
             }
         }
-//        for (int n = 1; n <= 10; n++) {
-        for n in 1..<=10 {
-            var m = 1;
-//            for (int i = 0; i < n; i++) m *= 2;
-            for i in 0..<n { m *= 2 }
-//            for (int f = 0; f < m; f++) {
-            for f in 0..<m {
+        for n in 1 ..<= 10 {
+            var m = 1
+            for _ in 0 ..< n { m *= 2 }
+            for f in 0 ..< m {
                 var s = [Int](repeating: 0, count: n)
-                var g = f;
-//                for (int i = 0; i < n; i++) {
-                for i in 0..<n {
-                    s[i] = g % 2;
-                    g /= 2;
+                var g = f
+                for i in 0 ..< n {
+                    s[i] = g % 2
+                    g /= 2
                 }
-                XCTAssertEqual(z_naive(s), z_algorithm(s));
+                XCTAssertEqual(z_naive(s), z_algorithm(s))
             }
         }
     }

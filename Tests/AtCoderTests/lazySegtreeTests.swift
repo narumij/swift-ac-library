@@ -138,10 +138,10 @@ final class lazySegtreeTests: XCTestCase {
     func testString() throws {
         
         do {
-            var seg = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "")
+            _ = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "")
         }
         do {
-            var seg = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "",count: 12)
+            _ = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "",count: 12)
         }
     }
 
