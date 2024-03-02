@@ -83,7 +83,9 @@ public extension LazySegTree {
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
 #endif
         lz = [F](unsafeUninitializedCapacity: __size) { buffer, initializedCount in
-            buffer.baseAddress?.update(repeating: id(), count: __size)
+            for i in 0..<__size {
+                buffer[i] = id()
+            }
             initializedCount = __size
         }
         __update { unsafeHandle in
