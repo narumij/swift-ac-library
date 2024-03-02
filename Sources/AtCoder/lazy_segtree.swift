@@ -65,7 +65,7 @@ public extension LazySegTree {
         _n = v.count
         _size = _Internal.bit_ceil(UInt64(_n))
         _log = _Internal.countr_zero(UInt64(_size))
-#if false
+#if true
         d = [S](repeating: e(), count: 2 * _size)
         lz = [F](repeating: id(), count: _size)
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
