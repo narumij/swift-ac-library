@@ -1,5 +1,9 @@
 import XCTest
+#if DEBUG
+@testable import AtCoder
+#else
 import AtCoder
+#endif
 
 fileprivate let op_ss: LazySegTree<Int,Int>.Op = max
 fileprivate let op_ts: LazySegTree<Int,Int>.Mapping = (+)
@@ -138,11 +142,16 @@ final class lazySegtreeTests: XCTestCase {
     // Actionsのtestを通過できない。
     func testString() throws {
         
+        let _n = 0
+        let _size = _Internal.bit_ceil(UInt64(_n))
+        let _log = _Internal.countr_zero(UInt64(_size))
+        XCTAssertEqual(1, _size)
+        XCTAssertEqual(0, _log)
+        
 #if false
         do {
             _ = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "")
         }
-#endif
         do {
             _ = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "", [])
         }
@@ -150,6 +159,7 @@ final class lazySegtreeTests: XCTestCase {
         do {
             _ = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "", count: 12)
         }
+#endif
     }
 
 }
