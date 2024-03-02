@@ -66,29 +66,32 @@ public extension LazySegTree {
         _size = _Internal.bit_ceil(UInt64(_n))
         _log = _Internal.countr_zero(UInt64(_size))
         let (__size,__n) = (_size, _n)
-#if true
+#if false
         // 暫定的に古いコードに。
         d = [S](repeating: e(), count: 2 * _size)
-//        lz = [F](repeating: id(), count: _size)
+        lz = [F](repeating: id(), count: _size)
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         for i in 0..<_n { d[_size + i] = v[i]; }
 #else
         // CI環境でサイズ0で初期化した場合に、問題が発生する。
         d = [S](unsafeUninitializedCapacity: 2 * __size) { buffer, initializedCount in
-            buffer.baseAddress?.update(repeating: e(), count: __size)
-            // for (int i = 0; i < _n; i++) d[size + i] = v[i];
-            (buffer.baseAddress! + __size).update(from: v, count: __n)
-            (buffer.baseAddress! + __size + __n).update(repeating: e(), count: __size - __n)
+            for i in 0..<(2 * __size) {
+                if __size <= i, i < __size + __n {
+                    // for (int i = 0; i < _n; i++) d[size + i] = v[i];
+                    buffer.initializeElement(at: i, to: v[i - __size])
+                } else {
+                    buffer.initializeElement(at: i, to: e())
+                }
+            }
             initializedCount = 2 * __size
         }
-//        lz = [F](repeating: id(), count: __size)
-#endif
-        lz = [F](unsafeUninitializedCapacity: max(0, __size)) { buffer, initializedCount in
+        lz = [F](unsafeUninitializedCapacity: __size) { buffer, initializedCount in
             for i in 0..<__size {
                 buffer.initializeElement(at: i, to: id())
             }
             initializedCount = __size
         }
+#endif
 
         // for (int i = size - 1; i >= 1; i--) {
         __update { unsafeHandle in
