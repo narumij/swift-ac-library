@@ -1,14 +1,14 @@
 import Foundation
 
 public struct SegTree<S> {
-    let op: (S,S) -> S
-    let e: () -> S
-    let _n, size, log: Int
-    var d: [S]
+    @usableFromInline let op: (S,S) -> S
+    @usableFromInline let e: () -> S
+    @usableFromInline let _n, size, log: Int
+    @usableFromInline var d: [S]
     
-    typealias S = S
-    typealias Op = (S,S) -> S
-    typealias E = () -> S
+    public typealias S = S
+    public typealias Op = (S,S) -> S
+    public typealias E = () -> S
 }
 
 public extension SegTree {
@@ -26,26 +26,75 @@ public extension SegTree {
         self.init(op: op, e: e(), [S](repeating: e(), count: n) )
     }
     
-    init(op: @escaping (S,S) -> S,
+    init<V>(op: @escaping (S,S) -> S,
          e: @autoclosure @escaping () -> S,
-         _ v: [S])
+         _ v: V)
+    where V: Collection, V.Element == S, V.Index == Int
     {
         self.op = op
         self.e = e
         _n = v.count
         size = _Internal.bit_ceil(UInt64(_n))
         log = _Internal.countr_zero(UInt64(size))
-        d = [S](repeating: e(), count: 2 * size)
+        // d = [S](repeating: e(), count: 2 * size)
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
-        for i in 0..<_n { d[size + i] = v[i] }
+        // for i in 0..<_n { d[size + i] = v[i] }
         // for (int i = size - 1; i >= 1; i--) {
-        for i in stride(from: size - 1, through: 1, by: -1) { update(i) }
+        let (__size,__n) = (size, _n)
+        d = [S](unsafeUninitializedCapacity: 2 * __size) { buffer, initializedCount in
+            for i in 0 ..< (2 * __size) {
+                if __size <= i, i < __size + __n {
+                    // for (int i = 0; i < _n; i++) d[size + i] = v[i];
+                    buffer.initializeElement(at: i, to: v[i - __size])
+                } else {
+                    buffer.initializeElement(at: i, to: e())
+                }
+            }
+            initializedCount = 2 * __size
+        }
+        __update { unsafeHandle in
+            // for (int i = size - 1; i >= 1; i--) {
+            for i in stride(from: __size - 1, through: 1, by: -1) {
+                unsafeHandle.update(i)
+            }
+        }
     }
 }
 
-public extension SegTree {
+extension SegTree {
     
-    mutating func set(_ p: Int,_ x: S) {
+    @usableFromInline
+    struct _UnsafeHandle {
+        
+        @inlinable @inline(__always)
+        init(
+            op: @escaping (S, S) -> S,
+            e: @escaping () -> S,
+            _n: Int,
+            size: Int,
+            log: Int,
+            d: UnsafeMutablePointer<S>
+        ) {
+            self.op = op
+            self.e = e
+            
+            self._n = _n
+            self.size = size
+            self.log = log
+            self.d = d
+        }
+
+        @usableFromInline let op: (S,S) -> S
+        @usableFromInline let e: () -> S
+
+        @usableFromInline let _n, size, log: Int
+        @usableFromInline let d: UnsafeMutablePointer<S>
+    }
+}
+
+extension SegTree._UnsafeHandle {
+    
+    func set(_ p: Int,_ x: S) {
         var p = p
         assert(0 <= p && p < _n)
         p += size
@@ -68,7 +117,7 @@ public extension SegTree {
         
         while l < r {
             if l & 1 != 0 { sml = op(sml, d[l]); l += 1 }
-            if r & 1 != 0 { r -= 1; smr = op(d[r], smr); }
+            if r & 1 != 0 { r -= 1; smr = op(d[r], smr) }
             l >>= 1
             r >>= 1
         }
@@ -126,12 +175,39 @@ public extension SegTree {
         } while r & -r != r
         return 0
     }
-}
-
-extension SegTree {
     
-    mutating func update(_ k: Int) {
+    func update(_ k: Int) {
         d[k] = op(d[2 * k], d[2 * k + 1])
     }
 }
 
+extension SegTree {
+    
+    @inlinable @inline(__always)
+    mutating func __update<R>(_ body: (_UnsafeHandle) -> R) -> R {
+        let handle = _UnsafeHandle(op: op, e: e, _n: _n, size: size, log: log, d: &d)
+        return body(handle)
+    }
+}
+
+public extension SegTree {
+    
+    mutating func set(_ p: Int,_ x: S) {
+        __update{ $0.set(p,x) }
+    }
+    mutating func get(_ p: Int) -> S {
+        __update{ $0.get(p) }
+    }
+    mutating func prod(_ l: Int,_ r: Int) -> S {
+        __update{ $0.prod(l, r) }
+    }
+    mutating func all_prod() -> S {
+        __update{ $0.all_prod() }
+    }
+    mutating func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
+        __update{ $0.max_right(l, g) }
+    }
+    mutating func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
+        __update{ $0.min_left(r, g) }
+    }
+}

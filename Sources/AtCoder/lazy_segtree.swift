@@ -49,12 +49,13 @@ public extension LazySegTree {
                   [S](repeating: e(), count: n))
     }
     
-    init(op: @escaping (S, S) -> S,
+    init<V>(op: @escaping (S, S) -> S,
          e: @escaping @autoclosure () -> S,
          mapping: @escaping (F, S) -> S,
          composition: @escaping (F, F) -> F,
          id: @escaping @autoclosure () -> F,
-         _ v: [S])
+         _ v: V)
+    where V: Collection, V.Element == S, V.Index == Int
     {
         _op = op
         _e = e
