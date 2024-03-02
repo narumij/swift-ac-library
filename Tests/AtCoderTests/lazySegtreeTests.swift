@@ -138,14 +138,14 @@ final class lazySegtreeTests: XCTestCase {
     // Actionsのtestを通過できない。
     func testString() throws {
         
+#if false
         do {
             _ = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "")
         }
-#if false
+#endif
         do {
             _ = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "", count: 12)
         }
-#endif
     }
 
 }
