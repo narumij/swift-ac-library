@@ -150,6 +150,9 @@ final class lazySegtreeTests: XCTestCase {
         
 #if true
         do {
+            _ = LazySegTree(op: +, e: 0, mapping: +, composition: +, id: 0)
+        }
+        do {
             _ = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "")
         }
         do {

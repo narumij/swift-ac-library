@@ -67,27 +67,30 @@ public extension LazySegTree {
         _log = _Internal.countr_zero(UInt64(_size))
         let (__size,__n) = (_size, _n)
 #if true
+        // 暫定的に古いコードに。
         d = [S](repeating: e(), count: 2 * _size)
 //        lz = [F](repeating: id(), count: _size)
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         for i in 0..<_n { d[_size + i] = v[i]; }
-        // for (int i = size - 1; i >= 1; i--) {
 #else
+        // CI環境でサイズ0で初期化した場合に、問題が発生する。
         d = [S](unsafeUninitializedCapacity: 2 * __size) { buffer, initializedCount in
             buffer.baseAddress?.update(repeating: e(), count: __size)
+            // for (int i = 0; i < _n; i++) d[size + i] = v[i];
             (buffer.baseAddress! + __size).update(from: v, count: __n)
             (buffer.baseAddress! + __size + __n).update(repeating: e(), count: __size - __n)
             initializedCount = 2 * __size
         }
 //        lz = [F](repeating: id(), count: __size)
-        // for (int i = 0; i < _n; i++) d[size + i] = v[i];
 #endif
-        lz = [F](unsafeUninitializedCapacity: __size) { buffer, initializedCount in
+        lz = [F](unsafeUninitializedCapacity: max(32, __size)) { buffer, initializedCount in
             for i in 0..<__size {
                 buffer[i] = id()
             }
             initializedCount = __size
         }
+
+        // for (int i = size - 1; i >= 1; i--) {
         __update { unsafeHandle in
             for i in stride(from: __size - 1, through: 1, by: -1) {
                 unsafeHandle.update(i)
