@@ -1,10 +1,3 @@
-//
-//  BinaryHeapTests.swift
-//  
-//
-//  Created by narumij on 2023/11/09.
-//
-
 import XCTest
 #if DEBUG
 @testable import AtCoder

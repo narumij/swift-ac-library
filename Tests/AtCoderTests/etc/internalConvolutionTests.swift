@@ -1,10 +1,3 @@
-//
-//  internalConvolutionTests.swift
-//  
-//
-//  Created by narumij on 2023/11/12.
-//
-
 import XCTest
 #if DEBUG
 @testable import AtCoder
