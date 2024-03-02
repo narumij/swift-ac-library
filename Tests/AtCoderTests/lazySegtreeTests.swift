@@ -136,6 +136,7 @@ final class lazySegtreeTests: XCTestCase {
     }
     
 #if false
+    // Actionsのtestを通過できない。
     func testString() throws {
         
         do {
