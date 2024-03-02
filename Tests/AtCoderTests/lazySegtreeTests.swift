@@ -143,7 +143,7 @@ final class lazySegtreeTests: XCTestCase {
             _ = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "")
         }
         do {
-            _ = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "",count: 12)
+            _ = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "", count: 12)
         }
     }
 #endif
