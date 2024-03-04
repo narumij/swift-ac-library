@@ -80,7 +80,7 @@ public enum mod_1_000_000_007: static_mod {
     public static let mod: mod_value = 1_000_000_007
 }
 
-public protocol modint_base: AdditiveArithmetic, Numeric, Hashable, ExpressibleByIntegerLiteral, CustomStringConvertible, Strideable {
+public protocol modint_base: BinaryInteger, Hashable, ExpressibleByIntegerLiteral, CustomStringConvertible, Strideable where Words == Array<UInt> {
     static func mod() -> CInt
     static func umod() -> CUnsignedInt
     init()
@@ -118,15 +118,6 @@ public extension modint_base {
 }
 
 extension modint_base {
-    public init?<T>(exactly source: T) where T : BinaryInteger {
-        self.init(source)
-    }
-    public var magnitude: CUnsignedInt {
-        val()
-    }
-}
-
-extension modint_base {
     public static func < (lhs: Self, rhs: Self) -> Bool {
         lhs.val() < rhs.val()
     }
@@ -135,6 +126,62 @@ extension modint_base {
     }
     public func advanced(by n: CInt) -> Self{
         .init(CInt(self.val()) + n)
+    }
+}
+
+extension modint_base {
+    public init<T>(_ source: T) where T : BinaryFloatingPoint {
+        self.init(CUnsignedInt(source))
+    }
+    public init<T>(clamping source: T) where T : BinaryInteger {
+        self.init(CUnsignedInt(clamping: source))
+    }
+    public init<T>(truncatingIfNeeded source: T) where T : BinaryInteger {
+        self.init(CUnsignedInt(truncatingIfNeeded: source))
+    }
+    public init?<T>(exactly source: T) where T : BinaryInteger {
+        self.init(source)
+    }
+    public init?<T>(exactly source: T) where T : BinaryFloatingPoint {
+        guard let raw = CUnsignedInt(exactly: source) else { return nil }
+        self.init(raw)
+    }
+    public var words: Array<UInt> { [.init(val())] }
+    public var magnitude: CUnsignedInt {
+        val()
+    }
+    public static var isSigned: Bool {
+        false
+    }
+    public var bitWidth: Int {
+        val().bitWidth
+    }
+    public var trailingZeroBitCount: Int {
+        val().trailingZeroBitCount
+    }
+    public static func % (lhs: Self, rhs: Self) -> Self {
+        .init(lhs.val() % rhs.val())
+    }
+    public static func %= (lhs: inout Self, rhs: Self) {
+        lhs = lhs % rhs
+    }
+    public static func &= (lhs: inout Self, rhs: Self) {
+        lhs = .init(lhs.val() & rhs.val())
+    }
+    public static func |= (lhs: inout Self, rhs: Self) {
+        lhs = .init(lhs.val() | rhs.val())
+    }
+    public static func ^= (lhs: inout Self, rhs: Self) {
+        lhs = .init(lhs.val() ^ rhs.val())
+    }
+    public static func <<= <RHS>(lhs: inout Self, rhs: RHS) where RHS : BinaryInteger {
+        lhs = .init(lhs.val() << rhs)
+    }
+    public static func >>= <RHS>(lhs: inout Self, rhs: RHS) where RHS : BinaryInteger {
+        lhs = .init(lhs.val() >> rhs)
+    }
+    public static prefix func ~ (x: Self) -> Self {
+        .init(~(x.val()))
     }
 }
 
