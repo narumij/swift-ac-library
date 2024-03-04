@@ -80,13 +80,13 @@ public enum mod_1_000_000_007: static_mod {
     public static let mod: mod_value = 1_000_000_007
 }
 
-public protocol modint_base: AdditiveArithmetic, Hashable, ExpressibleByIntegerLiteral, CustomStringConvertible {
+public protocol modint_base: AdditiveArithmetic, Numeric, Hashable, ExpressibleByIntegerLiteral, CustomStringConvertible, Strideable {
     static func mod() -> CInt
     static func umod() -> CUnsignedInt
     init()
     init(_ v: Bool)
     init(_ v: CInt)
-    init<T: FixedWidthInteger>(_ v: T)
+    init<T: BinaryInteger>(_ v: T)
     func val() -> CUnsignedInt
     static func +(lhs: Self, rhs: Self) -> Self
     static func -(lhs: Self, rhs: Self) -> Self
@@ -117,12 +117,33 @@ public extension modint_base {
     static func /= <I: FixedWidthInteger>(lhs: inout Self, rhs: I) { lhs /= Self(rhs) }
 }
 
+extension modint_base {
+    public init?<T>(exactly source: T) where T : BinaryInteger {
+        self.init(source)
+    }
+    public var magnitude: CUnsignedInt {
+        val()
+    }
+}
+
+extension modint_base {
+    public static func < (lhs: Self, rhs: Self) -> Bool {
+        lhs.val() < rhs.val()
+    }
+    public func distance(to other: Self) -> CInt {
+        CInt(other.val()) - CInt(self.val())
+    }
+    public func advanced(by n: CInt) -> Self{
+        .init(CInt(self.val()) + n)
+    }
+}
+
 @usableFromInline func __modint_v<T: UnsignedInteger>(_ v: T, umod: T) -> CUnsignedInt {
     let x = v % umod
     return CUnsignedInt(truncatingIfNeeded: x)
 }
 
-@usableFromInline func ___modint_v<T: FixedWidthInteger>(_ v: T, mod: T) -> CUnsignedInt {
+@usableFromInline func ___modint_v<T: BinaryInteger>(_ v: T, mod: T) -> CUnsignedInt {
     var x = v % mod;
     if (x < 0) { x += mod }
     let x0 = CInt(truncatingIfNeeded: x)
@@ -130,8 +151,8 @@ public extension modint_base {
 }
 
 @usableFromInline func __modint_umod<T: UnsignedInteger>(_ umod: CUnsignedInt) -> T { T(umod) }
-@usableFromInline func __modint_mod<T: FixedWidthInteger>(_ umod: CUnsignedInt) -> T { T(truncatingIfNeeded: umod) }
-@usableFromInline func __modint_mod<T: FixedWidthInteger>(_ mod: CInt) -> T { T(truncatingIfNeeded: mod) }
+@usableFromInline func __modint_mod<T: BinaryInteger>(_ umod: CUnsignedInt) -> T { T(truncatingIfNeeded: umod) }
+@usableFromInline func __modint_mod<T: BinaryInteger>(_ mod: CInt) -> T { T(truncatingIfNeeded: mod) }
 
 extension modint_base {
     typealias ULL = CUnsignedLongLong

@@ -24,7 +24,7 @@ public extension static_modint {
     init(_ v: Bool) { _v = ___modint_v(v ? 1 : 0, mod: __modint_mod(m.umod)) }
     init(_ v: CInt) { _v = ___modint_v(v, mod: __modint_mod(m.umod)) }
     init(unsigned v: CUnsignedLongLong) { _v = __modint_v(v, umod: __modint_umod(m.umod)) }
-    init<T: FixedWidthInteger>(_ v: T) { _v = ___modint_v(v, mod: __modint_mod(m.umod)) }
+    init<T: BinaryInteger>(_ v: T) { _v = ___modint_v(v, mod: __modint_mod(m.umod)) }
 
     func val() -> CUnsignedInt { return _v }
     
@@ -123,7 +123,7 @@ extension dynamic_modint {
     public init() { self.init(raw: 0) }
     public init(_ v: Bool) { _v = ___modint_v(v ? 1 : 0, mod: __modint_mod(bt.umod)) }
     public init(_ v: CInt) { _v = ___modint_v(v, mod: __modint_mod(bt.umod)) }
-    public init<T: FixedWidthInteger>(_ v: T) { _v = ___modint_v(v, mod: __modint_mod(bt.umod))  }
+    public init<T: BinaryInteger>(_ v: T) { _v = ___modint_v(v, mod: __modint_mod(bt.umod))  }
 
     public func val() -> CUnsignedInt { return _v; }
     
