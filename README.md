@@ -15,7 +15,7 @@ swift-ac-libraryは、[AC(AtCoder) Library][ac-library]のSwift移植版です�
 
 [ac-library-python] - Python版
 
-[ac-library-swift] - Swift版
+[ac-library-swift] - 元祖Swift版
 
 ## 利用の仕方
 
