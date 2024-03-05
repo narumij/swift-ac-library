@@ -80,7 +80,9 @@ public enum mod_1_000_000_007: static_mod {
     public static let mod: mod_value = 1_000_000_007
 }
 
-public protocol modint_base: BinaryInteger, Hashable, ExpressibleByIntegerLiteral, CustomStringConvertible, Strideable where Words == Array<UInt> {
+public typealias ModIntAdaptions = BinaryInteger & Hashable & Strideable & ExpressibleByIntegerLiteral & CustomStringConvertible
+
+public protocol modint_base: ModIntAdaptions where Words == Array<UInt> {
     static func mod() -> CInt
     static func umod() -> CUnsignedInt
     init()

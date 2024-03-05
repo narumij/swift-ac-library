@@ -13,12 +13,14 @@ public struct SegTree<S> {
 
 public extension SegTree {
     
+    @inlinable
     init(op: @escaping (S,S) -> S,
          e: @autoclosure @escaping () -> S)
     {
         self.init(op: op, e: e(), count: 0 )
     }
     
+    @inlinable
     init(op: @escaping (S,S) -> S,
          e: @autoclosure @escaping () -> S,
          count n: Int)
@@ -26,6 +28,7 @@ public extension SegTree {
         self.init(op: op, e: e(), [S](repeating: e(), count: n) )
     }
     
+    @inlinable
     init<V>(op: @escaping (S,S) -> S,
          e: @autoclosure @escaping () -> S,
          _ v: V)
@@ -94,27 +97,26 @@ extension SegTree {
 
 extension SegTree._UnsafeHandle {
     
+    @inlinable
     func set(_ p: Int,_ x: S) {
-        var p = p
         assert(0 <= p && p < _n)
-        p += size
+        let p = p + size
         d[p] = x
         // for (int i = 1; i <= log; i++) update(p >> i);
         for i in stride(from: 1, through: log, by: 1) { update(p >> i) }
     }
     
+    @inlinable
     func get(_ p: Int) -> S {
         assert(0 <= p && p < _n)
         return d[Int(p) + size]
     }
     
+    @inlinable
     func prod(_ l: Int,_ r: Int) -> S {
-        var (l,r) = (l,r)
         assert(0 <= l && l <= r && r <= _n)
         var sml: S = e(), smr: S = e()
-        l += size
-        r += size
-        
+        var (l,r) = (l + size, r + size)
         while l < r {
             if l & 1 != 0 { sml = op(sml, d[l]); l += 1 }
             if r & 1 != 0 { r -= 1; smr = op(d[r], smr) }
@@ -124,14 +126,15 @@ extension SegTree._UnsafeHandle {
         return op(sml, smr)
     }
     
+    @inlinable
     func all_prod() -> S { return d[1] }
     
+    @inlinable
     func max_right(_ l: Int,_ f: (S) -> Bool) -> Int {
-        var l = l
         assert(0 <= l && l <= _n)
         assert(f(e()))
         if l == _n { return _n }
-        l += size
+        var l = l + size
         var sm: S = e()
         repeat {
             while l % 2 == 0 { l >>= 1 }
@@ -151,12 +154,12 @@ extension SegTree._UnsafeHandle {
         return _n
     }
     
+    @inlinable
     func min_left(_ r: Int,_ f: (S) -> Bool ) -> Int {
-        var r = r
         assert(0 <= r && r <= _n)
         assert(f(e()))
         if r == 0 { return 0 }
-        r += size
+        var r = r + size
         var sm: S = e()
         repeat {
             r -= 1
@@ -176,8 +179,9 @@ extension SegTree._UnsafeHandle {
         return 0
     }
     
+    @inlinable
     func update(_ k: Int) {
-        d[k] = op(d[2 * k], d[2 * k + 1])
+        d[k] = op(d[k << 1], d[(k << 1) + 1])
     }
 }
 
