@@ -109,7 +109,7 @@ extension SegTree._UnsafeHandle {
     @inlinable
     func get(_ p: Int) -> S {
         assert(0 <= p && p < _n)
-        return d[Int(p) + size]
+        return d[p + size]
     }
     
     @inlinable
