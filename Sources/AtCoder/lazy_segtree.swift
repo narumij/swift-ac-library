@@ -20,6 +20,7 @@ public struct LazySegTree<S,F> {
 
 public extension LazySegTree {
     
+    @inlinable
     init(op: @escaping (S, S) -> S,
          e: @escaping @autoclosure () -> S,
          mapping: @escaping (F, S) -> S,
@@ -34,6 +35,7 @@ public extension LazySegTree {
                   count: 0)
     }
     
+    @inlinable
     init(op: @escaping (S, S) -> S,
          e: @escaping @autoclosure () -> S,
          mapping: @escaping (F, S) -> S,
@@ -49,6 +51,7 @@ public extension LazySegTree {
                   [S](repeating: e(), count: n))
     }
     
+    @inlinable
     init<V>(op: @escaping (S, S) -> S,
          e: @escaping @autoclosure () -> S,
          mapping: @escaping (F, S) -> S,
@@ -138,6 +141,7 @@ extension LazySegTree {
 
 extension LazySegTree._UnsafeHandle {
     
+    @inlinable
     func set(_ p: Int,_ x: S) {
         var p = p
         assert(0 <= p && p < _n)
@@ -147,6 +151,7 @@ extension LazySegTree._UnsafeHandle {
         for i in stride(from: 1, through: log, by: 1) { update(p >> i) }
     }
     
+    @inlinable
     func get(_ p: Int) -> S {
         var p = p
         assert(0 <= p && p < _n)
@@ -155,6 +160,7 @@ extension LazySegTree._UnsafeHandle {
         return d[p]
     }
     
+    @inlinable
     func prod(_ l: Int,_ r: Int) -> S{
         var l = l
         var r = r
@@ -180,8 +186,10 @@ extension LazySegTree._UnsafeHandle {
         return op(sml, smr)
     }
     
+    @inlinable
     func all_prod() -> S { return d[1] }
 
+    @inlinable
     func apply(_ p: Int,_ f: F) {
         var p = p
         assert(0 <= p && p < _n)
@@ -191,6 +199,7 @@ extension LazySegTree._UnsafeHandle {
         for i in stride(from: 1, through: log, by: 1) { update(p >> i) }
     }
 
+    @inlinable
     func apply(_ l: Int,_ r: Int,_ f: F) {
         var l = l
         var r = r
@@ -223,6 +232,7 @@ extension LazySegTree._UnsafeHandle {
         }
     }
 
+    @inlinable
     func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
         var l = l
         assert(0 <= l && l <= _n)
@@ -250,6 +260,7 @@ extension LazySegTree._UnsafeHandle {
         return _n
     }
     
+    @inlinable
     func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
         var r = r
         assert(0 <= r && r <= _n)
@@ -277,14 +288,16 @@ extension LazySegTree._UnsafeHandle {
         return 0
     }
     
-    @usableFromInline
+    @inlinable @inline(__always)
     func update(_ k: Int) { d[k] = op(d[2 * k], d[2 * k + 1]) }
     
+    @inlinable
     func all_apply(_ k: Int,_ f: F) {
         d[k] = mapping(f, d[k])
         if k < size { lz[k] = composition(f, lz[k]) }
     }
     
+    @inlinable
     func push(_ k: Int) {
         all_apply(2 * k, lz[k])
         all_apply(2 * k + 1, lz[k])
