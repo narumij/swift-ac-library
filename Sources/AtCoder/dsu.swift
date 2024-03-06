@@ -5,16 +5,19 @@ import Foundation
 /// Zvi Galil and Giuseppe F. Italiano,
 /// Data structures and algorithms for disjoint set union problems
 public struct DSU {
-    public init() { _n = 0; parent_or_size = [] }
-    public init(_ n: Int) { _n = n; parent_or_size = .init(repeating: -1, count: n) }
     @usableFromInline let _n: Int
     /// root node: -1 * component size
     /// otherwise: parent
     @usableFromInline var parent_or_size: [Int]
 }
 
+public extension DSU {
+    @inlinable init() { _n = 0; parent_or_size = [] }
+    @inlinable init(_ n: Int) { _n = n; parent_or_size = .init(repeating: -1, count: n) }
+}
+
 extension DSU._UnsafeHandle {
-    
+    @inlinable
     func merge(_ a: Int,_ b: Int) -> Int {
         assert(0 <= a && a < _n)
         assert(0 <= b && b < _n)
@@ -25,25 +28,25 @@ extension DSU._UnsafeHandle {
         parent_or_size[y] = x
         return x
     }
-
+    @inlinable
     func same(_ a: Int,_ b: Int) -> Bool {
         assert(0 <= a && a < _n)
         assert(0 <= b && b < _n)
         return leader(a) == leader(b)
     }
-
+    @inlinable
     func leader(_ a: Int) -> Int {
         assert(0 <= a && a < _n)
         if parent_or_size[a] < 0 { return a }
         parent_or_size[a] = leader(parent_or_size[a])
         return parent_or_size[a]
     }
-
+    @inlinable
     func size(_ a: Int) -> Int {
         assert(0 <= a && a < _n)
         return -parent_or_size[leader(a)]
     }
-
+    @inlinable
     func groups() -> [[Int]] {
         var leader_buf = [Int](repeating: -1, count:_n), group_size = [Int](repeating: -1, count:_n)
         for i in 0 ..< _n {
@@ -63,7 +66,6 @@ extension DSU._UnsafeHandle {
 }
 
 extension DSU {
-    
     @usableFromInline
     struct _UnsafeHandle {
         @inlinable @inline(__always)
@@ -74,7 +76,6 @@ extension DSU {
         public let _n: Int;
         public let parent_or_size: UnsafeMutablePointer<Int>
     }
-    
     @inlinable @inline(__always)
     mutating func _update<R>(_ body: (_UnsafeHandle) -> R) -> R {
         body(_UnsafeHandle(_n: _n, parent_or_size: &parent_or_size))
@@ -82,7 +83,6 @@ extension DSU {
 }
 
 public extension DSU {
-    
     @discardableResult
     mutating func merge(_ a: Int,_ b: Int) -> Int {
         _update { $0.merge(a, b) }

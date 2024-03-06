@@ -7,14 +7,14 @@ public struct FenwickTree<T: AdditiveArithmetic & HandleUnsigned> where T: Handl
 }
 
 public extension FenwickTree {
-
     typealias U = T.Unsigned
+    @inlinable
     init() { _n = 0; data = [] }
+    @inlinable
     init(_ n: Int) { _n = n; data = [U](repeating: 0, count: n) }
 }
 
 extension FenwickTree {
-    
     @usableFromInline
     struct _UnsafeHandle {
         @inlinable @inline(__always)
@@ -29,7 +29,7 @@ extension FenwickTree {
 }
 
 extension FenwickTree._UnsafeHandle {
-    
+    @inlinable
     func add(_ p: Int,_ x: T) {
         var p = p
         assert(0 <= p && p < _n)
@@ -39,12 +39,12 @@ extension FenwickTree._UnsafeHandle {
             p += p & -p
         }
     }
-
+    @inlinable
     func sum(_ l: Int,_ r: Int) -> T {
         assert(0 <= l && l <= r && r <= _n)
         return T(unsigned: sum(r) &- sum(l))
     }
-
+    @inlinable
     func sum(_ r: Int) -> U {
         var r = r
         var s: U = 0
@@ -57,7 +57,6 @@ extension FenwickTree._UnsafeHandle {
 }
 
 extension FenwickTree {
-    
     @inlinable @inline(__always)
     mutating func _update<R>(_ body: (_UnsafeHandle) -> R) -> R {
         body(_UnsafeHandle(_n: _n, data: &data))
@@ -65,7 +64,6 @@ extension FenwickTree {
 }
 
 public extension FenwickTree {
-
     mutating func add(_ p: Int,_ x: T) {
         _update{ $0.add(p,x) }
     }
