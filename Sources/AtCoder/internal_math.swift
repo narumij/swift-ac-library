@@ -162,29 +162,31 @@ extension _Internal {
         var x = (m - 1) / 2
         while x % 2 == 0 { x /= 2 }
         //    for (int i = 3; (long long)(i)*i <= x; i += 2) {
-        do { var i: INT = 3; while LL(i)*LL(i) <= x { defer { i += 2 }
+        for i in sequence(first: INT(3), next: { LL($0) * LL($0) <= x ? $0 + 2 : nil }) {
             if x % i == 0 {
                 divs[cnt] = i; cnt += 1
                 while x % i == 0 {
                     x /= i
                 }
             }
-        } }
+        }
+        
         if (x > 1) {
             divs[cnt] = x; cnt += 1
         }
-        //    for (int g = 2;; g++) {
-        do { var g: INT = 2; while true { defer { g += 1 }
+        // for (int g = 2;; g++) {
+        for g in sequence(first: INT(2), next: { $0 + 1 }) {
             var ok = true
-            //        for (int i = 0; i < cnt; i++) {
-            for i in 0..<INT(cnt) {
+            for i in 0 ..< INT(cnt) {
                 if pow_mod_constexpr(LL(g), LL((m - 1) / divs[Int(i)]), m) == 1 {
                     ok = false
                     break
                 }
             }
             if ok { return g }
-        } }
+        }
+        
+        fatalError()
     }
     
     static var memoized_primitve_root: Memoized = .init(source: _primitive_root_constexpr)
