@@ -2,10 +2,10 @@ import Foundation
 
 public struct LazySegTree<S,F> {
     @usableFromInline let _op: (S,S) -> S
-    @usableFromInline let _e: () -> S
+    @usableFromInline let _e: S
     @usableFromInline let _mapping: (F,S) -> S
     @usableFromInline let _composition: (F,F) -> F
-    @usableFromInline let _id: () -> F
+    @usableFromInline let _id: F
 
     @usableFromInline let _n, _size, _log: Int
     @usableFromInline var d: [S]
@@ -24,41 +24,41 @@ public extension LazySegTree {
     
     @inlinable
     init(op: @escaping (S, S) -> S,
-         e: @escaping @autoclosure () -> S,
+         e: S,
          mapping: @escaping (F, S) -> S,
          composition: @escaping (F, F) -> F,
-         id: @escaping @autoclosure () -> F)
+         id: F)
     {
         self.init(op: op,
-                  e: e(),
+                  e: e,
                   mapping: mapping,
                   composition: composition,
-                  id: id(),
+                  id: id,
                   count: 0)
     }
     
     @inlinable
     init(op: @escaping (S, S) -> S,
-         e: @escaping @autoclosure () -> S,
+         e: S,
          mapping: @escaping (F, S) -> S,
          composition: @escaping (F, F) -> F,
-         id: @escaping @autoclosure () -> F,
+         id: F,
          count n: Int)
     {
         self.init(op: op,
-                  e: e(),
+                  e: e,
                   mapping: mapping,
                   composition: composition,
-                  id: id(),
-                  [S](repeating: e(), count: n))
+                  id: id,
+                  [S](repeating: e, count: n))
     }
     
     @inlinable
     init<V>(op: @escaping (S, S) -> S,
-         e: @escaping @autoclosure () -> S,
+         e: S,
          mapping: @escaping (F, S) -> S,
          composition: @escaping (F, F) -> F,
-         id: @escaping @autoclosure () -> F,
+         id: F,
          _ v: V)
     where V: Collection, V.Element == S, V.Index == Int
     {
@@ -78,14 +78,14 @@ public extension LazySegTree {
                     // for (int i = 0; i < _n; i++) d[size + i] = v[i];
                     buffer.initializeElement(at: i, to: v[i - __size])
                 } else {
-                    buffer.initializeElement(at: i, to: e())
+                    buffer.initializeElement(at: i, to: e)
                 }
             }
             initializedCount = 2 * __size
         }
         lz = [F](unsafeUninitializedCapacity: __size) { buffer, initializedCount in
             for i in 0 ..< __size {
-                buffer.initializeElement(at: i, to: id())
+                buffer.initializeElement(at: i, to: id)
             }
             initializedCount = __size
         }
@@ -306,37 +306,49 @@ extension LazySegTree._UnsafeHandle {
 extension LazySegTree {
     @inlinable @inline(__always)
     mutating func __update<R>(_ body: (_UnsafeHandle) -> R) -> R {
-        let handle = _UnsafeHandle(
-            op: _op, e: _e,
-            mapping: _mapping, composition: _composition, id: _id,
-            _n: _n, size: _size, log: _log, d: &d, lz: &lz)
-        return body(handle)
+        withoutActuallyEscaping({ _e }) { _e in
+            withoutActuallyEscaping({ _id }) { _id in
+                let handle = _UnsafeHandle(
+                    op: _op, e: _e,
+                    mapping: _mapping, composition: _composition, id: _id,
+                    _n: _n, size: _size, log: _log, d: &d, lz: &lz)
+                return body(handle)
+
+            }
+        }
     }
 }
 
 public extension LazySegTree {
-    
+    @inlinable
     mutating func set(_ p: Int,_ x: S) {
         __update{ $0.set(p,x) }
     }
+    @inlinable
     mutating func get(_ p: Int) -> S {
         __update{ $0.get(p) }
     }
+    @inlinable
     mutating func prod(_ l: Int,_ r: Int) -> S {
         __update{ $0.prod(l, r) }
     }
+    @inlinable
     mutating func all_prod() -> S {
         __update{ $0.all_prod() }
     }
+    @inlinable
     mutating func apply(_ p: Int,_ f: F) {
         __update{ $0.apply(p, f) }
     }
+    @inlinable
     mutating func apply(_ l: Int,_ r: Int,_ f: F) {
         __update{ $0.apply(l, r, f) }
     }
+    @inlinable
     mutating func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
         __update{ $0.max_right(l, g) }
     }
+    @inlinable
     mutating func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
         __update{ $0.min_left(r, g) }
     }
