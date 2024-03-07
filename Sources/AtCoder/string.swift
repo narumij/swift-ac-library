@@ -28,27 +28,22 @@ extension _Internal {
         let n = s.count
         var sa = (0 ..< n) + [], rnk = s, tmp = [Element](repeating: 0, count: n)
         
-        do {
-            // for (int k = 1; k < n; k *= 2) {
-            var k = 1
-            while k < n {
-                defer { k *= 2 }
-                
-                func cmp(_ x: Int,_ y: Int) -> Bool {
-                    if rnk[x] != rnk[y] { return rnk[x] < rnk[y] }
-                    let rx = x + k < n ? rnk[x + k] : -1
-                    let ry = y + k < n ? rnk[y + k] : -1
-                    return rx < ry
-                }
-                
-                sa.sort(by: cmp)
-                tmp[sa[0]] = 0
-                
-                for i in 1 ..< n {
-                    tmp[sa[i]] = tmp[sa[i - 1]] + (cmp(sa[i - 1], sa[i]) ? 1 : 0)
-                }
-                swap(&tmp, &rnk)
+        for k in sequence(first: 1, next: { $0 < n ? $0 * 2 : nil }) {
+            
+            func cmp(_ x: Int,_ y: Int) -> Bool {
+                if rnk[x] != rnk[y] { return rnk[x] < rnk[y] }
+                let rx = x + k < n ? rnk[x + k] : -1
+                let ry = y + k < n ? rnk[y + k] : -1
+                return rx < ry
             }
+            
+            sa.sort(by: cmp)
+            tmp[sa[0]] = 0
+            
+            for i in 1 ..< n {
+                tmp[sa[i]] = tmp[sa[i - 1]] + (cmp(sa[i - 1], sa[i]) ? 1 : 0)
+            }
+            swap(&tmp, &rnk)
         }
         
         return sa
