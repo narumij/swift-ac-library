@@ -2,7 +2,7 @@ import Foundation
 
 public struct SegTree<S> {
     @usableFromInline let op: (S,S) -> S
-    @usableFromInline let e: () -> S
+    @usableFromInline let e: S
     @usableFromInline let _n, size, log: Int
     @usableFromInline var d: [S]
 }
@@ -17,22 +17,22 @@ public extension SegTree {
     
     @inlinable
     init(op: @escaping (S,S) -> S,
-         e: @autoclosure @escaping () -> S)
+         e: S)
     {
-        self.init(op: op, e: e(), count: 0 )
+        self.init(op: op, e: e, count: 0 )
     }
     
     @inlinable
     init(op: @escaping (S,S) -> S,
-         e: @autoclosure @escaping () -> S,
+         e: S,
          count n: Int)
     {
-        self.init(op: op, e: e(), [S](repeating: e(), count: n) )
+        self.init(op: op, e: e, [S](repeating: e, count: n) )
     }
     
     @inlinable
     init<V>(op: @escaping (S,S) -> S,
-         e: @autoclosure @escaping () -> S,
+         e: S,
          _ v: V)
     where V: Collection, V.Element == S, V.Index == Int
     {
@@ -52,7 +52,7 @@ public extension SegTree {
                     // for (int i = 0; i < _n; i++) d[size + i] = v[i];
                     buffer.initializeElement(at: i, to: v[i - __size])
                 } else {
-                    buffer.initializeElement(at: i, to: e())
+                    buffer.initializeElement(at: i, to: e)
                 }
             }
             initializedCount = 2 * __size
@@ -190,27 +190,35 @@ extension SegTree._UnsafeHandle {
 extension SegTree {
     @inlinable @inline(__always)
     mutating func __update<R>(_ body: (_UnsafeHandle) -> R) -> R {
-        let handle = _UnsafeHandle(op: op, e: e, _n: _n, size: size, log: log, d: &d)
-        return body(handle)
+        withoutActuallyEscaping({ e }) { e in
+            let handle = _UnsafeHandle(op: op, e: e, _n: _n, size: size, log: log, d: &d)
+            return body(handle)
+        }
     }
 }
 
 public extension SegTree {
+    @inlinable
     mutating func set(_ p: Int,_ x: S) {
         __update{ $0.set(p,x) }
     }
+    @inlinable
     mutating func get(_ p: Int) -> S {
         __update{ $0.get(p) }
     }
+    @inlinable
     mutating func prod(_ l: Int,_ r: Int) -> S {
         __update{ $0.prod(l, r) }
     }
+    @inlinable
     mutating func all_prod() -> S {
         __update{ $0.all_prod() }
     }
+    @inlinable
     mutating func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
         __update{ $0.max_right(l, g) }
     }
+    @inlinable
     mutating func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
         __update{ $0.min_left(r, g) }
     }
