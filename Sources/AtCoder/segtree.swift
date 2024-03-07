@@ -5,10 +5,12 @@ public struct SegTree<S> {
     @usableFromInline let e: () -> S
     @usableFromInline let _n, size, log: Int
     @usableFromInline var d: [S]
-    
-    public typealias S = S
-    public typealias Op = (S,S) -> S
-    public typealias E = () -> S
+}
+
+public extension SegTree {
+    typealias S = S
+    typealias Op = (S,S) -> S
+    typealias E = () -> S
 }
 
 public extension SegTree {
@@ -186,7 +188,6 @@ extension SegTree._UnsafeHandle {
 }
 
 extension SegTree {
-    
     @inlinable @inline(__always)
     mutating func __update<R>(_ body: (_UnsafeHandle) -> R) -> R {
         let handle = _UnsafeHandle(op: op, e: e, _n: _n, size: size, log: log, d: &d)
@@ -195,7 +196,6 @@ extension SegTree {
 }
 
 public extension SegTree {
-    
     mutating func set(_ p: Int,_ x: S) {
         __update{ $0.set(p,x) }
     }

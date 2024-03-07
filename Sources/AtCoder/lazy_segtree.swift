@@ -10,12 +10,14 @@ public struct LazySegTree<S,F> {
     @usableFromInline let _n, _size, _log: Int
     @usableFromInline var d: [S]
     @usableFromInline var lz: [F]
-    
-    public typealias S = S
-    public typealias Op = (S,S) -> S
-    public typealias F = F
-    public typealias Mapping = (F,S) -> S
-    public typealias Composition = (F,F) -> F
+}
+
+public extension LazySegTree {
+    typealias S = S
+    typealias Op = (S,S) -> S
+    typealias F = F
+    typealias Mapping = (F,S) -> S
+    typealias Composition = (F,F) -> F
 }
 
 public extension LazySegTree {
@@ -162,13 +164,9 @@ extension LazySegTree._UnsafeHandle {
     
     @inlinable
     func prod(_ l: Int,_ r: Int) -> S{
-        var l = l
-        var r = r
         assert(0 <= l && l <= r && r <= _n)
         if l == r { return e() }
-        
-        l += size
-        r += size
+        var (l, r) = (l + size, r + size)
         
         for i in stride(from: log, through: 1, by: -1) {
             if (l >> i) << i != l { push(l >> i) }
@@ -306,7 +304,6 @@ extension LazySegTree._UnsafeHandle {
 }
 
 extension LazySegTree {
-    
     @inlinable @inline(__always)
     mutating func __update<R>(_ body: (_UnsafeHandle) -> R) -> R {
         let handle = _UnsafeHandle(
