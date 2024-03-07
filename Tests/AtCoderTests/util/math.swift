@@ -6,14 +6,14 @@ import Foundation
 func factors(_ m: CInt) -> [CInt] {
     var m = m
     var result = [CInt]()
-    do { var i = CInt(2); while CLongLong(i)*CLongLong(i) <= CLongLong(m) { defer { i += 1 }
+    for i in sequence(first: CInt(2), next: { CLongLong($0) * CLongLong($0) <= CLongLong(m) ? $0 + 1 : nil }) {
         if m % i == 0 {
             result.append(i)
             while m % i == 0 {
                 m /= i
             }
         }
-    } }
+    }
     
     if (m > 1) { result.append(m); }
     return result;
