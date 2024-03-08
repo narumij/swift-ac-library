@@ -181,7 +181,7 @@ extension SegTree._UnsafeHandle {
         return 0
     }
     
-    @inlinable
+    @inlinable @inline(__always)
     func update(_ k: Int) {
         d[k] = op(d[k << 1], d[(k << 1) + 1])
     }
