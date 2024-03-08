@@ -64,12 +64,15 @@ extension FenwickTree {
 }
 
 public extension FenwickTree {
+    @inlinable
     mutating func add(_ p: Int,_ x: T) {
         _update{ $0.add(p,x) }
     }
+    @inlinable
     mutating func sum(_ l: Int,_ r: Int) -> T {
         _update{ $0.sum(l,r) }
     }
+    @inlinable
     mutating func sum(_ l: Int) -> U {
         _update{ $0.sum(l) }
     }
