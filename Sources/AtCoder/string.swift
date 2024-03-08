@@ -241,8 +241,9 @@ where Element: Equatable
         if rnk[i] == 0 { continue }
         let j = sa[rnk[i] - 1]
         // for (; j + h < n && i + h < n; h++) {
-        while j + h < n, i + h < n { defer { h += 1 }
-            if s[j + h] != s[i + h] { h -= 1; /* defer分の補正 */ break }
+        //  if s[j + h] != s[i + h] { break }
+        while j + h < n, i + h < n, s[j + h] == s[i + h] {
+            h += 1
         }
         lcp[rnk[i] - 1] = h
     }
