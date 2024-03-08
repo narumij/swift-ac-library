@@ -2,9 +2,11 @@ import Foundation
 
 extension _Internal {
     
+    @usableFromInline
     struct csr<E> {
-        var start: [Int]
-        var elist: [E?]
+        @usableFromInline var start: [Int]
+        @usableFromInline var elist: [E?]
+        @inlinable
         init(_ n: Int,_ edges: [(Int, E)]) {
             start = [Int](repeating: 0, count: n + 1)
             elist = [E?](repeating: nil, count: edges.count)

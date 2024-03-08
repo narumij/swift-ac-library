@@ -5,17 +5,22 @@ extension _Internal {
     /// Reference:
     /// R. Tarjan,
     /// Depth-First Search and Linear Graph Algorithms
+    @usableFromInline
     struct scc_graph {
         
+        @inlinable
         init(_ n: Int) { _n = n }
 
+        @inlinable
         func num_vertices() -> Int { return _n }
 
+        @inlinable
         mutating func add_edge(_ from: Int,_ to: Int) {
             edges.append((from, .init(to: to)))
         }
 
         /// @return pair of (# of scc, scc id)
+        @inlinable
         func scc_ids() -> (number: Int, id: [Int]) {
             let g = csr<edge>(_n, edges)
             var now_ord = 0, group_num = 0
@@ -53,6 +58,7 @@ extension _Internal {
             return (group_num, ids)
         }
 
+        @inlinable
         func scc() -> [[Int]] {
             let ids = scc_ids()
             let group_num = ids.number
@@ -68,10 +74,16 @@ extension _Internal {
             return groups
         }
 
-        let _n: Int
+        @usableFromInline let _n: Int
+        
+        @usableFromInline
         struct edge {
-            let to: Int
+            @inlinable init(to: Int) {
+                self.to = to
+            }
+            @usableFromInline let to: Int
         }
-        var edges: [(Int,edge)] = []
+        
+        @usableFromInline var edges: [(Int,edge)] = []
     }
 }
