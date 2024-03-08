@@ -260,9 +260,9 @@ extension _Internal {
                 self.b = b
                 self.c = c
             }
-            @usableFromInline var a: A
-            @usableFromInline var b: B
-            @usableFromInline var c: C
+            public var a: A
+            public var b: B
+            public var c: C
         }
         @usableFromInline var cache: [Key:Output] = [:]
         @usableFromInline let source: (A,B,C) -> Output
