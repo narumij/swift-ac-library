@@ -3,6 +3,7 @@ import Foundation
 extension _Internal {
     /// @param m `1 <= m`
     /// @return x mod m
+    @inlinable
     static func safe_mod(_ x: LL,_ m: LL) -> LL {
         var x = x
         x %= m
@@ -12,10 +13,12 @@ extension _Internal {
     
 }
 
+@inlinable
 func imValue(_ _m: CUnsignedInt) -> CUnsignedLongLong {
     CUnsignedLongLong(bitPattern: -1) / CUnsignedLongLong(_m) &+ 1
 }
 
+@inlinable
 func imValue(_ _m: CInt) -> CUnsignedLongLong {
     imValue(CUnsignedInt(bitPattern: _m))
 }
@@ -24,23 +27,28 @@ func imValue(_ _m: CInt) -> CUnsignedLongLong {
 /// Reference: https://en.wikipedia.org/wiki/Barrett_reduction
 /// NOTE: reconsider after Ice Lake
 public struct barrett {
-    let m: CUnsignedInt
-    let im: CUnsignedLongLong
+    @usableFromInline let m: CUnsignedInt
+    @usableFromInline let im: CUnsignedLongLong
+    
+    @inlinable
     public init<Unsigned: UnsignedInteger>(_ _m: Unsigned) {
         m = CUnsignedInt(_m)
         im = imValue(CUnsignedInt(_m))
     }
+    
+    @inlinable
     public init<Signed: SignedInteger>(_ _m: Signed) {
         m = CUnsignedInt(bitPattern: CInt(_m))
         im = imValue(CInt(_m))
     }
     
     /// @return m
-    @usableFromInline func umod() -> CUnsignedInt { return m }
+    @inlinable @inline(__always)
+    public func umod() -> CUnsignedInt { return m }
     /// @param a `0 <= a < m`
     /// @param b `0 <= b < m`
     /// @return `a * b % m`
-    func mul(_ a: CUnsignedInt,_ b: CUnsignedInt) -> CUnsignedInt {
+    public func mul(_ a: CUnsignedInt,_ b: CUnsignedInt) -> CUnsignedInt {
         // [1] m = 1
         // a = b = im = 0, so okay
         
@@ -78,7 +86,9 @@ extension _Internal {
         return r
     }
     
+    @usableFromInline
     static var memoized_pow_mod: Memoized3 = .init(source: _pow_mod_constexpr)
+    @inlinable
     static func pow_mod_constexpr(_ x: LL,_ n: LL,_ m: INT) -> LL { memoized_pow_mod.get(x,n,m) }
 
     /// Reference:
@@ -107,7 +117,9 @@ extension _Internal {
         return true
     }
     
+    @usableFromInline
     static var memoized_is_prime: Memoized = .init(source: _is_prime_constexpr)
+    @inlinable
     static func is_prime_constexpr(_ n: INT) -> Bool { memoized_is_prime.get(n) }
     static func is_prime(_ n: INT) -> Bool { is_prime_constexpr(n) }
     
@@ -189,7 +201,9 @@ extension _Internal {
         fatalError()
     }
     
+    @usableFromInline
     static var memoized_primitve_root: Memoized = .init(source: _primitive_root_constexpr)
+    @inlinable
     static func primitive_root_constexpr(_ m: INT) -> INT { memoized_primitve_root.get(m) }
     static func primitive_root(_ m: INT) -> INT { primitive_root_constexpr(m) }
 
@@ -225,9 +239,11 @@ extension _Internal {
 
 extension _Internal {
     
+    @usableFromInline
     struct Memoized<A: Hashable, Output> {
-        var cache: [A:Output] = [:]
-        let source: (A) -> Output
+        @usableFromInline var cache: [A:Output] = [:]
+        @usableFromInline let source: (A) -> Output
+        @inlinable
         mutating func get(_ a: A) -> Output {
             if let p = cache[a] { return p }
             let p = source(a)
@@ -236,12 +252,21 @@ extension _Internal {
         }
     }
     
+    @usableFromInline
     struct Memoized3<A: Hashable, B: Hashable, C: Hashable, Output> {
-        struct Key: Hashable {
-            var a: A; var b: B; var c: C
+        public struct Key: Hashable {
+            @inlinable init(a: A, b: B, c: C) {
+                self.a = a
+                self.b = b
+                self.c = c
+            }
+            @usableFromInline var a: A
+            @usableFromInline var b: B
+            @usableFromInline var c: C
         }
-        var cache: [Key:Output] = [:]
-        let source: (A,B,C) -> Output
+        @usableFromInline var cache: [Key:Output] = [:]
+        @usableFromInline let source: (A,B,C) -> Output
+        @inlinable
         mutating func get(_ a: A,_ b: B,_ c: C) -> Output {
             let key = Key(a: a, b: b, c: c)
             if let p = cache[key] { return p }
