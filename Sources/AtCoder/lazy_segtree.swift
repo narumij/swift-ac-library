@@ -106,10 +106,10 @@ extension LazySegTree {
         @inlinable @inline(__always)
         init(
             op: @escaping (S, S) -> S,
-            e: @escaping () -> S,
+            e: S,
             mapping: @escaping (F, S) -> S,
             composition: @escaping (F, F) -> F,
-            id: @escaping () -> F,
+            id: F,
             _n: Int,
             size: Int,
             log: Int,
@@ -117,10 +117,10 @@ extension LazySegTree {
             lz: UnsafeMutablePointer<F>
         ) {
             self.op = op
-            self.e = e
+            self._e = e
             self.mapping = mapping
             self.composition = composition
-            self.id = id
+            self._id = id
             
             self._n = _n
             self.size = size
@@ -130,10 +130,12 @@ extension LazySegTree {
         }
 
         @usableFromInline let op: (S,S) -> S
-        @usableFromInline let e: () -> S
+        @usableFromInline let _e: S
+        @inlinable @inline(__always) func e() -> S { _e }
         @usableFromInline let mapping: (F,S) -> S
         @usableFromInline let composition: (F,F) -> F
-        @usableFromInline let id: () -> F
+        @usableFromInline let _id: F
+        @inlinable @inline(__always) func id() -> F { _id }
 
         @usableFromInline let _n, size, log: Int
         @usableFromInline let d: UnsafeMutablePointer<S>
@@ -306,16 +308,11 @@ extension LazySegTree._UnsafeHandle {
 extension LazySegTree {
     @inlinable @inline(__always)
     mutating func __update<R>(_ body: (_UnsafeHandle) -> R) -> R {
-        withoutActuallyEscaping({ _e }) { _e in
-            withoutActuallyEscaping({ _id }) { _id in
-                let handle = _UnsafeHandle(
-                    op: _op, e: _e,
-                    mapping: _mapping, composition: _composition, id: _id,
-                    _n: _n, size: _size, log: _log, d: &d, lz: &lz)
-                return body(handle)
-
-            }
-        }
+        let handle = _UnsafeHandle(
+            op: _op, e: _e,
+            mapping: _mapping, composition: _composition, id: _id,
+            _n: _n, size: _size, log: _log, d: &d, lz: &lz)
+        return body(handle)
     }
 }
 

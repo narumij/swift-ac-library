@@ -74,14 +74,14 @@ extension SegTree {
         @inlinable @inline(__always)
         init(
             op: @escaping (S, S) -> S,
-            e: @escaping () -> S,
+            e: S,
             _n: Int,
             size: Int,
             log: Int,
             d: UnsafeMutablePointer<S>
         ) {
             self.op = op
-            self.e = e
+            self._e = e
             
             self._n = _n
             self.size = size
@@ -90,7 +90,8 @@ extension SegTree {
         }
 
         @usableFromInline let op: (S,S) -> S
-        @usableFromInline let e: () -> S
+        @usableFromInline let _e: S
+        @inlinable @inline(__always) func e() -> S { _e }
 
         @usableFromInline let _n, size, log: Int
         @usableFromInline let d: UnsafeMutablePointer<S>
@@ -190,10 +191,8 @@ extension SegTree._UnsafeHandle {
 extension SegTree {
     @inlinable @inline(__always)
     mutating func __update<R>(_ body: (_UnsafeHandle) -> R) -> R {
-        withoutActuallyEscaping({ e }) { e in
-            let handle = _UnsafeHandle(op: op, e: e, _n: _n, size: size, log: log, d: &d)
-            return body(handle)
-        }
+        let handle = _UnsafeHandle(op: op, e: e, _n: _n, size: size, log: log, d: &d)
+        return body(handle)
     }
 }
 
