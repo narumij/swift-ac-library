@@ -83,19 +83,23 @@ extension DSU {
 }
 
 public extension DSU {
-    @discardableResult
+    @discardableResult @inlinable
     mutating func merge(_ a: Int,_ b: Int) -> Int {
         _update { $0.merge(a, b) }
     }
+    @inlinable
     mutating func same(_ a: Int,_ b: Int) -> Bool {
         _update { $0.same(a, b) }
     }
+    @inlinable
     mutating func leader(_ a: Int) -> Int {
         _update { $0.leader(a) }
     }
+    @inlinable
     mutating func size(_ a: Int) -> Int {
         _update { $0.size(a) }
     }
+    @inlinable
     mutating func groups() -> [[Int]] {
         _update { $0.groups() }
     }
