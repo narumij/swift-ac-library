@@ -2,6 +2,7 @@ import Foundation
 
 extension _Internal {
     
+    @inlinable
     static func sa_naive<Element>(pointer s: UnsafePointer<Element>, count n: Int) -> [Int]
     where Element: Comparable
     {
@@ -18,10 +19,12 @@ extension _Internal {
             }
     }
     
+    @inlinable
     static func sa_naive(_ s: [Int]) -> [Int] {
         sa_naive(pointer: s, count: s.count)
     }
     
+    @inlinable
     static func sa_doubling<Element>(_ s: [Element]) -> [Int]
     where Element: Comparable & AdditiveArithmetic & ExpressibleByIntegerLiteral
     {
@@ -49,6 +52,7 @@ extension _Internal {
         return sa
     }
     
+    @inlinable
     static func sa_doubling<Element>(pointer s: UnsafePointer<Element>, count n: Int) -> [Int]
     where Element: Comparable & AdditiveArithmetic & ExpressibleByIntegerLiteral
     {
@@ -59,6 +63,7 @@ extension _Internal {
     /// Reference:
     /// G. Nong, S. Zhang, and W. H. Chan,
     /// Two Efficient Algorithms for Linear Time Suffix Array Construction
+    @usableFromInline
     static func sa_is<Element>(_ s: UnsafePointer<Element>, count n: Int,_ upper: Int,_ THRESHOLD_NAIVE: Int = 10,_ THRESHOLD_DOUBLING: Int = 40) -> [Int] where Element: BinaryInteger {
         if n == 0 { return [] }
         if n == 1 { return [0] }
@@ -207,14 +212,17 @@ where V: Collection, V.Element: Comparable, V.Index == Int
     return _Internal.sa_is(s2, count: s2.count, now)
 }
 
+@inlinable
 public func suffix_array(_ s: [UInt8]) -> [Int] {
     _Internal.sa_is(s, count: s.count, 255)
 }
 
+@inlinable
 public func suffix_array(_ s: [Character]) -> [Int] {
     _Internal.sa_is(s.map{ Int($0.asciiValue!) }, count: s.count, 255)
 }
 
+@inlinable
 public func suffix_array(_ s: String) -> [Int] {
     s.withCString(encodedAs: Unicode.ASCII.self) {
         _Internal.sa_is( $0, count: s.count, 255)
@@ -225,6 +233,7 @@ public func suffix_array(_ s: String) -> [Int] {
 /// T. Kasai, G. Lee, H. Arimura, S. Arikawa, and K. Park,
 /// Linear-Time Longest-Common-Prefix Computation in Suffix Arrays and Its
 /// Applications
+@usableFromInline
 func lcp_array<Element>(pointer s: UnsafePointer<Element>, count n: Int, _ sa: [Int]) -> [Int]
 where Element: Equatable
 {
@@ -250,12 +259,14 @@ where Element: Equatable
     return lcp
 }
 
+@inlinable
 public func lcp_array<C>(_ s: [C], _ sa: [Int]) -> [Int]
 where C: Equatable
 {
     lcp_array(pointer: s, count: s.count, sa)
 }
 
+@inlinable
 public func lcp_array(_ s: String,_ sa: [Int]) -> [Int] {
     s.withCString(encodedAs: Unicode.ASCII.self) {
         lcp_array(pointer: $0, count: s.count, sa)
@@ -266,6 +277,7 @@ public func lcp_array(_ s: String,_ sa: [Int]) -> [Int] {
 /// D. Gusfield,
 /// Algorithms on Strings, Trees, and Sequences: Computer Science and
 /// Computational Biology
+@usableFromInline
 func z_algorithm<Element>(pointer s: UnsafePointer<Element>, count n: Int) -> [Int]
 where Element: Comparable
 {
@@ -283,12 +295,14 @@ where Element: Comparable
     return z
 }
 
+@inlinable
 public func z_algorithm<C>(_ s: [C]) -> [Int]
 where C: Comparable
 {
     z_algorithm(pointer: s, count: s.count)
 }
 
+@inlinable
 public func z_algorithm(_ s: String) -> [Int] {
     s.withCString(encodedAs: Unicode.ASCII.self) {
         z_algorithm(pointer: $0, count: s.count)

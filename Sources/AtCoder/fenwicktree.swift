@@ -31,9 +31,8 @@ extension FenwickTree {
 extension FenwickTree._UnsafeHandle {
     @inlinable
     func add(_ p: Int,_ x: T) {
-        var p = p
         assert(0 <= p && p < _n)
-        p += 1
+        var p = p + 1
         while p <= _n {
             data[p - 1] &+= x.unsigned
             p += p & -p
