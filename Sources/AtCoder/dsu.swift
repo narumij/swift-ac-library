@@ -17,23 +17,26 @@ public extension DSU {
 }
 
 extension DSU._UnsafeHandle {
+    
     @inlinable
     func merge(_ a: Int,_ b: Int) -> Int {
         assert(0 <= a && a < _n)
         assert(0 <= b && b < _n)
-        var x = leader(a), y = leader(b)
+        var (x,y) = (leader(a), leader(b))
         if x == y { return x }
         if -parent_or_size[x] < -parent_or_size[y] { swap(&x, &y) }
         parent_or_size[x] += parent_or_size[y]
         parent_or_size[y] = x
         return x
     }
+    
     @inlinable
     func same(_ a: Int,_ b: Int) -> Bool {
         assert(0 <= a && a < _n)
         assert(0 <= b && b < _n)
         return leader(a) == leader(b)
     }
+    
     @inlinable
     func leader(_ a: Int) -> Int {
         assert(0 <= a && a < _n)
@@ -41,11 +44,13 @@ extension DSU._UnsafeHandle {
         parent_or_size[a] = leader(parent_or_size[a])
         return parent_or_size[a]
     }
+    
     @inlinable
     func size(_ a: Int) -> Int {
         assert(0 <= a && a < _n)
         return -parent_or_size[leader(a)]
     }
+    
     @inlinable
     func groups() -> [[Int]] {
         var leader_buf = [Int](repeating: -1, count:_n), group_size = [Int](repeating: -1, count:_n)
