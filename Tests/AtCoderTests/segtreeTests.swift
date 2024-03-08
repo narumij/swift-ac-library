@@ -1,5 +1,5 @@
 import XCTest
-import AtCoder
+@testable import AtCoder
 
 fileprivate func op(a: String,b: String) -> String {
     assert(a == "$" || b == "$" || a <= b);
