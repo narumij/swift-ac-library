@@ -12,13 +12,18 @@ let package = Package(
             targets: ["AtCoder"]),
     ],
     dependencies: [
+        // ライブラリ本体で使用するswift-collectionsは、
+        // AtCoderのジャッジ環境が最後に更新された当時のバージョンを使用
         .package(
             url: "https://github.com/apple/swift-collections.git",
-            .upToNextMajor(from: "1.0.0") // or `.upToNextMinor
+            exact: "1.0.4"
         ),
-        .package(
-            url: "https://github.com/apple/swift-algorithms.git",
-            .upToNextMajor(from: "1.0.0")),
+        // それ以外についてはバージョン縛りはない
+//        .package(
+//            url: "https://github.com/apple/swift-collections.git",
+//            .upToNextMajor(from: "1.0.0") // or `.upToNextMinor
+//        ),
+        .package(url: "https://github.com/apple/swift-algorithms.git", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/apple/swift-numerics", branch: "main"),
         .package(url: "https://github.com/attaswift/BigInt.git", from: "5.3.0"),
     ],
