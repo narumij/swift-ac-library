@@ -1,6 +1,6 @@
 import Foundation
 
-// swift-collections 1.1.0以降は不要
+// swift-collections 1.1.0以降では不要
 
 extension Array: BinaryHeap {
     @inlinable @inline(__always)
