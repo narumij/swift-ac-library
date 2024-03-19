@@ -64,11 +64,11 @@ extension _Internal {
     }
     
     static func butterfly<mint: static_modint_base>(_ a: inout [mint]) {
-        a.withUnsafeMutableBufferPointer { butterfly($0) }
+        a.withUnsafeMutableBufferPointer { butterfly($0.baseAddress!, count: $0.count) }
     }
     
-    static func butterfly<mint: static_modint_base>(_ a: UnsafeMutableBufferPointer<mint>) {
-        let n = a.count
+    static func butterfly<mint: static_modint_base>(_ a: UnsafeMutablePointer<mint>, count n: Int) {
+//        let n = a.count
         let h: CInt = _Internal.countr_zero(CUnsignedInt(n))
         
         // static const fft_info<mint> info;
@@ -122,11 +122,11 @@ extension _Internal {
     }
     
     static func butterfly_inv<mint: static_modint_base>(_ a: inout [mint]) {
-        a.withUnsafeMutableBufferPointer { butterfly_inv($0) }
+        a.withUnsafeMutableBufferPointer { butterfly_inv($0.baseAddress!, count: $0.count) }
     }
     
-    static func butterfly_inv<mint: static_modint_base>(_ a: UnsafeMutableBufferPointer<mint>) {
-        let n = a.count;
+    static func butterfly_inv<mint: static_modint_base>(_ a: UnsafeMutablePointer<mint>, count n: Int) {
+//        let n = a.count;
         let h: CInt = _Internal.countr_zero(CUnsignedInt(n));
         
         // static const fft_info<mint> info;

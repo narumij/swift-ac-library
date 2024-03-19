@@ -204,9 +204,9 @@ extension modint_base {
 @usableFromInline func __modint_mod<T: BinaryInteger>(_ mod: CInt) -> T { T(truncatingIfNeeded: mod) }
 
 extension modint_base {
-    typealias ULL = CUnsignedLongLong
-    typealias LL = CLongLong
-    typealias UINT = CUnsignedInt
+    @usableFromInline typealias ULL = CUnsignedLongLong
+    @usableFromInline typealias LL = CLongLong
+    @usableFromInline typealias UINT = CUnsignedInt
 }
 
 public extension modint_base {
@@ -225,7 +225,7 @@ public protocol modint_raw {
 extension modint_raw {
     @inlinable @inline(__always)
     public init(integerLiteral value: CInt) {
-        self.init(raw: ___modint_v(value, mod: __modint_mod(Self.mod())))
+        self.init(raw: value == 0 ? 0 :  ___modint_v(value, mod: __modint_mod(Self.umod())))
     }
 }
 

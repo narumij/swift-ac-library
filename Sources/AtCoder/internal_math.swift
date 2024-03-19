@@ -43,7 +43,7 @@ public struct barrett {
     }
     
     /// @return m
-    @inlinable @inline(__always)
+    @inlinable
     public func umod() -> CUnsignedInt { return m }
     /// @param a `0 <= a < m`
     /// @param b `0 <= b < m`
@@ -125,6 +125,7 @@ extension _Internal {
     
     /// @param b `1 <= b`
     /// @return pair(g, x) s.t. g = gcd(a, b), xa = g (mod b), 0 <= x < b/g
+    @usableFromInline
     static func inv_gcd(_ a: LL,_ b: LL) -> (first: LL, second: LL) {
         let a = safe_mod(a, b)
         if a == 0 { return (b, 0) }
