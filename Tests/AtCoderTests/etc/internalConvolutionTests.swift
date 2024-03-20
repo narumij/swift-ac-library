@@ -53,8 +53,8 @@ final class internalConvolutionTests: XCTestCase {
         b.resize(Int(z));
         _Internal.butterfly(&b);
         
-        let ai = a.map{Int($0.val())}
-        let bi = b.map{Int($0.val())}
+        let ai = a.map{Int($0.val)}
+        let bi = b.map{Int($0.val)}
         XCTAssertEqual(a.count, aa.count)
         XCTAssertEqual(ai, aa)
         XCTAssertEqual(b.count, bb.count)
