@@ -1,7 +1,7 @@
 import Foundation
 
 public struct mod_value {
-    public init<Integer: FixedWidthInteger>(_ m: Integer) {
+    public init<Integer: BinaryInteger>(_ m: Integer) {
         self.umod = CUnsignedInt(m)
         self.isPrime = _Internal.is_prime(CInt(m))
     }
@@ -193,6 +193,11 @@ extension modint_base {
     public static prefix func ~ (x: Self) -> Self {
         .init(~(x.val))
     }
+}
+
+@usableFromInline func __modint_v(_ v: CUnsignedLongLong, umod: CUnsignedLongLong) -> CUnsignedInt {
+    let x = v % umod
+    return CUnsignedInt(truncatingIfNeeded: x)
 }
 
 @usableFromInline func __modint_v<T: UnsignedInteger>(_ v: T, umod: T) -> CUnsignedInt {

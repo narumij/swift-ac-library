@@ -9,14 +9,25 @@ extension Array {
             return
         }
 
-        let old = self
+        let c = count
         
         self = .init(unsafeUninitializedCapacity: n, initializingWith: { buffer, initializedCount in
-            for i in 0..<n {
-                if i < old.count {
-                    buffer.initializeElement(at: i, to: old[i])
-                } else {
-                    buffer.initializeElement(at: i, to: element)
+            self.withUnsafeBufferPointer { o in
+                let old = o.baseAddress!
+                for i in 0 ..< n {
+#if true
+                    if i < c {
+                        buffer[i] = i < c ? old[i] : element
+                    } else {
+                        buffer[i] = element
+                    }
+#else
+                    if i < c {
+                        buffer.initializeElement(at: i, to: old[i])
+                    } else {
+                        buffer.initializeElement(at: i, to: element)
+                    }
+#endif
                 }
             }
             initializedCount = n
@@ -36,7 +47,8 @@ fileprivate extension static_modint {
 
 extension _Internal {
     
-    public struct fft_info<mint: static_modint_base> {
+    public struct fft_info<mod: static_mod> {
+        public typealias mint = static_modint<mod>
         
         public var root: [mint]
         public var iroot: [mint]
@@ -48,45 +60,86 @@ extension _Internal {
         public var irate3: [mint]
         
         public init() {
+            
             let g: CInt = _Internal.primitive_root(mint.mod)
-            let rank2: CInt = _Internal.countr_zero_constexpr(UInt32(mint.mod) - 1)
+            let rank2: Int = _Internal.countr_zero_constexpr(UInt32(mint.mod) - 1)
             
-            root = [mint](repeating: 0, count: Int(rank2 + 1)) // root[i]^(2^i) == 1
-            iroot = [mint](repeating: 0, count: Int(rank2 + 1)) // root[i] * iroot[i] == 1
+            root = [mint](repeating: 0, count: rank2 + 1) // root[i]^(2^i) == 1
+            iroot = [mint](repeating: 0, count: rank2 + 1) // root[i] * iroot[i] == 1
             
-            rate2 = [mint](repeating: 0, count: Int(max(0, rank2 - 2 + 1)))
-            irate2 = [mint](repeating: 0, count: Int(max(0, rank2 - 2 + 1)))
+            rate2 = [mint](repeating: 0, count: max(0, rank2 - 2 + 1))
+            irate2 = [mint](repeating: 0, count: max(0, rank2 - 2 + 1))
             
-            rate3 = [mint](repeating: 0, count: Int(max(0, rank2 - 3 + 1)))
-            irate3 = [mint](repeating: 0, count: Int(max(0, rank2 - 3 + 1)))
+            rate3 = [mint](repeating: 0, count: max(0, rank2 - 3 + 1))
+            irate3 = [mint](repeating: 0, count: max(0, rank2 - 3 + 1))
 
-            root[Int(rank2)] = mint(g).pow(CLongLong((mint.mod - 1) >> rank2))
-            iroot[Int(rank2)] = root[Int(rank2)].inv
-            // for (int i = rank2 - 1; i >= 0; i--) {
-            for i in stride(from: Int(rank2 - 1), through: 0, by: -1) {
-                root[i] = root[i + 1] * root[i + 1]
-                iroot[i] = iroot[i + 1] * iroot[i + 1]
-            }
+            root[rank2] = mint(g).pow(CLongLong((mint.mod - 1) >> rank2))
+            iroot[rank2] = root[rank2].inv
             
-            do {
-                var prod: mint = 1; var iprod: mint = 1
-                // for (int i = 0; i <= rank2 - 2; i++) {
-                for i in stride(from: 0, through: Int(rank2 - 2), by: 1) {
-                    rate2[i] = root[i + 2] * prod
-                    irate2[i] = iroot[i + 2] * iprod
-                    prod *= iroot[i + 2]
-                    iprod *= root[i + 2]
+            root.withUnsafeMutableBufferPointer { _root in
+                let root = _root.baseAddress!
+                
+                iroot.withUnsafeMutableBufferPointer { _iroot in
+                    let iroot = _iroot.baseAddress!
+                    
+                    // for (int i = rank2 - 1; i >= 0; i--) {
+                    for i in stride(from: Int(rank2 - 1), through: 0, by: -1) {
+                        root[i] = root[i + 1] * root[i + 1]
+                        iroot[i] = iroot[i + 1] * iroot[i + 1]
+                    }
+                    
+                    do {
+                        var prod: mint = 1; var iprod: mint = 1
+                        // for (int i = 0; i <= rank2 - 2; i++) {
+                        for i in stride(from: 0, through: rank2 - 2, by: 1) {
+                            rate2[i] = root[i + 2] * prod
+                            irate2[i] = iroot[i + 2] * iprod
+                            prod *= iroot[i + 2]
+                            iprod *= root[i + 2]
+                        }
+                    }
+                    
+                    do {
+                        var prod: mint = 1; var iprod: mint = 1
+                        // for (int i = 0; i <= rank2 - 3; i++) {
+                        for i in stride(from: 0, through: rank2 - 3, by: 1) {
+                            rate3[i] = root[i + 3] * prod
+                            irate3[i] = iroot[i + 3] * iprod
+                            prod *= iroot[i + 3]
+                            iprod *= root[i + 3]
+                        }
+                    }
                 }
             }
-            
-            do {
-                var prod: mint = 1; var iprod: mint = 1
-                // for (int i = 0; i <= rank2 - 3; i++) {
-                for i in stride(from: 0, through: Int(rank2 - 3), by: 1) {
-                    rate3[i] = root[i + 3] * prod
-                    irate3[i] = iroot[i + 3] * iprod
-                    prod *= iroot[i + 3]
-                    iprod *= root[i + 3]
+        }
+        
+        struct __Unsafe {
+            let root: UnsafePointer<mint>
+            let iroot: UnsafePointer<mint>
+            let rate2: UnsafePointer<mint>
+            let irate2: UnsafePointer<mint>
+            let rate3: UnsafePointer<mint>
+            let irate3: UnsafePointer<mint>
+        }
+        
+        func __unsafeHandle(_ f: (__Unsafe) -> Void) {
+            root.withUnsafeBufferPointer { root in
+                iroot.withUnsafeBufferPointer { iroot in
+                    rate2.withUnsafeBufferPointer { rate2 in
+                        irate2.withUnsafeBufferPointer { irate2 in
+                            rate3.withUnsafeBufferPointer { rate3 in
+                                irate3.withUnsafeBufferPointer { irate3 in
+                                    let handle = __Unsafe(root:   root.baseAddress!,
+                                                          iroot:  iroot.baseAddress!,
+                                                          rate2:  rate2.baseAddress!,
+                                                          irate2: irate2.baseAddress!,
+                                                          rate3:  rate3.baseAddress!,
+                                                          irate3: irate3.baseAddress!)
+                                    f(handle)
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -98,55 +151,59 @@ extension _Internal {
     
     static func butterfly<mod: static_mod>(_ a: UnsafeMutablePointer<static_modint<mod>>, count n: Int) {
         typealias mint = static_modint<mod>
-//        let n = a.count
-        let h: CInt = _Internal.countr_zero(CUnsignedInt(n))
+        
+        let h: Int = CUnsignedInt(n).trailingZeroBitCount
         
         // static const fft_info<mint> info;
-        let info = fft_info<mint>()
+        let info = fft_info<mod>()
         let umod = ULL(mod.umod)
-        var len: CInt = 0  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
-        while len < h {
-            if h - len == 1 {
-                let p = 1 << (h - len - 1)
-                var rot: mint = 1
-                for s in 0 ..< (1 << len) {
-                    let offset = s << (h - len)
-                    for i in 0 ..< p {
-                        let l = a[i + offset]
-                        let r = a[i + offset + p] * rot
-                        a[i + offset] = l + r
-                        a[i + offset + p] = l - r
+        var len: Int = 0  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
+        
+        info.__unsafeHandle { info in
+            
+            while len < h {
+                if h - len == 1 {
+                    let p = 1 << (h - len - 1)
+                    var rot: mint = 1
+                    for s in 0 ..< (1 << len) {
+                        let offset = s << (h - len)
+                        for i in 0 ..< p {
+                            let l = a[i + offset]
+                            let r = a[i + offset + p] * rot
+                            a[i + offset] = l + r
+                            a[i + offset + p] = l - r
+                        }
+                        if s + 1 != 1 << len
+                        { rot *= info.rate2[(~UINT(truncatingIfNeeded: s)).trailingZeroBitCount] }
                     }
-                    if s + 1 != 1 << len
-                    { rot *= info.rate2[_Internal.countr_zero(~CUnsignedInt(s))] }
-                }
-                len += 1
-            } else {
-                // 4-base
-                let p = 1 << (h - len - 2)
-                var rot: mint = 1; let imag = info.root[2]
-                for s in 0 ..< (1 << len) {
-                    let rot2 = rot * rot
-                    let rot3 = rot2 * rot
-                    let offset = s << (h - len)
-                    for i in 0 ..< p {
-                        let mod2: ULL = 1 * ULL(umod) * ULL(umod)
-                        let a0: ULL = 1 * ULL(a[i + offset].val)
-                        let a1: ULL = 1 * ULL(a[i + offset + p].val) * ULL(rot.val)
-                        let a2: ULL = 1 * ULL(a[i + offset + 2 * p].val) * ULL(rot2.val)
-                        let a3: ULL = 1 * ULL(a[i + offset + 3 * p].val) * ULL(rot3.val)
-                        let a1na3imag =
-                        1 * ULL(mint(unsigned: a1 + mod2 - a3, umod: umod).val) * ULL(imag.val)
-                        let na2 = mod2 - a2
-                        a[i + offset] = mint(unsigned: a0 + a2 + a1 + a3, umod: umod)
-                        a[i + offset + 1 * p] = mint(unsigned: a0 + a2 + (2 * mod2 - (a1 + a3)), umod: umod)
-                        a[i + offset + 2 * p] = mint(unsigned: a0 + na2 + a1na3imag, umod: umod)
-                        a[i + offset + 3 * p] = mint(unsigned: a0 + na2 + (mod2 - a1na3imag), umod: umod)
+                    len += 1
+                } else {
+                    // 4-base
+                    let p = 1 << (h - len - 2)
+                    var rot: mint = 1; let imag = info.root[2]
+                    for s in 0 ..< (1 << len) {
+                        let rot2 = rot * rot
+                        let rot3 = rot2 * rot
+                        let offset = s << (h - len)
+                        for i in 0 ..< p {
+                            let mod2: ULL = 1 * umod * umod
+                            let a0: ULL = 1 * ULL(a[i + offset].val)
+                            let a1: ULL = 1 * ULL(a[i + offset + p].val) * ULL(rot.val)
+                            let a2: ULL = 1 * ULL(a[i + offset + 2 * p].val) * ULL(rot2.val)
+                            let a3: ULL = 1 * ULL(a[i + offset + 3 * p].val) * ULL(rot3.val)
+                            let a1na3imag =
+                            1 * ULL(mint(unsigned: a1 + mod2 - a3, umod: umod).val) * ULL(imag.val)
+                            let na2 = mod2 - a2
+                            a[i + offset] = mint(unsigned: a0 + a2 + a1 + a3, umod: umod)
+                            a[i + offset + 1 * p] = mint(unsigned: a0 + a2 + (2 * mod2 - (a1 + a3)), umod: umod)
+                            a[i + offset + 2 * p] = mint(unsigned: a0 + na2 + a1na3imag, umod: umod)
+                            a[i + offset + 3 * p] = mint(unsigned: a0 + na2 + (mod2 - a1na3imag), umod: umod)
+                        }
+                        if s + 1 != 1 << len
+                        { rot *= info.rate3[(~UINT(truncatingIfNeeded: s)).trailingZeroBitCount] }
                     }
-                    if s + 1 != 1 << len
-                    { rot *= info.rate3[_Internal.countr_zero(~(CUnsignedInt(s)))] }
+                    len += 2
                 }
-                len += 2
             }
         }
     }
@@ -157,71 +214,77 @@ extension _Internal {
     
     static func butterfly_inv<mod: static_mod>(_ a: UnsafeMutablePointer<static_modint<mod>>, count n: Int) {
         typealias mint = static_modint<mod>
-//        let n = a.count;
-        let h: CInt = _Internal.countr_zero(CUnsignedInt(n));
+        
+        let h: Int = CUnsignedInt(n).trailingZeroBitCount
         
         // static const fft_info<mint> info;
-        let info = fft_info<mint>();
+        let info = fft_info<mod>();
         let umod = ULL(mod.umod)
 
         var len = h  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
-        while len != 0 {
-            if (len == 1) {
-                let p = 1 << (h - len)
-                var irot: mint = 1
-                for s in 0 ..< (1 << (len - 1)) {
-                    let offset = s << (h - len + 1)
-                    for i in 0 ..< p {
-                        let l = a[i + offset]
-                        let r = a[i + offset + p]
-                        a[i + offset] = l + r
-                        a[i + offset + p] = mint(unsigned:
-                                                    (ULL(umod) + ULL(l.val) - ULL(r.val)) *
-                                                 ULL(irot.val), umod: umod)
+        
+        info.__unsafeHandle { info in
+            
+            while len != 0 {
+                if (len == 1) {
+                    let p = 1 << (h - len)
+                    var irot: mint = 1
+                    for s in 0 ..< (1 << (len - 1)) {
+                        let offset = s << (h - len + 1)
+                        for i in 0 ..< p {
+                            let l = a[i + offset]
+                            let r = a[i + offset + p]
+                            a[i + offset] = l + r
+                            a[i + offset + p] = mint(unsigned:
+                                                        (ULL(umod) + ULL(l.val) - ULL(r.val)) *
+                                                     ULL(irot.val), umod: umod)
+                        }
+                        if s + 1 != 1 << (len - 1)
+                        { irot *= info.irate2[(~UINT(truncatingIfNeeded: s)).trailingZeroBitCount] }
                     }
-                    if s + 1 != 1 << (len - 1)
-                    { irot *= info.irate2[_Internal.countr_zero(~CUnsignedInt(s))] }
-                }
-                len -= 1
-            } else {
-                // 4-base
-                let p = 1 << (h - len)
-                var irot: mint = 1; let iimag = info.iroot[2]
-                for s in 0 ..< (1 << (len - 2)) {
-                    let irot2 = irot * irot
-                    let irot3 = irot2 * irot
-                    let offset = s << (h - len + 2)
-                    for i in 0 ..< p {
-                        let a0: ULL = 1 * ULL(a[i + offset + 0 * p].val)
-                        let a1: ULL = 1 * ULL(a[i + offset + 1 * p].val)
-                        let a2: ULL = 1 * ULL(a[i + offset + 2 * p].val)
-                        let a3: ULL = 1 * ULL(a[i + offset + 3 * p].val)
-                        
-                        let a2na3iimag: ULL =
-                        1 *
-                        ULL(mint(unsigned: (ULL(umod) + a2 - a3) * ULL(iimag.val), umod: umod).val)
-                        a[i + offset] = mint(unsigned: a0 + a1 + a2 + a3, umod: umod)
-                        a[i + offset + 1 * p] =
-                        mint(unsigned: (a0 + (ULL(umod) - a1) + a2na3iimag) * ULL(irot.val), umod: umod)
-                        a[i + offset + 2 * p] =
-                        mint(unsigned: (a0 + a1 + (ULL(umod) - a2) + (ULL(umod) - a3)) *
-                             ULL(irot2.val), umod: umod)
-                        a[i + offset + 3 * p] =
-                        mint(unsigned: (a0 + (ULL(umod) - a1) + (ULL(umod) - a2na3iimag)) *
-                             ULL(irot3.val), umod: umod)
+                    len -= 1
+                } else {
+                    // 4-base
+                    let p = 1 << (h - len)
+                    var irot: mint = 1; let iimag = info.iroot[2]
+                    for s in 0 ..< (1 << (len - 2)) {
+                        let irot2 = irot * irot
+                        let irot3 = irot2 * irot
+                        let offset = s << (h - len + 2)
+                        for i in 0 ..< p {
+                            let a0: ULL = 1 * ULL(a[i + offset + 0 * p].val)
+                            let a1: ULL = 1 * ULL(a[i + offset + 1 * p].val)
+                            let a2: ULL = 1 * ULL(a[i + offset + 2 * p].val)
+                            let a3: ULL = 1 * ULL(a[i + offset + 3 * p].val)
+                            
+                            let a2na3iimag: ULL =
+                            1 *
+                            ULL(mint(unsigned: (umod + a2 - a3) * ULL(iimag.val), umod: umod).val)
+                            a[i + offset] = mint(unsigned: a0 + a1 + a2 + a3, umod: umod)
+                            a[i + offset + 1 * p] =
+                            mint(unsigned: (a0 + (umod - a1) + a2na3iimag) * ULL(irot.val), umod: umod)
+                            a[i + offset + 2 * p] =
+                            mint(unsigned: (a0 + a1 + (umod - a2) + (umod - a3)) *
+                                 ULL(irot2.val), umod: umod)
+                            a[i + offset + 3 * p] =
+                            mint(unsigned: (a0 + (umod - a1) + (umod - a2na3iimag)) *
+                                 ULL(irot3.val), umod: umod)
+                        }
+                        if s + 1 != 1 << (len - 2)
+                        { irot *= info.irate3[(~UINT(truncatingIfNeeded: s)).trailingZeroBitCount] }
                     }
-                    if s + 1 != 1 << (len - 2)
-                    { irot *= info.irate3[_Internal.countr_zero(~(CUnsignedInt(s)))] }
+                    len -= 2
                 }
-                len -= 2
             }
         }
     }
     
-    static func convolution_naive<mint: static_modint_base>(_ a: [mint],
-                                                            _ b: [mint]) -> [mint] {
+    static func convolution_naive<mod: static_mod, A,B>(_ a: A, _ b: B) -> [static_modint<mod>]
+    where A: Collection, A.Element == static_modint<mod>, A.Index == Int,
+          B: Collection, B.Element == static_modint<mod>, B.Index == Int
+    {
         let n = a.count, m = b.count
-        var ans = [mint](repeating: 0, count: n + m - 1)
+        var ans = [static_modint<mod>](repeating: 0, count: n + m - 1)
         if n < m {
             for j in 0 ..< m {
                 for i in 0 ..< n {
@@ -238,27 +301,40 @@ extension _Internal {
         return ans
     }
     
-    static func convolution_fft<mod: static_mod>(_ a: [static_modint<mod>],_ b: [static_modint<mod>]) -> [static_modint<mod>] {
-        var a = a
-        var b = b
-        let n = CInt(a.count), m = CInt(b.count)
-        let z: CInt = _Internal.bit_ceil(CUnsignedInt(n + m - 1))
-        a.resize(Int(z),element: .init())
-        _Internal.butterfly(&a)
-        b.resize(Int(z),element: .init())
-        _Internal.butterfly(&b)
-        for i in 0 ..< Int(z) {
-            a[i] *= b[i]
+    static func convolution_fft<mod: static_mod,A,B>(_ a: A,_ b: B) -> [static_modint<mod>]
+    where A: Collection, A.Element == static_modint<mod>, A.Index == Int,
+          B: Collection, B.Element == static_modint<mod>, B.Index == Int
+    {
+        var (a,b) = (a + [], b + [])
+        let (n,m) = (a.count, b.count)
+        let z: Int = _Internal.bit_ceil(CUnsignedInt(n + m - 1))
+        a.resize(z,element: .init())
+        b.resize(z,element: .init())
+        a.withUnsafeMutableBufferPointer { a_buffer in
+            let a = a_buffer.baseAddress!
+            b.withUnsafeMutableBufferPointer { b_buffer in
+                let b = b_buffer.baseAddress!
+                _Internal.butterfly(a, count: z)
+                _Internal.butterfly(b, count: z)
+                for i in 0 ..< Int(z) {
+                    a[i] *= b[i]
+                }
+                _Internal.butterfly_inv(a, count: z)
+            }
         }
-        _Internal.butterfly_inv(&a)
-        a.resize(Int(n + m - 1),element: .init())
+        a.resize(n + m - 1, element: .init())
         let iz = static_modint<mod>(z).inv
-        for i in 0 ..< Int(n + m - 1) { a[i] *= iz }
+        a.withUnsafeMutableBufferPointer { a in
+            for i in 0 ..< (n + m - 1) { a[i] *= iz }
+        }
         return a
     }
 }
 
-public func convolution<mod: static_mod>(_ a: [static_modint<mod>],_ b: [static_modint<mod>]) -> [static_modint<mod>] {
+public func convolution<mod: static_mod, A,B>(_ a: A,_ b: B) -> [static_modint<mod>]
+where A: Collection, A.Element == static_modint<mod>, A.Index == Int,
+      B: Collection, B.Element == static_modint<mod>, B.Index == Int
+{
     let (n,m) = (a.count, b.count)
     if n == 0 || m == 0 { return [] }
     
@@ -314,9 +390,9 @@ public func convolution_ll(_ a: [CLongLong],
         static let M1M3: ULL = MOD1 &* MOD3
         static let M1M2: ULL = MOD1 &* MOD2
         static let M1M2M3: ULL = MOD1 &* MOD2 &* MOD3
-        enum mod1: static_mod_value { static let mod = mod_value(MOD1) }
-        enum mod2: static_mod_value { static let mod = mod_value(MOD2) }
-        enum mod3: static_mod_value { static let mod = mod_value(MOD3) }
+        enum mod1: static_mod { static let umod = CUnsignedInt(MOD1); static let isPrime: Bool = false }
+        enum mod2: static_mod { static let umod = CUnsignedInt(MOD2); static let isPrime: Bool = false }
+        enum mod3: static_mod { static let umod = CUnsignedInt(MOD3); static let isPrime: Bool = false }
         static let i1 = ULL(_Internal.inv_gcd(LL(MOD2) * LL(MOD3), LL(MOD1)).second)
         static let i2 = ULL(_Internal.inv_gcd(LL(MOD1) * LL(MOD3), LL(MOD2)).second)
         static let i3 = ULL(_Internal.inv_gcd(LL(MOD1) * LL(MOD2), LL(MOD3)).second)

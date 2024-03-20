@@ -1,7 +1,6 @@
 import Foundation
 
 public protocol static_modint_base: modint_base & modint_raw {
-    init(unsigned v: CUnsignedLongLong)
 }
 
 public protocol dynamic_modint_base: modint_base & modint_raw {
@@ -9,6 +8,7 @@ public protocol dynamic_modint_base: modint_base & modint_raw {
 }
 
 public struct static_modint<m: static_mod>: static_modint_base {
+    typealias static_mod = m
     public init(raw v: CUnsignedInt) {
         _v = v
     }
@@ -23,7 +23,6 @@ public extension static_modint {
     @inlinable init() { self.init(raw: 0) }
     @inlinable init(_ v: Bool) { _v = ___modint_v(v ? 1 : 0, mod: __modint_mod(m.umod)) }
     @inlinable init(_ v: CInt) { _v = ___modint_v(v, mod: __modint_mod(m.umod)) }
-    @inlinable init(unsigned v: CUnsignedLongLong) { _v = __modint_v(v, umod: __modint_umod(m.umod)) }
     @inlinable init<T: BinaryInteger>(_ v: T) { _v = ___modint_v(v, mod: __modint_mod(m.umod)) }
 
     @inlinable @inline(__always)
