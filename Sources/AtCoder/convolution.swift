@@ -280,21 +280,21 @@ extension _Internal {
     }
     
     static func convolution_naive<mod: static_mod, A,B>(_ a: A, _ b: B) -> [static_modint<mod>]
-    where A: Collection, A.Element == static_modint<mod>, A.Index == Int,
-          B: Collection, B.Element == static_modint<mod>, B.Index == Int
+    where A: Collection, A.Element == static_modint<mod>,
+          B: Collection, B.Element == static_modint<mod>
     {
         let n = a.count, m = b.count
         var ans = [static_modint<mod>](repeating: 0, count: n + m - 1)
         if n < m {
             for j in 0 ..< m {
                 for i in 0 ..< n {
-                    ans[i + j] += a[i] * b[j]
+                    ans[i + j] += a[a.index(a.startIndex, offsetBy:i)] * b[b.index(b.startIndex, offsetBy:j)]
                 }
             }
         } else {
             for i in 0 ..< n {
                 for j in 0 ..< m {
-                    ans[i + j] += a[i] * b[j]
+                    ans[i + j] += a[a.index(a.startIndex, offsetBy:i)] * b[b.index(b.startIndex, offsetBy:j)]
                 }
             }
         }
@@ -302,8 +302,8 @@ extension _Internal {
     }
     
     static func convolution_fft<mod: static_mod,A,B>(_ a: A,_ b: B) -> [static_modint<mod>]
-    where A: Collection, A.Element == static_modint<mod>, A.Index == Int,
-          B: Collection, B.Element == static_modint<mod>, B.Index == Int
+    where A: Collection, A.Element == static_modint<mod>,
+          B: Collection, B.Element == static_modint<mod>
     {
         var (a,b) = (a + [], b + [])
         let (n,m) = (a.count, b.count)
@@ -332,8 +332,8 @@ extension _Internal {
 }
 
 public func convolution<mod: static_mod, A,B>(_ a: A,_ b: B) -> [static_modint<mod>]
-where A: Collection, A.Element == static_modint<mod>, A.Index == Int,
-      B: Collection, B.Element == static_modint<mod>, B.Index == Int
+where A: Collection, A.Element == static_modint<mod>,
+      B: Collection, B.Element == static_modint<mod>
 {
     let (n,m) = (a.count, b.count)
     if n == 0 || m == 0 { return [] }
