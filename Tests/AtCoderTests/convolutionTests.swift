@@ -92,8 +92,8 @@ final class convolutionTests: XCTestCase {
     
     func testSimpleSMod() throws {
         
-        enum MOD1: static_mod { static let mod: mod_value = 998244353 }
-        enum MOD2: static_mod { static let mod: mod_value = 924844033 }
+        enum MOD1: static_mod_value { static let mod: mod_value = 998244353 }
+        enum MOD2: static_mod_value { static let mod: mod_value = 924844033 }
         
         typealias s_mint1 = static_modint<MOD1>
         typealias s_mint2 = static_modint<MOD2>
@@ -131,8 +131,8 @@ final class convolutionTests: XCTestCase {
     }
     
     func testSimpleInt() throws {
-        enum MOD1: static_mod { static let mod: mod_value = 998_244_353 }
-        enum MOD2: static_mod { static let mod: mod_value = 924_844_033 }
+        enum MOD1: static_mod_value { static let mod: mod_value = 998_244_353 }
+        enum MOD2: static_mod_value { static let mod: mod_value = 924_844_033 }
         
         // std::mt19937 mt;
         let mt = { int.random(in: 0...int.max) }
@@ -170,8 +170,8 @@ final class convolutionTests: XCTestCase {
     }
     
     func testSimpleUint() throws {
-        enum MOD1: static_mod { static let mod: mod_value = 998244353 }
-        enum MOD2: static_mod { static let mod: mod_value = 924844033 }
+        enum MOD1: static_mod_value { static let mod: mod_value = 998244353 }
+        enum MOD2: static_mod_value { static let mod: mod_value = 924844033 }
         
         // std::mt19937 mt;
         let mt = { uint.random(in: uint.min...uint.max) }
@@ -207,8 +207,8 @@ final class convolutionTests: XCTestCase {
     }
     
     func testSimpleULL() throws {
-        enum MOD1: static_mod { static let mod: mod_value = 998244353 }
-        enum MOD2: static_mod { static let mod: mod_value = 924844033 }
+        enum MOD1: static_mod_value { static let mod: mod_value = 998244353 }
+        enum MOD2: static_mod_value { static let mod: mod_value = 924844033 }
         
         // std::mt19937 mt;
         let mt = { ull.random(in: ull.min...ull.max) }
@@ -370,7 +370,7 @@ final class convolutionTests: XCTestCase {
     // https://github.com/atcoder/ac-library/issues/30
     func testConv641() throws {
         // 641 = 128 * 5 + 1
-        enum MOD: static_mod { static let mod: mod_value = 641 }
+        enum MOD: static_mod_value { static let mod: mod_value = 641 }
         
         var a = [ll](repeating: 0, count: 64)
         var b = [ll](repeating: 0, count: 65)
@@ -389,7 +389,7 @@ final class convolutionTests: XCTestCase {
     func testConv18433() throws {
         
         // 18433 = 2048 * 9 + 1
-        enum MOD: static_mod { static let mod: mod_value = 18433 }
+        enum MOD: static_mod_value { static let mod: mod_value = 18433 }
         
         var a = [ll](repeating: 0, count: 1024)
         var b = [ll](repeating: 0, count: 1025)
@@ -405,13 +405,13 @@ final class convolutionTests: XCTestCase {
     }
     
     func testConv2() throws {
-        enum mod_2: static_mod { static let mod: mod_value = 2 }
+        enum mod_2: static_mod_value { static let mod: mod_value = 2 }
         let empty: [ll] = [];
         XCTAssertEqual(empty, convolution(mod_2.self, empty, empty));
     }
     
     func testConv257() throws {
-        enum MOD: static_mod { static let mod: mod_value = 257 }
+        enum MOD: static_mod_value { static let mod: mod_value = 257 }
         
         var a = [ll](repeating: 0, count: 128)
         var b = [ll](repeating: 0, count: 129)
@@ -427,7 +427,7 @@ final class convolutionTests: XCTestCase {
     }
     
     func testConv2147483647() throws {
-        enum MOD: static_mod { static let mod: mod_value = 2147483647 }
+        enum MOD: static_mod_value { static let mod: mod_value = 2147483647 }
         
         var a = [ll](repeating: 0, count: 1)
         var b = [ll](repeating: 0, count: 2)
@@ -443,7 +443,7 @@ final class convolutionTests: XCTestCase {
     }
     
     func testConv2130706433() throws {
-        enum MOD: static_mod { static let mod: mod_value = 2130706433 }
+        enum MOD: static_mod_value { static let mod: mod_value = 2130706433 }
         
         var a = [ll](repeating: 0, count: 1024)
         var b = [ll](repeating: 0, count: 1024)

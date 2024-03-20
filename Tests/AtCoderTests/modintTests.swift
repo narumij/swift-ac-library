@@ -16,12 +16,12 @@ extension dynamic_mod {
 
 final class modintTests: XCTestCase {
     
-    enum mod_1:             static_mod { static let mod: mod_value = 1 }
-    enum mod_11:            static_mod { static let mod: mod_value = 11 }
-    enum mod_12:            static_mod { static let mod: mod_value = 12 }
-    enum mod_1_000_000_007: static_mod { static let mod: mod_value = .mod_1_000_000_007 }
-    enum mod_1_000_000_008: static_mod { static let mod: mod_value = 1_000_000_008 }
-    enum INT32_MAX:         static_mod { static let mod: mod_value = .mod_INT32_MAX }
+    enum mod_1:             static_mod_value { static let mod: mod_value = 1 }
+    enum mod_11:            static_mod_value { static let mod: mod_value = 11 }
+    enum mod_12:            static_mod_value { static let mod: mod_value = 12 }
+    enum mod_1_000_000_007: static_mod_value { static let mod: mod_value = .mod_1_000_000_007 }
+    enum mod_1_000_000_008: static_mod_value { static let mod: mod_value = 1_000_000_008 }
+    enum INT32_MAX:         static_mod_value { static let mod: mod_value = .mod_INT32_MAX }
     
     func testDynamicBorder() throws {
         
