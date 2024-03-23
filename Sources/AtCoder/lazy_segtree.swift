@@ -60,7 +60,7 @@ public extension LazySegTree {
          composition: @escaping (F, F) -> F,
          id: F,
          _ v: V)
-    where V: Collection, V.Element == S, V.Index == Int
+    where V: Collection, V.Element == S
     {
         _op = op
         _e = e
@@ -76,7 +76,7 @@ public extension LazySegTree {
             for i in 0 ..< (2 * __size) {
                 if __size <= i, i < __size + __n {
                     // for (int i = 0; i < _n; i++) d[size + i] = v[i];
-                    buffer.initializeElement(at: i, to: v[i - __size])
+                    buffer.initializeElement(at: i, to: v[v.index(v.startIndex, offsetBy: i - __size)])
                 } else {
                     buffer.initializeElement(at: i, to: e)
                 }

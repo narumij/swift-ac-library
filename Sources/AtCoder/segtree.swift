@@ -34,7 +34,7 @@ public extension SegTree {
     init<V>(op: @escaping (S,S) -> S,
          e: S,
          _ v: V)
-    where V: Collection, V.Element == S, V.Index == Int
+    where V: Collection, V.Element == S
     {
         self.op = op
         self.e = e
@@ -50,7 +50,7 @@ public extension SegTree {
             for i in 0 ..< (2 * __size) {
                 if __size <= i, i < __size + __n {
                     // for (int i = 0; i < _n; i++) d[size + i] = v[i];
-                    buffer.initializeElement(at: i, to: v[i - __size])
+                    buffer.initializeElement(at: i, to: v[v.index(v.startIndex, offsetBy: i - __size)])
                 } else {
                     buffer.initializeElement(at: i, to: e)
                 }
