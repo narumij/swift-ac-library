@@ -1,5 +1,7 @@
 # swift-ac-library
 
+(このブランチは将来のジャッジ環境更新に向けた準備のものです。2024/06/24現在、提出には使えません。)
+
 swift-ac-libraryは、[AC(AtCoder) Library][ac-library]のSwift移植版です。
 
 [![Swift](https://github.com/narumij/swift-ac-library/actions/workflows/swift.yml/badge.svg?branch=main)](https://github.com/narumij/swift-ac-library/actions/workflows/swift.yml)
