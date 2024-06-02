@@ -2,10 +2,10 @@ import XCTest
 @testable import AtCoder
 
 fileprivate func op(a: String,b: String) -> String {
-    assert(a == "$" || b == "$" || a <= b);
-    if (a == "$") { return b; }
-    if (b == "$") { return a; }
-    return a + b;
+    assert(a == "$" || b == "$" || a <= b)
+    if (a == "$") { return b }
+    if (b == "$") { return a }
+    return a + b
 }
 
 fileprivate let e: String = "$"
@@ -69,14 +69,14 @@ final class segtreeTests: XCTestCase {
 
     func testOne() throws {
         var s = SegTree(1)
-        XCTAssertEqual("$", s.all_prod());
-        XCTAssertEqual("$", s.get(0));
-        XCTAssertEqual("$", s.prod(0, 1));
-        s.set(0, "dummy");
-        XCTAssertEqual("dummy", s.get(0));
-        XCTAssertEqual("$", s.prod(0, 0));
-        XCTAssertEqual("dummy", s.prod(0, 1));
-        XCTAssertEqual("$", s.prod(1, 1));
+        XCTAssertEqual("$", s.all_prod())
+        XCTAssertEqual("$", s.get(0))
+        XCTAssertEqual("$", s.prod(0, 1))
+        s.set(0, "dummy")
+        XCTAssertEqual("dummy", s.get(0))
+        XCTAssertEqual("$", s.prod(0, 0))
+        XCTAssertEqual("dummy", s.prod(0, 1))
+        XCTAssertEqual("$", s.prod(1, 1))
     }
     
     func testCompareNaive() throws {
@@ -84,40 +84,40 @@ final class segtreeTests: XCTestCase {
         func leq_y(_ x: String) -> Bool { x.count <= y.count }
 
         for n in 0..<30 {
-            var seg0 = segtree_naive(n);
-            var seg1 = SegTree(n);
+            var seg0 = segtree_naive(n)
+            var seg1 = SegTree(n)
             for i in 0..<n {
                 var s = ""
                 s.append(String(["a",Character(UnicodeScalar(i)!)]))
-                seg0.set(i, s);
-                seg1.set(i, s);
+                seg0.set(i, s)
+                seg1.set(i, s)
             }
 
             for l in 0..<=n {
                 for r in l..<=n {
-                    XCTAssertEqual(seg0.prod(l, r), seg1.prod(l, r));
+                    XCTAssertEqual(seg0.prod(l, r), seg1.prod(l, r))
                 }
             }
 
             for l in 0..<=n {
                 for r in l..<=n {
-                    y = seg1.prod(l, r);
-                    XCTAssertEqual(seg0.max_right(l, leq_y), seg1.max_right(l,leq_y));
+                    y = seg1.prod(l, r)
+                    XCTAssertEqual(seg0.max_right(l, leq_y), seg1.max_right(l,leq_y))
                     XCTAssertEqual(seg0.max_right(l, leq_y),
                               seg1.max_right(l, { x in
-                                  return x.count <= y.count;
-                              }));
+                                  return x.count <= y.count
+                    }))
                 }
             }
 
             for r in 0..<=n {
                 for l in 0..<=r {
-                    y = seg1.prod(l, r);
-                    XCTAssertEqual(seg0.min_left(r,leq_y), seg1.min_left(r,leq_y));
+                    y = seg1.prod(l, r)
+                    XCTAssertEqual(seg0.min_left(r,leq_y), seg1.min_left(r,leq_y))
                     XCTAssertEqual(seg0.min_left(r,leq_y),
                               seg1.min_left(r, { x in
-                                  return x.count <= y.count;
-                              }));
+                                  return x.count <= y.count
+                    }))
                 }
             }
         }
@@ -126,7 +126,7 @@ final class segtreeTests: XCTestCase {
 #if false
     func testAssign() throws {
         throw XCTSkip("代入のオーバーロードはSwiftにはない。")
-        var seg0 = SegTree();
+        var seg0 = SegTree()
         XCTAssertNoThrow(seg0 = SegTree(10))
     }
 #endif

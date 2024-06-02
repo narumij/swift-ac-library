@@ -16,33 +16,33 @@ final class dsuTests: XCTestCase {
 #endif
     
     func testSimple() throws {
-        var uf = dsu(2);
-        XCTAssertFalse(uf.same(0, 1));
-        let x = uf.merge(0, 1);
-        XCTAssertEqual(x, uf.leader(0));
-        XCTAssertEqual(x, uf.leader(1));
-        XCTAssertTrue(uf.same(0, 1));
-        XCTAssertEqual(2, uf.size(0));
+        var uf = dsu(2)
+        XCTAssertFalse(uf.same(0, 1))
+        let x = uf.merge(0, 1)
+        XCTAssertEqual(x, uf.leader(0))
+        XCTAssertEqual(x, uf.leader(1))
+        XCTAssertTrue(uf.same(0, 1))
+        XCTAssertEqual(2, uf.size(0))
     }
     
     func testLine() throws {
-        let n = 500000;
-        var uf = dsu(n);
+        let n = 500000
+        var uf = dsu(n)
         for i in 0..<(n - 1) {
-            _ = uf.merge(i, i + 1);
+            _ = uf.merge(i, i + 1)
         }
-        XCTAssertEqual(n, uf.size(0));
-        XCTAssertEqual(1, uf.groups().count);
+        XCTAssertEqual(n, uf.size(0))
+        XCTAssertEqual(1, uf.groups().count)
     }
     
     func testLineReverse() throws {
-        let n = 500000;
-        var uf = dsu(n);
+        let n = 500000
+        var uf = dsu(n)
         for i in (n - 2)..>=0 {
-            _ = uf.merge(i, i + 1);
+            _ = uf.merge(i, i + 1)
         }
-        XCTAssertEqual(n, uf.size(0));
-        XCTAssertEqual(1, uf.groups().count);
+        XCTAssertEqual(n, uf.size(0))
+        XCTAssertEqual(1, uf.groups().count)
     }
 
     func testPerformance() throws {

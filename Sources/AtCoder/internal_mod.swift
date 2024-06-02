@@ -206,7 +206,7 @@ extension modint_base {
 }
 
 @usableFromInline func ___modint_v<T: BinaryInteger>(_ v: T, mod: T) -> CUnsignedInt {
-    var x = v % mod;
+    var x = v % mod
     if (x < 0) { x += mod }
     let x0 = CInt(truncatingIfNeeded: x)
     return CUnsignedInt(bitPattern: x0)

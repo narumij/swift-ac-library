@@ -28,33 +28,33 @@ fileprivate struct S {
         self.r = r
         self.time = time
     }
-    var l, r, time: Int;
-};
+    var l, r, time: Int
+}
 fileprivate struct T {
     internal init(_ new_time: Int) {
         self.new_time = new_time
     }
-    var new_time: Int;
-};
+    var new_time: Int
+}
 fileprivate func op_ss(_ l: S,_ r: S) -> S {
-    if (l.l == -1) { return r; }
-    if (r.l == -1) { return l; }
-    assert(l.r == r.l);
-    return S(l.l, r.r, max(l.time, r.time));
+    if (l.l == -1) { return r }
+    if (r.l == -1) { return l }
+    assert(l.r == r.l)
+    return S(l.l, r.r, max(l.time, r.time))
 }
 fileprivate func op_ts(_ l: T,_ r: S) -> S {
-    if (l.new_time == -1) { return r; }
-    assert(r.time < l.new_time);
-    return S(r.l, r.r, l.new_time);
+    if (l.new_time == -1) { return r }
+    assert(r.time < l.new_time)
+    return S(r.l, r.r, l.new_time)
 }
 fileprivate func op_tt(_ l: T,_ r: T) -> T {
-    if (l.new_time == -1) { return r; }
-    if (r.new_time == -1) { return l; }
-    assert(l.new_time > r.new_time);
-    return l;
+    if (l.new_time == -1) { return r }
+    if (r.new_time == -1) { return l }
+    assert(l.new_time > r.new_time)
+    return l
 }
-fileprivate func e_s() -> S { return S(-1, -1, -1); }
-fileprivate func e_t() -> T { return T(-1); }
+fileprivate func e_s() -> S { return S(-1, -1, -1) }
+fileprivate func e_t() -> T { return T(-1) }
 
 fileprivate extension LazySegTree where S == AtCoderTests.S, F == AtCoderTests.T {
     init() {
@@ -102,7 +102,7 @@ final class lazySegtreeStressTests: XCTestCase {
                     for i in 0..<n {
                         seg0.set(i, S(i, i + 1, -1))
                     }
-                    var now = 0;
+                    var now = 0
                     for _ in 0..<naive {
                         let ty = randint(0, 3)
                         var l, r: Int
@@ -154,7 +154,7 @@ final class lazySegtreeStressTests: XCTestCase {
                                 assert(s.l == l)
                                 assert(s.time == tm.prod(l, s.r))
                                 return s.r <= r
-                            });
+                            })
                         } else {
                             now += 1
                             seg0.apply(l, r, T(now))
@@ -186,7 +186,7 @@ final class lazySegtreeStressTests: XCTestCase {
                                 assert(s.r == r)
                                 assert(s.time == tm.prod(s.l, r))
                                 return l <= s.l
-                            });
+                            })
                         } else {
                             now += 1
                             seg0.apply(l, r, T(now))

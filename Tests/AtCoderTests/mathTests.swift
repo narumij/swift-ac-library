@@ -43,7 +43,7 @@ fileprivate func is_prime_naive(_ n: ll) -> Bool {
     for i in 2 ..<= n as StrideThrough<ll> {
         if n % i == 0 { return false }
     }
-    return true;
+    return true
 }
 
 fileprivate func safe_mod(_ x: ll,_ m: ll) -> ll {
@@ -91,12 +91,12 @@ final class mathTests: XCTestCase {
     }
     
     func testInvBoundHand() throws {
-        let minll = ll.min;
-        let maxll = ll.max;
-        XCTAssertEqual(inv_mod(-1, maxll), inv_mod(minll, maxll));
-        XCTAssertEqual(1, inv_mod(maxll, maxll - 1));
-        XCTAssertEqual(maxll - 1, inv_mod(maxll - 1, maxll));
-        XCTAssertEqual(2, inv_mod(maxll / 2 + 1, maxll));
+        let minll = ll.min
+        let maxll = ll.max
+        XCTAssertEqual(inv_mod(-1, maxll), inv_mod(minll, maxll))
+        XCTAssertEqual(1, inv_mod(maxll, maxll - 1))
+        XCTAssertEqual(maxll - 1, inv_mod(maxll - 1, maxll))
+        XCTAssertEqual(2, inv_mod(maxll / 2 + 1, maxll))
     }
     
 #if DEBUG
@@ -105,24 +105,24 @@ final class mathTests: XCTestCase {
         for a in ll(-100)..<=100 {
 //            for (int b = 1; b <= 1000; b++) {
             for b in ll(1)..<=1000 {
-                if (gcd(_Internal.safe_mod(a, b), b) != 1) { continue; }
-                let c = inv_mod(a, b);
-                XCTAssertLessThanOrEqual(0, c);
-                XCTAssertLessThan(c, b);
-                XCTAssertEqual(1 % b, ((a * c) % b + b) % b);
+                if (gcd(_Internal.safe_mod(a, b), b) != 1) { continue }
+                let c = inv_mod(a, b)
+                XCTAssertLessThanOrEqual(0, c)
+                XCTAssertLessThan(c, b)
+                XCTAssertEqual(1 % b, ((a * c) % b + b) % b)
             }
         }
     }
 #endif
     
     func testInvModZero() throws {
-        XCTAssertEqual(0, inv_mod(0, 1));
-//        for (int i = 0; i < 10; i++) {
+        XCTAssertEqual(0, inv_mod(0, 1))
+        //        for (int i = 0; i < 10; i++) {
         for i in ll(0)..<10 {
-            XCTAssertEqual(0, inv_mod(i, 1));
-            XCTAssertEqual(0, inv_mod(-i, 1));
-            XCTAssertEqual(0, inv_mod(ll.min + i, 1));
-            XCTAssertEqual(0, inv_mod(ll.max - i, 1));
+            XCTAssertEqual(0, inv_mod(i, 1))
+            XCTAssertEqual(0, inv_mod(-i, 1))
+            XCTAssertEqual(0, inv_mod(ll.min + i, 1))
+            XCTAssertEqual(0, inv_mod(ll.max - i, 1))
         }
     }
     
@@ -137,7 +137,7 @@ final class mathTests: XCTestCase {
 //                    for (int b = -20; b < 20; b++) {
                     for b in ll(-20)..<20 {
                         XCTAssertEqual(floor_sum_naive(n, m, a, b),
-                                       floor_sum(n, m, a, b));
+                                       floor_sum(n, m, a, b))
                     }
                 }
             }
@@ -146,9 +146,9 @@ final class mathTests: XCTestCase {
 #endif
     
     func testCRTHand() throws {
-        let res = crt([1, 2, 1], [2, 3, 2]);
-        XCTAssertEqual(5, res.rem);
-        XCTAssertEqual(6, res.mod);
+        let res = crt([1, 2, 1], [2, 3, 2])
+        XCTAssertEqual(5, res.rem)
+        XCTAssertEqual(6, res.mod)
     }
     
 #if DEBUG
@@ -161,17 +161,17 @@ final class mathTests: XCTestCase {
                 for c in ll(-10)..<=10 {
 //                    for (int d = -10; d <= 10; d++) {
                     for d in ll(-10)..<10 {
-                        let res = crt([c, d], [a, b]);
+                        let res = crt([c, d], [a, b])
                         if (res.mod == 0) {
 //                            for (int x = 0; x < a * b / gcd(a, b); x++) {
                             do { var x: ll = 0; while x < a * b / gcd(a, b) { defer { x += 1 }
-                                XCTAssertTrue(x % a != c || x % b != d);
+                                XCTAssertTrue(x % a != c || x % b != d)
                             } }
-                            continue;
+                            continue
                         }
-                        XCTAssertEqual(a * b / gcd(a, b), res.mod);
-                        XCTAssertEqual(_Internal.safe_mod(c, a), res.rem % a);
-                        XCTAssertEqual(_Internal.safe_mod(d, b), res.rem % b);
+                        XCTAssertEqual(a * b / gcd(a, b), res.mod)
+                        XCTAssertEqual(_Internal.safe_mod(c, a), res.rem % a)
+                        XCTAssertEqual(_Internal.safe_mod(d, b), res.rem % b)
                     }
                 }
             }
@@ -193,21 +193,21 @@ final class mathTests: XCTestCase {
                         for e in ll(-5)..<=5 {
 //                            for (int f = -5; f <= 5; f++) {
                             for f in ll(-5)..<=5 {
-                                let res = crt([d, e, f], [a, b, c]);
-                                var lcm = a * b / gcd(a, b);
-                                lcm = lcm * c / gcd(lcm, c);
+                                let res = crt([d, e, f], [a, b, c])
+                                var lcm = a * b / gcd(a, b)
+                                lcm = lcm * c / gcd(lcm, c)
                                 if (res.mod == 0) {
 //                                    for (int x = 0; x < lcm; x++) {
                                     for x in 0..<lcm {
                                         XCTAssertTrue(x % a != d || x % b != e ||
-                                                    x % c != f);
+                                                    x % c != f)
                                     }
-                                    continue;
+                                    continue
                                 }
-                                XCTAssertEqual(lcm, res.mod);
-                                XCTAssertEqual(_Internal.safe_mod(d, a), res.rem % a);
-                                XCTAssertEqual(_Internal.safe_mod(e, b), res.rem % b);
-                                XCTAssertEqual(_Internal.safe_mod(f, c), res.rem % c);
+                                XCTAssertEqual(lcm, res.mod)
+                                XCTAssertEqual(_Internal.safe_mod(d, a), res.rem % a)
+                                XCTAssertEqual(_Internal.safe_mod(e, b), res.rem % b)
+                                XCTAssertEqual(_Internal.safe_mod(f, c), res.rem % c)
                             }
                         }
                     }
@@ -245,8 +245,8 @@ final class mathTests: XCTestCase {
                    (7, INF),
                    (INF / 337, 337),
                    (2, (INF - 1) / 2)] {
-            var a = ab.0;
-            var b = ab.1;
+            var a = ab.0
+            var b = ab.1
             for _ /* ph */ in 0..<2 {
                 for ans in pred {
                     let res = crt([ans % a, ans % b], [a, b])
@@ -265,7 +265,7 @@ final class mathTests: XCTestCase {
                     r.append(ans % f)
                     m.append(f)
                 }
-                let res = crt(r, m);
+                let res = crt(r, m)
                 XCTAssertEqual(ans % INF, res.rem)
                 XCTAssertEqual(INF, res.mod)
             }
@@ -278,7 +278,7 @@ final class mathTests: XCTestCase {
                     r.append(ans % f)
                     m.append(f)
                 }
-                let res = crt(r, m);
+                let res = crt(r, m)
                 XCTAssertEqual(ans % (INF - 1), res.rem)
                 XCTAssertEqual(INF - 1, res.mod)
             }

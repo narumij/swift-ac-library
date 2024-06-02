@@ -135,7 +135,7 @@ final class stringTests: XCTestCase {
             }
         }
         for n in 1 ..<= 10 {
-            var m = 1;
+            var m = 1
             for _ in 0 ..< n { m *= 2 }
             for f in 0 ..< m {
                 var s = [Int](repeating: 0, count: n)
@@ -262,8 +262,8 @@ final class stringTests: XCTestCase {
             "sippi",       // 5
             "sisippi",     // 3
             "ssisippi",    // 2
-        ];
-
+        ]
+        
         XCTAssertEqual(answer.count, sa.count)
 
         for i in 0 ..< sa.count {
@@ -287,8 +287,8 @@ final class stringTests: XCTestCase {
             "sippi",       // 5
             "sisippi",     // 3
             "ssisippi",    // 2
-        ];
-
+        ]
+        
         XCTAssertEqual(answer.count, sa.count)
 
         for i in 0 ..< sa.count {
@@ -312,8 +312,8 @@ final class stringTests: XCTestCase {
             "sippi",       // 5
             "sisippi",     // 3
             "ssisippi",    // 2
-        ];
-
+        ]
+        
         XCTAssertEqual(answer.count, sa.count)
 
         for i in 0 ..< sa.count {
@@ -398,30 +398,30 @@ final class stringTests: XCTestCase {
     }
     
     func testZAlgo() throws {
-        let s = "abab";
-        let z = z_algorithm(s);
-        XCTAssertEqual([4, 0, 2, 0], z);
+        let s = "abab"
+        let z = z_algorithm(s)
+        XCTAssertEqual([4, 0, 2, 0], z)
         XCTAssertEqual([4, 0, 2, 0],
-                  z_algorithm([1, 10, 1, 10]));
-        XCTAssertEqual(z_naive([0, 0, 0, 0, 0, 0, 0]), z_algorithm([0, 0, 0, 0, 0, 0, 0]));
+                  z_algorithm([1, 10, 1, 10]))
+        XCTAssertEqual(z_naive([0, 0, 0, 0, 0, 0, 0]), z_algorithm([0, 0, 0, 0, 0, 0, 0]))
     }
     
     func testZAlgoCharacter() throws {
-        let s = "abab".map{ $0 };
-        let z = z_algorithm(s);
-        XCTAssertEqual([4, 0, 2, 0], z);
+        let s = "abab".map{ $0 }
+        let z = z_algorithm(s)
+        XCTAssertEqual([4, 0, 2, 0], z)
         XCTAssertEqual([4, 0, 2, 0],
-                  z_algorithm([1, 10, 1, 10]));
-        XCTAssertEqual(z_naive([0, 0, 0, 0, 0, 0, 0]), z_algorithm([0, 0, 0, 0, 0, 0, 0]));
+                  z_algorithm([1, 10, 1, 10]))
+        XCTAssertEqual(z_naive([0, 0, 0, 0, 0, 0, 0]), z_algorithm([0, 0, 0, 0, 0, 0, 0]))
     }
     
     func testZAlgoUInt8() throws {
-        let s = "abab".utf8.map{$0};
-        let z = z_algorithm(s);
-        XCTAssertEqual([4, 0, 2, 0], z);
+        let s = "abab".utf8.map{$0}
+        let z = z_algorithm(s)
+        XCTAssertEqual([4, 0, 2, 0], z)
         XCTAssertEqual([4, 0, 2, 0],
-                  z_algorithm([1, 10, 1, 10]));
-        XCTAssertEqual(z_naive([0, 0, 0, 0, 0, 0, 0]), z_algorithm([0, 0, 0, 0, 0, 0, 0]));
+                  z_algorithm([1, 10, 1, 10]))
+        XCTAssertEqual(z_naive([0, 0, 0, 0, 0, 0, 0]), z_algorithm([0, 0, 0, 0, 0, 0, 0]))
     }
 
     func testZNaive() throws {

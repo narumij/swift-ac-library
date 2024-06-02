@@ -48,7 +48,7 @@ public extension MCFGraph {
         return _edges[i]
     }
     
-    func edges() -> [Edge] { return _edges; }
+    func edges() -> [Edge] { return _edges }
     
     mutating func flow(_ s: Int,_ t: Int) -> (Cap,Cost) {
         return flow(s, t, Cap.max)
@@ -160,7 +160,7 @@ extension MCFGraph {
                     heap_r -= 1
                 }
                 if vis[v] { continue }
-                vis[v] = true;
+                vis[v] = true
                 if v == t { break }
                 // dist[v] = shortest(s, v) + dual[s] - dual[v]
                 // dist[v] >= 0 (all reduced cost are positive)

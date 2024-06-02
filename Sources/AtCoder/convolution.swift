@@ -218,7 +218,7 @@ extension _Internal {
         let h: Int = CUnsignedInt(n).trailingZeroBitCount
         
         // static const fft_info<mint> info;
-        let info = fft_info<mod>();
+        let info = fft_info<mod>()
         let umod = ULL(mod.umod)
 
         var len = h  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed

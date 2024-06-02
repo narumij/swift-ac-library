@@ -7,10 +7,10 @@ extension static_mod {
     public static func value<T: FixedWidthInteger>() -> T { T(umod) }
 }
 
-fileprivate typealias int = CInt;
-fileprivate typealias uint = CUnsignedInt;
-fileprivate typealias ll = CLongLong;
-fileprivate typealias ull = CUnsignedLongLong;
+fileprivate typealias int = CInt
+fileprivate typealias uint = CUnsignedInt
+fileprivate typealias ll = CLongLong
+fileprivate typealias ull = CUnsignedLongLong
 
 fileprivate func conv_ll_naive(_ a: [ll],_ b: [ll]) -> [ll] {
     let n = a.count, m = b.count
@@ -20,7 +20,7 @@ fileprivate func conv_ll_naive(_ a: [ll],_ b: [ll]) -> [ll] {
             c[i + j] += a[i] * b[j]
         }
     }
-    return c;
+    return c
 }
 
 fileprivate func conv_naive<mint: modint_base>(_ a: [mint],_ b: [mint]) -> [mint] {
@@ -54,23 +54,23 @@ final class convolutionTests: XCTestCase {
     
     func testEmpty() throws {
         XCTAssertEqual([] as [CInt],
-                       convolution([] as [CInt], [] as [CInt]));
+                       convolution([] as [CInt], [] as [CInt]))
         XCTAssertEqual([] as [CInt],
-                       convolution([] as [CInt], [1, 2]));
+                       convolution([] as [CInt], [1, 2]))
         XCTAssertEqual([] as [CInt],
-                       convolution([1, 2], [] as [CInt]));
+                       convolution([1, 2], [] as [CInt]))
         XCTAssertEqual([] as [CInt],
-                       convolution([1], [] as [CInt]));
+                       convolution([1], [] as [CInt]))
         XCTAssertEqual([] as [ll],
-                       convolution([] as [ll], [] as [ll]));
+                       convolution([] as [ll], [] as [ll]))
         XCTAssertEqual([] as [ll],
-                       convolution([] as [ll], [1, 2]));
+                       convolution([] as [ll], [1, 2]))
         XCTAssertEqual([] as [modint998244353],
                        convolution([] as [modint998244353],
-                                   [] as [modint998244353]));
+                                   [] as [modint998244353]))
         XCTAssertEqual([] as [modint998244353],
                        convolution([] as [modint998244353],
-                                   [1, 2]));
+                                   [1, 2]))
     }
     
     func testMid() throws {
@@ -78,8 +78,8 @@ final class convolutionTests: XCTestCase {
         
         // std::mt19937 mt;
         let mt = { mint(CInt.random(in: 0...CInt.max)) }
-        let n = 1234, m = 2345;
-        var a = [mint](repeating: 0, count: n); var b = [mint](repeating: 0, count: m);
+        let n = 1234, m = 2345
+        var a = [mint](repeating: 0, count: n); var b = [mint](repeating: 0, count: m)
         
         for i in 0 ..< n {
             a[i] = mt()
@@ -87,7 +87,7 @@ final class convolutionTests: XCTestCase {
         for i in 0 ..< m {
             b[i] = mt()
         }
-        XCTAssertEqual(conv_naive(a, b), convolution(a, b));
+        XCTAssertEqual(conv_naive(a, b), convolution(a, b))
     }
     
     func testSimpleSMod() throws {
@@ -106,12 +106,12 @@ final class convolutionTests: XCTestCase {
                 var a = [s_mint1](repeating: 0, count: n)
                 var b = [s_mint1](repeating: 0, count: m)
                 for i in 0..<n {
-                    a[i] = s_mint1(mt());
+                    a[i] = s_mint1(mt())
                 }
                 for i in 0..<m {
-                    b[i] = s_mint1(mt());
+                    b[i] = s_mint1(mt())
                 }
-                XCTAssertEqual(conv_naive(a, b), (convolution(a, b)));
+                XCTAssertEqual(conv_naive(a, b), (convolution(a, b)))
             }
         }
         
@@ -120,12 +120,12 @@ final class convolutionTests: XCTestCase {
                 var a = [s_mint2](repeating: 0, count: n)
                 var b = [s_mint2](repeating: 0, count: m)
                 for i in 0..<n {
-                    a[i] = s_mint2(mt());
+                    a[i] = s_mint2(mt())
                 }
                 for i in 0..<m {
-                    b[i] = s_mint2(mt());
+                    b[i] = s_mint2(mt())
                 }
-                XCTAssertEqual(conv_naive(a, b), (convolution(a, b)));
+                XCTAssertEqual(conv_naive(a, b), (convolution(a, b)))
             }
         }
     }
@@ -142,10 +142,10 @@ final class convolutionTests: XCTestCase {
                 var a = [int](repeating: 0, count: Int(n))
                 var b = [int](repeating: 0, count: Int(m))
                 for i in 0..<n as Range<int> {
-                    a[Int(i)] = mt() % MOD1.value();
+                    a[Int(i)] = mt() % MOD1.value()
                 }
                 for i in 0..<m as Range<int> {
-                    b[Int(i)] = mt() % MOD1.value();
+                    b[Int(i)] = mt() % MOD1.value()
                 }
                 XCTAssertEqual(conv_naive(MOD1.value(), a, b), convolution(a, b))
                 // これがコンパイル通るのは、コンパイラのバグな気がする。あるいは5.9のマクロで緩んだ？
@@ -159,12 +159,12 @@ final class convolutionTests: XCTestCase {
                 var a = [int](repeating: 0, count: n)
                 var b = [int](repeating: 0, count: m)
                 for i in 0..<n {
-                    a[i] = mt() % MOD2.value();
+                    a[i] = mt() % MOD2.value()
                 }
                 for i in 0..<m {
-                    b[i] = mt() % MOD2.value();
+                    b[i] = mt() % MOD2.value()
                 }
-                XCTAssertEqual(conv_naive(MOD2.value(), a, b), (convolution(MOD2.self, a, b)));
+                XCTAssertEqual(conv_naive(MOD2.value(), a, b), (convolution(MOD2.self, a, b)))
             }
         }
     }
@@ -181,13 +181,13 @@ final class convolutionTests: XCTestCase {
                 var a = [uint](repeating: 0, count: n)
                 var b = [uint](repeating: 0, count: m)
                 for i in 0..<n {
-                    a[i] = mt() % MOD1.value();
+                    a[i] = mt() % MOD1.value()
                 }
                 for i in 0..<m {
-                    b[i] = mt() % MOD1.value();
+                    b[i] = mt() % MOD1.value()
                 }
-                XCTAssertEqual(conv_naive(MOD1.self,a, b), convolution(a, b));
-                XCTAssertEqual(conv_naive(MOD1.self,a, b), (convolution(MOD1.self, a, b)));
+                XCTAssertEqual(conv_naive(MOD1.self,a, b), convolution(a, b))
+                XCTAssertEqual(conv_naive(MOD1.self,a, b), (convolution(MOD1.self, a, b)))
             }
         }
         
@@ -196,12 +196,12 @@ final class convolutionTests: XCTestCase {
                 var a = [uint](repeating: 0, count: n)
                 var b = [uint](repeating: 0, count: m)
                 for i in 0..<n {
-                    a[i] = mt() % MOD2.value();
+                    a[i] = mt() % MOD2.value()
                 }
                 for i in 0..<m {
-                    b[i] = mt() % MOD2.value();
+                    b[i] = mt() % MOD2.value()
                 }
-                XCTAssertEqual(conv_naive(MOD2.self,a, b), (convolution(MOD2.self,a, b)));
+                XCTAssertEqual(conv_naive(MOD2.self,a, b), (convolution(MOD2.self,a, b)))
             }
         }
     }
@@ -218,13 +218,13 @@ final class convolutionTests: XCTestCase {
                 var a = [ull](repeating: 0, count: n)
                 var b = [ull](repeating: 0, count: m)
                 for i in 0..<n {
-                    a[i] = mt() % MOD1.value();
+                    a[i] = mt() % MOD1.value()
                 }
                 for i in 0..<m {
-                    b[i] = mt() % MOD1.value();
+                    b[i] = mt() % MOD1.value()
                 }
-                XCTAssertEqual(conv_naive(MOD1.self,a, b), convolution(a, b));
-                XCTAssertEqual(conv_naive(MOD1.self,a, b), (convolution(MOD1.self, a, b)));
+                XCTAssertEqual(conv_naive(MOD1.self,a, b), convolution(a, b))
+                XCTAssertEqual(conv_naive(MOD1.self,a, b), (convolution(MOD1.self, a, b)))
             }
         }
         
@@ -233,12 +233,12 @@ final class convolutionTests: XCTestCase {
                 var a = [ull](repeating: 0, count: n)
                 var b = [ull](repeating: 0, count: m)
                 for i in 0..<n {
-                    a[i] = mt() % MOD2.value();
+                    a[i] = mt() % MOD2.value()
                 }
                 for i in 0..<m {
-                    b[i] = mt() % MOD2.value();
+                    b[i] = mt() % MOD2.value()
                 }
-                XCTAssertEqual(conv_naive(MOD2.self,a, b), (convolution(MOD2.self,a, b)));
+                XCTAssertEqual(conv_naive(MOD2.self,a, b), (convolution(MOD2.self,a, b)))
             }
         }
     }
@@ -327,43 +327,43 @@ final class convolutionTests: XCTestCase {
                 var a = [ll](repeating: 0, count: n)
                 var b = [ll](repeating: 0, count: m)
                 for i in 0..<n {
-                    a[i] = mt() % 1_000_000 - 500_000;
+                    a[i] = mt() % 1_000_000 - 500_000
                 }
                 for i in 0..<m {
-                    b[i] = mt() % 1_000_000 - 500_000;
+                    b[i] = mt() % 1_000_000 - 500_000
                 }
-                XCTAssertEqual(conv_ll_naive(a, b), convolution_ll(a, b));
+                XCTAssertEqual(conv_ll_naive(a, b), convolution_ll(a, b))
             }
         }
     }
     
     func testConvLLBound() throws {
-        let MOD1: ll = 469762049;  // 2^26
-        let MOD2: ll = 167772161;  // 2^25
-        let MOD3: ll = 754974721;  // 2^24
-        let M2M3: ll = MOD2 * MOD3;
-        let M1M3: ll = MOD1 * MOD3;
-        let M1M2: ll = MOD1 * MOD2;
+        let MOD1: ll = 469762049  // 2^26
+        let MOD2: ll = 167772161  // 2^25
+        let MOD3: ll = 754974721  // 2^24
+        let M2M3: ll = MOD2 * MOD3
+        let M1M3: ll = MOD1 * MOD3
+        let M1M2: ll = MOD1 * MOD2
         // for (int i = -1000; i <= 1000; i++) {
         for i in ll(-1000)..<=1000 {
             let a: [ll] = [ll(0 - M1M2 - M1M3 - M2M3 + i)]
             let b: [ll] = [1];
             
-            XCTAssertEqual(a, convolution_ll(a, b));
+            XCTAssertEqual(a, convolution_ll(a, b))
         }
         // for (int i = 0; i < 1000; i++) {
         for i in ll(-1000)..<=1000 {
-            let a: [ll] = [ll.min &+ i];
-            let b: [ll] = [1];
+            let a: [ll] = [ll.min &+ i]
+            let b: [ll] = [1]
             
-            XCTAssertEqual(a, convolution_ll(a, b));
+            XCTAssertEqual(a, convolution_ll(a, b))
         }
         // for (int i = 0; i < 1000; i++) {
         for i in ll(-1000)..<=1000 {
-            let a: [ll] = [ll.max &- i];
-            let b: [ll] = [1];
+            let a: [ll] = [ll.max &- i]
+            let b: [ll] = [1]
             
-            XCTAssertEqual(a, convolution_ll(a, b));
+            XCTAssertEqual(a, convolution_ll(a, b))
         }
     }
     
@@ -401,13 +401,13 @@ final class convolutionTests: XCTestCase {
             b[i] = ll.random(in: 0...(MOD.value() - 1))
         }
         
-        XCTAssertEqual(conv_naive(MOD.self, a, b), convolution(MOD.self, a, b));
+        XCTAssertEqual(conv_naive(MOD.self, a, b), convolution(MOD.self, a, b))
     }
     
     func testConv2() throws {
         enum mod_2: static_mod_value { static let mod: mod_value = 2 }
-        let empty: [ll] = [];
-        XCTAssertEqual(empty, convolution(mod_2.self, empty, empty));
+        let empty: [ll] = []
+        XCTAssertEqual(empty, convolution(mod_2.self, empty, empty))
     }
     
     func testConv257() throws {
@@ -423,7 +423,7 @@ final class convolutionTests: XCTestCase {
             b[i] = ll.random(in: 0...(MOD.value() - 1))
         }
         
-        XCTAssertEqual(conv_naive(MOD.self, a, b), convolution(MOD.self, a, b));
+        XCTAssertEqual(conv_naive(MOD.self, a, b), convolution(MOD.self, a, b))
     }
     
     func testConv2147483647() throws {
@@ -439,7 +439,7 @@ final class convolutionTests: XCTestCase {
             b[i] = ll.random(in: 0...(MOD.value() - 1))
         }
         
-        XCTAssertEqual(conv_naive(MOD.self, a, b), convolution(MOD.self, a, b));
+        XCTAssertEqual(conv_naive(MOD.self, a, b), convolution(MOD.self, a, b))
     }
     
     func testConv2130706433() throws {
@@ -455,7 +455,7 @@ final class convolutionTests: XCTestCase {
             b[i] = ll.random(in: 0...(MOD.value() - 1))
         }
         
-        XCTAssertEqual(conv_naive(MOD.self, a, b), convolution(MOD.self, a, b));
+        XCTAssertEqual(conv_naive(MOD.self, a, b), convolution(MOD.self, a, b))
     }
     
 }

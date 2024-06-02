@@ -24,7 +24,7 @@ public extension MFGraph {
         if from == to { to_id += 1 }
         g[from].append(_Edge(to: to, rev: to_id, cap: cap))
         g[to].append(_Edge(to: from, rev: from_id, cap: 0))
-        return m;
+        return m
     }
 
     struct Edge {
@@ -76,7 +76,7 @@ public extension MFGraph {
         assert(0 <= t && t < _n)
         assert(s != t)
 
-        var level = [Int](repeating: 0, count:_n), iter = [Int](repeating: 0, count:_n);
+        var level = [Int](repeating: 0, count:_n), iter = [Int](repeating: 0, count:_n)
         var que = Deque<Int>()
 
         func bfs() {

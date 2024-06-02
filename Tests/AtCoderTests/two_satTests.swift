@@ -1,40 +1,40 @@
 import XCTest
 import AtCoder
 
-fileprivate typealias ll = CLongLong;
-fileprivate typealias ull = CUnsignedLongLong;
+fileprivate typealias ll = CLongLong
+fileprivate typealias ull = CUnsignedLongLong
 
 final class two_satTests: XCTestCase {
 
     typealias two_sat = TwoSAT
 
     func testEmpty() throws {
-        var ts0 = two_sat();
-        XCTAssertTrue(ts0.satisfiable());
-        XCTAssertEqual([], ts0.answer());
-        var ts1 = two_sat(0);
-        XCTAssertTrue(ts1.satisfiable());
-        XCTAssertEqual([], ts1.answer());
+        var ts0 = two_sat()
+        XCTAssertTrue(ts0.satisfiable())
+        XCTAssertEqual([], ts0.answer())
+        var ts1 = two_sat(0)
+        XCTAssertTrue(ts1.satisfiable())
+        XCTAssertEqual([], ts1.answer())
     }
     
     func testOne() throws {
         do {
-            var ts = two_sat(1);
-            ts.add_clause(0, true, 0, true);
-            ts.add_clause(0, false, 0, false);
-            XCTAssertFalse(ts.satisfiable());
+            var ts = two_sat(1)
+            ts.add_clause(0, true, 0, true)
+            ts.add_clause(0, false, 0, false)
+            XCTAssertFalse(ts.satisfiable())
         }
         do {
-            var ts = two_sat(1);
-            ts.add_clause(0, true, 0, true);
-            XCTAssertTrue(ts.satisfiable());
-            XCTAssertEqual([true], ts.answer());
+            var ts = two_sat(1)
+            ts.add_clause(0, true, 0, true)
+            XCTAssertTrue(ts.satisfiable())
+            XCTAssertEqual([true], ts.answer())
         }
         do {
-            var ts = two_sat(1);
-            ts.add_clause(0, false, 0, false);
-            XCTAssertTrue(ts.satisfiable());
-            XCTAssertEqual([false], ts.answer());
+            var ts = two_sat(1)
+            ts.add_clause(0, false, 0, false)
+            XCTAssertTrue(ts.satisfiable())
+            XCTAssertEqual([false], ts.answer())
         }
     }
     

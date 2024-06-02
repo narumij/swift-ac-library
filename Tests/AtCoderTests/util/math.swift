@@ -15,8 +15,8 @@ func factors(_ m: CInt) -> [CInt] {
         }
     }
     
-    if (m > 1) { result.append(m); }
-    return result;
+    if (m > 1) { result.append(m) }
+    return result
 }
 
 #if DEBUG
@@ -25,6 +25,6 @@ func is_primitive_root(_ m: CInt,_ g: CInt) -> Bool {
     for x in factors(m - 1) {
         if _Internal.pow_mod_constexpr(CLongLong(g), CLongLong((m - 1) / x), m) == 1 { return false }
     }
-    return true;
+    return true
 }
 #endif

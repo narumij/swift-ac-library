@@ -90,9 +90,9 @@ final class mincostflowTests: XCTestCase {
 #if false
     func testOutrange() throws {
         throw XCTSkip("Swift Packageでは実施不可")
-        var g = mcf_graph<Int>(count: 10);
-        XCTAssertThrowsError(g.slope(-1, 3), ".*");
-        XCTAssertThrowsError(g.slope(3, 3), ".*");
+        var g = mcf_graph<Int>(count: 10)
+        XCTAssertThrowsError(g.slope(-1, 3), ".*")
+        XCTAssertThrowsError(g.slope(3, 3), ".*")
     }
 #endif
     
@@ -117,10 +117,10 @@ final class mincostflowTests: XCTestCase {
 #if false
     func testInvalid() throws {
         throw XCTSkip("Swift Packageでは実施不可")
-        var g = mcf_graph<Int>(count: 2);
+        var g = mcf_graph<Int>(count: 2)
         // https://github.com/atcoder/ac-library/issues/51
-        XCTAssertThrowsError(g.add_edge(0, 0, -1, 0), ".*");
-        XCTAssertThrowsError(g.add_edge(0, 0, 0, -1), ".*");
+        XCTAssertThrowsError(g.add_edge(0, 0, -1, 0), ".*")
+        XCTAssertThrowsError(g.add_edge(0, 0, 0, -1), ".*")
     }
 #endif
     
@@ -134,15 +134,15 @@ final class mincostflowTests: XCTestCase {
         
         self.measure {
             for phase in 0 ..< phases {
-                let n = randint(2, 20);
-                let m = randint(1, 100);
+                let n = randint(2, 20)
+                let m = randint(1, 100)
                 if m > 40 { continue }
-                var s, t: Int;
-                (s, t) = randpair(0, n - 1);
-                if (randbool()) { swap(&s, &t); }
+                var s, t: Int
+                (s, t) = randpair(0, n - 1)
+                if (randbool()) { swap(&s, &t) }
                 
-                var g_mf = mf_graph<Int>(count: n);
-                var g = mcf_graph<Int>(count: n);
+                var g_mf = mf_graph<Int>(count: n)
+                var g = mcf_graph<Int>(count: n)
                 var data: [(Int,Int,Int,Int,Int)] = []
                 for _ in 0..<m {
                     let u = randint(0, n - 1)

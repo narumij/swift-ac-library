@@ -7,9 +7,9 @@ import AtCoder
 import Numerics
 import BigInt
 
-fileprivate typealias uint = CUnsignedInt;
-fileprivate typealias ll = CLongLong;
-fileprivate typealias ull = CUnsignedLongLong;
+fileprivate typealias uint = CUnsignedInt
+fileprivate typealias ll = CLongLong
+fileprivate typealias ull = CUnsignedLongLong
 
 fileprivate func pow_mod_naive(_ x: ll,_ n: ull,_ mod: uint) -> ll {
     let y: ull = ull((x % ll(mod) + ll(mod)) % ll(mod))
@@ -25,7 +25,7 @@ fileprivate func floor_sum_naive(_ n: ll,_ m: ll,_ a: ll,_ b: ll) -> ll {
     for i in 0 ..< n as Range<ll> {
         sum += (a * i + b) / m
     }
-    return sum;
+    return sum
 }
 
 fileprivate func is_prime_naive(_ n: ll) -> Bool {
@@ -34,7 +34,7 @@ fileprivate func is_prime_naive(_ n: ll) -> Bool {
     do { var i: ll = 2; while i &* i <= n { defer { i += 1 }
         if n % i == 0 { return false }
     } }
-    return true;
+    return true
 }
 
 final class internalMathTests: XCTestCase {
@@ -58,7 +58,7 @@ final class internalMathTests: XCTestCase {
     }
     
     func testBarrettIntBorder() throws {
-        let mod_upper = CUnsignedInt(CInt.max);
+        let mod_upper = CUnsignedInt(CInt.max)
         
 //        for (unsigned int mod = mod_upper; mod >= mod_upper - 20; mod--) {
         for mod in stride(from: mod_upper, through: mod_upper - 20, by: -1) {
@@ -73,7 +73,7 @@ final class internalMathTests: XCTestCase {
             }
             
             for a in v {
-                let a2 = ll(a);
+                let a2 = ll(a)
                 XCTAssertEqual(((a2 &* a2) % ll(mod) &* a2) % ll(mod), ll(bt.mul(a, bt.mul(a, a))))
                 for b in v {
                     let b2 = ll(b)
@@ -1112,48 +1112,48 @@ final class internalMathTests: XCTestCase {
         
         for (a,b,a2,eg,g) in ab {
             let _eg = _Internal.inv_gcd(a, b)
-            XCTAssertEqual(a2,_Internal.safe_mod(a, b));
-            XCTAssertEqual(eg.0,_eg.0);
-            XCTAssertEqual(eg.1,_eg.1);
-            XCTAssertEqual(g, gcd(a2, b));
+            XCTAssertEqual(a2,_Internal.safe_mod(a, b))
+            XCTAssertEqual(eg.0,_eg.0)
+            XCTAssertEqual(eg.1,_eg.1)
+            XCTAssertEqual(g, gcd(a2, b))
         }
     }
     
     func testPrimitiveRootTestNaive() throws {
 //        for (int m = 2; m <= 10000; m++) {
         for m in CInt(2)..<=10000 {
-            if (!_Internal.is_prime_constexpr(m)) { continue; }
-            let n = _Internal.primitive_root_constexpr(m);
-            XCTAssertLessThanOrEqual(1, n);
-            XCTAssertLessThan(n, m);
-            var x: CInt = 1;
-//            for (int i = 1; i <= m - 2; i++) {
+            if (!_Internal.is_prime_constexpr(m)) { continue }
+            let n = _Internal.primitive_root_constexpr(m)
+            XCTAssertLessThanOrEqual(1, n)
+            XCTAssertLessThan(n, m)
+            var x: CInt = 1
+            //            for (int i = 1; i <= m - 2; i++) {
             for _ in 1..<=(m - 2) {
-                x = CInt(CLongLong(x)*CLongLong(n) % CLongLong(m));
+                x = CInt(CLongLong(x)*CLongLong(n) % CLongLong(m))
                 // x == n^i
-                XCTAssertNotEqual(1, x);
+                XCTAssertNotEqual(1, x)
             }
-            x = CInt(CLongLong(x)*CLongLong(n) % CLongLong(m));
-            XCTAssertEqual(1, x);
+            x = CInt(CLongLong(x)*CLongLong(n) % CLongLong(m))
+            XCTAssertEqual(1, x)
         }
     }
     
     func testPrimitiveRootTemplateTest() throws {
         
-        XCTAssertTrue(is_primitive_root(2, (_Internal.primitive_root(2))));
-        XCTAssertTrue(is_primitive_root(3, (_Internal.primitive_root(3))));
-        XCTAssertTrue(is_primitive_root(5, (_Internal.primitive_root(5))));
-        XCTAssertTrue(is_primitive_root(7, (_Internal.primitive_root(7))));
-        XCTAssertTrue(is_primitive_root(11, (_Internal.primitive_root(11))));
-        XCTAssertTrue(is_primitive_root(998244353, (_Internal.primitive_root(998244353))));
-        XCTAssertTrue(is_primitive_root(1000000007, (_Internal.primitive_root(1000000007))));
-
-        XCTAssertTrue(is_primitive_root(469762049, (_Internal.primitive_root(469762049))));
-        XCTAssertTrue(is_primitive_root(167772161, (_Internal.primitive_root(167772161))));
-        XCTAssertTrue(is_primitive_root(754974721, (_Internal.primitive_root(754974721))));
-        XCTAssertTrue(is_primitive_root(324013369, (_Internal.primitive_root(324013369))));
-        XCTAssertTrue(is_primitive_root(831143041, (_Internal.primitive_root(831143041))));
-        XCTAssertTrue(is_primitive_root(1685283601, (_Internal.primitive_root(1685283601))));
+        XCTAssertTrue(is_primitive_root(2, (_Internal.primitive_root(2))))
+        XCTAssertTrue(is_primitive_root(3, (_Internal.primitive_root(3))))
+        XCTAssertTrue(is_primitive_root(5, (_Internal.primitive_root(5))))
+        XCTAssertTrue(is_primitive_root(7, (_Internal.primitive_root(7))))
+        XCTAssertTrue(is_primitive_root(11, (_Internal.primitive_root(11))))
+        XCTAssertTrue(is_primitive_root(998244353, (_Internal.primitive_root(998244353))))
+        XCTAssertTrue(is_primitive_root(1000000007, (_Internal.primitive_root(1000000007))))
+        
+        XCTAssertTrue(is_primitive_root(469762049, (_Internal.primitive_root(469762049))))
+        XCTAssertTrue(is_primitive_root(167772161, (_Internal.primitive_root(167772161))))
+        XCTAssertTrue(is_primitive_root(754974721, (_Internal.primitive_root(754974721))))
+        XCTAssertTrue(is_primitive_root(324013369, (_Internal.primitive_root(324013369))))
+        XCTAssertTrue(is_primitive_root(831143041, (_Internal.primitive_root(831143041))))
+        XCTAssertTrue(is_primitive_root(1685283601, (_Internal.primitive_root(1685283601))))
     }
     
     func testPrimitiveRootTest() throws {

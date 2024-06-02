@@ -49,10 +49,10 @@ public func crt(_ r: [CLongLong],
         // -> x = (r1 - r0) / g * inv(u0) (mod u1)
 
         // im = inv(u0) (mod u1) (0 <= im < u1)
-        var g, im: CLongLong;
+        var g, im: CLongLong
         (g, im) = _Internal.inv_gcd(m0, m1)
 
-        let u1 = (m1 / g);
+        let u1 = (m1 / g)
         // |r1 - r0| < (m0 + m1) <= lcm(m0, m1)
         if (r1 - r0) % g != 0 { return (0, 0) }
 

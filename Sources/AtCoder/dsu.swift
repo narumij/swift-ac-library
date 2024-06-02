@@ -78,7 +78,7 @@ extension DSU {
             self._n = _n
             self.parent_or_size = parent_or_size
         }
-        public let _n: Int;
+        public let _n: Int
         public let parent_or_size: UnsafeMutablePointer<Int>
     }
     @inlinable @inline(__always)

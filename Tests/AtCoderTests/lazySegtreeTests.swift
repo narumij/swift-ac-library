@@ -67,24 +67,24 @@ final class lazySegtreeTests: XCTestCase {
 
     func test0() throws {
         do {
-            var s = starry_seg(0);
-            XCTAssertEqual(-1_000_000_000, s.all_prod());
+            var s = starry_seg(0)
+            XCTAssertEqual(-1_000_000_000, s.all_prod())
         }
         do {
-            var s = starry_seg();
-            XCTAssertEqual(-1_000_000_000, s.all_prod());
+            var s = starry_seg()
+            XCTAssertEqual(-1_000_000_000, s.all_prod())
         }
         do {
-            var s = starry_seg(10);
-            XCTAssertEqual(-1_000_000_000, s.all_prod());
+            var s = starry_seg(10)
+            XCTAssertEqual(-1_000_000_000, s.all_prod())
         }
     }
     
 #if false
     func testAssign() throws {
         throw XCTSkip("代入のオーバーロードはSwiftにはない。")
-        var seg0 = starry_seg();
-        XCTAssertNoThrow(seg0 = starry_seg(10));
+        var seg0 = starry_seg()
+        XCTAssertNoThrow(seg0 = starry_seg(10))
     }
 #endif
 
@@ -109,19 +109,19 @@ final class lazySegtreeTests: XCTestCase {
 
     func testNaiveProd() throws {
         for n in 0...50 {
-            var seg = starry_seg(n);
+            var seg = starry_seg(n)
             var p = [Int](repeating: 0, count: n)
             for i in 0..<n {
-                p[i] = (i * i + 100) % 31;
-                seg.set(i, p[i]);
+                p[i] = (i * i + 100) % 31
+                seg.set(i, p[i])
             }
             for l in 0..<=n {
                 for r in l..<=n {
-                    var e = -1_000_000_000;
+                    var e = -1_000_000_000
                     for i in l..<r {
-                        e = max(e, p[i]);
+                        e = max(e, p[i])
                     }
-                    XCTAssertEqual(e, seg.prod(l, r));
+                    XCTAssertEqual(e, seg.prod(l, r))
                 }
             }
         }
@@ -129,14 +129,14 @@ final class lazySegtreeTests: XCTestCase {
     
     func testUsage() throws {
         
-        var seg = starry_seg([Int](repeating: 0, count: 10));
+        var seg = starry_seg([Int](repeating: 0, count: 10))
         
-        XCTAssertEqual(0, seg.all_prod());
-        seg.apply(0, 3, 5);
-        XCTAssertEqual(5, seg.all_prod());
-        seg.apply(2, -10);
-        XCTAssertEqual(-5, seg.prod(2, 3));
-        XCTAssertEqual(0, seg.prod(2, 4));
+        XCTAssertEqual(0, seg.all_prod())
+        seg.apply(0, 3, 5)
+        XCTAssertEqual(5, seg.all_prod())
+        seg.apply(2, -10)
+        XCTAssertEqual(-5, seg.prod(2, 3))
+        XCTAssertEqual(0, seg.prod(2, 4))
     }
     
     // Actionsのtestを通過できない。
