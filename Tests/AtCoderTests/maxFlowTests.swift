@@ -1,5 +1,9 @@
 import XCTest
+#if DEBUG
+@testable import AtCoder
+#else
 import AtCoder
+#endif
 
 typealias mf_graph = MFGraph
 

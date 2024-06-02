@@ -14,7 +14,9 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/apple/swift-collections.git", exact: "1.1.0"),
         .package(url: "https://github.com/apple/swift-algorithms.git", exact: "1.2.0"),
-        .package(url: "https://github.com/apple/swift-numerics.git", branch: "main"),
+        .package(
+            url: "https://github.com/apple/swift-numerics.git",
+            branch: "main"), // gcd関数がmainブランチにしかない
         .package(url: "https://github.com/attaswift/BigInt.git", from: "5.3.0"),
     ],
     targets: [

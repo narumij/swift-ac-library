@@ -1,5 +1,9 @@
 import XCTest
+#if DEBUG
+@testable import AtCoder
+#else
 import AtCoder
+#endif
 
 fileprivate typealias ll = CLongLong
 fileprivate typealias ull = CUnsignedLongLong
