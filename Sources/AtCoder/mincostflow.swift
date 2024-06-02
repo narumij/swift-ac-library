@@ -131,7 +131,7 @@ extension MCFGraph {
         var prev_e = [Int](repeating: 0, count:_n)
         var vis = [Bool](repeating: false, count: _n)
         var que_min = [Int]()
-        var que = Queue()
+        var que = Heap<Q>()
         func dual_ref() -> Bool {
             // for (int i = 0; i < _n; i++) {
             for i in 0 ..< _n {
@@ -154,7 +154,7 @@ extension MCFGraph {
                 } else {
                     while heap_r < que.count {
                         heap_r += 1
-                        que.push_heap(que.startIndex, que.startIndex + heap_r)
+                        // que.push_heap(que.startIndex, que.startIndex + heap_r)
                     }
                     v = que.popMin()!.to
                     heap_r -= 1
@@ -230,36 +230,5 @@ extension MCFGraph {
         }
         return result
     }
-    
-#if false
-    // swift-collections 1.1.0以降はこちら。
-    typealias Queue = Heap<Q>
-#else
-    typealias Queue = Array<Q>
-#endif
 }
 
-#if false
-// swift-collections 1.1.0以降はこちら。
-extension Heap {
-    var startIndex: Int { 0 }
-    mutating func push_heap(_ start: Int, _ end: Int) { /* NOP */ }
-}
-#else
-extension Array where Element: Comparable {
-    
-    mutating func push_heap(_ start: Int, _ end: Int) {
-        push_heap(end, <)
-    }
-    
-    @discardableResult
-    mutating func popMin() -> Element? {
-        pop_heap(<)
-        return removeLast()
-    }
-    
-    mutating public func insert(_ newElement: Element) {
-        append(newElement)
-    }
-}
-#endif
