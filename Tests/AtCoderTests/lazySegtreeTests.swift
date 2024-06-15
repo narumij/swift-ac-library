@@ -5,6 +5,11 @@ import XCTest
 import AtCoder
 #endif
 
+fileprivate extension LazySegTree {
+    typealias S = S
+    typealias F = F
+}
+
 fileprivate let op_ss: LazySegTree<Int,Int>.Op = max
 fileprivate let op_ts: LazySegTree<Int,Int>.Mapping = (+)
 fileprivate let op_tt: LazySegTree<Int,Int>.Composition = (+)

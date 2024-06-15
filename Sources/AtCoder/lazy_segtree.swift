@@ -13,9 +13,7 @@ public struct LazySegTree<S,F> {
 }
 
 public extension LazySegTree {
-    typealias S = S
     typealias Op = (S,S) -> S
-    typealias F = F
     typealias Mapping = (F,S) -> S
     typealias Composition = (F,F) -> F
 }

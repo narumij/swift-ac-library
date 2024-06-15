@@ -8,9 +8,7 @@ public struct SegTree<S> {
 }
 
 public extension SegTree {
-    typealias S = S
     typealias Op = (S,S) -> S
-    typealias E = () -> S
 }
 
 public extension SegTree {
