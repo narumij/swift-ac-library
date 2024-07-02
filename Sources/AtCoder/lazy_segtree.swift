@@ -317,10 +317,10 @@ extension LazySegTree.Storage._UnsafeHandle {
     public typealias E = LazySegTree.Storage.E
     public typealias Mapping = LazySegTree.Storage.Mapping
     public typealias Composition = LazySegTree.Storage.Composition
-    public typealias ID = LazySegTree.Storage.Id
+    public typealias Id = LazySegTree.Storage.Id
     
     @inlinable
-    func set(_ op: Op,_ mapping: Mapping,_ composition: Composition,_ id: ID,_ p: Int,_ x: S) {
+    func set(_ op: Op,_ mapping: Mapping,_ composition: Composition,_ id: Id,_ p: Int,_ x: S) {
         var p = p
         assert(0 <= p && p < _n)
         p += size
@@ -330,7 +330,7 @@ extension LazySegTree.Storage._UnsafeHandle {
     }
     
     @inlinable
-    func get(_ mapping: Mapping,_ composition: Composition,_ id: ID,_ p: Int) -> S {
+    func get(_ mapping: Mapping,_ composition: Composition,_ id: Id,_ p: Int) -> S {
         var p = p
         assert(0 <= p && p < _n)
         p += size
@@ -339,7 +339,7 @@ extension LazySegTree.Storage._UnsafeHandle {
     }
     
     @inlinable
-    func prod(_ op: Op,_ e: E,_ mapping: Mapping,_ composition: Composition,_ id: ID,_ l: Int,_ r: Int) -> S{
+    func prod(_ op: Op,_ e: E,_ mapping: Mapping,_ composition: Composition,_ id: Id,_ l: Int,_ r: Int) -> S{
         assert(0 <= l && l <= r && r <= _n)
         if l == r { return e }
         var (l, r) = (l + size, r + size)
@@ -364,7 +364,7 @@ extension LazySegTree.Storage._UnsafeHandle {
     func all_prod() -> S { return d[1] }
 
     @inlinable
-    func apply(_ op: Op,_ e: E,_ mapping: Mapping,_ composition: Composition,_ id: ID,_ p: Int,_ f: F) {
+    func apply(_ op: Op,_ e: E,_ mapping: Mapping,_ composition: Composition,_ id: Id,_ p: Int,_ f: F) {
         var p = p
         assert(0 <= p && p < _n)
         p += size
@@ -374,7 +374,7 @@ extension LazySegTree.Storage._UnsafeHandle {
     }
 
     @inlinable
-    func apply(_ op: Op,_ e: E,_ mapping: Mapping,_ composition: Composition,_ id: ID,_ l: Int,_ r: Int,_ f: F) {
+    func apply(_ op: Op,_ e: E,_ mapping: Mapping,_ composition: Composition,_ id: Id,_ l: Int,_ r: Int,_ f: F) {
         var l = l
         var r = r
         assert(0 <= l && l <= r && r <= _n)
@@ -407,7 +407,7 @@ extension LazySegTree.Storage._UnsafeHandle {
     }
 
     @inlinable
-    func max_right(_ op: Op,_ e: E,_ mapping: Mapping,_ composition: Composition,_ id: ID,_ l: Int,_ g: (S) -> Bool) -> Int {
+    func max_right(_ op: Op,_ e: E,_ mapping: Mapping,_ composition: Composition,_ id: Id,_ l: Int,_ g: (S) -> Bool) -> Int {
         var l = l
         assert(0 <= l && l <= _n)
         assert(g(e))
@@ -435,7 +435,7 @@ extension LazySegTree.Storage._UnsafeHandle {
     }
     
     @inlinable
-    func min_left(_ op: Op,_ e: E,_ mapping: Mapping,_ composition: Composition,_ id: ID,_ r: Int,_ g: (S) -> Bool) -> Int {
+    func min_left(_ op: Op,_ e: E,_ mapping: Mapping,_ composition: Composition,_ id: Id,_ r: Int,_ g: (S) -> Bool) -> Int {
         var r = r
         assert(0 <= r && r <= _n)
         assert(g(e))
@@ -475,7 +475,7 @@ extension LazySegTree.Storage._UnsafeHandle {
     }
     
     @inlinable @inline(__always)
-    func push(_ mapping: Mapping,_ composition: Composition,_ id: ID,_ k: Int) {
+    func push(_ mapping: Mapping,_ composition: Composition,_ id: Id,_ k: Int) {
         all_apply(mapping, composition, 2 * k, lz[k])
         all_apply(mapping, composition, 2 * k + 1, lz[k])
         lz[k] = id
