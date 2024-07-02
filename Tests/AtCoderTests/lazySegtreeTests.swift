@@ -8,8 +8,8 @@ import AtCoder
 fileprivate let op_ss: LazySegTree<Int,Int>.Op = max
 fileprivate let op_ts: LazySegTree<Int,Int>.Mapping = (+)
 fileprivate let op_tt: LazySegTree<Int,Int>.Composition = (+)
-fileprivate let e_s: LazySegTree<Int,Int>.S = -1_000_000_000
-fileprivate let e_t: LazySegTree<Int,Int>.F = 0
+fileprivate let e_s: LazySegTree<Int,Int>.E = -1_000_000_000
+fileprivate let e_t: LazySegTree<Int,Int>.Id = 0
 fileprivate typealias S = Int
 fileprivate typealias F = Int
 

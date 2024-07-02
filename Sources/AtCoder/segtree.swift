@@ -1,28 +1,80 @@
 import Foundation
 
-public struct SegTree<S> {
-    @usableFromInline let op: (S,S) -> S
-    @usableFromInline let e: S
-    @usableFromInline let _n, size, log: Int
-    @usableFromInline var d: [S]
+public protocol SegTreeProtocol {
+    associatedtype S
+    init(storage: Storage)
+    var storage: Storage { get set }
+    static var op: Op { get }
+    static var e: S { get }
 }
 
-public extension SegTree {
-    typealias S = S
-    typealias Op = (S,S) -> S
-    typealias E = () -> S
-}
-
-public extension SegTree {
+public extension SegTreeProtocol {
     
-    @inlinable
+    @inlinable @inline(__always) var op: Op { Self.op }
+    @inlinable @inline(__always) var e: E { Self.e }
+    
+    typealias Storage = SegTree<S>.Storage
+    typealias Op = SegTree<S>.Op
+    typealias E = SegTree<S>.E
+    
+    init()
+    {
+        self.init(count: 0)
+    }
+    
+    init(count n: Int)
+    {
+        self.init([S](repeating: Self.e, count: n) )
+    }
+    
+    init<V>(_ v: V) where V: Collection, V.Element == S
+    {
+        self.init(storage: .init(op: Self.op, e: Self.e, v))
+    }
+
+    mutating func set(_ p: Int,_ x: S) {
+        storage.set(op: op, e: e, p, x)
+    }
+    
+    mutating func get(_ p: Int) -> S {
+        storage.get(p)
+    }
+    
+    mutating func prod(_ l: Int,_ r: Int) -> S {
+        storage.prod(op: op, e: e, l, r)
+    }
+    
+    mutating func all_prod() -> S {
+        storage.all_prod()
+    }
+    
+    mutating func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
+        storage.max_right(op: op, e: e, l, g)
+    }
+    
+    mutating func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
+        storage.min_left(op: op, e: e, r, g)
+    }
+}
+
+public struct SegTree<S> {
+    
+    public typealias Op = (S,S) -> S
+    public typealias E = S
+    
+    public let op: Op
+    public let e: E
+    public var storage: SegTree.Storage
+}
+
+extension SegTree {
+    
     init(op: @escaping (S,S) -> S,
          e: S)
     {
-        self.init(op: op, e: e, count: 0 )
+        self.init(op: op, e: e, count: 0)
     }
     
-    @inlinable
     init(op: @escaping (S,S) -> S,
          e: S,
          count n: Int)
@@ -30,17 +82,73 @@ public extension SegTree {
         self.init(op: op, e: e, [S](repeating: e, count: n) )
     }
     
-    @inlinable
-    init<V>(op: @escaping (S,S) -> S,
-         e: S,
-         _ v: V)
+    init<V>(op: @escaping (S,S) -> S, e: S,_ v: V)
     where V: Collection, V.Element == S
     {
         self.op = op
         self.e = e
-        _n = v.count
+        self.storage = .init(op: op, e: e, v)
+    }
+}
+
+public extension SegTree {
+    
+    mutating func set(_ p: Int,_ x: S) {
+        storage.set(op: op, e: e, p, x)
+    }
+    
+    mutating func get(_ p: Int) -> S {
+        storage.get(p)
+    }
+
+    mutating func prod(_ l: Int,_ r: Int) -> S {
+        storage.prod(op: op, e: e, l, r)
+    }
+    
+    mutating func all_prod() -> S {
+        storage.all_prod()
+    }
+    
+    mutating func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
+        storage.max_right(op: op, e: e, l, g)
+    }
+    
+    mutating func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
+        storage.min_left(op: op, e: e, r, g)
+    }
+}
+
+// MARK: - Nonescaping Segtree
+
+extension SegTree {
+    
+    public struct Storage {
+        public let _n, size, log: Int
+        public var d: [S]
+    }
+}
+
+public extension SegTree.Storage {
+    
+    @inlinable @inline(__always)
+    init(op: SegTree.Op, e: SegTree.E)
+    {
+        self.init(op: op, e: e, count: 0 )
+    }
+    
+    @inlinable @inline(__always)
+    init(op: SegTree.Op, e: SegTree.E, count n: Int)
+    {
+        self.init(op: op, e: e, [S](repeating: e, count: n) )
+    }
+    
+    @inlinable @inline(__always)
+    init<V>(op: SegTree.Op, e: SegTree.E,_ v: V)
+    where V: Collection, V.Element == S
+    {
+        _n   = v.count
         size = _Internal.bit_ceil(UInt64(_n))
-        log = _Internal.countr_zero(UInt64(size))
+        log  = _Internal.countr_zero(UInt64(size))
         // d = [S](repeating: e(), count: 2 * size)
         // for (int i = 0; i < _n; i++) d[size + i] = v[i];
         // for i in 0..<_n { d[size + i] = v[i] }
@@ -60,53 +168,53 @@ public extension SegTree {
         __update { unsafeHandle in
             // for (int i = size - 1; i >= 1; i--) {
             for i in stride(from: __size - 1, through: 1, by: -1) {
-                unsafeHandle.update(i)
+                unsafeHandle.update(op: op, i)
             }
         }
     }
 }
 
-extension SegTree {
+extension SegTree.Storage {
+    
+    @inlinable @inline(__always)
+    mutating func __update<R>(_ body: (_UnsafeHandle) -> R) -> R {
+        let handle = _UnsafeHandle(_n: _n, size: size, log: log, d: &d)
+        return body(handle)
+    }
+}
+
+extension SegTree.Storage {
     
     @usableFromInline
     struct _UnsafeHandle {
         
         @inlinable @inline(__always)
         init(
-            op: @escaping (S, S) -> S,
-            e: S,
             _n: Int,
             size: Int,
             log: Int,
             d: UnsafeMutablePointer<S>
         ) {
-            self.op = op
-            self._e = e
-            
             self._n = _n
             self.size = size
             self.log = log
             self.d = d
         }
 
-        @usableFromInline let op: (S,S) -> S
-        @usableFromInline let _e: S
-        @inlinable @inline(__always) func e() -> S { _e }
-
-        @usableFromInline let _n, size, log: Int
-        @usableFromInline let d: UnsafeMutablePointer<S>
+        public let _n, size, log: Int
+        public let d: UnsafeMutablePointer<S>
     }
 }
 
-extension SegTree._UnsafeHandle {
+extension SegTree.Storage._UnsafeHandle {
     
     @inlinable
-    func set(_ p: Int,_ x: S) {
+    func set(op: SegTree.Op,_ p: Int,_ x: S) {
         assert(0 <= p && p < _n)
         let p = p + size
         d[p] = x
         // for (int i = 1; i <= log; i++) update(p >> i);
-        for i in stride(from: 1, through: log, by: 1) { update(p >> i) }
+        for i in stride(from: 1, through: log, by: 1) { update(op: op, p >> i) }
     }
     
     @inlinable
@@ -116,9 +224,9 @@ extension SegTree._UnsafeHandle {
     }
     
     @inlinable
-    func prod(_ l: Int,_ r: Int) -> S {
+    func prod(op: SegTree.Op, e: SegTree.E, _ l: Int,_ r: Int) -> S {
         assert(0 <= l && l <= r && r <= _n)
-        var sml: S = e(), smr: S = e()
+        var sml: S = e, smr: S = e
         var (l,r) = (l + size, r + size)
         while l < r {
             if l & 1 != 0 { sml = op(sml, d[l]); l += 1 }
@@ -133,12 +241,12 @@ extension SegTree._UnsafeHandle {
     func all_prod() -> S { return d[1] }
     
     @inlinable
-    func max_right(_ l: Int,_ f: (S) -> Bool) -> Int {
+    func max_right(op: SegTree.Op, e: SegTree.E, _ l: Int,_ f: (S) -> Bool) -> Int {
         assert(0 <= l && l <= _n)
-        assert(f(e()))
+        assert(f(e))
         if l == _n { return _n }
         var l = l + size
-        var sm: S = e()
+        var sm: S = e
         repeat {
             while l % 2 == 0 { l >>= 1 }
             if !f(op(sm, d[l])) {
@@ -158,12 +266,12 @@ extension SegTree._UnsafeHandle {
     }
     
     @inlinable
-    func min_left(_ r: Int,_ f: (S) -> Bool ) -> Int {
+    func min_left(op: SegTree.Op, e: SegTree.E, _ r: Int,_ f: (S) -> Bool ) -> Int {
         assert(0 <= r && r <= _n)
-        assert(f(e()))
+        assert(f(e))
         if r == 0 { return 0 }
         var r = r + size
-        var sm: S = e()
+        var sm: S = e
         repeat {
             r -= 1
             while r > 1, r % 2 != 0 { r >>= 1 }
@@ -183,42 +291,40 @@ extension SegTree._UnsafeHandle {
     }
     
     @inlinable @inline(__always)
-    func update(_ k: Int) {
+    func update(op: SegTree.Op,_ k: Int) {
         d[k] = op(d[k << 1], d[(k << 1) + 1])
     }
 }
 
-extension SegTree {
+public extension SegTree.Storage {
+    
     @inlinable @inline(__always)
-    mutating func __update<R>(_ body: (_UnsafeHandle) -> R) -> R {
-        let handle = _UnsafeHandle(op: op, e: e, _n: _n, size: size, log: log, d: &d)
-        return body(handle)
+    mutating func set(op: SegTree.Op, e: SegTree.E,_ p: Int,_ x: S) {
+        __update{ $0.set(op: op, p,x) }
     }
-}
-
-public extension SegTree {
-    @inlinable
-    mutating func set(_ p: Int,_ x: S) {
-        __update{ $0.set(p,x) }
-    }
-    @inlinable
+    
+    @inlinable @inline(__always)
     mutating func get(_ p: Int) -> S {
         __update{ $0.get(p) }
     }
-    @inlinable
-    mutating func prod(_ l: Int,_ r: Int) -> S {
-        __update{ $0.prod(l, r) }
+    
+    @inlinable @inline(__always)
+    mutating func prod(op: SegTree.Op, e: SegTree.E,_ l: Int,_ r: Int) -> S {
+        __update{ $0.prod(op: op, e: e, l, r) }
     }
-    @inlinable
+    
+    @inlinable @inline(__always)
     mutating func all_prod() -> S {
         __update{ $0.all_prod() }
     }
-    @inlinable
-    mutating func max_right(_ l: Int,_ g: (S) -> Bool) -> Int {
-        __update{ $0.max_right(l, g) }
+    
+    @inlinable @inline(__always)
+    mutating func max_right(op: SegTree.Op, e: SegTree.E,_ l: Int,_ g: (S) -> Bool) -> Int {
+        __update{ $0.max_right(op: op, e: e, l, g) }
     }
-    @inlinable
-    mutating func min_left(_ r: Int,_ g: (S) -> Bool) -> Int {
-        __update{ $0.min_left(r, g) }
+    
+    @inlinable @inline(__always)
+    mutating func min_left(op: SegTree.Op, e: SegTree.E,_ r: Int,_ g: (S) -> Bool) -> Int {
+        __update{ $0.min_left(op: op, e: e, r, g) }
     }
 }
