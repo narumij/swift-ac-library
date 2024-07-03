@@ -10,32 +10,13 @@ fileprivate func op(a: String,b: String) -> String {
 
 fileprivate let e: String = "$"
 
-protocol SegtreeMonoid {
-    associatedtype S
-    static var op: (S,S) -> S { get }
-    static var e: S { get }
+fileprivate enum Param: SegtreeParameter {
+    typealias S = String
+    static let op: Op = AtCoderTests.op
+    static let e: E = AtCoderTests.e
 }
 
-extension SegTree {
-    init<T>(_ monoid: T) where T: SegtreeMonoid, S == T.S {
-        self.init(op: T.op, e: T.e)
-    }
-    init<T>(_ monoid: T,_ n: Int) where T: SegtreeMonoid, S == T.S {
-        self.init(op: T.op, e: T.e, count: n)
-    }
-    init<T>(_ monoid: T,_ v: [S]) where T: SegtreeMonoid, S == T.S {
-        self.init(op: T.op, e: T.e, v)
-    }
-}
-
-fileprivate extension SegTree where S == String {
-    init() {
-        self.init(op: AtCoderTests.op, e: AtCoderTests.e)
-    }
-    init(_ n: Int) {
-        self.init(op: AtCoderTests.op, e: AtCoderTests.e, count: n )
-    }
-}
+fileprivate typealias segtree = SegTree<Param>
 
 fileprivate extension segtree_naive where S == String {
     init(_ n: Int) {
@@ -68,7 +49,7 @@ final class segtreeTests: XCTestCase {
 #endif
 
     func testOne() throws {
-        var s = SegTree(1)
+        var s = segtree(1)
         XCTAssertEqual("$", s.all_prod())
         XCTAssertEqual("$", s.get(0))
         XCTAssertEqual("$", s.prod(0, 1))
@@ -85,7 +66,7 @@ final class segtreeTests: XCTestCase {
 
         for n in 0..<30 {
             var seg0 = segtree_naive(n)
-            var seg1 = SegTree(n)
+            var seg1 = segtree(n)
             for i in 0..<n {
                 var s = ""
                 s.append(String(["a",Character(UnicodeScalar(i)!)]))
@@ -130,14 +111,4 @@ final class segtreeTests: XCTestCase {
         XCTAssertNoThrow(seg0 = SegTree(10))
     }
 #endif
-    
-    func testString() throws {
-        
-        do {
-            _ = SegTree(op: +, e: "$")
-        }
-        do {
-            _ = SegTree(op: +, e: "$", count: 12)
-        }
-    }
 }

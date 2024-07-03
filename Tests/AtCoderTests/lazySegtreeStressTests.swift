@@ -56,33 +56,18 @@ fileprivate func op_tt(_ l: T,_ r: T) -> T {
 fileprivate func e_s() -> S { return S(-1, -1, -1) }
 fileprivate func e_t() -> T { return T(-1) }
 
-fileprivate extension LazySegTree where S == AtCoderTests.S, F == AtCoderTests.T {
-    init() {
-        self.init(op: op_ss,
-                  e: e_s(),
-                  mapping: op_ts,
-                  composition: op_tt,
-                  id: e_t())
-    }
-    init(_ n: Int) {
-        self.init(op: op_ss,
-                  e: e_s(),
-                  mapping: op_ts,
-                  composition: op_tt,
-                  id: e_t(),
-                  count: n )
-    }
-    init(_ v: [S]) {
-        self.init(op: op_ss,
-                  e: e_s(),
-                  mapping: op_ts,
-                  composition: op_tt,
-                  id: e_t(),
-                  v )
-    }
+fileprivate enum param: LazySegtreeParameter {
+    typealias S = AtCoderTests.S
+    typealias F = AtCoderTests.T
+    
+    static let op: Op = op_ss
+    static let e: E = e_s()
+    static let mapping: Mapping = op_ts
+    static let composition: Composition = op_tt
+    static let id: Id = e_t()
 }
 
-fileprivate typealias seg = LazySegTree<S,T>
+fileprivate typealias seg = LazySegTree<param>
 
 
 final class lazySegtreeStressTests: XCTestCase {

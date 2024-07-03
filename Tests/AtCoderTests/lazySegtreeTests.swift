@@ -5,63 +5,16 @@ import XCTest
 import AtCoder
 #endif
 
-fileprivate let op_ss: LazySegTree<Int,Int>.Op = max
-fileprivate let op_ts: LazySegTree<Int,Int>.Mapping = (+)
-fileprivate let op_tt: LazySegTree<Int,Int>.Composition = (+)
-fileprivate let e_s: LazySegTree<Int,Int>.E = -1_000_000_000
-fileprivate let e_t: LazySegTree<Int,Int>.Id = 0
-fileprivate typealias S = Int
-fileprivate typealias F = Int
-
-protocol LazySegtreeMonoid {
-    associatedtype S
-    static var op: (S,S) -> S { get }
-    static var e: S { get }
-    associatedtype F
-    static var mapping: (F,S) -> S { get }
-    static var composition: (F,F) -> F { get }
-    static var id: F { get }
+fileprivate enum param: LazySegtreeParameter {
+    typealias S = Int
+    typealias F = Int
+    static let op: Op = max
+    static let e: E = -1_000_000_000
+    static let mapping: Mapping = (+)
+    static let composition: Composition = (+)
+    static let id: Id = 0
 }
-
-extension LazySegTree {
-    init<T>(_ monoid: T) where T: LazySegtreeMonoid, S == T.S, F == T.F {
-        self.init(op: T.op, e: T.e, mapping: T.mapping, composition: T.composition, id: T.id)
-    }
-    init<T>(_ monoid: T,_ n: Int) where T: LazySegtreeMonoid, S == T.S, F == T.F {
-        self.init(op: T.op, e: T.e, mapping: T.mapping, composition: T.composition, id: T.id, count: n)
-    }
-    init<T>(_ monoid: T,_ v: [S]) where T: LazySegtreeMonoid, S == T.S, F == T.F {
-        self.init(op: T.op, e: T.e, mapping: T.mapping, composition: T.composition, id: T.id, v)
-    }
-}
-
-fileprivate extension LazySegTree where S == AtCoderTests.S, F == AtCoderTests.F {
-    init() {
-        self.init(op: max,
-                  e: -1_000_000_000,
-                  mapping: +,
-                  composition: +,
-                  id: 0)
-    }
-    init(_ n: Int) {
-        self.init(op: max,
-                  e: -1_000_000_000,
-                  mapping: +,
-                  composition: +,
-                  id: 0,
-                  count: n )
-    }
-    init(_ v: [S]) {
-        self.init(op: max,
-                  e: -1_000_000_000,
-                  mapping: +,
-                  composition: +,
-                  id: 0,
-                  v )
-    }
-}
-
-fileprivate typealias starry_seg = LazySegTree<S,F>
+fileprivate typealias starry_seg = LazySegTree<param>
 
 final class lazySegtreeTests: XCTestCase {
 
@@ -138,22 +91,4 @@ final class lazySegtreeTests: XCTestCase {
         XCTAssertEqual(-5, seg.prod(2, 3))
         XCTAssertEqual(0, seg.prod(2, 4))
     }
-    
-    // Actionsのtestを通過できない。
-    func testString() throws {
-        
-        do {
-            _ = LazySegTree(op: +, e: 0, mapping: +, composition: +, id: 0)
-        }
-        do {
-            _ = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "")
-        }
-        do {
-            _ = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "", [])
-        }
-        do {
-            _ = LazySegTree(op: +, e: "$", mapping: +, composition: +, id: "", count: 12)
-        }
-    }
-
 }
