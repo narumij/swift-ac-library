@@ -145,10 +145,6 @@ extension _Internal {
         }
     }
     
-    static func butterfly<mod: static_mod>(_ a: inout [static_modint<mod>]) {
-        a.withUnsafeMutableBufferPointer { butterfly($0.baseAddress!, count: $0.count) }
-    }
-    
     static func butterfly<mod: static_mod>(_ a: UnsafeMutablePointer<static_modint<mod>>, count n: Int) {
         typealias mint = static_modint<mod>
         
@@ -206,10 +202,6 @@ extension _Internal {
                 }
             }
         }
-    }
-    
-    static func butterfly_inv<mod: static_mod>(_ a: inout [static_modint<mod>]) {
-        a.withUnsafeMutableBufferPointer { butterfly_inv($0.baseAddress!, count: $0.count) }
     }
     
     static func butterfly_inv<mod: static_mod>(_ a: UnsafeMutablePointer<static_modint<mod>>, count n: Int) {
