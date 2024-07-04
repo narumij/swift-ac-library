@@ -27,7 +27,11 @@ final class internalConvolutionTests: XCTestCase {
 #if DEBUG
     func testFFTINFO() throws {
         typealias mint = modint998244353
+#if false
         let info = _Internal.fft_info<mint.static_mod>()
+#else
+        let info = _Internal.fft_info<mint>()
+#endif
 //        XCTAssertEqual( info.g, 3 )
 //        XCTAssertEqual( info.rank2, 23 )
         XCTAssertEqual( info.root, [1, 998244352, 911660635, 372528824, 929031873, 452798380, 922799308, 781712469, 476477967, 166035806, 258648936, 584193783, 63912897, 350007156, 666702199, 968855178, 629671588, 24514907, 996173970, 363395222, 565042129, 733596141, 267099868, 15311432] )
@@ -61,5 +65,4 @@ final class internalConvolutionTests: XCTestCase {
         XCTAssertEqual(bi, bb)
     }
 #endif
-
 }

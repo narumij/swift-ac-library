@@ -41,6 +41,8 @@ public extension Array where Element: AdditiveArithmetic {
     }
 }
 
+#if false
+
 fileprivate extension static_modint {
     init(unsigned v: CUnsignedLongLong, umod: CUnsignedLongLong) { _v = __modint_v(v, umod: umod) }
 }
@@ -458,3 +460,4 @@ public func convolution_ll(_ a: [CLongLong],
     
     return c
 }
+#endif
