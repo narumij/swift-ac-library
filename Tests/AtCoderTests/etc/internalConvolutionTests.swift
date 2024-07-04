@@ -27,7 +27,7 @@ final class internalConvolutionTests: XCTestCase {
 #if DEBUG
     func testFFTINFO() throws {
         typealias mint = modint998244353
-#if false
+#if true
         let info = _Internal.fft_info<mint.static_mod>()
 #else
         let info = _Internal.fft_info<mint>()
@@ -53,10 +53,13 @@ final class internalConvolutionTests: XCTestCase {
         let n = CInt(a.count), m = CInt(b.count)
         let z: CInt = _Internal.bit_ceil(CUnsignedInt(n + m - 1))
         a.resize(Int(z))
-        _Internal.butterfly(&a)
+        a.withUnsafeMutableBufferPointer { a in
+            _Internal.butterfly(a.baseAddress!, count: a.count)
+        }
         b.resize(Int(z))
-        _Internal.butterfly(&b)
-        
+        b.withUnsafeMutableBufferPointer { b in
+            _Internal.butterfly(b.baseAddress!, count: b.count)
+        }
         let ai = a.map{Int($0.val)}
         let bi = b.map{Int($0.val)}
         XCTAssertEqual(a.count, aa.count)
