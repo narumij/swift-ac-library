@@ -1,11 +1,11 @@
 import Foundation
 
-extension static_modint: HandleUnsigned { }
-extension dynamic_modint: HandleUnsigned { }
+extension static_modint: ToUnsignedType { }
+extension dynamic_modint: ToUnsignedType { }
 
-extension modint_raw where Self: HandleUnsigned {
-    public init(unsigned: CUnsignedInt) {
-        self.init(raw: __modint_v(unsigned, umod: __modint_umod(Self.umod)))
+extension modint_raw where Self: ToUnsignedType {
+    public init(bitPattern i: CUnsignedInt) {
+        self.init(raw: __modint_v(i, umod: __modint_umod(Self.umod)))
     }
     public var unsigned: CUnsignedInt { val }
 }

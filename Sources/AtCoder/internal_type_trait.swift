@@ -1,34 +1,31 @@
 import Foundation
 
-public protocol HandleUnsigned {
-    associatedtype Unsigned: UnsignedInteger & FixedWidthInteger
-    init(unsigned: Unsigned)
+public protocol ToUnsignedType {
+    associatedtype Unsigned where Unsigned: FixedWidthInteger & UnsignedInteger
+    init(bitPattern: Unsigned)
     var unsigned: Unsigned { get }
 }
 
 extension UnsignedInteger {
-    public init(unsigned: Self) { self = unsigned }
+    public init(bitPattern: Self) { self = bitPattern }
 }
 
-extension Int32: HandleUnsigned {
-    public init(unsigned: UInt32) { self.init(bitPattern: unsigned) }
-    public var unsigned: UInt32 { Unsigned(bitPattern: self) }
+extension Int32: ToUnsignedType {
+    public var unsigned: UInt32 { .init(bitPattern: self) }
 }
-extension Int64: HandleUnsigned {
-    public init(unsigned: UInt64) { self.init(bitPattern: unsigned) }
-    public var unsigned: UInt64 { Unsigned(bitPattern: self)  }
+extension Int64: ToUnsignedType {
+    public var unsigned: UInt64 { .init(bitPattern: self)  }
 }
-extension Int: HandleUnsigned {
-    public init(unsigned: UInt) { self.init(bitPattern: unsigned) }
-    public var unsigned: UInt { Unsigned(bitPattern: self)  }
+extension Int: ToUnsignedType {
+    public var unsigned: UInt { .init(bitPattern: self)  }
 }
 
-extension UInt32: HandleUnsigned { 
+extension UInt32: ToUnsignedType { 
     public var unsigned: Self { self }
 }
-extension UInt64: HandleUnsigned {
+extension UInt64: ToUnsignedType {
     public var unsigned: Self { self }
 }
-extension UInt: HandleUnsigned { 
+extension UInt: ToUnsignedType { 
     public var unsigned: Self { self }
 }

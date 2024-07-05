@@ -1,20 +1,21 @@
 import Foundation
 
 /// Reference: https://en.wikipedia.org/wiki/Fenwick_tree
-public struct FenwickTree<T: AdditiveArithmetic & HandleUnsigned> where T: HandleUnsigned {
-    @usableFromInline var _n: Int
+public struct FenwickTree<T: AdditiveArithmetic & ToUnsignedType> where T: ToUnsignedType {
+    @inlinable @inline(__always) var _n: Int { data.count }
     @usableFromInline var data: [U]
 }
 
 public extension FenwickTree {
     typealias U = T.Unsigned
     @inlinable
-    init() { _n = 0; data = [] }
+    init() { data = [] }
     @inlinable
-    init(_ n: Int) { _n = n; data = [U](repeating: 0, count: n) }
+    init(_ n: Int) { data = [U](repeating: 0, count: n) }
 }
 
 extension FenwickTree {
+    
     @usableFromInline
     struct _UnsafeHandle {
         @inlinable @inline(__always)
@@ -41,7 +42,7 @@ extension FenwickTree._UnsafeHandle {
     @inlinable
     func sum(_ l: Int,_ r: Int) -> T {
         assert(0 <= l && l <= r && r <= _n)
-        return T(unsigned: sum(r) &- sum(l))
+        return T(bitPattern: sum(r) &- sum(l))
     }
     @inlinable
     func sum(_ r: Int) -> U {
