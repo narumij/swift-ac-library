@@ -114,7 +114,6 @@ public extension static_modint {
 
 
 public struct dynamic_modint<bt: dynamic_mod>: dynamic_modint_base {
-//    public typealias bt = bt
     public init(raw v: CUnsignedInt) {
         _v = v
     }

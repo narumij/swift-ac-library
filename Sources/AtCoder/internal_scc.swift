@@ -76,11 +76,11 @@ extension _Internal {
 
         @usableFromInline let _n: Int
         
-        public struct edge {
+        @usableFromInline struct edge {
             public init(to: Int) { self.to = to }
             public let to: Int
         }
         
-        public var edges: [(Int,edge)] = []
+        @usableFromInline var edges: [(Int,edge)] = []
     }
 }
