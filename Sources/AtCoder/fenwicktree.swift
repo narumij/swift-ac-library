@@ -44,7 +44,7 @@ extension FenwickTree._UnsafeHandle {
         assert(0 <= l && l <= r && r <= _n)
         return T(bitPattern: sum(r) &- sum(l))
     }
-    @inlinable
+    @inlinable @inline(__always)
     func sum(_ r: Int) -> U {
         var r = r
         var s: U = 0
