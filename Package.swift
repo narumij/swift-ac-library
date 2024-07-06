@@ -24,7 +24,10 @@ let package = Package(
 //            .upToNextMajor(from: "1.0.0") // or `.upToNextMinor
 //        ),
         .package(url: "https://github.com/apple/swift-algorithms.git", .upToNextMajor(from: "1.0.0")),
-        .package(url: "https://github.com/apple/swift-numerics", branch: "main"),
+        .package(
+          url: "https://github.com/stephentyrone/swift-numerics",
+          branch: "int128"
+        ),
         .package(url: "https://github.com/attaswift/BigInt.git", from: "5.3.0"),
     ],
     targets: [
@@ -42,6 +45,7 @@ let package = Package(
                 .product(name: "Algorithms", package: "swift-algorithms"),
                 .product(name: "Collections", package: "swift-collections"),
                 .product(name: "Numerics", package: "swift-numerics"),
+                .product(name: "Int128Demo", package: "swift-numerics"),
                 .product(name: "BigInt", package: "BigInt"),
             ]),
     ]

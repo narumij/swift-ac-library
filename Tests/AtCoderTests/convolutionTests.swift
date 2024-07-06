@@ -53,6 +53,24 @@ fileprivate func conv_naive<MOD: static_mod, T: FixedWidthInteger>(_ t: MOD.Type
     conv_naive(t.value(), a, b)
 }
 
+@available(macOS, introduced: 15.0)
+fileprivate func conv_naive(_ MOD: Int128,_ a: [Int128],_ b: [Int128]) -> [Int128] {
+    let (n,m) = (a.count, b.count)
+    var c = [Int128](repeating: 0, count: n + m - 1)
+    for i in 0 ..< n {
+        for j in 0 ..< m {
+            c[i + j] &+= (Int128)(ll(a[i]) * ll(b[j]) % ll(MOD))
+            if c[i + j] >= MOD { c[i + j] -= MOD }
+        }
+    }
+    return c
+}
+
+@available(macOS, introduced: 15.0)
+fileprivate func conv_naive<MOD: static_mod>(_ t: MOD.Type,_ a: [Int128],_ b: [Int128]) -> [Int128] {
+    conv_naive(t.value(), a, b)
+}
+
 final class convolutionTests: XCTestCase {
     
     func testEmpty() throws {
@@ -237,42 +255,45 @@ final class convolutionTests: XCTestCase {
         }
     }
     
-#if false
+    @available(macOS, introduced: 15.0)
     func testSimpleInt128() throws {
-        throw XCTSkip("__int128はSwiftでは利用できないため")
-        /*
-         const int MOD1 = 998244353;
-         const int MOD2 = 924844033;
-         
-         std::mt19937 mt;
-         for (int n = 1; n < 20; n++) {
-         for (int m = 1; m < 20; m++) {
-         std::vector<__int128> a(n), b(m);
-         for (int i = 0; i < n; i++) {
-         a[i] = mt() % MOD1;
-         }
-         for (int i = 0; i < m; i++) {
-         b[i] = mt() % MOD1;
-         }
-         ASSERT_EQ(conv_naive<MOD1>(a, b), convolution(a, b));
-         ASSERT_EQ(conv_naive<MOD1>(a, b), (convolution<MOD1>(a, b)));
-         }
-         }
-         for (int n = 1; n < 20; n++) {
-         for (int m = 1; m < 20; m++) {
-         std::vector<__int128> a(n), b(m);
-         for (int i = 0; i < n; i++) {
-         a[i] = mt() % MOD2;
-         }
-         for (int i = 0; i < m; i++) {
-         b[i] = mt() % MOD2;
-         }
-         ASSERT_EQ(conv_naive<MOD2>(a, b), (convolution<MOD2>(a, b)));
-         }
-         }
-         */
+//        throw XCTSkip("__int128はSwiftでは利用できないため")
+//        let MOD1: int = 998244353;
+//        let MOD2: int = 924844033;
+        enum MOD1: static_mod_value { static let mod: mod_value = 998244353 }
+        enum MOD2: static_mod_value { static let mod: mod_value = 924844033 }
+
+         // std::mt19937 mt;
+        let mt = { ull.random(in: ull.min...ull.max) }
+
+        for n in 1 ..< 20 {
+            for m in 1 ..< 20 {
+                var a = [Int128](repeating: 0, count: n) // EXC_BADD_ACCESS (code=1, address=0x0)
+                var b = [Int128](repeating: 0, count: m)
+                for i in 0 ..< n {
+                    a[i] = Int128(mt() % MOD1.value())
+                }
+                for i in 0 ..< m {
+                    b[i] = Int128(mt() % MOD1.value())
+                }
+                XCTAssertEqual(conv_naive(MOD1.self, a, b), convolution(a, b));
+                XCTAssertEqual(conv_naive(MOD1.self, a, b), (convolution<MOD1>(a, b)));
+            }
+        }
+        for n in 1 ..< 20 {
+            for m in 1 ..< 20 {
+                var a = [Int128](repeating: 0, count: n)
+                var b = [Int128](repeating: 0, count: m)
+                for i in 0 ..< n {
+                    a[i] = Int128(mt() % MOD2.value())
+                }
+                for i in 0 ..< m {
+                    b[i] = Int128(mt() % MOD2.value())
+                }
+                XCTAssertEqual(conv_naive(MOD2.self, a, b), (convolution<MOD2>(a, b)));
+            }
+        }
     }
-#endif
     
 #if false
     func testSimpleUInt128() throws {
