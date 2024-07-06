@@ -7,19 +7,19 @@ import Foundation
 public struct TwoSAT {
     @usableFromInline let _n: Int
     @usableFromInline var _answer: [Bool]
-    @usableFromInline var scc: _Internal.scc_graph
+    @usableFromInline var scc: _Internal.scc_graph<Int>
 }
 
 public extension TwoSAT {
     
     @inlinable
-    init() { _n = 0; _answer = []; scc = _Internal.scc_graph(0) }
+    init() { _n = 0; _answer = []; scc = .init(0) }
     
     @inlinable
     init(_ n: Int) {
         _n = n
         _answer = [Bool](repeating: false, count: n)
-        scc = _Internal.scc_graph(2 * n)
+        scc = .init(2 * n)
     }
     
     @inlinable
@@ -32,7 +32,7 @@ public extension TwoSAT {
     
     @inlinable
     mutating func satisfiable() -> Bool {
-        let id = scc.scc_ids().id
+        let id = scc.scc_ids().second
         for i in 0 ..< _n {
             if id[2 * i] == id[2 * i + 1] { return false }
             _answer[i] = id[2 * i] < id[2 * i + 1]
@@ -43,3 +43,4 @@ public extension TwoSAT {
     @inlinable
     func answer() -> [Bool] { return _answer }
 }
+

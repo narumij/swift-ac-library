@@ -1,25 +1,19 @@
 import Foundation
 
 public struct SCCGraph {
-    @usableFromInline var _internal: _Internal.scc_graph
-}
+    public init() { __internal = .init(0) }
+    public init<Index: FixedWidthInteger>(_ n: Index) { __internal = .init(Int(n)) }
 
-public extension SCCGraph {
-    
-    @inlinable
-    init() { _internal = _Internal.scc_graph.init(0) }
-    
-    @inlinable
-    init(_ n: Int) { _internal = _Internal.scc_graph.init(n) }
-
-    @inlinable
-    mutating func add_edge(_ from: Int,_ to: Int) {
-        let n = _internal.num_vertices()
-        assert(0 <= from && from < n)
-        assert(0 <= to && to < n)
-        _internal.add_edge(from, to)
+    public mutating func add_edge<Index: FixedWidthInteger>(_ from: Index,_ to: Index) {
+        let from = Int(from)
+        let to = Int(to)
+        let n = __internal.num_vertices();
+        assert(0 <= from && from < n);
+        assert(0 <= to && to < n);
+        __internal.add_edge(from, to);
     }
 
-    @inlinable
-    func scc() -> [[Int]] { return _internal.scc() }
-}
+    public func scc() -> [[Int]] { return __internal.scc(); }
+
+    var __internal: _Internal.scc_graph<CInt>;
+};
