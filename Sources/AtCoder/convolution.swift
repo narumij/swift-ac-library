@@ -184,16 +184,16 @@ extension _Internal {
                         for i in 0 ..< p {
                             let mod2: ULL = 1 * umod * umod
                             let a0: ULL = 1 * ULL(a[i + offset].val)
-                            let a1: ULL = 1 * ULL(a[i + offset + p].val) * ULL(rot.val)
-                            let a2: ULL = 1 * ULL(a[i + offset + 2 * p].val) * ULL(rot2.val)
-                            let a3: ULL = 1 * ULL(a[i + offset + 3 * p].val) * ULL(rot3.val)
+                            let a1: ULL = 1 * ULL(a[i + offset + p].val) &* ULL(rot.val)
+                            let a2: ULL = 1 * ULL(a[i + offset + 2 * p].val) &* ULL(rot2.val)
+                            let a3: ULL = 1 * ULL(a[i + offset + 3 * p].val) &* ULL(rot3.val)
                             let a1na3imag =
-                            1 * ULL(mint(unsigned: a1 + mod2 - a3, umod: umod).val) * ULL(imag.val)
-                            let na2 = mod2 - a2
-                            a[i + offset] = mint(unsigned: a0 + a2 + a1 + a3, umod: umod)
-                            a[i + offset + 1 * p] = mint(unsigned: a0 + a2 + (2 * mod2 - (a1 + a3)), umod: umod)
-                            a[i + offset + 2 * p] = mint(unsigned: a0 + na2 + a1na3imag, umod: umod)
-                            a[i + offset + 3 * p] = mint(unsigned: a0 + na2 + (mod2 - a1na3imag), umod: umod)
+                            1 * ULL(mint(unsigned: a1 + mod2 - a3, umod: umod).val) &* ULL(imag.val)
+                            let na2 = mod2 &- a2
+                            a[i + offset] = mint(unsigned: a0 &+ a2 &+ a1 &+ a3, umod: umod)
+                            a[i + offset + 1 * p] = mint(unsigned: a0 &+ a2 &+ (2 * mod2 &- (a1 &+ a3)), umod: umod)
+                            a[i + offset + 2 * p] = mint(unsigned: a0 &+ na2 &+ a1na3imag, umod: umod)
+                            a[i + offset + 3 * p] = mint(unsigned: a0 &+ na2 &+ (mod2 &- a1na3imag), umod: umod)
                         }
                         if s + 1 != 1 << len
                         { rot *= info.rate3[(~UINT(truncatingIfNeeded: s)).trailingZeroBitCount] }
@@ -227,9 +227,9 @@ extension _Internal {
                             let l = a[i + offset]
                             let r = a[i + offset + p]
                             a[i + offset] = l + r
-                            a[i + offset + p] = mint(unsigned:
-                                                        (ULL(umod) + ULL(l.val) - ULL(r.val)) *
-                                                     ULL(irot.val), umod: umod)
+                            a[i + offset + p] = mint(
+                                unsigned: (ULL(l.val) &- ULL(r.val) &+ umod) &* ULL(irot.val),
+                                umod: umod)
                         }
                         if s + 1 != 1 << (len - 1)
                         { irot *= info.irate2[(~UINT(truncatingIfNeeded: s)).trailingZeroBitCount] }
@@ -251,15 +251,15 @@ extension _Internal {
                             
                             let a2na3iimag: ULL =
                             1 *
-                            ULL(mint(unsigned: (umod + a2 - a3) * ULL(iimag.val), umod: umod).val)
-                            a[i + offset] = mint(unsigned: a0 + a1 + a2 + a3, umod: umod)
+                            ULL(mint(unsigned: (umod &+ a2 &- a3) &* ULL(iimag.val), umod: umod).val)
+                            a[i + offset] = mint(unsigned: a0 &+ a1 &+ a2 &+ a3, umod: umod)
                             a[i + offset + 1 * p] =
-                            mint(unsigned: (a0 + (umod - a1) + a2na3iimag) * ULL(irot.val), umod: umod)
+                            mint(unsigned: (a0 &+ (umod &- a1) &+ a2na3iimag) &* ULL(irot.val), umod: umod)
                             a[i + offset + 2 * p] =
-                            mint(unsigned: (a0 + a1 + (umod - a2) + (umod - a3)) *
+                            mint(unsigned: (a0 &+ a1 &+ (umod &- a2) &+ (umod &- a3)) &*
                                  ULL(irot2.val), umod: umod)
                             a[i + offset + 3 * p] =
-                            mint(unsigned: (a0 + (umod - a1) + (umod - a2na3iimag)) *
+                            mint(unsigned: (a0 &+ (umod &- a1) &+ (umod &- a2na3iimag)) &*
                                  ULL(irot3.val), umod: umod)
                         }
                         if s + 1 != 1 << (len - 2)

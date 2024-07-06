@@ -26,7 +26,7 @@ public extension static_modint {
     @inlinable init<T: BinaryInteger>(_ v: T) { _v = ___modint_v(v, mod: __modint_mod(m.umod)) }
 
     @inlinable @inline(__always)
-    var val: CUnsignedInt { return _v }
+    var val: CInt { return .init(bitPattern: _v) }
     @inlinable @inline(__always)
     static func +=(lhs: inout Self, rhs: Self) {
         lhs._v &+= rhs._v
@@ -133,7 +133,7 @@ extension dynamic_modint {
     public init(_ v: CInt) { _v = ___modint_v(v, mod: __modint_mod(bt.umod)) }
     public init<T: BinaryInteger>(_ v: T) { _v = ___modint_v(v, mod: __modint_mod(bt.umod))  }
 
-    public var val: CUnsignedInt { return _v }
+    public var val: CInt { return .init(bitPattern: _v) }
     
     public static func +=(lhs: inout Self, rhs: Self) {
         lhs._v &+= rhs._v

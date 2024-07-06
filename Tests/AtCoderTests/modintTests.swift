@@ -40,11 +40,11 @@ final class modintTests: XCTestCase {
             }
             for a in v {
                 let mod = ll(mod)
-                XCTAssertEqual(uint(((a &* a) % mod &* a) % mod), (mint(a).pow(3)).val, "mod = \(mod), a = \(a)")
+                XCTAssertEqual(int(((a &* a) % mod &* a) % mod), (mint(a).pow(3)).val, "mod = \(mod), a = \(a)")
                 for b in v {
-                    XCTAssertEqual(uint((a &+ b) % mod), (mint(a) + mint(b)).val, "mod = \(mod)")
-                    XCTAssertEqual(uint((a &- b &+ mod) % mod), (mint(a) - mint(b)).val, "mod = \(mod)")
-                    XCTAssertEqual(uint((a &* b) % mod), (mint(a) * mint(b)).val, "mod = \(mod)")
+                    XCTAssertEqual(int((a &+ b) % mod), (mint(a) + mint(b)).val, "mod = \(mod)")
+                    XCTAssertEqual(int((a &- b &+ mod) % mod), (mint(a) - mint(b)).val, "mod = \(mod)")
+                    XCTAssertEqual(int((a &* b) % mod), (mint(a) * mint(b)).val, "mod = \(mod)")
                 }
             }
         }
@@ -54,7 +54,7 @@ final class modintTests: XCTestCase {
     
     func testDynamicBorderAlt() throws {
         
-        let ab: [(mod: uint,a:ll,uint,[(b:ll,uint,uint,uint)])] = [
+        let ab: [(mod: uint,a:ll,int,[(b:ll,int,int,int)])] = [
             (2147483647,0,0,
              [(0,0,0,0),
               (2147483647,0,0,0),
@@ -100,10 +100,10 @@ final class modintTests: XCTestCase {
     
     func testULL() throws {
         modint.set_mod(998244353)
-        XCTAssertNotEqual(uint(modint.mod - 1), modint(ull(bitPattern: -1)).val)
+        XCTAssertNotEqual(int(modint.mod - 1), modint(ull(bitPattern: -1)).val)
         XCTAssertNotEqual(0, (ull(bitPattern: -1) + modint(1)).val)
         typealias mint = modint998244353
-        XCTAssertNotEqual(uint(mint.mod - 1), mint(ull(bitPattern: -1)).val)
+        XCTAssertNotEqual(int(mint.mod - 1), mint(ull(bitPattern: -1)).val)
         XCTAssertNotEqual(0, (ull(bitPattern: -1) + mint(1)).val)
         
         mod_dynamic.reset()
@@ -151,11 +151,11 @@ final class modintTests: XCTestCase {
         for i in 0 ..< 100 as Range<int> {
             // for (int j = 0; j < 100; j++) {
             for j in 0 ..< 100 as Range<int> {
-                XCTAssertEqual((modint(i) * modint(j)).val, uint(i * j))
+                XCTAssertEqual((modint(i) * modint(j)).val, int(i * j))
             }
         }
         XCTAssertEqual((modint(1234) + modint(5678)).val, 1234 + 5678)
-        XCTAssertEqual((modint(1234) - modint(5678)).val, uint(CInt.max - 5678 + 1234))
+        XCTAssertEqual((modint(1234) - modint(5678)).val, int(CInt.max - 5678 + 1234))
         XCTAssertEqual((modint(1234) * modint(5678)).val, 1234 * 5678)
         
         typealias mint = static_modint<INT32_MAX>
@@ -163,11 +163,11 @@ final class modintTests: XCTestCase {
         for i in 0 ..< 100 as Range<int> {
             // for (int j = 0; j < 100; j++) {
             for j in 0 ..< 100 as Range<int> {
-                XCTAssertEqual((mint(i) * mint(j)).val, uint(i * j))
+                XCTAssertEqual((mint(i) * mint(j)).val, int(i * j))
             }
         }
         XCTAssertEqual((mint(1234) + mint(5678)).val, 1234 + 5678)
-        XCTAssertEqual((mint(1234) - mint(5678)).val, uint(Int32.max - 5678 + 1234))
+        XCTAssertEqual((mint(1234) - mint(5678)).val, int(Int32.max - 5678 + 1234))
         XCTAssertEqual((mint(1234) * mint(5678)).val, 1234 * 5678)
         XCTAssertEqual((mint(Int32.max) + mint(Int32.max)).val, 0)
         
@@ -468,8 +468,8 @@ final class modintTests: XCTestCase {
     
     func testSome() throws {
         typealias mint = modint998244353
-        XCTAssertEqual(1, (mint(3) / 2).val - CUnsignedInt((mint.mod + 1) / 2))
-        XCTAssertEqual(4, (mint(9) / 2).val - CUnsignedInt((mint.mod + 1) / 2))
+        XCTAssertEqual(1, (mint(3) / 2).val - int((mint.mod + 1) / 2))
+        XCTAssertEqual(4, (mint(9) / 2).val - int((mint.mod + 1) / 2))
         XCTAssertEqual(18, (mint(36) / 2).val)
         
         XCTAssertEqual(0, mint(false).val)
@@ -528,10 +528,10 @@ final class modintTests: XCTestCase {
     }
     
     func testEtc2() throws {
-        let ne1: (CUnsignedLongLong,CUnsignedInt) = (998244352,932051909)
+        let ne1: (ull,int) = (998244352,932051909)
         XCTAssertEqual(ne1.0, CUnsignedLongLong(modint.mod - 1))
         XCTAssertEqual(ne1.1, modint(CUnsignedLongLong(bitPattern: CLongLong(-1))).val)
-        let ne2: (CUnsignedInt,CUnsignedInt) = (0,932051910)
+        let ne2: (ull,int) = (0,932051910)
         XCTAssertEqual(ne2.1, (modint(CUnsignedLongLong(bitPattern: CLongLong(-1))) + modint(1)).val)
     }
     
