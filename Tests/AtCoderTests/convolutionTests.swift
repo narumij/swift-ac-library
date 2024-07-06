@@ -56,24 +56,14 @@ fileprivate func conv_naive<MOD: static_mod, T: FixedWidthInteger>(_ t: MOD.Type
 final class convolutionTests: XCTestCase {
     
     func testEmpty() throws {
-        XCTAssertEqual([] as [CInt],
-                       convolution([] as [CInt], [] as [CInt]))
-        XCTAssertEqual([] as [CInt],
-                       convolution([] as [CInt], [1, 2]))
-        XCTAssertEqual([] as [CInt],
-                       convolution([1, 2], [] as [CInt]))
-        XCTAssertEqual([] as [CInt],
-                       convolution([1], [] as [CInt]))
-        XCTAssertEqual([] as [ll],
-                       convolution([] as [ll], [] as [ll]))
-        XCTAssertEqual([] as [ll],
-                       convolution([] as [ll], [1, 2]))
-        XCTAssertEqual([] as [modint998244353],
-                       convolution([] as [modint998244353],
-                                   [] as [modint998244353]))
-        XCTAssertEqual([] as [modint998244353],
-                       convolution([] as [modint998244353],
-                                   [1, 2]))
+        XCTAssertEqual([int](), convolution([int](), [int]()))
+        XCTAssertEqual([int](), convolution([int](), [1, 2]))
+        XCTAssertEqual([int](), convolution([1, 2], [int]()))
+        XCTAssertEqual([int](), convolution([1], [int]()))
+        XCTAssertEqual([ll](), convolution([ll](), [ll]()))
+        XCTAssertEqual([ll](), convolution([ll](), [1, 2]))
+        XCTAssertEqual([modint998244353](), convolution([modint998244353](), [modint998244353]()))
+        XCTAssertEqual([modint998244353](), convolution([modint998244353](), [1, 2]))
     }
     
     func testMid() throws {
@@ -82,7 +72,8 @@ final class convolutionTests: XCTestCase {
         // std::mt19937 mt;
         let mt = { mint(CInt.random(in: 0...CInt.max)) }
         let n = 1234, m = 2345
-        var a = [mint](repeating: 0, count: n); var b = [mint](repeating: 0, count: m)
+        var a = [mint](repeating: 0, count: n)
+        var b = [mint](repeating: 0, count: m)
         
         for i in 0 ..< n {
             a[i] = mt()
@@ -90,6 +81,7 @@ final class convolutionTests: XCTestCase {
         for i in 0 ..< m {
             b[i] = mt()
         }
+        
         XCTAssertEqual(conv_naive(a, b), convolution(a, b))
     }
     
@@ -151,7 +143,6 @@ final class convolutionTests: XCTestCase {
                     b[Int(i)] = mt() % MOD1.value()
                 }
                 XCTAssertEqual(conv_naive(MOD1.value(), a, b), convolution(a, b))
-                // これがコンパイル通るのは、コンパイラのバグな気がする。あるいは5.9のマクロで緩んだ？
                 XCTAssertEqual(conv_naive(MOD1.value(), a, b), convolution<MOD1>(a, b))
                 XCTAssertEqual(conv_naive(MOD1.value(), a, b), (convolution(MOD1.self, a, b)))
             }
