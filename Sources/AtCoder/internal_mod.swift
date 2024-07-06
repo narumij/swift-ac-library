@@ -97,7 +97,7 @@ public protocol modint_base: ModIntAdaptions where Words == Array<UInt> {
     init(_ v: Bool)
     init(_ v: CInt)
     init<T: BinaryInteger>(_ v: T)
-    var val: CUnsignedInt { get }
+    var val: CInt { get }
     static func +(lhs: Self, rhs: Self) -> Self
     static func -(lhs: Self, rhs: Self) -> Self
     static func *(lhs: Self, rhs: Self) -> Self
@@ -158,7 +158,7 @@ extension modint_base {
     }
     public var words: Array<UInt> { [.init(val)] }
     public var magnitude: CUnsignedInt {
-        val
+        .init(bitPattern: val)
     }
     public static var isSigned: Bool {
         false
@@ -233,7 +233,7 @@ public extension modint_base {
 public protocol modint_raw {
     init(raw: CUnsignedInt)
     var _v: CUnsignedInt { get set }
-    var val: CUnsignedInt { get }
+    var val: CInt { get }
     static var mod: CInt { get }
     static var umod: CUnsignedInt { get }
 }
