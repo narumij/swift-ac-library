@@ -1,5 +1,9 @@
 import XCTest
+#if DEBUG
+@testable import AtCoder
+#else
 import AtCoder
+#endif
 import Numerics
 
 fileprivate typealias int = CInt

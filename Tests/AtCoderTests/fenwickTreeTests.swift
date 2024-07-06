@@ -1,5 +1,9 @@
 import XCTest
+#if DEBUG
+@testable import AtCoder
+#else
 import AtCoder
+#endif
 
 fileprivate typealias int = CInt
 fileprivate typealias uint = CUnsignedInt

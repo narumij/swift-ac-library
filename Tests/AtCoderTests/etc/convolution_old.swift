@@ -1,4 +1,5 @@
 import Foundation
+#if DEBUG
 @testable import AtCoder
 
 extension _Internal {
@@ -140,3 +141,4 @@ static func butterfly_inv<mod: static_mod>(_ a: UnsafeMutableBufferPointer<stati
 }
 
 }
+#endif

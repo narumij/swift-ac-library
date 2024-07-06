@@ -1,6 +1,8 @@
 import Foundation
 #if DEBUG
 @testable import AtCoder
+#else
+import AtCoder
 #endif
 
 func factors(_ m: CInt) -> [CInt] {

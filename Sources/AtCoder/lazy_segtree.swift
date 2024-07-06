@@ -97,7 +97,7 @@ extension LazySegTree._UnsafeHandle {
     }
 }
 
-extension LazySegTree {
+public extension LazySegTree {
     func all_prod() -> S { return d[1] }
 }
 

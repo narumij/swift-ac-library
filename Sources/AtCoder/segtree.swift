@@ -71,7 +71,7 @@ extension SegTree._UnsafeHandle {
 
 }
 
-extension SegTree {
+public extension SegTree {
     func all_prod() -> S { return d[1] }
 }
 

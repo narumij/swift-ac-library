@@ -1,6 +1,8 @@
 import XCTest
 #if DEBUG
 @testable import AtCoder
+#else
+import AtCoder
 #endif
 
 func is_primitive_root_naive(_ m: CInt,_ g: CInt) -> Bool {
