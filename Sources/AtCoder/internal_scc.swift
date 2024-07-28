@@ -1,71 +1,77 @@
 import Foundation
 
 extension _Internal {
-    
-    @usableFromInline
-    struct scc_graph<edge: FixedWidthInteger> {
-        public init(_ n: Int) { _n = n }
 
-        public func num_vertices() -> Int { return _n; }
+  @usableFromInline
+  struct scc_graph<edge: FixedWidthInteger> {
+    public init(_ n: Int) { _n = n }
 
-        public mutating func add_edge(_ from: Int,_ to: Int) { edges.append((from, edge(to))); }
+    public func num_vertices() -> Int { return _n }
 
-        // @return pair of (# of scc, scc id)
-        public func scc_ids() -> (first: Int, second: [Int]) {
-            let g = csr<edge>(_n, edges)
-            var now_ord = 0, group_num = 0
-            var visited: [edge] = [], low = [Int](repeating: 0, count:_n), ord = [Int](repeating: -1, count:_n), ids = [Int](repeating: 0, count:_n)
-            visited.reserveCapacity(_n)
-            func dfs(_ v: edge) {
-                low[Int(v)] = now_ord; ord[Int(v)] = now_ord; now_ord += 1
-                visited.append(v)
-                for i in g.start[Int(v)]..<g.start[Int(v) + 1] {
-                    let to = g.elist[i]
-                    if (ord[Int(to)] == -1) {
-                        dfs(to)
-                        low[Int(v)] = min(low[Int(v)], low[Int(to)])
-                    } else {
-                        low[Int(v)] = min(low[Int(v)], ord[Int(to)])
-                    }
-                }
-                if (low[Int(v)] == ord[Int(v)]) {
-                    while (true) {
-                        let u = visited.last!
-                        visited.removeLast()
-                        ord[Int(u)] = _n
-                        ids[Int(u)] = group_num
-                        if (u == v) { break }
-                    }
-                    group_num += 1
-                }
-            }
-            for i in 0..<edge(_n) {
-                if (ord[Int(i)] == -1) { dfs(i) }
-            }
-            for i in 0..<ids.endIndex {
-                ids[i] = group_num - 1 - ids[i]
-            }
-            return (group_num, ids)
+    public mutating func add_edge(_ from: Int, _ to: Int) { edges.append((from, edge(to))) }
+
+    // @return pair of (# of scc, scc id)
+    public func scc_ids() -> (first: Int, second: [Int]) {
+      let g = csr<edge>(_n, edges)
+      var now_ord = 0
+      var group_num = 0
+      var visited: [edge] = []
+      var low = [Int](repeating: 0, count: _n)
+      var ord = [Int](repeating: -1, count: _n)
+      var ids = [Int](repeating: 0, count: _n)
+      visited.reserveCapacity(_n)
+      func dfs(_ v: edge) {
+        low[Int(v)] = now_ord
+        ord[Int(v)] = now_ord
+        now_ord += 1
+        visited.append(v)
+        for i in g.start[Int(v)]..<g.start[Int(v) + 1] {
+          let to = g.elist[i]
+          if ord[Int(to)] == -1 {
+            dfs(to)
+            low[Int(v)] = min(low[Int(v)], low[Int(to)])
+          } else {
+            low[Int(v)] = min(low[Int(v)], ord[Int(to)])
+          }
         }
-
-        public func scc() -> [[Int]] {
-            let ids = scc_ids()
-            let group_num = ids.first
-            var counts = [Int](repeating: 0, count: group_num)
-            for x in ids.second { counts[x] += 1 }
-            var groups = [[Int]](repeating: [], count: ids.first)
-            for i in 0..<group_num {
-                groups[i].reserveCapacity(counts[i])
-            }
-            for i in 0..<_n {
-                groups[ids.second[i]].append(i)
-            }
-            return groups
+        if low[Int(v)] == ord[Int(v)] {
+          while true {
+            let u = visited.last!
+            visited.removeLast()
+            ord[Int(u)] = _n
+            ids[Int(u)] = group_num
+            if u == v { break }
+          }
+          group_num += 1
         }
-
-        var _n: Int;
-        typealias edge = edge
-        var edges: [(Int,edge)] = []
+      }
+      for i in 0..<edge(_n) {
+        if ord[Int(i)] == -1 { dfs(i) }
+      }
+      for i in 0..<ids.endIndex {
+        ids[i] = group_num - 1 - ids[i]
+      }
+      return (group_num, ids)
     }
-    
+
+    public func scc() -> [[Int]] {
+      let ids = scc_ids()
+      let group_num = ids.first
+      var counts = [Int](repeating: 0, count: group_num)
+      for x in ids.second { counts[x] += 1 }
+      var groups = [[Int]](repeating: [], count: ids.first)
+      for i in 0..<group_num {
+        groups[i].reserveCapacity(counts[i])
+      }
+      for i in 0..<_n {
+        groups[ids.second[i]].append(i)
+      }
+      return groups
+    }
+
+    var _n: Int
+    typealias edge = edge
+    var edges: [(Int, edge)] = []
+  }
+
 }
