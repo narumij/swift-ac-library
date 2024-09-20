@@ -1,6 +1,7 @@
 import Foundation
 
 public struct mod_value {
+  @inlinable
   public init<Integer: BinaryInteger>(_ m: Integer) {
     self.umod = CUnsignedInt(m)
     self.isPrime = _Internal.is_prime(CInt(m))
@@ -17,6 +18,7 @@ extension mod_value {
 }
 
 extension mod_value: ExpressibleByIntegerLiteral {
+  @inlinable
   public init(integerLiteral value: CInt) {
     self.umod = CUnsignedInt(bitPattern: value)
     self.isPrime = _Internal.is_prime(value)
@@ -56,10 +58,12 @@ public protocol dynamic_mod {
 }
 
 extension dynamic_mod {
+  @inlinable
   public static var umod: CUnsignedInt { bt.umod() }
   static func mul(_ a: CUnsignedInt, _ b: CUnsignedInt) -> CUnsignedInt {
     bt.mul(a, b)
   }
+  @inlinable
   public static func set_mod(_ m: CInt) {
     assert(1 <= m)
     bt = .init(m)
@@ -67,6 +71,7 @@ extension dynamic_mod {
 }
 
 extension barrett {
+  @inlinable
   public static var `default`: Self { 998_244_353 }
 }
 
@@ -114,99 +119,132 @@ public protocol modint_base: ModIntAdaptions where Words == [UInt] {
 }
 
 extension modint_base {
+  @inlinable
   public static func + <I: FixedWidthInteger>(lhs: I, rhs: Self) -> Self { Self(lhs) + rhs }
+  @inlinable
   public static func + <I: FixedWidthInteger>(lhs: Self, rhs: I) -> Self { lhs + Self(rhs) }
+  @inlinable
   public static func - <I: FixedWidthInteger>(lhs: I, rhs: Self) -> Self { Self(lhs) - rhs }
+  @inlinable
   public static func - <I: FixedWidthInteger>(lhs: Self, rhs: I) -> Self { lhs - Self(rhs) }
+  @inlinable
   public static func * <I: FixedWidthInteger>(lhs: I, rhs: Self) -> Self { Self(lhs) * rhs }
+  @inlinable
   public static func * <I: FixedWidthInteger>(lhs: Self, rhs: I) -> Self { lhs * Self(rhs) }
+  @inlinable
   public static func / <I: FixedWidthInteger>(lhs: I, rhs: Self) -> Self { Self(lhs) / rhs }
+  @inlinable
   public static func / <I: FixedWidthInteger>(lhs: Self, rhs: I) -> Self { lhs / Self(rhs) }
+  @inlinable
   public static func += <I: FixedWidthInteger>(lhs: inout Self, rhs: I) { lhs += Self(rhs) }
+  @inlinable
   public static func -= <I: FixedWidthInteger>(lhs: inout Self, rhs: I) { lhs -= Self(rhs) }
+  @inlinable
   public static func *= <I: FixedWidthInteger>(lhs: inout Self, rhs: I) { lhs *= Self(rhs) }
+  @inlinable
   public static func /= <I: FixedWidthInteger>(lhs: inout Self, rhs: I) { lhs /= Self(rhs) }
 }
 
 extension modint_base {
+  @inlinable
   public static func < (lhs: Self, rhs: Self) -> Bool {
     lhs.val < rhs.val
   }
+  @inlinable
   public func distance(to other: Self) -> CInt {
     CInt(other.val) - CInt(self.val)
   }
+  @inlinable
   public func advanced(by n: CInt) -> Self {
     .init(CInt(self.val) + n)
   }
 }
 
 extension modint_base {
+  @inlinable
   public init<T>(_ source: T) where T: BinaryFloatingPoint {
     self.init(CUnsignedInt(source))
   }
+  @inlinable
   public init<T>(clamping source: T) where T: BinaryInteger {
     self.init(CUnsignedInt(clamping: source))
   }
+  @inlinable
   public init<T>(truncatingIfNeeded source: T) where T: BinaryInteger {
     self.init(CUnsignedInt(truncatingIfNeeded: source))
   }
+  @inlinable
   public init?<T>(exactly source: T) where T: BinaryInteger {
     self.init(source)
   }
+  @inlinable
   public init?<T>(exactly source: T) where T: BinaryFloatingPoint {
     guard let raw = CUnsignedInt(exactly: source) else { return nil }
     self.init(raw)
   }
+  @inlinable
   public var words: [UInt] { [.init(val)] }
+  @inlinable
   public var magnitude: CUnsignedInt {
     .init(bitPattern: val)
   }
+  @inlinable
   public static var isSigned: Bool {
     false
   }
+  @inlinable
   public var bitWidth: Int {
     val.bitWidth
   }
+  @inlinable
   public var trailingZeroBitCount: Int {
     val.trailingZeroBitCount
   }
+  @inlinable
   public static func % (lhs: Self, rhs: Self) -> Self {
     .init(lhs.val % rhs.val)
   }
+  @inlinable
   public static func %= (lhs: inout Self, rhs: Self) {
     lhs = lhs % rhs
   }
+  @inlinable
   public static func &= (lhs: inout Self, rhs: Self) {
     lhs = .init(lhs.val & rhs.val)
   }
+  @inlinable
   public static func |= (lhs: inout Self, rhs: Self) {
     lhs = .init(lhs.val | rhs.val)
   }
+  @inlinable
   public static func ^= (lhs: inout Self, rhs: Self) {
     lhs = .init(lhs.val ^ rhs.val)
   }
+  @inlinable
   public static func <<= <RHS>(lhs: inout Self, rhs: RHS) where RHS: BinaryInteger {
     lhs = .init(lhs.val << rhs)
   }
+  @inlinable
   public static func >>= <RHS>(lhs: inout Self, rhs: RHS) where RHS: BinaryInteger {
     lhs = .init(lhs.val >> rhs)
   }
+  @inlinable
   public static prefix func ~ (x: Self) -> Self {
     .init(~(x.val))
   }
 }
 
-@usableFromInline func __modint_v(_ v: CUnsignedLongLong, umod: CUnsignedLongLong) -> CUnsignedInt {
+@inlinable func __modint_v(_ v: CUnsignedLongLong, umod: CUnsignedLongLong) -> CUnsignedInt {
   let x = v % umod
   return CUnsignedInt(truncatingIfNeeded: x)
 }
 
-@usableFromInline func __modint_v<T: UnsignedInteger>(_ v: T, umod: T) -> CUnsignedInt {
+@inlinable func __modint_v<T: UnsignedInteger>(_ v: T, umod: T) -> CUnsignedInt {
   let x = v % umod
   return CUnsignedInt(truncatingIfNeeded: x)
 }
 
-@usableFromInline func ___modint_v<T: BinaryInteger>(_ v: T, mod: T) -> CUnsignedInt {
+@inlinable func ___modint_v<T: BinaryInteger>(_ v: T, mod: T) -> CUnsignedInt {
   var x = v % mod
   if x < 0 { x += mod }
   let x0 = CInt(truncatingIfNeeded: x)

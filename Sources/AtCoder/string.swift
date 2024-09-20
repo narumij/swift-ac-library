@@ -62,7 +62,7 @@ extension _Internal {
   /// Reference:
   /// G. Nong, S. Zhang, and W. H. Chan,
   /// Two Efficient Algorithms for Linear Time Suffix Array Construction
-  @usableFromInline
+  @inlinable
   static func sa_is<Element>(
     _ s: UnsafePointer<Element>, count n: Int, _ upper: Int, _ THRESHOLD_NAIVE: Int = 10,
     _ THRESHOLD_DOUBLING: Int = 40
@@ -201,12 +201,14 @@ extension _Internal {
   }
 }
 
+@inlinable
 func suffix_array(_ s: [Int], _ upper: Int) -> [Int] {
   assert(0 <= upper)
   assert(s.allSatisfy { d in (0...upper).contains(d) })
   return _Internal.sa_is(s, count: s.count, upper)
 }
 
+@inlinable
 func suffix_array<V>(_ s: V) -> [Int]
 where V: Collection, V.Element: Comparable, V.Index == Int {
   let n = s.count
@@ -243,7 +245,7 @@ public func suffix_array(_ s: String) -> [Int] {
 /// T. Kasai, G. Lee, H. Arimura, S. Arikawa, and K. Park,
 /// Linear-Time Longest-Common-Prefix Computation in Suffix Arrays and Its
 /// Applications
-@usableFromInline
+@inlinable
 func lcp_array<Element>(pointer s: UnsafePointer<Element>, count n: Int, _ sa: [Int]) -> [Int]
 where Element: Equatable {
   assert(n >= 1)
@@ -285,7 +287,7 @@ public func lcp_array(_ s: String, _ sa: [Int]) -> [Int] {
 /// D. Gusfield,
 /// Algorithms on Strings, Trees, and Sequences: Computer Science and
 /// Computational Biology
-@usableFromInline
+@inlinable
 func z_algorithm<Element>(pointer s: UnsafePointer<Element>, count n: Int) -> [Int]
 where Element: Comparable {
   if n == 0 { return [] }

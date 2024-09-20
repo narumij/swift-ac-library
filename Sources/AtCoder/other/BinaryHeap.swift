@@ -21,12 +21,15 @@ protocol BinaryHeap: Sequence {
 }
 
 extension BinaryHeap {
+  @inlinable
   mutating func make_heap(_ end: Int, _ comp: @escaping (Element, Element) -> Bool) {
     __update_binary_heap(comp) { $0.make_heap(end) }
   }
+  @inlinable
   mutating func push_heap(_ end: Int, _ comp: @escaping (Element, Element) -> Bool) {
     __update_binary_heap(comp) { $0.push_heap(end) }
   }
+  @inlinable
   mutating func pop_heap(_ comp: @escaping (Element, Element) -> Bool) {
     __update_binary_heap(comp) { $0.pop_heap($0.endIndex) }
   }
@@ -69,17 +72,17 @@ extension BinaryHeapUnsafeHandle {
   @usableFromInline
   typealias Index = Int
 
-  @inlinable @inline(__always)
+  @inlinable
   func push_heap(_ limit: Index) {
     heapifyUp(limit, limit - 1, comp)
   }
-  @inlinable @inline(__always)
+  @inlinable
   func pop_heap(_ limit: Index) {
     guard limit > 0, startIndex != limit - 1 else { return }
     swap(&buffer[startIndex], &buffer[limit - 1])
     heapifyDown(limit - 1, startIndex, comp)
   }
-  @inlinable @inline(__always)
+  @inlinable
   func heapifyUp(_ limit: Index, _ i: Index, _ comp: (Element, Element) -> Bool) {
     guard i >= startIndex else { return }
     let element = buffer[i]
@@ -91,7 +94,7 @@ extension BinaryHeapUnsafeHandle {
     }
     buffer[current] = element
   }
-  @inlinable @inline(__always)
+  @inlinable
   func heapifyDown(_ limit: Index, _ i: Index, _ comp: (Element, Element) -> Bool) {
     let element = buffer[i]
     var (current, selected) = (i, i)
@@ -113,12 +116,14 @@ extension BinaryHeapUnsafeHandle {
     }
     buffer[current] = element
   }
-  private func heapify(_ limit: Index, _ i: Index, _ comp: (Element, Element) -> Bool) {
+  @inlinable
+  func heapify(_ limit: Index, _ i: Index, _ comp: (Element, Element) -> Bool) {
     guard let index = heapifyIndex(limit, i, comp) else { return }
     swap(&buffer[i], &buffer[index])
     heapify(limit, index, comp)
   }
-  private func heapifyIndex(_ limit: Index, _ current: Index, _ comp: (Element, Element) -> Bool)
+  @inlinable
+  func heapifyIndex(_ limit: Index, _ current: Index, _ comp: (Element, Element) -> Bool)
     -> Index?
   {
     var next = current
@@ -134,9 +139,11 @@ extension BinaryHeapUnsafeHandle {
     }
     return next == current ? nil : next
   }
+  @inlinable
   func isHeap(_ limit: Index) -> Bool {
     (startIndex..<limit).allSatisfy { heapifyIndex(limit, $0, comp) == nil }
   }
+  @inlinable
   func make_heap(_ limit: Index) {
     for i in stride(from: limit / 2, through: startIndex, by: -1) {
       heapify(limit, i, comp)

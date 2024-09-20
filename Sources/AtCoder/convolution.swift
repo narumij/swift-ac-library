@@ -2,6 +2,7 @@ import Foundation
 
 extension Array {
 
+  @inlinable
   mutating func resize(_ n: Int, element: Element) {
 
     if count > n {
@@ -38,13 +39,15 @@ extension Array {
 }
 
 extension Array where Element: AdditiveArithmetic {
+  @inlinable
   public mutating func resize(_ n: Int) {
     resize(n, element: .zero)
   }
 }
 
 extension static_modint {
-  fileprivate init(unsigned v: CUnsignedLongLong, umod: CUnsignedLongLong) {
+  @inlinable
+  init(unsigned v: CUnsignedLongLong, umod: CUnsignedLongLong) {
     _v = __modint_v(v, umod: umod)
   }
 }
@@ -63,6 +66,7 @@ extension _Internal {
     public var rate3: [mint]
     public var irate3: [mint]
 
+    @inlinable
     public init() {
 
       let g: CInt = _Internal.primitive_root(mint.mod)
@@ -119,15 +123,33 @@ extension _Internal {
       }
     }
 
+    @usableFromInline
     struct __Unsafe {
-      let root: UnsafePointer<mint>
-      let iroot: UnsafePointer<mint>
-      let rate2: UnsafePointer<mint>
-      let irate2: UnsafePointer<mint>
-      let rate3: UnsafePointer<mint>
-      let irate3: UnsafePointer<mint>
+      @inlinable
+      init(
+        root: UnsafePointer<_Internal.fft_info<mod>.mint>,
+        iroot: UnsafePointer<_Internal.fft_info<mod>.mint>,
+        rate2: UnsafePointer<_Internal.fft_info<mod>.mint>,
+        irate2: UnsafePointer<_Internal.fft_info<mod>.mint>,
+        rate3: UnsafePointer<_Internal.fft_info<mod>.mint>,
+        irate3: UnsafePointer<_Internal.fft_info<mod>.mint>
+      ) {
+        self.root = root
+        self.iroot = iroot
+        self.rate2 = rate2
+        self.irate2 = irate2
+        self.rate3 = rate3
+        self.irate3 = irate3
+      }
+      @usableFromInline let root: UnsafePointer<mint>
+      @usableFromInline let iroot: UnsafePointer<mint>
+      @usableFromInline let rate2: UnsafePointer<mint>
+      @usableFromInline let irate2: UnsafePointer<mint>
+      @usableFromInline let rate3: UnsafePointer<mint>
+      @usableFromInline let irate3: UnsafePointer<mint>
     }
 
+    @inlinable
     func __unsafeHandle(_ f: (__Unsafe) -> Void) {
       root.withUnsafeBufferPointer { root in
         iroot.withUnsafeBufferPointer { iroot in
@@ -152,6 +174,7 @@ extension _Internal {
     }
   }
 
+  @inlinable
   static func butterfly<mod: static_mod>(
     _ a: UnsafeMutablePointer<static_modint<mod>>, count n: Int
   ) {
@@ -220,6 +243,7 @@ extension _Internal {
     }
   }
 
+  @inlinable
   static func butterfly_inv<mod: static_mod>(
     _ a: UnsafeMutablePointer<static_modint<mod>>, count n: Int
   ) {
@@ -298,6 +322,7 @@ extension _Internal {
     }
   }
 
+  @inlinable
   static func convolution_naive<mod: static_mod, A, B>(_ a: A, _ b: B) -> [static_modint<mod>]
   where
     A: Collection, A.Element == static_modint<mod>,
@@ -326,6 +351,7 @@ extension _Internal {
     return ans
   }
 
+  @inlinable
   static func convolution_fft<mod: static_mod, A, B>(_ a: A, _ b: B) -> [static_modint<mod>]
   where
     A: Collection, A.Element == static_modint<mod>,
@@ -357,6 +383,7 @@ extension _Internal {
   }
 }
 
+@inlinable
 public func convolution<mod: static_mod, A, B>(_ a: A, _ b: B) -> [static_modint<mod>]
 where
   A: Collection, A.Element == static_modint<mod>,
@@ -372,6 +399,7 @@ where
   return _Internal.convolution_fft(a, b)
 }
 
+@inlinable
 public func convolution<mod: static_mod, T: FixedWidthInteger>(_ t: mod.Type, _ a: [T], _ b: [T])
   -> [T]
 {
@@ -401,6 +429,7 @@ public func convolution<mod: static_mod, T: FixedWidthInteger>(_ t: mod.Type, _ 
   return c
 }
 
+@inlinable
 public func convolution<T: FixedWidthInteger>(_ a: [T], _ b: [T]) -> [T] {
   convolution(mod_998_244_353.self, a, b)
 }

@@ -66,10 +66,10 @@ private enum param: LazySegtreeParameter {
   typealias F = AtCoderTests.T
 
   static let op: Op = op_ss
-  static let e: E = e_s()
+  static let e: S = e_s()
   static let mapping: Mapping = op_ts
   static let composition: Composition = op_tt
-  static let id: Id = e_t()
+  static let id: F = e_t()
 }
 
 private typealias seg = LazySegTree<param>

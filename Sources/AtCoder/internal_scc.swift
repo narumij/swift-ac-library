@@ -4,13 +4,18 @@ extension _Internal {
 
   @usableFromInline
   struct scc_graph<edge: FixedWidthInteger> {
+
+    @inlinable
     public init(_ n: Int) { _n = n }
 
+    @inlinable
     public func num_vertices() -> Int { return _n }
 
+    @inlinable
     public mutating func add_edge(_ from: Int, _ to: Int) { edges.append((from, edge(to))) }
 
     // @return pair of (# of scc, scc id)
+    @inlinable
     public func scc_ids() -> (first: Int, second: [Int]) {
       let g = csr<edge>(_n, edges)
       var now_ord = 0
@@ -54,6 +59,7 @@ extension _Internal {
       return (group_num, ids)
     }
 
+    @inlinable
     public func scc() -> [[Int]] {
       let ids = scc_ids()
       let group_num = ids.first
@@ -69,8 +75,10 @@ extension _Internal {
       return groups
     }
 
+    @usableFromInline
     var _n: Int
-    typealias edge = edge
+    public typealias edge = edge
+    @usableFromInline
     var edges: [(Int, edge)] = []
   }
 

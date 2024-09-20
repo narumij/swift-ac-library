@@ -18,7 +18,7 @@ private let e: String = "$"
 private enum Param: SegtreeParameter {
   typealias S = String
   static let op: Op = AtCoderTests.op
-  static let e: E = AtCoderTests.e
+  static let e: S = AtCoderTests.e
 }
 
 private typealias segtree = SegTree<Param>

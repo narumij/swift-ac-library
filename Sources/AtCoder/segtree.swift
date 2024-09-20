@@ -3,40 +3,49 @@ import Foundation
 public protocol SegtreeParameter {
   associatedtype S
   static var op: Op { get }
-  static var e: E { get }
+  static var e: S { get }
 }
 
 extension SegtreeParameter {
   public typealias Op = (S, S) -> S
-  public typealias E = S
 }
 
 public struct SegTree<P: SegtreeParameter> {
   public typealias S = P.S
 
-  public init() { self.init(0) }
-  public init(_ n: Int) { self.init([S](repeating: P.e, count: n)) }
-  public init(_ v: [S]) {
+  @inlinable public init() { self.init(0) }
+  @inlinable public init(_ n: Int) { self.init([S](repeating: P.e, count: n)) }
+  @inlinable public init(_ v: [S]) {
     _n = v.count
     size = _Internal.bit_ceil(CUnsignedInt(_n))
     log = _Internal.countr_zero(CUnsignedInt(size))
-    d = .init(repeating: P.e, count: 2 * size)
-    d.withUnsafeMutableBufferPointer { d in
-      // for (int i = 0; i < _n; i++) d[size + i] = v[i];
-      for i in 0..<_n { d.baseAddress?[size + i] = v[i] }
+    let s = size
+    let n = _n
+    let l = log
+    d = .init(unsafeUninitializedCapacity: 2 * s) { buffer, initializedCount in
+      for i in 0..<s {
+        buffer.initializeElement(at: i, to: P.e)
+        if i < (s - n) {
+          buffer.initializeElement(at: i + s + n, to: P.e)
+        }
+      }
+      for i in s..<s + n {
+        buffer.initializeElement(at: i, to: v[i - s])
+      }
+      let handler = _UnsafeHandle(_n: n, size: s, log: l, d: buffer.baseAddress!)
+      for i in stride(from: s - 1, through: 1, by: -1) {
+        handler.update(i)
+      }
+      initializedCount = 2 * s
     }
-    // for (int i = size - 1; i >= 1; i--) {
-    for i in stride(from: size - 1, through: 1, by: -1) { _update { $0.update(i) } }
   }
-
   @usableFromInline let _n, size, log: Int
-  @usableFromInline var d: ContiguousArray<S>
+  @usableFromInline var d: [S]
 }
 
 extension SegTree._UnsafeHandle {
 
-  @inlinable @inline(__always)
-  func set(_ p: Int, _ x: S) {
+  @inlinable func set(_ p: Int, _ x: S) {
     var p = p
     assert(0 <= p && p < _n)
     p += size
@@ -45,14 +54,12 @@ extension SegTree._UnsafeHandle {
     for i in stride(from: 1, through: log, by: 1) { update(p >> i) }
   }
 
-  @inlinable @inline(__always)
-  func get(_ p: Int) -> S {
+  @inlinable func get(_ p: Int) -> S {
     assert(0 <= p && p < _n)
     return d[p + size]
   }
 
-  @inlinable @inline(__always)
-  func prod(_ l: Int, _ r: Int) -> S {
+  @inlinable func prod(_ l: Int, _ r: Int) -> S {
     var l = l
     var r = r
     assert(0 <= l && l <= r && r <= _n)
@@ -76,17 +83,16 @@ extension SegTree._UnsafeHandle {
 
     return op(sml, smr)
   }
-
 }
 
 extension SegTree {
+  @inlinable @inline(__always)
   public func all_prod() -> S { return d[1] }
 }
 
 extension SegTree._UnsafeHandle {
 
-  @inlinable @inline(__always)
-  func max_right(_ l: Int, _ f: (S) -> Bool) -> Int {
+  @inlinable func max_right(_ l: Int, _ f: (S) -> Bool) -> Int {
     var l = l
     assert(0 <= l && l <= _n)
     assert(f(e()))
@@ -111,8 +117,7 @@ extension SegTree._UnsafeHandle {
     return _n
   }
 
-  @inlinable @inline(__always)
-  func min_left(_ r: Int, _ f: (S) -> Bool) -> Int {
+  @inlinable func min_left(_ r: Int, _ f: (S) -> Bool) -> Int {
     var r = r
     assert(0 <= r && r <= _n)
     assert(f(e()))
@@ -137,8 +142,9 @@ extension SegTree._UnsafeHandle {
     return 0
   }
 
-  @inlinable @inline(__always)
-  public func update(_ k: Int) { d[k] = op(d[2 * k], d[2 * k + 1]) }
+  @inlinable public func update(_ k: Int) {
+    d[k] = op(d[2 * k], d[2 * k + 1])
+  }
 }
 
 extension SegTree {
@@ -163,8 +169,8 @@ extension SegTree {
     @usableFromInline let d: UnsafeMutablePointer<S>
 
     @usableFromInline typealias S = P.S
-    @usableFromInline func op(_ l: S, _ r: S) -> S { P.op(l, r) }
-    @usableFromInline func e() -> S { P.e }
+    @inlinable @inline(__always) func op(_ l: S, _ r: S) -> S { P.op(l, r) }
+    @inlinable @inline(__always) func e() -> S { P.e }
   }
 
   @inlinable @inline(__always)
@@ -176,13 +182,13 @@ extension SegTree {
 }
 
 extension SegTree {
-  public mutating func set(_ p: Int, _ x: S) { _update { $0.set(p, x) } }
-  public mutating func get(_ p: Int) -> S { _update { $0.get(p) } }
-  public mutating func prod(_ l: Int, _ r: Int) -> S { _update { $0.prod(l, r) } }
-  public mutating func max_right(_ l: Int, _ g: (S) -> Bool) -> Int {
+  @inlinable public mutating func set(_ p: Int, _ x: S) { _update { $0.set(p, x) } }
+  @inlinable public mutating func get(_ p: Int) -> S { _update { $0.get(p) } }
+  @inlinable public mutating func prod(_ l: Int, _ r: Int) -> S { _update { $0.prod(l, r) } }
+  @inlinable public mutating func max_right(_ l: Int, _ g: (S) -> Bool) -> Int {
     _update { $0.max_right(l, g) }
   }
-  public mutating func min_left(_ r: Int, _ g: (S) -> Bool) -> Int {
+  @inlinable public mutating func min_left(_ r: Int, _ g: (S) -> Bool) -> Int {
     _update { $0.min_left(r, g) }
   }
 }

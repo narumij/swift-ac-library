@@ -10,10 +10,10 @@ private enum param: LazySegtreeParameter {
   typealias S = Int
   typealias F = Int
   static let op: Op = max
-  static let e: E = -1_000_000_000
+  static let e: S = -1_000_000_000
   static let mapping: Mapping = (+)
   static let composition: Composition = (+)
-  static let id: Id = 0
+  static let id: F = 0
 }
 private typealias starry_seg = LazySegTree<param>
 

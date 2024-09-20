@@ -6,26 +6,27 @@ public protocol LazySegtreeParameter {
   associatedtype S
   associatedtype F
   static var op: Op { get }
-  static var e: E { get }
+  static var e: S { get }
   static var mapping: Mapping { get }
   static var composition: Composition { get }
-  static var id: Id { get }
+  static var id: F { get }
 }
 
 extension LazySegtreeParameter {
   public typealias Op = (S, S) -> S
-  public typealias E = S
   public typealias Mapping = (F, S) -> S
   public typealias Composition = (F, F) -> F
-  public typealias Id = F
 }
 
 public struct LazySegTree<P: LazySegtreeParameter> {
   public typealias S = P.S
   public typealias F = P.F
 
+  @inlinable
   public init() { self.init(0) }
+  @inlinable
   public init(_ n: Int) { self.init([S](repeating: P.e, count: n)) }
+  @inlinable
   public init(_ v: [S]) {
     _n = v.count
     size = _Internal.bit_ceil(CUnsignedInt(_n))
@@ -47,7 +48,7 @@ public struct LazySegTree<P: LazySegtreeParameter> {
 
 extension LazySegTree._UnsafeHandle {
 
-  @inlinable @inline(__always)
+  @inlinable
   func set(_ p: Int, _ x: S) {
     var p = p
     assert(0 <= p && p < _n)
@@ -59,7 +60,7 @@ extension LazySegTree._UnsafeHandle {
     for i in stride(from: 1, through: log, by: 1) { update(p >> i) }
   }
 
-  @inlinable @inline(__always)
+  @inlinable
   func get(_ p: Int) -> S {
     var p = p
     assert(0 <= p && p < _n)
@@ -69,7 +70,7 @@ extension LazySegTree._UnsafeHandle {
     return d[p]
   }
 
-  @inlinable @inline(__always)
+  @inlinable
   func prod(_ l: Int, _ r: Int) -> S {
     var l = l
     var r = r
@@ -105,12 +106,13 @@ extension LazySegTree._UnsafeHandle {
 }
 
 extension LazySegTree {
+  @inlinable
   public func all_prod() -> S { return d[1] }
 }
 
 extension LazySegTree._UnsafeHandle {
 
-  @inlinable @inline(__always)
+  @inlinable
   func apply(_ p: Int, _ f: F) {
     var p = p
     assert(0 <= p && p < _n)
@@ -122,7 +124,7 @@ extension LazySegTree._UnsafeHandle {
     for i in stride(from: 1, through: log, by: 1) { update(p >> i) }
   }
 
-  @inlinable @inline(__always)
+  @inlinable
   func apply(_ l: Int, _ r: Int, _ f: F) {
     var l = l
     var r = r
@@ -164,7 +166,7 @@ extension LazySegTree._UnsafeHandle {
     }
   }
 
-  @inlinable @inline(__always)
+  @inlinable
   func max_right(_ l: Int, _ g: (S) -> Bool) -> Int {
     var l = l
     assert(0 <= l && l <= _n)
@@ -193,7 +195,7 @@ extension LazySegTree._UnsafeHandle {
     return _n
   }
 
-  @inlinable @inline(__always)
+  @inlinable
   func min_left(_ r: Int, _ g: (S) -> Bool) -> Int {
     var r = r
     assert(0 <= r && r <= _n)
@@ -222,16 +224,16 @@ extension LazySegTree._UnsafeHandle {
     return 0
   }
 
-  @inlinable @inline(__always)
+  @inlinable
   public func update(_ k: Int) { d[k] = op(d[2 * k], d[2 * k + 1]) }
 
-  @inlinable @inline(__always)
+  @inlinable
   func all_apply(_ k: Int, _ f: F) {
     d[k] = mapping(f, d[k])
     if k < size { lz[k] = composition(f, lz[k]) }
   }
 
-  @inlinable @inline(__always)
+  @inlinable
   func push(_ k: Int) {
     all_apply(2 * k, lz[k])
     all_apply(2 * k + 1, lz[k])
@@ -286,14 +288,21 @@ extension LazySegTree {
 }
 
 extension LazySegTree {
+  @inlinable
   public mutating func set(_ p: Int, _ x: S) { _update { $0.set(p, x) } }
+  @inlinable
   public mutating func get(_ p: Int) -> S { _update { $0.get(p) } }
+  @inlinable
   public mutating func prod(_ l: Int, _ r: Int) -> S { _update { $0.prod(l, r) } }
+  @inlinable
   public mutating func apply(_ p: Int, _ f: F) { _update { $0.apply(p, f) } }
+  @inlinable
   public mutating func apply(_ l: Int, _ r: Int, _ f: F) { _update { $0.apply(l, r, f) } }
+  @inlinable
   public mutating func max_right(_ l: Int, _ g: (S) -> Bool) -> Int {
     _update { $0.max_right(l, g) }
   }
+  @inlinable
   public mutating func min_left(_ r: Int, _ g: (S) -> Bool) -> Int {
     _update { $0.min_left(r, g) }
   }

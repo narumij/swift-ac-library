@@ -1,5 +1,6 @@
 import Foundation
 
+@inlinable
 public func pow_mod(_ x: CLongLong, _ n: CLongLong, _ m: CInt) -> CLongLong {
   var n = n
   assert(0 <= n && 1 <= m)
@@ -15,6 +16,7 @@ public func pow_mod(_ x: CLongLong, _ n: CLongLong, _ m: CInt) -> CLongLong {
   return CLongLong(r)
 }
 
+@inlinable
 public func inv_mod(_ x: CLongLong, _ m: CLongLong) -> CLongLong {
   assert(1 <= m)
   let z = _Internal.inv_gcd(x, m)
@@ -23,6 +25,7 @@ public func inv_mod(_ x: CLongLong, _ m: CLongLong) -> CLongLong {
 }
 
 /// (rem, mod)
+@inlinable
 public func crt(
   _ r: [CLongLong],
   _ m: [CLongLong]
@@ -76,6 +79,7 @@ public func crt(
   return (r0, m0)
 }
 
+@inlinable
 public func floor_sum(_ n: CLongLong, _ m: CLongLong, _ a: CLongLong, _ b: CLongLong) -> CLongLong {
   typealias ULL = CUnsignedLongLong
   typealias LL = CLongLong
