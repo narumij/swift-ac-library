@@ -2,7 +2,9 @@ import Collections
 import Foundation
 
 public struct MCFGraph<Value: FixedWidthInteger & SignedInteger> {
+  @usableFromInline
   var _n: Int
+  @usableFromInline
   var _edges: [Edge] = []
 }
 
@@ -11,12 +13,15 @@ extension MCFGraph {
   public typealias Cap = Value
   public typealias Cost = Value
 
+  @inlinable
   public init() { _n = 0 }
+  @inlinable
   public init(count n: Int) { _n = n }
 }
 
 extension MCFGraph {
 
+  @inlinable
   @discardableResult
   public mutating func add_edge(_ from: Int, _ to: Int, _ cap: Cap, _ cost: Cost) -> Int {
     assert(0 <= from && from < _n)
@@ -45,23 +50,29 @@ extension MCFGraph {
     public let cost: Cost
   }
 
+  @inlinable
   public func get_edge(_ i: Int) -> Edge {
     let m = _edges.count
     assert(0 <= i && i < m)
     return _edges[i]
   }
 
+  @inlinable
   public func edges() -> [Edge] { return _edges }
 
+  @inlinable
   public mutating func flow(_ s: Int, _ t: Int) -> (Cap, Cost) {
     return flow(s, t, Cap.max)
   }
+  @inlinable
   public mutating func flow(_ s: Int, _ t: Int, _ flow_limit: Cap) -> (Cap, Cost) {
     return slope(s, t, flow_limit).last!
   }
+  @inlinable
   public mutating func slope(_ s: Int, _ t: Int) -> [(Cap, Cost)] {
     return slope(s, t, Cap.max)
   }
+  @inlinable
   public mutating func slope(_ s: Int, _ t: Int, _ flow_limit: Cap) -> [(Cap, Cost)] {
     assert(0 <= s && s < _n)
     assert(0 <= t && t < _n)
@@ -109,21 +120,38 @@ extension MCFGraph {
 extension MCFGraph {
 
   /// inside edge
+  @usableFromInline
   struct _Edge {
-    let to: Int
-    var rev: Int
-    var cap: Cap
-    let cost: Cost
+    @inlinable
+    init(to: Int, rev: Int, cap: MCFGraph<Value>.Cap, cost: MCFGraph<Value>.Cost) {
+      self.to = to
+      self.rev = rev
+      self.cap = cap
+      self.cost = cost
+    }
+    @usableFromInline let to: Int
+    @usableFromInline var rev: Int
+    @usableFromInline var cap: Cap
+    @usableFromInline let cost: Cost
   }
 
+  @usableFromInline
   struct Q: Comparable {
-    let key: Cost
-    let to: Int
+    @inlinable
+    init(key: MCFGraph<Value>.Cost, to: Int) {
+      self.key = key
+      self.to = to
+    }
+
+    @usableFromInline let key: Cost
+    @usableFromInline let to: Int
+    @inlinable
     static func < (lhs: Q, rhs: Q) -> Bool {
       (lhs.key, lhs.to) < (rhs.key, rhs.to)
     }
   }
 
+  @inlinable
   func slope(
     _ g: inout _Internal.csr<_Edge>,
     _ s: Int,
@@ -256,8 +284,10 @@ extension MCFGraph {
 
   #if false
     // swift-collections 1.1.0以降はこちら。
+    @usableFromInline
     typealias Queue = Heap<Q>
   #else
+    @usableFromInline
     typealias Queue = [Q]
   #endif
 }
@@ -265,22 +295,27 @@ extension MCFGraph {
 #if false
   // swift-collections 1.1.0以降はこちら。
   extension Heap {
+    @inlinable
     var startIndex: Int { 0 }
+    @inlinable
     mutating func push_heap(_ start: Int, _ end: Int) { /* NOP */  }
   }
 #else
   extension Array where Element: Comparable {
 
+    @inlinable
     mutating func push_heap(_ start: Int, _ end: Int) {
       push_heap(end, <)
     }
 
+    @inlinable
     @discardableResult
     mutating func popMin() -> Element? {
       pop_heap(<)
       return removeLast()
     }
 
+    @inlinable
     mutating public func insert(_ newElement: Element) {
       append(newElement)
     }

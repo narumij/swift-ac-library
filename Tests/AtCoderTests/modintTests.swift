@@ -7,10 +7,10 @@ import XCTest
   import AtCoder
 #endif
 
-private typealias int = CInt
-private typealias uint = CUnsignedInt
-private typealias ll = CLongLong
-private typealias ull = CUnsignedLongLong
+//private typealias int = CInt
+//private typealias uint = CUnsignedInt
+//private typealias ll = CLongLong
+//private typealias ull = CUnsignedLongLong
 
 extension dynamic_mod {
   // 型の生存期間が各テストメソッドのスコープを超えるので、都度リセットする必要がある。
@@ -21,11 +21,17 @@ extension dynamic_mod {
 
 final class modintTests: XCTestCase {
 
+  @usableFromInline
   enum mod_1: static_mod_value { static let mod: mod_value = 1 }
+  @usableFromInline
   enum mod_11: static_mod_value { static let mod: mod_value = 11 }
+  @usableFromInline
   enum mod_12: static_mod_value { static let mod: mod_value = 12 }
+  @usableFromInline
   enum mod_1_000_000_007: static_mod_value { static let mod: mod_value = .mod_1_000_000_007 }
+  @usableFromInline
   enum mod_1_000_000_008: static_mod_value { static let mod: mod_value = 1_000_000_008 }
+  @usableFromInline
   enum INT32_MAX: static_mod_value { static let mod: mod_value = .mod_INT32_MAX }
 
   func testDynamicBorder() throws {
@@ -551,6 +557,22 @@ final class modintTests: XCTestCase {
     XCTAssertEqual(ne1.1, modint(CUnsignedLongLong(bitPattern: CLongLong(-1))).val)
     let ne2: (ull, int) = (0, 932_051_910)
     XCTAssertEqual(ne2.1, (modint(CUnsignedLongLong(bitPattern: CLongLong(-1))) + modint(1)).val)
+  }
+
+  func testStress() throws {
+
+    throw XCTSkip()
+
+    typealias mint = modint998244353
+    var (a, b, c, d): (mint, mint, mint, mint) = (100, 100, 100, 100)
+    for _ in 0..<10 {
+      for _ in 0..<1_000_000 {
+        a += 998_244_352
+        b -= 998_244_352
+        c *= 998_244_352
+        d /= 998_244_352
+      }
+    }
   }
 
 }

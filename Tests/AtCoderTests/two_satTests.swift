@@ -6,8 +6,8 @@ import XCTest
   import AtCoder
 #endif
 
-private typealias ll = CLongLong
-private typealias ull = CUnsignedLongLong
+//private typealias ll = CLongLong
+//private typealias ull = CUnsignedLongLong
 
 final class two_satTests: XCTestCase {
 

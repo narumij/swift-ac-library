@@ -116,10 +116,12 @@ extension static_modint {
 }
 
 public struct dynamic_modint<bt: dynamic_mod>: dynamic_modint_base {
+  @inlinable
   public init(raw v: CUnsignedInt) {
     _v = v
   }
   public var _v: CUnsignedInt
+  @inlinable
   public static func set_mod(_ m: CInt) {
     bt.set_mod(m)
   }
@@ -130,55 +132,72 @@ extension dynamic_modint {
   @inlinable @inline(__always)
   public static var mod: CInt { return CInt(bitPattern: bt.umod) }
 
+  @inlinable
   public init() { self.init(raw: 0) }
+  @inlinable
   public init(_ v: Bool) { _v = ___modint_v(v ? 1 : 0, mod: __modint_mod(bt.umod)) }
+  @inlinable
   public init(_ v: CInt) { _v = ___modint_v(v, mod: __modint_mod(bt.umod)) }
+  @inlinable
   public init<T: BinaryInteger>(_ v: T) { _v = ___modint_v(v, mod: __modint_mod(bt.umod)) }
 
+  @inlinable
   public var val: CInt { return .init(bitPattern: _v) }
 
+  @inlinable
   public static func += (lhs: inout Self, rhs: Self) {
     lhs._v &+= rhs._v
     if lhs._v >= umod { lhs._v &-= umod }
   }
+  @inlinable
   public static func -= (lhs: inout Self, rhs: Self) {
     lhs._v &+= umod &- rhs._v
     if lhs._v >= umod { lhs._v &-= umod }
   }
+  @inlinable
   public static func *= (lhs: inout Self, rhs: Self) {
     lhs._v = bt.mul(lhs._v, rhs._v)
   }
+  @inlinable
   public static func /= (lhs: inout Self, rhs: Self) {
     lhs *= rhs.inv
   }
+  @inlinable
   public static prefix func + (_ m: Self) -> Self {
     return m
   }
+  @inlinable
   public static prefix func - (_ m: Self) -> Self {
     return .init(raw: 0) - m
   }
+  @inlinable
   public static func + (lhs: Self, rhs: Self) -> Self {
     var _v = lhs._v &+ rhs._v
     if _v >= umod { _v &-= umod }
     return .init(raw: _v)
   }
+  @inlinable
   public static func - (lhs: Self, rhs: Self) -> Self {
     var _v = lhs._v &+ umod &- rhs._v
     if _v >= umod { _v &-= umod }
     return .init(raw: _v)
   }
+  @inlinable
   public static func * (lhs: Self, rhs: Self) -> Self {
     let _v = bt.mul(lhs._v, rhs._v)
     return .init(raw: _v)
   }
+  @inlinable
   public static func / (lhs: Self, rhs: Self) -> Self {
     lhs * rhs.inv
   }
 
+  @inlinable
   public func pow<LL: SignedInteger>(_ n: LL) -> Self {
     pow(CLongLong(n))
   }
 
+  @inlinable
   public func pow(_ n: CLongLong) -> Self {
     assert(0 <= n)
     var n = n
@@ -192,6 +211,7 @@ extension dynamic_modint {
     return r
   }
 
+  @inlinable
   public var inv: Self {
     let eg = _Internal.inv_gcd(LL(_v), LL(Self.mod))
     assert(eg.first == 1)

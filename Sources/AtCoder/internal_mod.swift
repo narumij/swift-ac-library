@@ -48,6 +48,7 @@ extension static_mod_value {
 // MARK: -
 
 extension barrett: ExpressibleByIntegerLiteral {
+  @inlinable
   public init(integerLiteral value: CInt) {
     self.init(value)
   }
@@ -60,6 +61,7 @@ public protocol dynamic_mod {
 extension dynamic_mod {
   @inlinable
   public static var umod: CUnsignedInt { bt.umod() }
+  @inlinable
   static func mul(_ a: CUnsignedInt, _ b: CUnsignedInt) -> CUnsignedInt {
     bt.mul(a, b)
   }
@@ -76,6 +78,7 @@ extension barrett {
 }
 
 extension barrett: Equatable {
+  @inlinable
   public static func == (lhs: barrett, rhs: barrett) -> Bool {
     (lhs.im, lhs.m) == (rhs.im, rhs.m)
   }

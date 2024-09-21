@@ -6,9 +6,9 @@ import XCTest
   import AtCoder
 #endif
 
-private typealias uint = CUnsignedInt
-private typealias ll = CLongLong
-private typealias ull = CUnsignedLongLong
+//private typealias uint = CUnsignedInt
+//private typealias ll = CLongLong
+//private typealias ull = CUnsignedLongLong
 
 extension Array where Element: AdditiveArithmetic {
   fileprivate mutating func resize(_ n: Int) {

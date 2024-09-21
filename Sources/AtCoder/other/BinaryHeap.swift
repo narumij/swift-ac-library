@@ -12,6 +12,7 @@ extension Array: BinaryHeap {
   }
 }
 
+@usableFromInline
 protocol BinaryHeap: Sequence {
   @inlinable @inline(__always)
   mutating func __update_binary_heap<R>(

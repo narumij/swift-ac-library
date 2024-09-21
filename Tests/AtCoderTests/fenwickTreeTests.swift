@@ -6,10 +6,10 @@ import XCTest
   import AtCoder
 #endif
 
-private typealias int = CInt
-private typealias uint = CUnsignedInt
-private typealias ll = CLongLong
-private typealias ull = CUnsignedLongLong
+//private typealias int = CInt
+//private typealias uint = CUnsignedInt
+//private typealias ll = CLongLong
+//private typealias ull = CUnsignedLongLong
 
 final class fenwickTreeTests: XCTestCase {
 

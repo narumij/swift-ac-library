@@ -2,22 +2,27 @@ import Collections
 import Foundation
 
 public struct MFGraph<Cap: FixedWidthInteger> {
+  @usableFromInline
   let _n: Int
+  @usableFromInline
   var pos: [(first: Int, second: Int)] = []
+  @usableFromInline
   var g: [[_Edge]]
 }
 
 extension MFGraph {
 
+  @inlinable
   public init() {
     _n = 0
     g = []
   }
+  @inlinable
   public init(count n: Int) {
     _n = n
     g = [[_Edge]].init(repeating: [], count: n)
   }
-
+  @inlinable
   @discardableResult
   public mutating func add_edge(_ from: Int, _ to: Int, _ cap: Cap) -> Int {
     assert(0 <= from && from < _n)
@@ -34,6 +39,7 @@ extension MFGraph {
   }
 
   public struct Edge {
+    @inlinable
     public init(from: Int, to: Int, cap: Cap, flow: Cap) {
       self.from = from
       self.to = to
@@ -44,6 +50,7 @@ extension MFGraph {
     public let cap, flow: Cap
   }
 
+  @inlinable
   public func get_edge(_ i: Int) -> Edge {
     let m = pos.count
     assert(0 <= i && i < m)
@@ -52,6 +59,7 @@ extension MFGraph {
     return Edge(from: pos[i].first, to: _e.to, cap: _e.cap + _re.cap, flow: _re.cap)
   }
 
+  @inlinable
   public func edges() -> [Edge] {
     let m = pos.count
     var result: [Edge] = []
@@ -61,6 +69,7 @@ extension MFGraph {
     return result
   }
 
+  @inlinable
   public mutating func change_edge(_ i: Int, _ new_cap: Cap, _ new_flow: Cap) {
     let m = pos.count
     assert(0 <= i && i < m)
@@ -73,10 +82,12 @@ extension MFGraph {
     g[_e.to][_e.rev] = _re
   }
 
+  @inlinable
   public mutating func flow(_ s: Int, _ t: Int) -> Cap {
     return flow(s, t, Cap.max)
   }
 
+  @inlinable
   public mutating func flow(_ s: Int, _ t: Int, _ flow_limit: Cap) -> Cap {
     assert(0 <= s && s < _n)
     assert(0 <= t && t < _n)
@@ -135,6 +146,7 @@ extension MFGraph {
     return flow
   }
 
+  @inlinable
   public func min_cut(_ s: Int) -> [Bool] {
     var visited = [Bool](repeating: false, count: _n)
     var que = Deque<Int>()
@@ -153,8 +165,17 @@ extension MFGraph {
 }
 
 extension MFGraph {
+  @usableFromInline
   struct _Edge {
+    @inlinable
+    init(to: Int, rev: Int, cap: Cap) {
+      self.to = to
+      self.rev = rev
+      self.cap = cap
+    }
+    @usableFromInline
     let to, rev: Int
+    @usableFromInline
     var cap: Cap
   }
 }

@@ -289,15 +289,25 @@ extension LazySegTree {
 
 extension LazySegTree {
   @inlinable
-  public mutating func set(_ p: Int, _ x: S) { _update { $0.set(p, x) } }
+  public mutating func set(_ p: Int, _ x: S) {
+    _update { $0.set(p, x) }
+  }
   @inlinable
-  public mutating func get(_ p: Int) -> S { _update { $0.get(p) } }
+  public mutating func get(_ p: Int) -> S {
+    _update { $0.get(p) }
+  }
   @inlinable
-  public mutating func prod(_ l: Int, _ r: Int) -> S { _update { $0.prod(l, r) } }
+  public mutating func prod(_ l: Int, _ r: Int) -> S {
+    _update { $0.prod(l, r) }
+  }
   @inlinable
-  public mutating func apply(_ p: Int, _ f: F) { _update { $0.apply(p, f) } }
+  public mutating func apply(_ p: Int, _ f: F) {
+    _update { $0.apply(p, f) }
+  }
   @inlinable
-  public mutating func apply(_ l: Int, _ r: Int, _ f: F) { _update { $0.apply(l, r, f) } }
+  public mutating func apply(_ l: Int, _ r: Int, _ f: F) {
+    _update { $0.apply(l, r, f) }
+  }
   @inlinable
   public mutating func max_right(_ l: Int, _ g: (S) -> Bool) -> Int {
     _update { $0.max_right(l, g) }

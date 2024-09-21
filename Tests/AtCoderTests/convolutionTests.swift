@@ -11,12 +11,17 @@ extension static_mod {
   public static func value<T: FixedWidthInteger>() -> T { T(umod) }
 }
 
-private typealias int = CInt
-private typealias uint = CUnsignedInt
-private typealias ll = CLongLong
-private typealias ull = CUnsignedLongLong
+@usableFromInline
+typealias int = CInt
+@usableFromInline
+typealias uint = CUnsignedInt
+@usableFromInline
+typealias ll = CLongLong
+@usableFromInline
+typealias ull = CUnsignedLongLong
 
-private func conv_ll_naive(_ a: [ll], _ b: [ll]) -> [ll] {
+@usableFromInline
+func conv_ll_naive(_ a: [ll], _ b: [ll]) -> [ll] {
   let n = a.count
   let m = b.count
   var c = [ll](repeating: 0, count: n + m - 1)
@@ -28,7 +33,8 @@ private func conv_ll_naive(_ a: [ll], _ b: [ll]) -> [ll] {
   return c
 }
 
-private func conv_naive<mint: modint_base>(_ a: [mint], _ b: [mint]) -> [mint] {
+@inlinable
+func conv_naive<mint: modint_base>(_ a: [mint], _ b: [mint]) -> [mint] {
   let n = a.count
   let m = b.count
   var c = [mint](repeating: 0, count: n + m - 1)
@@ -40,7 +46,8 @@ private func conv_naive<mint: modint_base>(_ a: [mint], _ b: [mint]) -> [mint] {
   return c
 }
 
-private func conv_naive<T: FixedWidthInteger>(_ MOD: T, _ a: [T], _ b: [T]) -> [T] {
+@inlinable
+func conv_naive<T: FixedWidthInteger>(_ MOD: T, _ a: [T], _ b: [T]) -> [T] {
   let (n, m) = (a.count, b.count)
   var c = [T](repeating: 0, count: n + m - 1)
   for i in 0..<n {
@@ -52,7 +59,8 @@ private func conv_naive<T: FixedWidthInteger>(_ MOD: T, _ a: [T], _ b: [T]) -> [
   return c
 }
 
-private func conv_naive<MOD: static_mod, T: FixedWidthInteger>(_ t: MOD.Type, _ a: [T], _ b: [T])
+@inlinable
+func conv_naive<MOD: static_mod, T: FixedWidthInteger>(_ t: MOD.Type, _ a: [T], _ b: [T])
   -> [T]
 {
   conv_naive(t.value(), a, b)

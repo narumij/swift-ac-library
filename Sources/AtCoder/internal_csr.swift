@@ -1,6 +1,7 @@
 import Foundation
 
 extension MCFGraph {
+    @usableFromInline
   enum _Internal {}
 }
 

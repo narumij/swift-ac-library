@@ -7,10 +7,10 @@ import XCTest
   import AtCoder
 #endif
 
-private typealias int = CInt
-private typealias uint = CUnsignedInt
-private typealias ll = CLongLong
-private typealias ull = CUnsignedLongLong
+//private typealias int = CInt
+//private typealias uint = CUnsignedInt
+//private typealias ll = CLongLong
+//private typealias ull = CUnsignedLongLong
 
 private func gcd(_ a: ll, _ b: ll) -> ll {
   assert(0 <= a && 0 <= b)

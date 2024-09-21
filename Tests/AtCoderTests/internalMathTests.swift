@@ -8,9 +8,9 @@ import XCTest
   import AtCoder
 #endif
 
-private typealias uint = CUnsignedInt
-private typealias ll = CLongLong
-private typealias ull = CUnsignedLongLong
+//private typealias uint = CUnsignedInt
+//private typealias ll = CLongLong
+//private typealias ull = CUnsignedLongLong
 
 private func pow_mod_naive(_ x: ll, _ n: ull, _ mod: uint) -> ll {
   let y: ull = ull((x % ll(mod) + ll(mod)) % ll(mod))
