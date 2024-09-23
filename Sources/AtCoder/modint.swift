@@ -9,6 +9,8 @@ public protocol dynamic_modint_base: modint_base & modint_raw {
 
 public struct static_modint<m: static_mod>: static_modint_base {
   typealias static_mod = m
+    
+    @inlinable @inline(__always)
   public init(raw v: CUnsignedInt) {
     _v = v
   }
@@ -20,26 +22,30 @@ extension static_modint {
   @inlinable
   public static var mod: CInt { return CInt(bitPattern: m.umod) }
 
-  @inlinable public init() { self.init(raw: 0) }
-  @inlinable public init(_ v: Bool) { _v = ___modint_v(v ? 1 : 0, mod: __modint_mod(m.umod)) }
-  @inlinable public init(_ v: CInt) { _v = ___modint_v(v, mod: __modint_mod(m.umod)) }
-  @inlinable public init<T: BinaryInteger>(_ v: T) {
+    @inlinable @inline(__always)
+    public init() { self.init(raw: 0) }
+    @inlinable @inline(__always)
+    public init(_ v: Bool) { _v = ___modint_v(v ? 1 : 0, mod: __modint_mod(m.umod)) }
+    @inlinable @inline(__always)
+    public init(_ v: CInt) { _v = ___modint_v(v, mod: __modint_mod(m.umod)) }
+    @inlinable @inline(__always)
+    public init<T: BinaryInteger>(_ v: T) {
     _v = ___modint_v(v, mod: __modint_mod(m.umod))
   }
 
-  @inlinable @inline(__always)
+  @inlinable
   public var val: CInt { return .init(bitPattern: _v) }
-  @inlinable @inline(__always)
+  @inlinable
   public static func += (lhs: inout Self, rhs: Self) {
     lhs._v &+= rhs._v
     if lhs._v >= umod { lhs._v &-= umod }
   }
-  @inlinable @inline(__always)
+  @inlinable
   public static func -= (lhs: inout Self, rhs: Self) {
     lhs._v &-= rhs._v
     if lhs._v >= umod { lhs._v &+= umod }
   }
-  @inlinable @inline(__always)
+  @inlinable
   public static func *= (lhs: inout Self, rhs: Self) {
     var z: ULL = ULL(lhs._v)
     z &*= ULL(rhs._v)
@@ -57,19 +63,19 @@ extension static_modint {
   public static prefix func - (_ m: Self) -> Self {
     return .init(raw: 0) - m
   }
-  @inlinable @inline(__always)
+  @inlinable
   public static func + (lhs: Self, rhs: Self) -> Self {
     var _v = lhs._v &+ rhs._v
     if _v >= umod { _v &-= umod }
     return .init(raw: _v)
   }
-  @inlinable @inline(__always)
+  @inlinable
   public static func - (lhs: Self, rhs: Self) -> Self {
     var _v = lhs._v &- rhs._v
     if _v >= umod { _v &+= umod }
     return .init(raw: _v)
   }
-  @inlinable @inline(__always)
+  @inlinable
   public static func * (lhs: Self, rhs: Self) -> Self {
     var z: ULL = ULL(lhs._v)
     z &*= ULL(rhs._v)
