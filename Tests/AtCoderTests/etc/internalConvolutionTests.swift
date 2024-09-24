@@ -151,11 +151,11 @@ final class internalConvolutionTests: XCTestCase {
       let z: CInt = _Internal.bit_ceil(CUnsignedInt(n + m - 1))
       a.resize(Int(z))
       a.withUnsafeMutableBufferPointer { a in
-        _Internal.butterfly(a, count: a.count)
+        _Internal.butterfly(a)
       }
       b.resize(Int(z))
       b.withUnsafeMutableBufferPointer { b in
-        _Internal.butterfly(b, count: b.count)
+        _Internal.butterfly(b)
       }
       let ai = a.map { Int($0.val) }
       let bi = b.map { Int($0.val) }

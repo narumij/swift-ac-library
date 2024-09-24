@@ -107,10 +107,10 @@ public enum mod_1_000_000_007: static_mod {
   public static let isPrime: Bool = true
 }
 
-public typealias ModIntAdaptions = BinaryInteger & Hashable & Strideable
+public typealias ModIntAdaptions = Hashable & AdditiveArithmetic
   & ExpressibleByIntegerLiteral & CustomStringConvertible
 
-public protocol modint_base: ModIntAdaptions where Words == [UInt] {
+public protocol modint_base: ModIntAdaptions {
   init()
   init(_ v: Bool)
   init(_ v: CInt)
@@ -157,121 +157,19 @@ extension modint_base {
   public static func /= <I: FixedWidthInteger>(lhs: inout Self, rhs: I) { lhs /= Self(rhs) }
 }
 
-extension modint_base {
-  @inlinable
-  public static func < (lhs: Self, rhs: Self) -> Bool {
-    lhs.val < rhs.val
-  }
-  @inlinable
-  public func distance(to other: Self) -> CInt {
-    CInt(other.val) - CInt(self.val)
-  }
-  @inlinable
-  public func advanced(by n: CInt) -> Self {
-    .init(CInt(self.val) + n)
-  }
-}
-
-extension modint_base {
-  @inlinable
-  public init<T>(_ source: T) where T: BinaryFloatingPoint {
-    self.init(CUnsignedInt(source))
-  }
-  @inlinable
-  public init<T>(clamping source: T) where T: BinaryInteger {
-    self.init(CUnsignedInt(clamping: source))
-  }
-  @inlinable
-  public init<T>(truncatingIfNeeded source: T) where T: BinaryInteger {
-    self.init(CUnsignedInt(truncatingIfNeeded: source))
-  }
-  @inlinable
-  public init?<T>(exactly source: T) where T: BinaryInteger {
-    self.init(source)
-  }
-  @inlinable
-  public init?<T>(exactly source: T) where T: BinaryFloatingPoint {
-    guard let raw = CUnsignedInt(exactly: source) else { return nil }
-    self.init(raw)
-  }
-  @inlinable
-  public var words: [UInt] { [.init(val)] }
-  @inlinable
-  public var magnitude: CUnsignedInt {
-    .init(bitPattern: val)
-  }
-  @inlinable
-  public static var isSigned: Bool {
-    false
-  }
-  @inlinable
-  public var bitWidth: Int {
-    val.bitWidth
-  }
-  @inlinable
-  public var trailingZeroBitCount: Int {
-    val.trailingZeroBitCount
-  }
-  @inlinable
-  public static func % (lhs: Self, rhs: Self) -> Self {
-    .init(lhs.val % rhs.val)
-  }
-  @inlinable
-  public static func %= (lhs: inout Self, rhs: Self) {
-    lhs = lhs % rhs
-  }
-  @inlinable
-  public static func &= (lhs: inout Self, rhs: Self) {
-    lhs = .init(lhs.val & rhs.val)
-  }
-  @inlinable
-  public static func |= (lhs: inout Self, rhs: Self) {
-    lhs = .init(lhs.val | rhs.val)
-  }
-  @inlinable
-  public static func ^= (lhs: inout Self, rhs: Self) {
-    lhs = .init(lhs.val ^ rhs.val)
-  }
-  @inlinable
-  public static func <<= <RHS>(lhs: inout Self, rhs: RHS) where RHS: BinaryInteger {
-    lhs = .init(lhs.val << rhs)
-  }
-  @inlinable
-  public static func >>= <RHS>(lhs: inout Self, rhs: RHS) where RHS: BinaryInteger {
-    lhs = .init(lhs.val >> rhs)
-  }
-  @inlinable
-  public static prefix func ~ (x: Self) -> Self {
-    .init(~(x.val))
-  }
+@inlinable @inline(__always)
+func __modint_v<T: UnsignedInteger>(unsigned v: T, umod: CUnsignedInt) -> CUnsignedInt {
+  CUnsignedInt(truncatingIfNeeded: v % T(umod))
 }
 
 @inlinable @inline(__always)
-func __modint_v(_ v: CUnsignedLongLong, umod: CUnsignedInt) -> CUnsignedInt {
-  let x = v % CUnsignedLongLong(umod)
-  return CUnsignedInt(truncatingIfNeeded: x)
-}
-
-@inlinable @inline(__always)
-func __modint_v<T: UnsignedInteger>(_ v: T, umod: T) -> CUnsignedInt {
-  let x = v % umod
-  return CUnsignedInt(truncatingIfNeeded: x)
-}
-
-@inlinable @inline(__always)
-func ___modint_v<T: BinaryInteger>(_ v: T, mod: T) -> CUnsignedInt {
-  var x = v % mod
-  if x < 0 { x += mod }
+func ___modint_v<T: BinaryInteger>(_ v: T, umod: CUnsignedInt) -> CUnsignedInt {
+  let umod = T(truncatingIfNeeded: umod)
+  var x = v % umod
+  if x < 0 { x += umod }
   let x0 = CInt(truncatingIfNeeded: x)
   return CUnsignedInt(bitPattern: x0)
 }
-
-@inlinable @inline(__always)
-func __modint_umod<T: UnsignedInteger>(_ umod: CUnsignedInt) -> T { T(umod) }
-@inlinable @inline(__always)
-func __modint_mod<T: BinaryInteger>(_ umod: CUnsignedInt) -> T { T(truncatingIfNeeded: umod) }
-@inlinable @inline(__always)
-func __modint_mod<T: BinaryInteger>(_ mod: CInt) -> T { T(truncatingIfNeeded: mod) }
 
 extension modint_base {
   @usableFromInline typealias ULL = CUnsignedLongLong
@@ -284,7 +182,8 @@ extension modint_base {
   public var description: String { val.description }
 }
 
-public protocol modint_raw {
+@usableFromInline
+protocol modint_raw {
   init(raw: CUnsignedInt)
   var _v: CUnsignedInt { get set }
   var val: CInt { get }
@@ -295,6 +194,12 @@ public protocol modint_raw {
 extension modint_raw {
   @inlinable @inline(__always)
   public init(integerLiteral value: CInt) {
-    self.init(raw: value == 0 ? 0 : ___modint_v(value, mod: __modint_mod(Self.umod)))
+    self.init(raw: value == 0 ? 0 : ___modint_v(value, umod: Self.umod))
   }
+  @inlinable
+  public init(bitPattern i: CUnsignedInt) {
+    self.init(raw: __modint_v(unsigned: i, umod: Self.umod))
+  }
+  @inlinable
+  public var unsigned: CUnsignedInt { .init(bitPattern: val) }
 }

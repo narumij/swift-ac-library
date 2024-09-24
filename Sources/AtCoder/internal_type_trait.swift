@@ -36,3 +36,7 @@ extension UInt: ToUnsignedType {
   @inlinable
   public var unsigned: Self { self }
 }
+
+extension static_modint: ToUnsignedType {}
+
+extension dynamic_modint: ToUnsignedType {}

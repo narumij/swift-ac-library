@@ -1,12 +1,12 @@
 import Foundation
 
-public protocol static_modint_base: modint_base & modint_raw {}
+public protocol static_modint_base: modint_base {}
 
-public protocol dynamic_modint_base: modint_base & modint_raw {
+public protocol dynamic_modint_base: modint_base {
   static func set_mod(_ m: CInt)
 }
 
-public struct static_modint<m: static_mod>: static_modint_base {
+public struct static_modint<m: static_mod>: static_modint_base & modint_raw {
   @usableFromInline
   typealias static_mod = m
 
@@ -26,12 +26,12 @@ extension static_modint {
   @inlinable @inline(__always)
   public init() { self.init(raw: 0) }
   @inlinable @inline(__always)
-  public init(_ v: Bool) { _v = ___modint_v(v ? 1 : 0, mod: __modint_mod(m.umod)) }
+  public init(_ v: Bool) { _v = ___modint_v(v ? 1 : 0, umod: m.umod) }
   @inlinable @inline(__always)
-  public init(_ v: CInt) { _v = ___modint_v(v, mod: __modint_mod(m.umod)) }
+  public init(_ v: CInt) { _v = ___modint_v(v, umod: m.umod) }
   @inlinable @inline(__always)
   public init<T: BinaryInteger>(_ v: T) {
-    _v = ___modint_v(v, mod: __modint_mod(m.umod))
+    _v = ___modint_v(v, umod: m.umod)
   }
 
   @inlinable
@@ -122,7 +122,7 @@ extension static_modint {
   public var isPrime: Bool { m.isPrime }
 }
 
-public struct dynamic_modint<bt: dynamic_mod>: dynamic_modint_base {
+public struct dynamic_modint<bt: dynamic_mod>: dynamic_modint_base & modint_raw {
   @inlinable
   public init(raw v: CUnsignedInt) {
     _v = v
@@ -142,11 +142,11 @@ extension dynamic_modint {
   @inlinable
   public init() { self.init(raw: 0) }
   @inlinable
-  public init(_ v: Bool) { _v = ___modint_v(v ? 1 : 0, mod: __modint_mod(bt.umod)) }
+  public init(_ v: Bool) { _v = ___modint_v(v ? 1 : 0, umod: bt.umod) }
   @inlinable
-  public init(_ v: CInt) { _v = ___modint_v(v, mod: __modint_mod(bt.umod)) }
+  public init(_ v: CInt) { _v = ___modint_v(v, umod: bt.umod) }
   @inlinable
-  public init<T: BinaryInteger>(_ v: T) { _v = ___modint_v(v, mod: __modint_mod(bt.umod)) }
+  public init<T: BinaryInteger>(_ v: T) { _v = ___modint_v(v, umod: bt.umod) }
 
   @inlinable
   public var val: CInt { return .init(bitPattern: _v) }

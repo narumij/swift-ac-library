@@ -43,8 +43,8 @@ extension ArraySlice where Element: AdditiveArithmetic {
 
 extension static_modint {
   @inlinable @inline(__always)
-  init(unsigned v: CUnsignedLongLong) {
-    _v = __modint_v(v, umod: static_mod.umod)
+  init(ull v: CUnsignedLongLong) {
+    _v = __modint_v(unsigned: v, umod: static_mod.umod)
   }
 }
 
@@ -101,11 +101,8 @@ extension _Internal {
       root[rank2] = mint(g).pow(CLongLong((mint.mod - 1) >> rank2))
       iroot[rank2] = root[rank2].inv
 
-      root.withUnsafeMutableBufferPointer { _root in
-        let root = _root.baseAddress!
-
-        iroot.withUnsafeMutableBufferPointer { _iroot in
-          let iroot = _iroot.baseAddress!
+      root.withUnsafeMutableBufferPointer { root in
+        iroot.withUnsafeMutableBufferPointer { iroot in
 
           // for (int i = rank2 - 1; i >= 0; i--) {
           for i in stride(from: Int(rank2 - 1), through: 0, by: -1) {
@@ -148,8 +145,14 @@ extension _Internal {
         root: Pointer, iroot: Pointer, rate2: Pointer, irate2: Pointer, rate3: Pointer,
         irate3: Pointer
       ) {
-        (self.root, self.iroot, self.rate2, self.irate2, self.rate3, self.irate3) = (
-          root, iroot, rate2, irate2, rate3, irate3
+        (
+          self.root, self.iroot,
+          self.rate2, self.irate2,
+          self.rate3, self.irate3
+        ) = (
+          root, iroot,
+          rate2, irate2,
+          rate3, irate3
         )
       }
 
@@ -160,20 +163,19 @@ extension _Internal {
     func _unsafe(_ f: (__Unsafe) -> Void) {
       f(
         __Unsafe(
-          root: root, iroot: iroot, rate2: rate2, irate2: irate2, rate3: rate3, irate3: irate3))
+          root: root, iroot: iroot,
+          rate2: rate2, irate2: irate2,
+          rate3: rate3, irate3: irate3))
     }
   }
 
   @inlinable
   static func butterfly<mod: static_mod>(
-    _ a: UnsafeMutableBufferPointer<static_modint<mod>>, count n: Int
+    _ a: UnsafeMutableBufferPointer<static_modint<mod>>
   ) {
     typealias mint = static_modint<mod>
 
-    let h: Int = CUnsignedInt(n).trailingZeroBitCount
-
-    // static const fft_info<mint> info;
-    //    let info = fft_info<mod>()
+    let h: Int = min(32, a.count.trailingZeroBitCount)
     let info = __static_const_fft_info.info(mod.self)
     let umod = ULL(mod.umod)
     var len: Int = 0  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
@@ -193,7 +195,7 @@ extension _Internal {
               a[i &+ offset &+ p] = l - r
             }
             if s &+ 1 != 1 << len {
-              rot *= info.rate2[(~UINT(truncatingIfNeeded: s)).trailingZeroBitCount]
+              rot *= info.rate2[min(32, (~s).trailingZeroBitCount)]
             }
           }
           len &+= 1
@@ -212,20 +214,15 @@ extension _Internal {
               let a1: ULL = 1 &* ULL(a[i &+ offset &+ p].val) &* ULL(rot.val)
               let a2: ULL = 1 &* ULL(a[i &+ offset &+ 2 &* p].val) &* ULL(rot2.val)
               let a3: ULL = 1 &* ULL(a[i &+ offset &+ 3 &* p].val) &* ULL(rot3.val)
-              let a1na3imag: ULL =
-                1 &* ULL(mint(unsigned: a1 &+ mod2 &- a3).val)
-                &* ULL(imag.val)
+              let a1na3imag: ULL = 1 &* ULL(mint(ull: a1 &+ mod2 &- a3).val) &* ULL(imag.val)
               let na2: ULL = mod2 &- a2
-              a[i &+ offset] = mint(unsigned: a0 &+ a2 &+ a1 &+ a3)
-              a[i &+ offset &+ 1 &* p] = mint(
-                unsigned: a0 &+ a2 &+ (2 * mod2 &- (a1 &+ a3)))
-              a[i &+ offset &+ 2 &* p] = mint(
-                unsigned: a0 &+ na2 &+ a1na3imag)
-              a[i &+ offset &+ 3 &* p] = mint(
-                unsigned: a0 &+ na2 &+ (mod2 &- a1na3imag))
+              a[i &+ offset] = mint(ull: a0 &+ a2 &+ a1 &+ a3)
+              a[i &+ offset &+ 1 &* p] = mint(ull: a0 &+ a2 &+ (2 * mod2 &- (a1 &+ a3)))
+              a[i &+ offset &+ 2 &* p] = mint(ull: a0 &+ na2 &+ a1na3imag)
+              a[i &+ offset &+ 3 &* p] = mint(ull: a0 &+ na2 &+ (mod2 &- a1na3imag))
             }
             if s &+ 1 != 1 << len {
-              rot *= info.rate3[(~UINT(truncatingIfNeeded: s)).trailingZeroBitCount]
+              rot *= info.rate3[min(32, (~s).trailingZeroBitCount)]
             }
           }
           len &+= 2
@@ -236,14 +233,11 @@ extension _Internal {
 
   @inlinable
   static func butterfly_inv<mod: static_mod>(
-    _ a: UnsafeMutableBufferPointer<static_modint<mod>>, count n: Int
+    _ a: UnsafeMutableBufferPointer<static_modint<mod>>
   ) {
     typealias mint = static_modint<mod>
 
-    let h: Int = CUnsignedInt(n).trailingZeroBitCount
-
-    // static const fft_info<mint> info;
-    //    let info = fft_info<mod>()
+    let h: Int = min(32, a.count.trailingZeroBitCount)
     let info = __static_const_fft_info.info(mod.self)
     let umod = ULL(mod.umod)
 
@@ -262,10 +256,10 @@ extension _Internal {
               let r = a[i &+ offset &+ p]
               a[i &+ offset] = l + r
               a[i &+ offset &+ p] = mint(
-                unsigned: (ULL(l.val) &- ULL(r.val) &+ umod) &* ULL(irot.val))
+                ull: (ULL(l.val) &- ULL(r.val) &+ umod) &* ULL(irot.val))
             }
             if s &+ 1 != 1 << (len &- 1) {
-              irot *= info.irate2[(~UINT(truncatingIfNeeded: s)).trailingZeroBitCount]
+              irot *= info.irate2[min(32, (~s).trailingZeroBitCount)]
             }
           }
           len &-= 1
@@ -287,23 +281,23 @@ extension _Internal {
               let a2na3iimag: ULL =
                 1
                 &* ULL(
-                  mint(unsigned: (umod &+ a2 &- a3) &* ULL(iimag.val))
+                  mint(ull: (umod &+ a2 &- a3) &* ULL(iimag.val))
                     .val)
-              a[i &+ offset] = mint(unsigned: a0 &+ a1 &+ a2 &+ a3)
+              a[i &+ offset] = mint(ull: a0 &+ a1 &+ a2 &+ a3)
               a[i &+ offset &+ 1 &* p] =
                 mint(
-                  unsigned: (a0 &+ (umod &- a1) &+ a2na3iimag) &* ULL(irot.val))
+                  ull: (a0 &+ (umod &- a1) &+ a2na3iimag) &* ULL(irot.val))
               a[i &+ offset &+ 2 &* p] =
                 mint(
-                  unsigned: (a0 &+ a1 &+ (umod &- a2) &+ (umod &- a3))
+                  ull: (a0 &+ a1 &+ (umod &- a2) &+ (umod &- a3))
                     &* ULL(irot2.val))
               a[i &+ offset &+ 3 &* p] =
                 mint(
-                  unsigned: (a0 &+ (umod &- a1) &+ (umod &- a2na3iimag))
+                  ull: (a0 &+ (umod &- a1) &+ (umod &- a2na3iimag))
                     &* ULL(irot3.val))
             }
             if s &+ 1 != 1 << (len &- 2) {
-              irot *= info.irate3[(~UINT(truncatingIfNeeded: s)).trailingZeroBitCount]
+              irot *= info.irate3[min(32, (~s).trailingZeroBitCount)]
             }
           }
           len &-= 2
@@ -348,12 +342,12 @@ extension _Internal {
     b.resize(z)
     a.withUnsafeMutableBufferPointer { a in
       b.withUnsafeMutableBufferPointer { b in
-        _Internal.butterfly(a, count: z)
-        _Internal.butterfly(b, count: z)
+        _Internal.butterfly(a)
+        _Internal.butterfly(b)
         for i in 0..<Int(z) {
           a[i] *= b[i]
         }
-        _Internal.butterfly_inv(a, count: z)
+        _Internal.butterfly_inv(a)
       }
     }
     a.resize(n + m - 1)
