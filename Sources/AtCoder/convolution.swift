@@ -28,14 +28,14 @@ extension ArraySlice {
 }
 
 extension Array where Element: AdditiveArithmetic {
-  @inlinable
+  @inlinable @inline(__always)
   public mutating func resize(_ n: Int) {
     resize(n, element: .zero)
   }
 }
 
 extension ArraySlice where Element: AdditiveArithmetic {
-  @inlinable
+  @inlinable @inline(__always)
   public mutating func resize(_ n: Int) {
     resize(n, element: .zero)
   }
@@ -53,7 +53,8 @@ protocol __cached_fft_info {}
 
 extension _Internal {
 
-  public enum __static_const_fft_info {
+  @usableFromInline
+  enum __static_const_fft_info {
 
     @usableFromInline
     static var cache: [UINT: __cached_fft_info] = [:]
@@ -69,17 +70,18 @@ extension _Internal {
     }
   }
 
-  public struct fft_info<mod: static_mod>: __cached_fft_info {
-    public typealias mint = static_modint<mod>
+  @usableFromInline
+  struct fft_info<mod: static_mod>: __cached_fft_info {
 
-    public var root: [mint]
-    public var iroot: [mint]
+    @usableFromInline
+    typealias mint = static_modint<mod>
 
-    public var rate2: [mint]
-    public var irate2: [mint]
-
-    public var rate3: [mint]
-    public var irate3: [mint]
+    @usableFromInline
+    var root, iroot: [mint]
+    @usableFromInline
+    var rate2, irate2: [mint]
+    @usableFromInline
+    var rate3, irate3: [mint]
 
     @inlinable
     public init() {
@@ -140,32 +142,27 @@ extension _Internal {
 
     @usableFromInline
     struct __Unsafe {
+
+      @usableFromInline
+      typealias Pointer = UnsafePointer<mint>
+
       @inlinable
       init(
-        root: UnsafePointer<_Internal.fft_info<mod>.mint>,
-        iroot: UnsafePointer<_Internal.fft_info<mod>.mint>,
-        rate2: UnsafePointer<_Internal.fft_info<mod>.mint>,
-        irate2: UnsafePointer<_Internal.fft_info<mod>.mint>,
-        rate3: UnsafePointer<_Internal.fft_info<mod>.mint>,
-        irate3: UnsafePointer<_Internal.fft_info<mod>.mint>
+        root: Pointer, iroot: Pointer,
+        rate2: Pointer, irate2: Pointer,
+        rate3: Pointer, irate3: Pointer
       ) {
-        self.root = root
-        self.iroot = iroot
-        self.rate2 = rate2
-        self.irate2 = irate2
-        self.rate3 = rate3
-        self.irate3 = irate3
+        (self.root, self.iroot) = (root, iroot)
+        (self.rate2, self.irate2) = (rate2, irate2)
+        (self.rate3, self.irate3) = (rate3, irate3)
       }
-      @usableFromInline let root: UnsafePointer<mint>
-      @usableFromInline let iroot: UnsafePointer<mint>
-      @usableFromInline let rate2: UnsafePointer<mint>
-      @usableFromInline let irate2: UnsafePointer<mint>
-      @usableFromInline let rate3: UnsafePointer<mint>
-      @usableFromInline let irate3: UnsafePointer<mint>
+      @usableFromInline let root, iroot: Pointer
+      @usableFromInline let rate2, irate2: Pointer
+      @usableFromInline let rate3, irate3: Pointer
     }
 
     @inlinable
-    func __unsafeHandle(_ f: (__Unsafe) -> Void) {
+    func _unsafe(_ f: (__Unsafe) -> Void) {
       root.withUnsafeBufferPointer { root in
         iroot.withUnsafeBufferPointer { iroot in
           rate2.withUnsafeBufferPointer { rate2 in
@@ -203,7 +200,7 @@ extension _Internal {
     let umod = ULL(mod.umod)
     var len: Int = 0  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
 
-    info.__unsafeHandle { info in
+    info._unsafe { info in
 
       while len < h {
         if h &- len == 1 {
@@ -274,7 +271,7 @@ extension _Internal {
 
     var len = h  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
 
-    info.__unsafeHandle { info in
+    info._unsafe { info in
 
       while len != 0 {
         if len == 1 {
