@@ -142,47 +142,25 @@ extension _Internal {
 
     @usableFromInline
     struct __Unsafe {
-
-      @usableFromInline
-      typealias Pointer = UnsafePointer<mint>
-
-      @inlinable
+      @usableFromInline typealias Pointer = UnsafePointer<mint>
+      @inlinable @inline(__always)
       init(
-        root: Pointer, iroot: Pointer,
-        rate2: Pointer, irate2: Pointer,
-        rate3: Pointer, irate3: Pointer
+        root: Pointer, iroot: Pointer, rate2: Pointer, irate2: Pointer, rate3: Pointer,
+        irate3: Pointer
       ) {
-        (self.root, self.iroot) = (root, iroot)
-        (self.rate2, self.irate2) = (rate2, irate2)
-        (self.rate3, self.irate3) = (rate3, irate3)
+        (self.root, self.iroot, self.rate2, self.irate2, self.rate3, self.irate3) = (
+          root, iroot, rate2, irate2, rate3, irate3
+        )
       }
-      @usableFromInline let root, iroot: Pointer
-      @usableFromInline let rate2, irate2: Pointer
-      @usableFromInline let rate3, irate3: Pointer
+
+      @usableFromInline let root, iroot, rate2, irate2, rate3, irate3: Pointer
     }
 
     @inlinable
     func _unsafe(_ f: (__Unsafe) -> Void) {
-      root.withUnsafeBufferPointer { root in
-        iroot.withUnsafeBufferPointer { iroot in
-          rate2.withUnsafeBufferPointer { rate2 in
-            irate2.withUnsafeBufferPointer { irate2 in
-              rate3.withUnsafeBufferPointer { rate3 in
-                irate3.withUnsafeBufferPointer { irate3 in
-                  let handle = __Unsafe(
-                    root: root.baseAddress!,
-                    iroot: iroot.baseAddress!,
-                    rate2: rate2.baseAddress!,
-                    irate2: irate2.baseAddress!,
-                    rate3: rate3.baseAddress!,
-                    irate3: irate3.baseAddress!)
-                  f(handle)
-                }
-              }
-            }
-          }
-        }
-      }
+      f(
+        __Unsafe(
+          root: root, iroot: iroot, rate2: rate2, irate2: irate2, rate3: rate3, irate3: irate3))
     }
   }
 
