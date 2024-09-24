@@ -49,27 +49,27 @@ extension static_modint {
 }
 
 @usableFromInline
-protocol fft_info_base {}
+protocol __cached_fft_info {}
 
 extension _Internal {
 
-  public enum __fft_info_cache {
+  public enum __static_const_fft_info {
 
     @usableFromInline
-    static var cache: [UINT: fft_info_base] = [:]
+    static var cache: [UINT: __cached_fft_info] = [:]
 
     @inlinable
-    static func ___fft_info<MOD: static_mod>(_ t: MOD.Type) -> fft_info<MOD> {
+    static func info<MOD: static_mod>(_ t: MOD.Type) -> fft_info<MOD> {
       if let cached = cache[MOD.umod] {
         return cached as! fft_info<MOD>
       }
-      let info: fft_info_base = fft_info<MOD>()
+      let info: __cached_fft_info = _Internal.fft_info<MOD>()
       cache[MOD.umod] = info
       return info as! fft_info<MOD>
     }
   }
 
-  public struct fft_info<mod: static_mod>: fft_info_base {
+  public struct fft_info<mod: static_mod>: __cached_fft_info {
     public typealias mint = static_modint<mod>
 
     public var root: [mint]
@@ -199,7 +199,7 @@ extension _Internal {
 
     // static const fft_info<mint> info;
     //    let info = fft_info<mod>()
-    let info = __fft_info_cache.___fft_info(mod.self)
+    let info = __static_const_fft_info.info(mod.self)
     let umod = ULL(mod.umod)
     var len: Int = 0  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
 
@@ -269,7 +269,7 @@ extension _Internal {
 
     // static const fft_info<mint> info;
     //    let info = fft_info<mod>()
-    let info = __fft_info_cache.___fft_info(mod.self)
+    let info = __static_const_fft_info.info(mod.self)
     let umod = ULL(mod.umod)
 
     var len = h  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
@@ -391,7 +391,7 @@ extension _Internal {
 }
 
 @inlinable
-public func convolution__<mod: static_mod>(
+public func convolution<mod: static_mod>(
   _ a: ArraySlice<static_modint<mod>>, _ b: ArraySlice<static_modint<mod>>
 ) -> ArraySlice<static_modint<mod>> {
   let (n, m) = (a.count, b.count)
@@ -414,7 +414,7 @@ where
   A: Collection, A.Element == static_modint<mod>,
   B: Collection, B.Element == static_modint<mod>
 {
-  convolution__(ArraySlice(a), ArraySlice(b)) + []
+  convolution(ArraySlice(a), ArraySlice(b)) + []
 }
 
 @inlinable
