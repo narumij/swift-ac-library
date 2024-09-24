@@ -5,29 +5,26 @@ import Foundation
 
 extension Array {
 
-    @inlinable
-    mutating func resize(_ n: Int, element: Element) {
-        if count > n {
-            removeLast(count - n)
-            return
-        }
-//        reserveCapacity(n)
-        append(contentsOf: repeatElement(element, count: n - count))
+  @inlinable
+  mutating func resize(_ n: Int, element: Element) {
+    if count > n {
+      removeLast(count - n)
+      return
     }
+    append(contentsOf: repeatElement(element, count: n - count))
+  }
 }
 
 extension ArraySlice {
 
-    @inlinable
-    mutating func resize(_ n: Int, element: Element) {
-//        reserveCapacity(Swift.max(count,n))
-        if count > n {
-            removeLast(count - n)
-            return
-        }
-//        reserveCapacity(n)
-        append(contentsOf: repeatElement(element, count: n - count))
+  @inlinable
+  mutating func resize(_ n: Int, element: Element) {
+    if count > n {
+      removeLast(count - n)
+      return
     }
+    append(contentsOf: repeatElement(element, count: n - count))
+  }
 }
 
 extension Array where Element: AdditiveArithmetic {
@@ -46,33 +43,33 @@ extension ArraySlice where Element: AdditiveArithmetic {
 
 extension static_modint {
   @inlinable @inline(__always)
-  init(unsigned v: CUnsignedLongLong, umod: CUnsignedInt) {
-      _v = __modint_v(v, umod: umod)
+  init(unsigned v: CUnsignedLongLong) {
+    _v = __modint_v(v, umod: static_mod.umod)
   }
 }
 
 @usableFromInline
-protocol fft_info_base { }
+protocol fft_info_base {}
 
 extension _Internal {
-    
-    public enum __fft_info_cache {
-        
-        @usableFromInline
-        static var cache: [UINT:fft_info_base] = [:]
-        
-        @inlinable
-        static func ___fft_info<MOD: static_mod>(_ t: MOD.Type) -> fft_info<MOD> {
-            if let cached = cache[MOD.umod] {
-                return cached as! fft_info<MOD>
-            }
-            let info: fft_info_base = fft_info<MOD>()
-            cache[MOD.umod] = info
-            return info as! fft_info<MOD>
-        }
-    }
 
-    public struct fft_info<mod: static_mod>: fft_info_base {
+  public enum __fft_info_cache {
+
+    @usableFromInline
+    static var cache: [UINT: fft_info_base] = [:]
+
+    @inlinable
+    static func ___fft_info<MOD: static_mod>(_ t: MOD.Type) -> fft_info<MOD> {
+      if let cached = cache[MOD.umod] {
+        return cached as! fft_info<MOD>
+      }
+      let info: fft_info_base = fft_info<MOD>()
+      cache[MOD.umod] = info
+      return info as! fft_info<MOD>
+    }
+  }
+
+  public struct fft_info<mod: static_mod>: fft_info_base {
     public typealias mint = static_modint<mod>
 
     public var root: [mint]
@@ -201,9 +198,9 @@ extension _Internal {
     let h: Int = CUnsignedInt(n).trailingZeroBitCount
 
     // static const fft_info<mint> info;
-    let info = fft_info<mod>()
+    //    let info = fft_info<mod>()
+    let info = __fft_info_cache.___fft_info(mod.self)
     let umod = ULL(mod.umod)
-      let _umod = mod.umod
     var len: Int = 0  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
 
     info.__unsafeHandle { info in
@@ -241,16 +238,16 @@ extension _Internal {
               let a2: ULL = 1 &* ULL(a[i &+ offset &+ 2 &* p].val) &* ULL(rot2.val)
               let a3: ULL = 1 &* ULL(a[i &+ offset &+ 3 &* p].val) &* ULL(rot3.val)
               let a1na3imag: ULL =
-                1 &* ULL(mint(unsigned: a1 &+ mod2 &- a3, umod: _umod).val)
+                1 &* ULL(mint(unsigned: a1 &+ mod2 &- a3).val)
                 &* ULL(imag.val)
               let na2: ULL = mod2 &- a2
-              a[i &+ offset] = mint(unsigned: a0 &+ a2 &+ a1 &+ a3, umod: _umod)
+              a[i &+ offset] = mint(unsigned: a0 &+ a2 &+ a1 &+ a3)
               a[i &+ offset &+ 1 &* p] = mint(
-                unsigned: a0 &+ a2 &+ (2 * mod2 &- (a1 &+ a3)), umod: _umod)
+                unsigned: a0 &+ a2 &+ (2 * mod2 &- (a1 &+ a3)))
               a[i &+ offset &+ 2 &* p] = mint(
-                unsigned: a0 &+ na2 &+ a1na3imag, umod: _umod)
+                unsigned: a0 &+ na2 &+ a1na3imag)
               a[i &+ offset &+ 3 &* p] = mint(
-                unsigned: a0 &+ na2 &+ (mod2 &- a1na3imag), umod: _umod)
+                unsigned: a0 &+ na2 &+ (mod2 &- a1na3imag))
             }
             if s &+ 1 != 1 << len {
               rot *= info.rate3[(~UINT(truncatingIfNeeded: s)).trailingZeroBitCount]
@@ -271,9 +268,9 @@ extension _Internal {
     let h: Int = CUnsignedInt(n).trailingZeroBitCount
 
     // static const fft_info<mint> info;
-    let info = fft_info<mod>()
+    //    let info = fft_info<mod>()
+    let info = __fft_info_cache.___fft_info(mod.self)
     let umod = ULL(mod.umod)
-      let _umod = mod.umod
 
     var len = h  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
 
@@ -290,8 +287,7 @@ extension _Internal {
               let r = a[i &+ offset &+ p]
               a[i &+ offset] = l + r
               a[i &+ offset &+ p] = mint(
-                unsigned: (ULL(l.val) &- ULL(r.val) &+ umod) &* ULL(irot.val),
-                umod: _umod)
+                unsigned: (ULL(l.val) &- ULL(r.val) &+ umod) &* ULL(irot.val))
             }
             if s &+ 1 != 1 << (len &- 1) {
               irot *= info.irate2[(~UINT(truncatingIfNeeded: s)).trailingZeroBitCount]
@@ -316,21 +312,20 @@ extension _Internal {
               let a2na3iimag: ULL =
                 1
                 &* ULL(
-                  mint(unsigned: (umod &+ a2 &- a3) &* ULL(iimag.val), umod: _umod)
+                  mint(unsigned: (umod &+ a2 &- a3) &* ULL(iimag.val))
                     .val)
-              a[i &+ offset] = mint(unsigned: a0 &+ a1 &+ a2 &+ a3, umod: _umod)
+              a[i &+ offset] = mint(unsigned: a0 &+ a1 &+ a2 &+ a3)
               a[i &+ offset &+ 1 &* p] =
                 mint(
-                  unsigned: (a0 &+ (umod &- a1) &+ a2na3iimag) &* ULL(irot.val),
-                  umod: _umod)
+                  unsigned: (a0 &+ (umod &- a1) &+ a2na3iimag) &* ULL(irot.val))
               a[i &+ offset &+ 2 &* p] =
                 mint(
                   unsigned: (a0 &+ a1 &+ (umod &- a2) &+ (umod &- a3))
-                    &* ULL(irot2.val), umod: _umod)
+                    &* ULL(irot2.val))
               a[i &+ offset &+ 3 &* p] =
                 mint(
                   unsigned: (a0 &+ (umod &- a1) &+ (umod &- a2na3iimag))
-                    &* ULL(irot3.val), umod: _umod)
+                    &* ULL(irot3.val))
             }
             if s &+ 1 != 1 << (len &- 2) {
               irot *= info.irate3[(~UINT(truncatingIfNeeded: s)).trailingZeroBitCount]
@@ -342,93 +337,42 @@ extension _Internal {
     }
   }
 
-#if false
-    @inlinable
-    static func convolution_naive<mod: static_mod, A, B>(_ a: A, _ b: B) -> [static_modint<mod>]
-    where
-      A: Collection, A.Element == static_modint<mod>,
-      B: Collection, B.Element == static_modint<mod>
-    {
-        let (a,b) = (a + [], b + [])
-        return a.withUnsafeBufferPointer { a in
-            b.withUnsafeBufferPointer { b in
-                convolution_naive(a, b) + []
-            }
-        }
-    }
-#endif
-    
   @inlinable
-    static func convolution_naive<mod: static_mod>(_ a: UnsafeBufferPointer<static_modint<mod>>, _ b: UnsafeBufferPointer<static_modint<mod>>) -> ArraySlice<static_modint<mod>>
-  {
+  static func convolution_naive<mod: static_mod>(
+    _ a: UnsafeBufferPointer<static_modint<mod>>, _ b: UnsafeBufferPointer<static_modint<mod>>
+  ) -> ArraySlice<static_modint<mod>> {
     let n = a.count
     let m = b.count
-//      let a = a.baseAddress!
-//      let b = b.baseAddress!
-      var ans = ArraySlice<static_modint<mod>>(repeating: 0, count: n + m - 1)
-      ans.withUnsafeMutableBufferPointer { ans in
-//          let ans = ans.baseAddress!
-          if n < m {
-            for j in 0..<m {
-              for i in 0..<n {
-                ans[i + j] += a[i] * b[j]
-              }
-            }
-          } else {
-            for i in 0..<n {
-              for j in 0..<m {
-                ans[i + j] += a[i] * b[j]
-              }
-            }
+    var ans = ArraySlice<static_modint<mod>>(repeating: 0, count: n + m - 1)
+    ans.withUnsafeMutableBufferPointer { ans in
+      if n < m {
+        for j in 0..<m {
+          for i in 0..<n {
+            ans[i + j] += a[i] * b[j]
           }
+        }
+      } else {
+        for i in 0..<n {
+          for j in 0..<m {
+            ans[i + j] += a[i] * b[j]
+          }
+        }
       }
+    }
     return ans
   }
 
-    @inlinable
-    static func convolution_fft<mod: static_mod>(_ a: ArraySlice<static_modint<mod>>, _ b: ArraySlice<static_modint<mod>>) -> ArraySlice<static_modint<mod>>
-    {
-      var (a, b) = (a, b)
-      let (n, m) = (a.count, b.count)
-      let z: Int = _Internal.bit_ceil(CUnsignedInt(n + m - 1))
-      a.resize(z, element: .init())
-      b.resize(z, element: .init())
-      a.withUnsafeMutableBufferPointer { a in
-//        let a = a_buffer.baseAddress!
-        b.withUnsafeMutableBufferPointer { b in
-//          let b = b_buffer.baseAddress!
-          _Internal.butterfly(a, count: z)
-          _Internal.butterfly(b, count: z)
-          for i in 0..<Int(z) {
-            a[i] *= b[i]
-          }
-          _Internal.butterfly_inv(a, count: z)
-        }
-      }
-      a.resize(n + m - 1, element: .init())
-      let iz = static_modint<mod>(z).inv
-      a.withUnsafeMutableBufferPointer { a in
-        for i in 0..<(n + m - 1) { a[i] *= iz }
-      }
-      return a
-    }
-    
-#if false
   @inlinable
-  static func convolution_fft<mod: static_mod, A, B>(_ a: A, _ b: B) -> [static_modint<mod>]
-  where
-    A: Collection, A.Element == static_modint<mod>,
-    B: Collection, B.Element == static_modint<mod>
-  {
-    var (a, b) = (a + [], b + [])
+  static func convolution_fft<mod: static_mod>(
+    _ a: ArraySlice<static_modint<mod>>, _ b: ArraySlice<static_modint<mod>>
+  ) -> ArraySlice<static_modint<mod>> {
+    var (a, b) = (a, b)
     let (n, m) = (a.count, b.count)
     let z: Int = _Internal.bit_ceil(CUnsignedInt(n + m - 1))
-    a.resize(z, element: .init())
-    b.resize(z, element: .init())
-    a.withUnsafeMutableBufferPointer { a_buffer in
-      let a = a_buffer.baseAddress!
-      b.withUnsafeMutableBufferPointer { b_buffer in
-        let b = b_buffer.baseAddress!
+    a.resize(z)
+    b.resize(z)
+    a.withUnsafeMutableBufferPointer { a in
+      b.withUnsafeMutableBufferPointer { b in
         _Internal.butterfly(a, count: z)
         _Internal.butterfly(b, count: z)
         for i in 0..<Int(z) {
@@ -437,31 +381,31 @@ extension _Internal {
         _Internal.butterfly_inv(a, count: z)
       }
     }
-    a.resize(n + m - 1, element: .init())
+    a.resize(n + m - 1)
     let iz = static_modint<mod>(z).inv
     a.withUnsafeMutableBufferPointer { a in
       for i in 0..<(n + m - 1) { a[i] *= iz }
     }
     return a
   }
-#endif
 }
 
 @inlinable
-public func convolution__<mod: static_mod>(_ a: ArraySlice<static_modint<mod>>, _ b: ArraySlice<static_modint<mod>>) -> ArraySlice<static_modint<mod>>
-{
-    let (n, m) = (a.count, b.count)
-    if n == 0 || m == 0 { return [] }
-    let z: CInt = _Internal.bit_ceil(CUnsignedInt(n + m - 1))
-    assert((static_modint<mod>.mod - 1) % CInt(z) == 0)
-    if min(n, m) <= 60 {
-        return a.withUnsafeBufferPointer { a in
-            b.withUnsafeBufferPointer { b in
-                _Internal.convolution_naive(a, b)
-            }
-        }
+public func convolution__<mod: static_mod>(
+  _ a: ArraySlice<static_modint<mod>>, _ b: ArraySlice<static_modint<mod>>
+) -> ArraySlice<static_modint<mod>> {
+  let (n, m) = (a.count, b.count)
+  if n == 0 || m == 0 { return [] }
+  let z: CInt = _Internal.bit_ceil(CUnsignedInt(n + m - 1))
+  assert((static_modint<mod>.mod - 1) % CInt(z) == 0)
+  if min(n, m) <= 60 {
+    return a.withUnsafeBufferPointer { a in
+      b.withUnsafeBufferPointer { b in
+        _Internal.convolution_naive(a, b)
+      }
     }
-    return _Internal.convolution_fft(a, b)
+  }
+  return _Internal.convolution_fft(a, b)
 }
 
 @inlinable
@@ -470,15 +414,7 @@ where
   A: Collection, A.Element == static_modint<mod>,
   B: Collection, B.Element == static_modint<mod>
 {
-//  let (n, m) = (a.count, b.count)
-//  if n == 0 || m == 0 { return [] }
-//
-//  let z: CInt = _Internal.bit_ceil(CUnsignedInt(n + m - 1))
-//  assert((static_modint<mod>.mod - 1) % CInt(z) == 0)
-//
-//  if min(n, m) <= 60 { return _Internal.convolution_naive(a, b) }
-//  return _Internal.convolution_fft(a, b)
-    return convolution__(ArraySlice(a), ArraySlice(b)) + []
+  convolution__(ArraySlice(a), ArraySlice(b)) + []
 }
 
 @inlinable

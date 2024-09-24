@@ -30,20 +30,20 @@ public struct barrett {
   @usableFromInline let m: CUnsignedInt
   @usableFromInline let im: CUnsignedLongLong
 
-  @inlinable
+  @inlinable @inline(__always)
   public init<Unsigned: UnsignedInteger>(_ _m: Unsigned) {
     m = CUnsignedInt(_m)
     im = imValue(CUnsignedInt(_m))
   }
 
-  @inlinable
+  @inlinable @inline(__always)
   public init<Signed: SignedInteger>(_ _m: Signed) {
     m = CUnsignedInt(bitPattern: CInt(_m))
     im = imValue(CInt(_m))
   }
 
   /// @return m
-  @inlinable
+  @inlinable @inline(__always)
   public func umod() -> CUnsignedInt { return m }
   /// @param a `0 <= a < m`
   /// @param b `0 <= b < m`

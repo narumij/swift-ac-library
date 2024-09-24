@@ -1,35 +1,36 @@
 import Foundation
 
-public protocol static_modint_base: modint_base & modint_raw {
-}
+public protocol static_modint_base: modint_base & modint_raw {}
 
 public protocol dynamic_modint_base: modint_base & modint_raw {
   static func set_mod(_ m: CInt)
 }
 
 public struct static_modint<m: static_mod>: static_modint_base {
+  @usableFromInline
   typealias static_mod = m
-    
-    @inlinable @inline(__always)
+
+  @inlinable @inline(__always)
   public init(raw v: CUnsignedInt) {
     _v = v
   }
+
   public var _v: CUnsignedInt
 }
 
 extension static_modint {
 
-  @inlinable
+  @inlinable @inline(__always)
   public static var mod: CInt { return CInt(bitPattern: m.umod) }
 
-    @inlinable @inline(__always)
-    public init() { self.init(raw: 0) }
-    @inlinable @inline(__always)
-    public init(_ v: Bool) { _v = ___modint_v(v ? 1 : 0, mod: __modint_mod(m.umod)) }
-    @inlinable @inline(__always)
-    public init(_ v: CInt) { _v = ___modint_v(v, mod: __modint_mod(m.umod)) }
-    @inlinable @inline(__always)
-    public init<T: BinaryInteger>(_ v: T) {
+  @inlinable @inline(__always)
+  public init() { self.init(raw: 0) }
+  @inlinable @inline(__always)
+  public init(_ v: Bool) { _v = ___modint_v(v ? 1 : 0, mod: __modint_mod(m.umod)) }
+  @inlinable @inline(__always)
+  public init(_ v: CInt) { _v = ___modint_v(v, mod: __modint_mod(m.umod)) }
+  @inlinable @inline(__always)
+  public init<T: BinaryInteger>(_ v: T) {
     _v = ___modint_v(v, mod: __modint_mod(m.umod))
   }
 
@@ -102,7 +103,7 @@ extension static_modint {
     }
     return r
   }
-  @inlinable @inline(__always)
+  @inlinable
   public var inv: Self {
     if isPrime {
       assert(_v != 0)
