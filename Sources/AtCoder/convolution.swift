@@ -305,6 +305,7 @@ extension _Internal {
     return .init(
       [static_modint<mod>](unsafeUninitializedCapacity: n + m - 1) {
         ans, initializedCount in
+        ans.initialize(repeating: .init())
         if n < m {
           for j in 0..<m {
             for i in 0..<n {
