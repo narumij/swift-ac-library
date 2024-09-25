@@ -380,7 +380,7 @@ where
 }
 
 @inlinable
-public func convolution<mod: static_mod, T: UnsignedInteger>(_ t: mod.Type, _ a: [T], _ b: [T])
+public func convolution<mod: static_mod, T: FixedWidthInteger>(_ t: mod.Type, _ a: [T], _ b: [T])
   -> [T]
 {
 
@@ -410,42 +410,7 @@ public func convolution<mod: static_mod, T: UnsignedInteger>(_ t: mod.Type, _ a:
 }
 
 @inlinable
-public func convolution<mod: static_mod, T: SignedInteger>(_ t: mod.Type, _ a: [T], _ b: [T])
-  -> [T]
-{
-
-  let n = a.count
-  let m = b.count
-  if n == 0 || m == 0 { return [] }
-
-  typealias mint = static_modint<mod>
-
-  let z: Int = _Internal.bit_ceil(CUnsignedInt(n + m - 1))
-  assert((Int(mint.mod) - 1) % z == 0)
-
-  var a2 = [mint](repeating: 0, count: n)
-  var b2 = [mint](repeating: 0, count: m)
-  for i in 0..<n {
-    a2[i] = mint(a[i])
-  }
-  for i in 0..<m {
-    b2[i] = mint(b[i])
-  }
-  let c2 = convolution(a2, b2)
-  var c = [T](repeating: 0, count: n + m - 1)
-  for i in 0..<(n + m - 1) {
-    c[i] = T(c2[i].val)
-  }
-  return c
-}
-
-@inlinable
-public func convolution<T: UnsignedInteger>(_ a: [T], _ b: [T]) -> [T] {
-  convolution(mod_998_244_353.self, a, b)
-}
-
-@inlinable
-public func convolution<T: SignedInteger>(_ a: [T], _ b: [T]) -> [T] {
+public func convolution<T: FixedWidthInteger>(_ a: [T], _ b: [T]) -> [T] {
   convolution(mod_998_244_353.self, a, b)
 }
 

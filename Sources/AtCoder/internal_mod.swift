@@ -13,8 +13,8 @@ extension static_mod {
   public static var m: CUnsignedInt { umod }
   @inlinable @inline(__always)
   public static var isPrime: Bool {
-      assert(_Internal.is_prime(CInt(umod)), "\(umod) is not prime number.")
-      return true
+    assert(_Internal.is_prime(CInt(umod)), "\(umod) is not prime number.")
+    return true
   }
 }
 
@@ -77,8 +77,7 @@ public protocol modint_base: Hashable & AdditiveArithmetic
   init()
   init(_ v: Bool)
   init(_ v: CInt)
-  init<T: UnsignedInteger>(_ v: T)
-  init<T: SignedInteger>(_ v: T)
+  init<T: FixedWidthInteger>(_ v: T)
   var val: CInt { get }
   static func + (lhs: Self, rhs: Self) -> Self
   static func - (lhs: Self, rhs: Self) -> Self
@@ -96,54 +95,29 @@ public protocol modint_base: Hashable & AdditiveArithmetic
 
 extension modint_base {
   @inlinable @inline(__always)
-  public static func + <I: UnsignedInteger>(lhs: I, rhs: Self) -> Self { Self(lhs) + rhs }
+  public static func + <I: FixedWidthInteger>(lhs: I, rhs: Self) -> Self { Self(lhs) + rhs }
   @inlinable @inline(__always)
-  public static func + <I: UnsignedInteger>(lhs: Self, rhs: I) -> Self { lhs + Self(rhs) }
+  public static func + <I: FixedWidthInteger>(lhs: Self, rhs: I) -> Self { lhs + Self(rhs) }
   @inlinable @inline(__always)
-  public static func - <I: UnsignedInteger>(lhs: I, rhs: Self) -> Self { Self(lhs) - rhs }
+  public static func - <I: FixedWidthInteger>(lhs: I, rhs: Self) -> Self { Self(lhs) - rhs }
   @inlinable @inline(__always)
-  public static func - <I: UnsignedInteger>(lhs: Self, rhs: I) -> Self { lhs - Self(rhs) }
+  public static func - <I: FixedWidthInteger>(lhs: Self, rhs: I) -> Self { lhs - Self(rhs) }
   @inlinable @inline(__always)
-  public static func * <I: UnsignedInteger>(lhs: I, rhs: Self) -> Self { Self(lhs) * rhs }
+  public static func * <I: FixedWidthInteger>(lhs: I, rhs: Self) -> Self { Self(lhs) * rhs }
   @inlinable @inline(__always)
-  public static func * <I: UnsignedInteger>(lhs: Self, rhs: I) -> Self { lhs * Self(rhs) }
+  public static func * <I: FixedWidthInteger>(lhs: Self, rhs: I) -> Self { lhs * Self(rhs) }
   @inlinable @inline(__always)
-  public static func / <I: UnsignedInteger>(lhs: I, rhs: Self) -> Self { Self(lhs) / rhs }
+  public static func / <I: FixedWidthInteger>(lhs: I, rhs: Self) -> Self { Self(lhs) / rhs }
   @inlinable @inline(__always)
-  public static func / <I: UnsignedInteger>(lhs: Self, rhs: I) -> Self { lhs / Self(rhs) }
+  public static func / <I: FixedWidthInteger>(lhs: Self, rhs: I) -> Self { lhs / Self(rhs) }
   @inlinable @inline(__always)
-  public static func += <I: UnsignedInteger>(lhs: inout Self, rhs: I) { lhs += Self(rhs) }
+  public static func += <I: FixedWidthInteger>(lhs: inout Self, rhs: I) { lhs += Self(rhs) }
   @inlinable @inline(__always)
-  public static func -= <I: UnsignedInteger>(lhs: inout Self, rhs: I) { lhs -= Self(rhs) }
+  public static func -= <I: FixedWidthInteger>(lhs: inout Self, rhs: I) { lhs -= Self(rhs) }
   @inlinable @inline(__always)
-  public static func *= <I: UnsignedInteger>(lhs: inout Self, rhs: I) { lhs *= Self(rhs) }
+  public static func *= <I: FixedWidthInteger>(lhs: inout Self, rhs: I) { lhs *= Self(rhs) }
   @inlinable @inline(__always)
-  public static func /= <I: UnsignedInteger>(lhs: inout Self, rhs: I) { lhs /= Self(rhs) }
-
-  @inlinable @inline(__always)
-  public static func + <I: SignedInteger>(lhs: I, rhs: Self) -> Self { Self(lhs) + rhs }
-  @inlinable @inline(__always)
-  public static func + <I: SignedInteger>(lhs: Self, rhs: I) -> Self { lhs + Self(rhs) }
-  @inlinable @inline(__always)
-  public static func - <I: SignedInteger>(lhs: I, rhs: Self) -> Self { Self(lhs) - rhs }
-  @inlinable @inline(__always)
-  public static func - <I: SignedInteger>(lhs: Self, rhs: I) -> Self { lhs - Self(rhs) }
-  @inlinable @inline(__always)
-  public static func * <I: SignedInteger>(lhs: I, rhs: Self) -> Self { Self(lhs) * rhs }
-  @inlinable @inline(__always)
-  public static func * <I: SignedInteger>(lhs: Self, rhs: I) -> Self { lhs * Self(rhs) }
-  @inlinable @inline(__always)
-  public static func / <I: SignedInteger>(lhs: I, rhs: Self) -> Self { Self(lhs) / rhs }
-  @inlinable @inline(__always)
-  public static func / <I: SignedInteger>(lhs: Self, rhs: I) -> Self { lhs / Self(rhs) }
-  @inlinable @inline(__always)
-  public static func += <I: SignedInteger>(lhs: inout Self, rhs: I) { lhs += Self(rhs) }
-  @inlinable @inline(__always)
-  public static func -= <I: SignedInteger>(lhs: inout Self, rhs: I) { lhs -= Self(rhs) }
-  @inlinable @inline(__always)
-  public static func *= <I: SignedInteger>(lhs: inout Self, rhs: I) { lhs *= Self(rhs) }
-  @inlinable @inline(__always)
-  public static func /= <I: SignedInteger>(lhs: inout Self, rhs: I) { lhs /= Self(rhs) }
+  public static func /= <I: FixedWidthInteger>(lhs: inout Self, rhs: I) { lhs /= Self(rhs) }
 }
 
 extension modint_base {
@@ -175,7 +149,7 @@ func __modint_v<T: UnsignedInteger>(unsigned v: T, umod: CUnsignedInt) -> CUnsig
 }
 
 @inlinable @inline(__always)
-func __modint_v<T: SignedInteger>(signed v: T, umod: CUnsignedInt) -> CUnsignedInt {
+func __modint_v<T: FixedWidthInteger>(_ v: T, umod: CUnsignedInt) -> CUnsignedInt {
   let umod = T(truncatingIfNeeded: umod)
   var x = v % umod
   if x < 0 { x += umod }
@@ -199,12 +173,8 @@ extension modint_raw {
     self.init(raw: __modint_v(bool: v, umod: Self.umod))
   }
   @inlinable @inline(__always)
-  public init<T: UnsignedInteger>(_ v: T) {
-    self.init(raw: __modint_v(unsigned: v, umod: Self.umod))
-  }
-  @inlinable @inline(__always)
-  public init<T: SignedInteger>(_ v: T) {
-    self.init(raw: __modint_v(signed: v, umod: Self.umod))
+  public init<T: FixedWidthInteger>(_ v: T) {
+    self.init(raw: __modint_v(v, umod: Self.umod))
   }
 }
 
