@@ -18,6 +18,7 @@ extension Array where Element: AdditiveArithmetic {
 extension ArraySlice where Element: AdditiveArithmetic {
   @inlinable
   public mutating func resize(_ n: Int) {
+    reserveCapacity(Swift.max(count, n))
     guard count != n else { return }
     if count > n {
       removeLast(count - n)
@@ -301,23 +302,24 @@ extension _Internal {
   ) -> ArraySlice<static_modint<mod>> {
     let n = a.count
     let m = b.count
-    var ans = ArraySlice<static_modint<mod>>(repeating: 0, count: n + m - 1)
-    ans.withUnsafeMutableBufferPointer { ans in
-      if n < m {
-        for j in 0..<m {
-          for i in 0..<n {
-            ans[i + j] += a[i] * b[j]
-          }
-        }
-      } else {
-        for i in 0..<n {
+    return .init(
+      [static_modint<mod>](unsafeUninitializedCapacity: n + m - 1) {
+        ans, initializedCount in
+        if n < m {
           for j in 0..<m {
-            ans[i + j] += a[i] * b[j]
+            for i in 0..<n {
+              ans[i + j] += a[i] * b[j]
+            }
+          }
+        } else {
+          for i in 0..<n {
+            for j in 0..<m {
+              ans[i + j] += a[i] * b[j]
+            }
           }
         }
-      }
-    }
-    return ans
+        initializedCount = n + m - 1
+      })
   }
 
   @inline(never)
