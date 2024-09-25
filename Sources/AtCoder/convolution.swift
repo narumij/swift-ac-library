@@ -323,7 +323,6 @@ extension _Internal {
       })
   }
 
-#if false
   @inline(never)
   @inlinable
   static func convolution_fft<mod: static_mod>(
@@ -351,48 +350,7 @@ extension _Internal {
     }
     return a
   }
-#else
-    @inline(never)
-    @inlinable
-    static func convolution_fft<mod: static_mod>(
-        _ a: ArraySlice<static_modint<mod>>, _ b: ArraySlice<static_modint<mod>>
-    ) -> ArraySlice<static_modint<mod>> {
-        var a = a
-        let (n, m) = (a.count, b.count)
-        let z: Int = _Internal.bit_ceil(CUnsignedInt(n + m - 1))
-        typealias mint = static_modint<mod>
-        _ = Array<mint>.init(unsafeUninitializedCapacity: z) { _a, _ in
-            let a_last = _a.initialize(fromContentsOf: a)
-            for i in a_last ..< z {
-                _a.initializeElement(at: i, to: .init())
-            }
-            _Internal.butterfly(_a)
-            
-            _ = Array<mint>.init(unsafeUninitializedCapacity: z) { _b, _ in
-                let b_last = _b.initialize(fromContentsOf: b)
-                for i in b_last ..< z {
-                    _b.initializeElement(at: i, to: .init())
-                }
-                _Internal.butterfly(_b)
-                for i in 0..<z {
-                    _a[i] *= _b[i]
-                }
-            }
-            
-            _Internal.butterfly_inv(_a)
-            
-            a.resize(n + m - 1)
-            let iz = static_modint<mod>(z).inv
-            a.withUnsafeMutableBufferPointer { a in
-                for i in 0..<(n + m - 1) {
-                    a.initializeElement(at: i, to: _a[i] * iz   )
-                }
-            }
-        }
-        return a
-    }
-#endif
-} // _Internal
+}  // _Internal
 
 @inlinable
 public func convolution<mod: static_mod>(
