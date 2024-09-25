@@ -11,6 +11,11 @@ public struct static_modint<m: static_mod>: static_modint_base & modint_raw {
   typealias static_mod = m
 
   @inlinable @inline(__always)
+  public init() {
+      _v = 0
+  }
+
+  @inlinable @inline(__always)
   init(raw v: CUnsignedInt) {
     _v = v
   }
@@ -114,6 +119,11 @@ extension static_modint {
 }
 
 public struct dynamic_modint<bt: dynamic_mod>: dynamic_modint_base & modint_raw {
+
+  @inlinable @inline(__always)
+  public init() {
+      _v = 0
+  }
 
   @inlinable @inline(__always)
   init(raw v: CUnsignedInt) {

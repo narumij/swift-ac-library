@@ -195,10 +195,6 @@ protocol modint_raw {
 extension modint_raw {
 
   @inlinable @inline(__always)
-  public init() {
-    self.init(raw: 0)
-  }
-  @inlinable @inline(__always)
   public init(_ v: Bool) {
     self.init(raw: __modint_v(bool: v, umod: Self.umod))
   }
