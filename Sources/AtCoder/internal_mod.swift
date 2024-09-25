@@ -12,7 +12,10 @@ extension static_mod {
   @inlinable @inline(__always)
   public static var m: CUnsignedInt { umod }
   @inlinable @inline(__always)
-  public static var isPrime: Bool { true }
+  public static var isPrime: Bool {
+      assert(_Internal.is_prime(CInt(umod)), "\(umod) is not prime number.")
+      return true
+  }
 }
 
 public enum mod_998_244_353: static_mod {
@@ -223,9 +226,4 @@ extension modint_raw {
   }
   @inlinable @inline(__always)
   public var unsigned: CUnsignedInt { .init(bitPattern: val) }
-}
-
-extension static_modint {
-  @inlinable @inline(__always)
-  public static var zero: Self { self.init(raw: 0) }
 }
