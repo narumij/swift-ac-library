@@ -11,11 +11,12 @@ public struct static_modint<m: static_mod>: static_modint_base & modint_raw {
   typealias static_mod = m
 
   @inlinable @inline(__always)
-  public init(raw v: CUnsignedInt) {
+  init(raw v: CUnsignedInt) {
     _v = v
   }
 
-  public var _v: CUnsignedInt
+  @usableFromInline
+  var _v: CUnsignedInt
 }
 
 extension static_modint {
@@ -24,18 +25,8 @@ extension static_modint {
   public static var mod: CInt { return CInt(bitPattern: m.umod) }
 
   @inlinable @inline(__always)
-  public init() { self.init(raw: 0) }
-  @inlinable @inline(__always)
-  public init(_ v: Bool) { _v = ___modint_v(v ? 1 : 0, umod: m.umod) }
-  @inlinable @inline(__always)
-  public init(_ v: CInt) { _v = ___modint_v(v, umod: m.umod) }
-  @inlinable @inline(__always)
-  public init<T: BinaryInteger>(_ v: T) {
-    _v = ___modint_v(v, umod: m.umod)
-  }
-
-  @inlinable
   public var val: CInt { return .init(bitPattern: _v) }
+
   @inlinable
   public static func += (lhs: inout Self, rhs: Self) {
     lhs._v &+= rhs._v
@@ -50,17 +41,17 @@ extension static_modint {
   public static func *= (lhs: inout Self, rhs: Self) {
     var z: ULL = ULL(lhs._v)
     z &*= ULL(rhs._v)
-    lhs._v = UINT(z % ULL(umod))
+    lhs._v = UINT(truncatingIfNeeded: z % ULL(umod))
   }
   @inlinable
   public static func /= (lhs: inout Self, rhs: Self) {
     lhs = lhs * rhs.inv
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static prefix func + (_ m: Self) -> Self {
     return m
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static prefix func - (_ m: Self) -> Self {
     return .init(raw: 0) - m
   }
@@ -80,7 +71,7 @@ extension static_modint {
   public static func * (lhs: Self, rhs: Self) -> Self {
     var z: ULL = ULL(lhs._v)
     z &*= ULL(rhs._v)
-    return .init(raw: UINT(z % ULL(umod)))
+    return .init(raw: UINT(truncatingIfNeeded: z % ULL(umod)))
   }
   @inlinable
   public static func / (lhs: Self, rhs: Self) -> Self {
@@ -119,15 +110,19 @@ extension static_modint {
   public static var umod: CUnsignedInt { m.umod }
 
   @inlinable @inline(__always)
-  public var isPrime: Bool { m.isPrime }
+  var isPrime: Bool { m.isPrime }
 }
 
 public struct dynamic_modint<bt: dynamic_mod>: dynamic_modint_base & modint_raw {
-  @inlinable
-  public init(raw v: CUnsignedInt) {
+
+  @inlinable @inline(__always)
+  init(raw v: CUnsignedInt) {
     _v = v
   }
-  public var _v: CUnsignedInt
+
+  @usableFromInline
+  var _v: CUnsignedInt
+
   @inlinable
   public static func set_mod(_ m: CInt) {
     bt.set_mod(m)
@@ -138,15 +133,6 @@ extension dynamic_modint {
 
   @inlinable @inline(__always)
   public static var mod: CInt { return CInt(bitPattern: bt.umod) }
-
-  @inlinable
-  public init() { self.init(raw: 0) }
-  @inlinable
-  public init(_ v: Bool) { _v = ___modint_v(v ? 1 : 0, umod: bt.umod) }
-  @inlinable
-  public init(_ v: CInt) { _v = ___modint_v(v, umod: bt.umod) }
-  @inlinable
-  public init<T: BinaryInteger>(_ v: T) { _v = ___modint_v(v, umod: bt.umod) }
 
   @inlinable
   public var val: CInt { return .init(bitPattern: _v) }

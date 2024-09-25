@@ -3,48 +3,34 @@ import Foundation
 // ABC345-G AC!
 // https://atcoder.jp/contests/abc345/submissions/58064206
 
-extension Array {
-
-  @inlinable
-  mutating func resize(_ n: Int, element: Element) {
-    if count > n {
-      removeLast(count - n)
-      return
-    }
-    append(contentsOf: repeatElement(element, count: n - count))
-  }
-}
-
-extension ArraySlice {
-
-  @inlinable
-  mutating func resize(_ n: Int, element: Element) {
-    if count > n {
-      removeLast(count - n)
-      return
-    }
-    append(contentsOf: repeatElement(element, count: n - count))
-  }
-}
-
 extension Array where Element: AdditiveArithmetic {
-  @inlinable @inline(__always)
+  @inlinable
   public mutating func resize(_ n: Int) {
-    resize(n, element: .zero)
+    guard count != n else { return }
+    if count > n {
+      removeLast(count - n)
+      return
+    }
+    append(contentsOf: repeatElement(.zero, count: n - count))
   }
 }
 
 extension ArraySlice where Element: AdditiveArithmetic {
-  @inlinable @inline(__always)
+  @inlinable
   public mutating func resize(_ n: Int) {
-    resize(n, element: .zero)
+    guard count != n else { return }
+    if count > n {
+      removeLast(count - n)
+      return
+    }
+    append(contentsOf: repeatElement(.zero, count: n - count))
   }
 }
 
 extension static_modint {
-  @inlinable @inline(__always)
+  @inlinable
   init(ull v: CUnsignedLongLong) {
-    _v = __modint_v(unsigned: v, umod: static_mod.umod)
+    _v = __modint_v(ull: v, umod: static_mod.umod)
   }
 }
 
@@ -169,6 +155,7 @@ extension _Internal {
     }
   }
 
+  @inline(never)
   @inlinable
   static func butterfly<mod: static_mod>(
     _ a: UnsafeMutableBufferPointer<static_modint<mod>>
@@ -231,6 +218,7 @@ extension _Internal {
     }
   }
 
+  @inline(never)
   @inlinable
   static func butterfly_inv<mod: static_mod>(
     _ a: UnsafeMutableBufferPointer<static_modint<mod>>
@@ -306,6 +294,7 @@ extension _Internal {
     }
   }
 
+  @inline(never)
   @inlinable
   static func convolution_naive<mod: static_mod>(
     _ a: UnsafeBufferPointer<static_modint<mod>>, _ b: UnsafeBufferPointer<static_modint<mod>>
@@ -331,6 +320,7 @@ extension _Internal {
     return ans
   }
 
+  @inline(never)
   @inlinable
   static func convolution_fft<mod: static_mod>(
     _ a: ArraySlice<static_modint<mod>>, _ b: ArraySlice<static_modint<mod>>
@@ -344,7 +334,7 @@ extension _Internal {
       b.withUnsafeMutableBufferPointer { b in
         _Internal.butterfly(a)
         _Internal.butterfly(b)
-        for i in 0..<Int(z) {
+        for i in 0..<z {
           a[i] *= b[i]
         }
         _Internal.butterfly_inv(a)
@@ -387,7 +377,7 @@ where
 }
 
 @inlinable
-public func convolution<mod: static_mod, T: FixedWidthInteger>(_ t: mod.Type, _ a: [T], _ b: [T])
+public func convolution<mod: static_mod, T: UnsignedInteger>(_ t: mod.Type, _ a: [T], _ b: [T])
   -> [T]
 {
 
@@ -417,7 +407,42 @@ public func convolution<mod: static_mod, T: FixedWidthInteger>(_ t: mod.Type, _ 
 }
 
 @inlinable
-public func convolution<T: FixedWidthInteger>(_ a: [T], _ b: [T]) -> [T] {
+public func convolution<mod: static_mod, T: SignedInteger>(_ t: mod.Type, _ a: [T], _ b: [T])
+  -> [T]
+{
+
+  let n = a.count
+  let m = b.count
+  if n == 0 || m == 0 { return [] }
+
+  typealias mint = static_modint<mod>
+
+  let z: Int = _Internal.bit_ceil(CUnsignedInt(n + m - 1))
+  assert((Int(mint.mod) - 1) % z == 0)
+
+  var a2 = [mint](repeating: 0, count: n)
+  var b2 = [mint](repeating: 0, count: m)
+  for i in 0..<n {
+    a2[i] = mint(a[i])
+  }
+  for i in 0..<m {
+    b2[i] = mint(b[i])
+  }
+  let c2 = convolution(a2, b2)
+  var c = [T](repeating: 0, count: n + m - 1)
+  for i in 0..<(n + m - 1) {
+    c[i] = T(c2[i].val)
+  }
+  return c
+}
+
+@inlinable
+public func convolution<T: UnsignedInteger>(_ a: [T], _ b: [T]) -> [T] {
+  convolution(mod_998_244_353.self, a, b)
+}
+
+@inlinable
+public func convolution<T: SignedInteger>(_ a: [T], _ b: [T]) -> [T] {
   convolution(mod_998_244_353.self, a, b)
 }
 
