@@ -83,9 +83,12 @@ extension _Internal {
       return sa_doubling(pointer: s, count: n)
     }
 
+    func index(_ i: Element) -> Int {
+      Int(truncatingIfNeeded: i)
+    }
+
     var sa = [Int](repeating: 0, count: n)
     var ls = [Bool](repeating: false, count: n)
-    // for (int i = n - 2; i >= 0; i--) {
     for i in stride(from: n - 2, through: 0, by: -1) {
       ls[i] = s[i] == s[i + 1] ? ls[i + 1] : s[i] < s[i + 1]
     }
@@ -93,12 +96,11 @@ extension _Internal {
     var sum_s = [Int](repeating: 0, count: upper + 1)
     for i in 0..<n {
       if !ls[i] {
-        sum_s[Int(s[i])] += 1
+        sum_s[index(s[i])] += 1
       } else {
-        sum_l[Int(s[i] + 1)] += 1
+        sum_l[index(s[i] + 1)] += 1
       }
     }
-    // for (int i = 0; i <= upper; i++) {
     for i in stride(from: 0, through: upper, by: 1) {
       sum_s[i] += sum_l[i]
       if i < upper { sum_l[i + 1] += sum_s[i] }
@@ -106,33 +108,33 @@ extension _Internal {
 
     func induce(_ lms: [Int]) {
       sa.withUnsafeMutableBufferPointer { $0.update(repeating: -1) }
-      var buf = [Int](repeating: 0, count: upper + 1)
-      // std::copy(sum_s.begin(), sum_s.end(), buf.begin());
-      buf = sum_s
-      for d in lms {
-        if d == n { continue }
-        sa[buf[Int(s[d])]] = d
-        buf[Int(s[d])] += 1
-      }
-      // std::copy(sum_l.begin(), sum_l.end(), buf.begin());
-      buf = sum_l
-      sa[buf[Int(s[n - 1])]] = n - 1
-      buf[Int(s[n - 1])] += 1
-      for i in 0..<n {
-        let v = sa[i]
-        if v >= 1, !ls[v - 1] {
-          sa[buf[Int(s[v - 1])]] = v - 1
-          buf[Int(s[v - 1])] += 1
+      _ = [Int](unsafeUninitializedCapacity: upper + 1) { buf, _ in
+        // std::copy(sum_s.begin(), sum_s.end(), buf.begin());
+        _ = buf.initialize(from: sum_s)
+        for d in lms {
+          if d == n { continue }
+          sa[buf[index(s[d])]] = d
+          buf[index(s[d])] += 1
         }
-      }
-      // std::copy(sum_l.begin(), sum_l.end(), buf.begin());
-      buf = sum_l
-      // for (int i = n - 1; i >= 0; i--) {
-      for i in stride(from: n - 1, through: 0, by: -1) {
-        let v = sa[i]
-        if v >= 1, ls[v - 1] {
-          buf[Int(s[v - 1]) + 1] -= 1
-          sa[buf[Int(s[v - 1]) + 1]] = v - 1
+        // std::copy(sum_l.begin(), sum_l.end(), buf.begin());
+        _ = buf.update(from: sum_l)
+        sa[buf[index(s[n - 1])]] = n - 1
+        buf[index(s[n - 1])] += 1
+        for i in 0..<n {
+          let v = sa[i]
+          if v >= 1, !ls[v - 1] {
+            sa[buf[index(s[v - 1])]] = v - 1
+            buf[index(s[v - 1])] += 1
+          }
+        }
+        // std::copy(sum_l.begin(), sum_l.end(), buf.begin());
+        _ = buf.update(from: sum_l)
+        for i in stride(from: n - 1, through: 0, by: -1) {
+          let v = sa[i]
+          if v >= 1, ls[v - 1] {
+            buf[index(s[v - 1]) + 1] -= 1
+            sa[buf[index(s[v - 1]) + 1]] = v - 1
+          }
         }
       }
     }
@@ -262,7 +264,8 @@ where Element: Equatable {
     let j = sa[rnk[i] - 1]
     // for (; j + h < n && i + h < n; h++) {
     //  if s[j + h] != s[i + h] { break }
-    while j + h < n, i + h < n, s[j + h] == s[i + h] {
+    while j + h < n, i + h < n,
+          s[j + h] == s[i + h] {
       h += 1
     }
     lcp[rnk[i] - 1] = h
