@@ -142,12 +142,11 @@ extension MCFGraph {
       self.key = key
       self.to = to
     }
-
     @usableFromInline let key: Cost
     @usableFromInline let to: Int
     @inlinable
     static func < (lhs: Q, rhs: Q) -> Bool {
-      (lhs.key, lhs.to) < (rhs.key, rhs.to)
+        lhs.key < rhs.key
     }
   }
 
