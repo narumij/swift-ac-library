@@ -182,13 +182,24 @@ extension SegTree {
 }
 
 extension SegTree {
-  @inlinable public mutating func set(_ p: Int, _ x: S) { _update { $0.set(p, x) } }
-  @inlinable public mutating func get(_ p: Int) -> S { _update { $0.get(p) } }
-  @inlinable public mutating func prod(_ l: Int, _ r: Int) -> S { _update { $0.prod(l, r) } }
-  @inlinable public mutating func max_right(_ l: Int, _ g: (S) -> Bool) -> Int {
+  @inlinable
+  public mutating func set(_ p: Int, _ x: S) {
+    _update { $0.set(p, x) }
+  }
+  @inlinable
+  public mutating func get(_ p: Int) -> S {
+    _update { $0.get(p) }
+  }
+  @inlinable
+  public mutating func prod(_ l: Int, _ r: Int) -> S {
+    _update { $0.prod(l, r) }
+  }
+  @inlinable
+  public mutating func max_right(_ l: Int, _ g: (S) -> Bool) -> Int {
     _update { $0.max_right(l, g) }
   }
-  @inlinable public mutating func min_left(_ r: Int, _ g: (S) -> Bool) -> Int {
+  @inlinable
+  public mutating func min_left(_ r: Int, _ g: (S) -> Bool) -> Int {
     _update { $0.min_left(r, g) }
   }
 }
