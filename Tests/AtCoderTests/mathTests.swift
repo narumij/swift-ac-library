@@ -7,12 +7,8 @@ import XCTest
   import AtCoder
 #endif
 
-//private typealias int = CInt
-//private typealias uint = CUnsignedInt
-//private typealias ll = CLongLong
-//private typealias ull = CUnsignedLongLong
-
-private func gcd(_ a: ll, _ b: ll) -> ll {
+private func gcd<LL>(_ a: LL, _ b: LL) -> LL
+where LL: SignedInteger {
   assert(0 <= a && 0 <= b)
   if b == 0 { return a }
   return gcd(b, a % b)
@@ -28,10 +24,11 @@ private func pow_mod_naive(_ x: ll, _ n: ull, _ mod: uint) -> ll {
 }
 
 #if DEBUG
-  private func floor_sum_naive(_ n: ll, _ m: ll, _ a: ll, _ b: ll) -> ll {
-    var sum: ll = 0
+  private func floor_sum_naive<LL>(_ n: LL, _ m: LL, _ a: LL, _ b: LL) -> LL
+  where LL: FixedWidthInteger & SignedInteger {
+    var sum: LL = 0
     for i in 0..<n {
-      let z: ll = a * i + b
+      let z: LL = a * i + b
       sum += (z - _Internal.safe_mod(z, m)) / m
     }
     return sum
@@ -47,14 +44,8 @@ private func is_prime_naive(_ n: ll) -> Bool {
   return true
 }
 
-//private func safe_mod(_ x: ll, _ m: ll) -> ll {
-//  var x = x
-//  x %= m
-//  if x < 0 { x += m }
-//  return x
-//}
-
-private func safe_mod<INT: FixedWidthInteger>(_ x: INT, _ m: INT) -> INT {
+private func safe_mod<LL>(_ x: LL, _ m: LL) -> LL
+where LL: FixedWidthInteger {
   var x = x
   x %= m
   if x < 0 { x += m }
@@ -100,7 +91,11 @@ final class mathTests: XCTestCase {
   func testPowMod_Int() throws {
 
     func naive(_ x: Int, _ n: Int, _ mod: Int) -> Int {
-      let y = Int(safe_mod(x, mod))
+      #if DEBUG
+        let y = Int(safe_mod(x, mod))
+      #else
+        let y = safe_mod(x, mod)
+      #endif
       var z = 1 % mod
       for _ in 0..<n {
         z = (z * y) % mod
@@ -125,7 +120,7 @@ final class mathTests: XCTestCase {
     XCTAssertEqual(maxll - 1, inv_mod(maxll - 1, maxll))
     XCTAssertEqual(2, inv_mod(maxll / 2 + 1, maxll))
   }
-  
+
   func testInvBoundHand_Int() throws {
     let minll = Int(ll.min)
     let maxll = Int(ll.max)
@@ -149,16 +144,39 @@ final class mathTests: XCTestCase {
         }
       }
     }
+
+    func testInvMod_Int() throws {
+      for a in -100 ..<= 100 {
+        for b in 1 ..<= 1000 {
+          if gcd(_Internal.safe_mod(a, b), b) != 1 { continue }
+          let c = inv_mod(a, b)
+          XCTAssertLessThanOrEqual(0, c)
+          XCTAssertLessThan(c, b)
+          XCTAssertEqual(1 % b, ((a * c) % b + b) % b)
+        }
+      }
+    }
   #endif
 
   func testInvModZero() throws {
-    XCTAssertEqual(0, inv_mod(0, 1))
+    XCTAssertEqual(0, inv_mod(ll(0), ll(1)))
     //        for (int i = 0; i < 10; i++) {
     for i in ll(0)..<10 {
       XCTAssertEqual(0, inv_mod(i, 1))
       XCTAssertEqual(0, inv_mod(-i, 1))
       XCTAssertEqual(0, inv_mod(ll.min + i, 1))
       XCTAssertEqual(0, inv_mod(ll.max - i, 1))
+    }
+  }
+
+  func testInvModZero_Int() throws {
+    XCTAssertEqual(0, inv_mod(0, 1))
+    //        for (int i = 0; i < 10; i++) {
+    for i in 0..<10 {
+      XCTAssertEqual(0, inv_mod(i, 1))
+      XCTAssertEqual(0, inv_mod(-i, 1))
+      XCTAssertEqual(0, inv_mod(Int(ll.min) + i, 1))
+      XCTAssertEqual(0, inv_mod(Int(ll.max) - i, 1))
     }
   }
 
@@ -180,6 +198,25 @@ final class mathTests: XCTestCase {
         }
       }
     }
+
+    func testFloorSum_Int() throws {
+      //        for (int n = 0; n < 20; n++) {
+      for n in 0..<20 {
+        //            for (int m = 1; m < 20; m++) {
+        for m in 1..<20 {
+          //                for (int a = -20; a < 20; a++) {
+          for a in -20..<20 {
+            //                    for (int b = -20; b < 20; b++) {
+            for b in -20..<20 {
+              XCTAssertEqual(
+                floor_sum_naive(n, m, a, b),
+                floor_sum(n, m, a, b))
+            }
+          }
+        }
+      }
+    }
+
   #endif
 
   func testCRTHand() throws {
