@@ -43,15 +43,16 @@ where LL: SignedInteger {
 
 /// (rem, mod)
 @inlinable
-public func crt(
-  _ r: [CLongLong],
-  _ m: [CLongLong]
-) -> (rem: CLongLong, mod: CLongLong) {
+public func crt<LL>(
+  _ r: [LL],
+  _ m: [LL]
+) -> (rem: LL, mod: LL)
+where LL: SignedInteger {
   assert(r.count == m.count)
   let n = r.count
   // Contracts: 0 <= r0 < m0
-  var r0 = 0 as CLongLong
-  var m0 = 1 as CLongLong
+  var r0 = 0 as LL
+  var m0 = 1 as LL
   for i in 0..<n {
     assert(1 <= m[i])
     var r1 = _Internal.safe_mod(r[i], m[i])
@@ -74,8 +75,8 @@ public func crt(
     // -> x = (r1 - r0) / g * inv(u0) (mod u1)
 
     // im = inv(u0) (mod u1) (0 <= im < u1)
-    var g: CLongLong
-    var im: CLongLong
+    var g: LL
+    var im: LL
     (g, im) = _Internal.inv_gcd(m0, m1)
 
     let u1 = (m1 / g)
@@ -119,5 +120,19 @@ public func floor_sum(_ n: CLongLong, _ m: CLongLong, _ a: CLongLong, _ b: CLong
 
 @inlinable
 public func floor_sum(_ n: Int, _ m: Int, _ a: Int, _ b: Int) -> Int {
-  return Int(floor_sum(CLongLong(n), CLongLong(m), CLongLong(a), CLongLong(b)))
+  var (a, b) = (a, b)
+  assert(0 <= n && n < (1 << 32))
+  assert(1 <= m && m < (1 << 32))
+  var ans = 0
+  if a < 0 {
+    let a2 = _Internal.safe_mod(a, m)
+    ans -= 1 * n * (n &- 1) / 2 * ((a2 - a) / m)
+    a = a2
+  }
+  if b < 0 {
+    let b2 = _Internal.safe_mod(b, m)
+    ans -= 1 * n * ((b2 - b) / m)
+    b = b2
+  }
+  return ans + Int(_Internal.floor_sum_unsigned(UInt(n), UInt(m), UInt(a), UInt(b)))
 }

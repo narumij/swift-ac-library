@@ -234,12 +234,13 @@ extension _Internal {
   /// @param m `1 <= m < 2^32`
   /// @return sum_{i=0}^{n-1} floor((ai + b) / m) (mod 2^64)
   @inlinable
-  static func floor_sum_unsigned(
+  static func floor_sum_unsigned<ULL>(
     _ n: ULL,
     _ m: ULL,
     _ a: ULL,
     _ b: ULL
-  ) -> ULL {
+  ) -> ULL
+  where ULL: FixedWidthInteger & UnsignedInteger {
     var (n, m, a, b) = (n, m, a, b)
     var ans: ULL = 0
     while true {
