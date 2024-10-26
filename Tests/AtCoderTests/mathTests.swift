@@ -219,9 +219,13 @@ final class mathTests: XCTestCase {
 
   #endif
   
-  // TODO: CRTのInt版のテストを増やすこと
-
   func testCRTHand() throws {
+    let res = crt([1, 2, 1] as [ll], [2, 3, 2] as [ll])
+    XCTAssertEqual(5, res.rem)
+    XCTAssertEqual(6, res.mod)
+  }
+
+  func testCRTHand_Int() throws {
     let res = crt([1, 2, 1], [2, 3, 2])
     XCTAssertEqual(5, res.rem)
     XCTAssertEqual(6, res.mod)
@@ -257,6 +261,32 @@ final class mathTests: XCTestCase {
         }
       }
     }
+  
+  func testCRT2_Int() throws {
+    for a in 1 ..<= 20 {
+      for b in 1 ..<= 20 {
+        for c in -10 ..<= 10 {
+          for d in -10 ..< 10 {
+            let res = crt([c, d], [a, b])
+            if res.mod == 0 {
+              // for (int x = 0; x < a * b / gcd(a, b); x++) {
+              do {
+                var x = 0
+                while x < a * b / gcd(a, b) {
+                  defer { x += 1 }
+                  XCTAssertTrue(x % a != c || x % b != d)
+                }
+              }
+              continue
+            }
+            XCTAssertEqual(a * b / gcd(a, b), res.mod)
+            XCTAssertEqual(_Internal.safe_mod(c, a), res.rem % a)
+            XCTAssertEqual(_Internal.safe_mod(d, b), res.rem % b)
+          }
+        }
+      }
+    }
+  }
   #endif
 
   #if DEBUG
@@ -294,6 +324,35 @@ final class mathTests: XCTestCase {
         }
       }
     }
+  
+  func testCRT3_Int() throws {
+    for a in 1 ..<= 5 {
+      for b in 1 ..<= 5 {
+        for c in 1 ..<= 5 {
+          for d in -5 ..<= 5 {
+            for e in -5 ..<= 5 {
+              for f in -5 ..<= 5 {
+                let res = crt([d, e, f], [a, b, c])
+                var lcm = a * b / gcd(a, b)
+                lcm = lcm * c / gcd(lcm, c)
+                if res.mod == 0 {
+                  // for (int x = 0; x < lcm; x++) {
+                  for x in 0..<lcm {
+                    XCTAssertTrue(x % a != d || x % b != e || x % c != f)
+                  }
+                  continue
+                }
+                XCTAssertEqual(lcm, res.mod)
+                XCTAssertEqual(_Internal.safe_mod(d, a), res.rem % a)
+                XCTAssertEqual(_Internal.safe_mod(e, b), res.rem % b)
+                XCTAssertEqual(_Internal.safe_mod(f, c), res.rem % c)
+              }
+            }
+          }
+        }
+      }
+    }
+  }
   #endif
 
   func testCRTOverflow() throws {
@@ -301,6 +360,17 @@ final class mathTests: XCTestCase {
     let r1: ll = 1_000_000_000_000 - 2
     let m0: ll = 900577
     let m1: ll = 1_000_000_000_000
+    let res = crt([r0, r1], [m0, m1])
+    XCTAssertEqual(m0 * m1, res.mod)
+    XCTAssertEqual(r0, res.rem % m0)
+    XCTAssertEqual(r1, res.rem % m1)
+  }
+  
+  func testCRTOverflow_Int() throws {
+    let r0 = 0
+    let r1 = 1_000_000_000_000 - 2
+    let m0 = 900577
+    let m1 = 1_000_000_000_000
     let res = crt([r0, r1], [m0, m1])
     XCTAssertEqual(m0 * m1, res.mod)
     XCTAssertEqual(r0, res.rem % m0)
@@ -368,4 +438,64 @@ final class mathTests: XCTestCase {
     }
   }
 
+  func testCRTBound_Int() throws {
+    let INF = Int(ll.max)
+    var pred = [Int]()
+    for i in 1 ..<= 10 as StrideThrough<Int> {
+      pred.append(i)
+      pred.append(INF - (i - 1))
+    }
+    pred.append(998_244_353)
+    pred.append(1_000_000_007)
+    pred.append(1_000_000_009)
+
+    for ab in [
+      (INF, INF),
+      (1, INF),
+      (INF, 1),
+      (7, INF),
+      (INF / 337, 337),
+      (2, (INF - 1) / 2),
+    ] {
+      var a = ab.0
+      var b = ab.1
+      for _ /* ph */ in 0..<2 {
+        for ans in pred {
+          let res = crt([ans % a, ans % b], [a, b])
+          let lcm = a / gcd(a, b) * b
+          XCTAssertEqual(lcm, res.mod)
+          XCTAssertEqual(ans % lcm, res.rem)
+        }
+        swap(&a, &b)
+      }
+    }
+    let factor_inf = ([49, 73, 127, 337, 92737, 649657] as [Int]).permutations()
+    for factor_inf in factor_inf {
+      for ans in pred {
+        var r: [Int] = []
+        var m: [Int] = []
+        for f in factor_inf {
+          r.append(ans % f)
+          m.append(f)
+        }
+        let res = crt(r, m)
+        XCTAssertEqual(ans % INF, res.rem)
+        XCTAssertEqual(INF, res.mod)
+      }
+    }
+    let factor_infn1 = ([2, 3, 715_827_883, 2_147_483_647] as [Int]).permutations()
+    for factor_infn1 in factor_infn1 {
+      for ans in pred {
+        var r: [Int] = []
+        var m: [Int] = []
+        for f in factor_infn1 {
+          r.append(ans % f)
+          m.append(f)
+        }
+        let res = crt(r, m)
+        XCTAssertEqual(ans % (INF - 1), res.rem)
+        XCTAssertEqual(INF - 1, res.mod)
+      }
+    }
+  }
 }
