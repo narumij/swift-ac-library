@@ -47,7 +47,14 @@ private func is_prime_naive(_ n: ll) -> Bool {
   return true
 }
 
-private func safe_mod(_ x: ll, _ m: ll) -> ll {
+//private func safe_mod(_ x: ll, _ m: ll) -> ll {
+//  var x = x
+//  x %= m
+//  if x < 0 { x += m }
+//  return x
+//}
+
+private func safe_mod<INT: FixedWidthInteger>(_ x: INT, _ m: INT) -> INT {
   var x = x
   x %= m
   if x < 0 { x += m }
@@ -90,9 +97,38 @@ final class mathTests: XCTestCase {
     #endif
   }
 
+  func testPowMod_Int() throws {
+
+    func naive(_ x: Int, _ n: Int, _ mod: Int) -> Int {
+      let y = Int(safe_mod(x, mod))
+      var z = 1 % mod
+      for _ in 0..<n {
+        z = (z * y) % mod
+      }
+      return z
+    }
+
+    for a in -100..<100 {
+      for b in 0 ..<= 100 {
+        for c in 1 ..<= 100 {
+          XCTAssertEqual(naive(a, b, c), pow_mod(a, b, c))
+        }
+      }
+    }
+  }
+
   func testInvBoundHand() throws {
     let minll = ll.min
     let maxll = ll.max
+    XCTAssertEqual(inv_mod(-1, maxll), inv_mod(minll, maxll))
+    XCTAssertEqual(1, inv_mod(maxll, maxll - 1))
+    XCTAssertEqual(maxll - 1, inv_mod(maxll - 1, maxll))
+    XCTAssertEqual(2, inv_mod(maxll / 2 + 1, maxll))
+  }
+  
+  func testInvBoundHand_Int() throws {
+    let minll = Int(ll.min)
+    let maxll = Int(ll.max)
     XCTAssertEqual(inv_mod(-1, maxll), inv_mod(minll, maxll))
     XCTAssertEqual(1, inv_mod(maxll, maxll - 1))
     XCTAssertEqual(maxll - 1, inv_mod(maxll - 1, maxll))

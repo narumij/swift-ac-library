@@ -4,13 +4,13 @@ extension _Internal {
   /// @param m `1 <= m`
   /// @return x mod m
   @inlinable
-  static func safe_mod(_ x: LL, _ m: LL) -> LL {
+  static func safe_mod<LL>(_ x: LL, _ m: LL) -> LL
+  where LL: SignedInteger {
     var x = x
     x %= m
     if x < 0 { x += m }
     return x
   }
-
 }
 
 @inlinable
@@ -62,9 +62,18 @@ public struct barrett {
     // ((ab * im) >> 64) == c or c + 1
     var z = CUnsignedLongLong(a)
     z &*= CUnsignedLongLong(b)
-    let x = z.multipliedFullWidth(by: CUnsignedLongLong(im)).high
+    let x = z.multipliedFullWidth(by: im).high
     let y = x &* CUnsignedLongLong(m)
     return CUnsignedInt(z &- y &+ (z < y ? CUnsignedLongLong(m) : 0))
+  }
+  
+  @inlinable
+  public func _mul(_ a: UInt, _ b: UInt) -> UInt {
+    var z = a
+    z &*= b
+    let x = z.multipliedFullWidth(by: UInt(im)).high
+    let y = x &* UInt(m)
+    return z &- y &+ (z < y ? UInt(m) : 0)
   }
 }
 
@@ -132,7 +141,8 @@ extension _Internal {
   /// @param b `1 <= b`
   /// @return pair(g, x) s.t. g = gcd(a, b), xa = g (mod b), 0 <= x < b/g
   @inlinable
-  static func inv_gcd(_ a: LL, _ b: LL) -> (first: LL, second: LL) {
+  static func inv_gcd<LL>(_ a: LL, _ b: LL) -> (first: LL, second: LL)
+  where LL: SignedInteger {
     let a = safe_mod(a, b)
     if a == 0 { return (b, 0) }
 

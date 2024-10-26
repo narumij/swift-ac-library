@@ -17,7 +17,24 @@ public func pow_mod(_ x: CLongLong, _ n: CLongLong, _ m: CInt) -> CLongLong {
 }
 
 @inlinable
-public func inv_mod(_ x: CLongLong, _ m: CLongLong) -> CLongLong {
+public func pow_mod(_ x: Int, _ n: Int, _ m: Int) -> Int {
+  var n = n
+  assert(0 <= n && 1 <= m)
+  if m == 1 { return 0 }
+  let bt = barrett(m)
+  var r: UInt = 1
+  var y = UInt(_Internal.safe_mod(x, m))
+  while n != 0 {
+    if n & 1 != 0 { r = bt._mul(r, y) }
+    y = bt._mul(y, y)
+    n >>= 1
+  }
+  return Int(r)
+}
+
+@inlinable
+public func inv_mod<LL>(_ x: LL, _ m: LL) -> LL
+where LL: SignedInteger {
   assert(1 <= m)
   let z = _Internal.inv_gcd(x, m)
   assert(z.first == 1)
@@ -98,4 +115,9 @@ public func floor_sum(_ n: CLongLong, _ m: CLongLong, _ a: CLongLong, _ b: CLong
     b = b2
   }
   return ans + LL(_Internal.floor_sum_unsigned(ULL(n), ULL(m), ULL(a), ULL(b)))
+}
+
+@inlinable
+public func floor_sum(_ n: Int, _ m: Int, _ a: Int, _ b: Int) -> Int {
+  return Int(floor_sum(CLongLong(n), CLongLong(m), CLongLong(a), CLongLong(b)))
 }

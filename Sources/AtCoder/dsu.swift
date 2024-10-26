@@ -85,8 +85,8 @@ extension DSU {
       self._n = _n
       self.parent_or_size = parent_or_size
     }
-    public let _n: Int
-    public let parent_or_size: UnsafeMutablePointer<Int>
+    @usableFromInline let _n: Int
+    @usableFromInline let parent_or_size: UnsafeMutablePointer<Int>
   }
   @inlinable @inline(__always)
   mutating func _update<R>(_ body: (_UnsafeHandle) -> R) -> R {
