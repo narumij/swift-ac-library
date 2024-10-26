@@ -33,6 +33,9 @@ public func pow_mod(_ x: Int, _ n: Int, _ m: Int) -> Int {
 }
 
 @inlinable
+public func pow(_ x: Int, _ n: Int, mod m: Int) -> Int { pow_mod(x, n, m) }
+
+@inlinable
 public func inv_mod<LL>(_ x: LL, _ m: LL) -> LL
 where LL: SignedInteger {
   assert(1 <= m)
@@ -40,6 +43,9 @@ where LL: SignedInteger {
   assert(z.first == 1)
   return z.second
 }
+
+@inlinable
+public func inv(_ x: Int, mod m: Int) -> Int { inv_mod(x, m) }
 
 /// (rem, mod)
 @inlinable
