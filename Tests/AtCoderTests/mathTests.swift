@@ -218,6 +218,8 @@ final class mathTests: XCTestCase {
     }
 
   #endif
+  
+  // TODO: CRTのInt版のテストを増やすこと
 
   func testCRTHand() throws {
     let res = crt([1, 2, 1], [2, 3, 2])
