@@ -1,7 +1,11 @@
 import Foundation
 
 @inlinable
-public func pow_mod(_ x: CLongLong, _ n: CLongLong, _ m: CInt) -> CLongLong {
+public func pow_mod(
+  _ x: CLongLong,
+  _ n: CLongLong,
+  _ m: CInt
+) -> CLongLong {
   var n = n
   assert(0 <= n && 1 <= m)
   if m == 1 { return 0 }
@@ -17,7 +21,11 @@ public func pow_mod(_ x: CLongLong, _ n: CLongLong, _ m: CInt) -> CLongLong {
 }
 
 @inlinable
-public func pow_mod(_ x: Int, _ n: Int, _ m: Int) -> Int {
+public func pow_mod(
+  _ x: Int,
+  _ n: Int,
+  _ m: Int
+) -> Int {
   var n = n
   assert(0 <= n && 1 <= m)
   if m == 1 { return 0 }
@@ -33,7 +41,10 @@ public func pow_mod(_ x: Int, _ n: Int, _ m: Int) -> Int {
 }
 
 @inlinable
-public func inv_mod<LL>(_ x: LL, _ m: LL) -> LL
+public func inv_mod<LL>(
+  _ x: LL,
+  _ m: LL
+) -> LL
 where LL: SignedInteger {
   assert(1 <= m)
   let z = _Internal.inv_gcd(x, m)
@@ -98,12 +109,22 @@ where LL: SignedInteger {
 }
 
 @inlinable
-public func floor_sum(_ n: CLongLong, _ m: CLongLong, _ a: CLongLong, _ b: CLongLong) -> CLongLong {
+public func floor_sum(
+  _ n: CLongLong,
+  _ m: CLongLong,
+  _ a: CLongLong,
+  _ b: CLongLong
+) -> CLongLong {
   CLongLong(floor_sum(Int(n), Int(m), Int(a), Int(b)))
 }
 
 @inlinable
-public func floor_sum(_ n: Int, _ m: Int, _ a: Int, _ b: Int) -> Int {
+public func floor_sum(
+  _ n: Int,
+  _ m: Int,
+  _ a: Int,
+  _ b: Int
+) -> Int {
   var (a, b) = (a, b)
   assert(0 <= n && n < (1 << 32))
   assert(1 <= m && m < (1 << 32))
