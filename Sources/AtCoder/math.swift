@@ -99,23 +99,7 @@ where LL: SignedInteger {
 
 @inlinable
 public func floor_sum(_ n: CLongLong, _ m: CLongLong, _ a: CLongLong, _ b: CLongLong) -> CLongLong {
-  typealias ULL = CUnsignedLongLong
-  typealias LL = CLongLong
-  var (a, b) = (a, b)
-  assert(0 <= n && n < ((1 as CLongLong) << 32))
-  assert(1 <= m && m < ((1 as CLongLong) << 32))
-  var ans: CLongLong = 0
-  if a < 0 {
-    let a2 = _Internal.safe_mod(a, m)
-    ans -= 1 * n * (n &- 1) / 2 * ((a2 - a) / m)
-    a = a2
-  }
-  if b < 0 {
-    let b2 = _Internal.safe_mod(b, m)
-    ans -= 1 * n * ((b2 - b) / m)
-    b = b2
-  }
-  return ans + LL(_Internal.floor_sum_unsigned(ULL(n), ULL(m), ULL(a), ULL(b)))
+  CLongLong(floor_sum(Int(n), Int(m), Int(a), Int(b)))
 }
 
 @inlinable
