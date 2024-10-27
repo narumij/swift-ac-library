@@ -106,7 +106,7 @@ final class mathTests: XCTestCase {
     for a in -100..<100 {
       for b in 0 ..<= 100 {
         for c in 1 ..<= 100 {
-          XCTAssertEqual(naive(a, b, c), pow(a, b, mod: c))
+          XCTAssertEqual(naive(a, b, c), pow_mod(a, b, c))
         }
       }
     }
