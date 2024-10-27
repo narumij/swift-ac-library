@@ -25,8 +25,8 @@ public func pow_mod(_ x: Int, _ n: Int, _ m: Int) -> Int {
   var r: UInt = 1
   var y = UInt(_Internal.safe_mod(x, m))
   while n != 0 {
-    if n & 1 != 0 { r = bt._mul(r, y) }
-    y = bt._mul(y, y)
+    if n & 1 != 0 { r = bt.mul(r, y) }
+    y = bt.mul(y, y)
     n >>= 1
   }
   return Int(r)

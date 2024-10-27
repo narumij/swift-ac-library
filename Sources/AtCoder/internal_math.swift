@@ -13,43 +13,36 @@ extension _Internal {
   }
 }
 
-@inlinable
-func imValue(_ _m: CUnsignedInt) -> CUnsignedLongLong {
-  CUnsignedLongLong(bitPattern: -1) / CUnsignedLongLong(_m) &+ 1
-}
-
-@inlinable
-func imValue(_ _m: CInt) -> CUnsignedLongLong {
-  imValue(CUnsignedInt(bitPattern: _m))
-}
-
 /// Fast modular multiplication by barrett reduction
 /// Reference: https://en.wikipedia.org/wiki/Barrett_reduction
 /// NOTE: reconsider after Ice Lake
 public struct barrett {
-  @usableFromInline let m: CUnsignedInt
-  @usableFromInline let im: CUnsignedLongLong
+  
+  @usableFromInline
+  let m, im: UInt
 
   @inlinable @inline(__always)
   public init<Unsigned: UnsignedInteger>(_ _m: Unsigned) {
-    m = CUnsignedInt(_m)
-    im = imValue(CUnsignedInt(_m))
+    m = UInt(_m)
+    im = UInt(bitPattern: -1) / UInt(_m) &+ 1
   }
 
   @inlinable @inline(__always)
   public init<Signed: SignedInteger>(_ _m: Signed) {
-    m = CUnsignedInt(bitPattern: CInt(_m))
-    im = imValue(CInt(_m))
+    m = UInt(bitPattern: Int(_m))
+    im = UInt(bitPattern: -1) / UInt(bitPattern: Int(_m)) &+ 1
   }
 
   /// @return m
-  @inlinable @inline(__always)
-  public func umod() -> CUnsignedInt { return m }
+  @inlinable
+  public func umod<Unsigned>() -> Unsigned where Unsigned: UnsignedInteger { Unsigned(m) }
+
   /// @param a `0 <= a < m`
   /// @param b `0 <= b < m`
   /// @return `a * b % m`
   @inlinable
-  public func mul(_ a: CUnsignedInt, _ b: CUnsignedInt) -> CUnsignedInt {
+  public func mul<Unsigned>(_ a: Unsigned, _ b: Unsigned) -> Unsigned
+  where Unsigned: UnsignedInteger {
     // [1] m = 1
     // a = b = im = 0, so okay
 
@@ -60,20 +53,11 @@ public struct barrett {
     // a*b * im = (c*m + d) * im = c*(im*m) + d*im = c*2^64 + c*r + d*im
     // c*r + d*im < m * m + m * im < m * m + 2^64 + m <= 2^64 + m * (m + 1) < 2^64 * 2
     // ((ab * im) >> 64) == c or c + 1
-    var z = CUnsignedLongLong(a)
-    z &*= CUnsignedLongLong(b)
+    var z = UInt(a)
+    z &*= UInt(b)
     let x = z.multipliedFullWidth(by: im).high
-    let y = x &* CUnsignedLongLong(m)
-    return CUnsignedInt(z &- y &+ (z < y ? CUnsignedLongLong(m) : 0))
-  }
-  
-  @inlinable
-  public func _mul(_ a: UInt, _ b: UInt) -> UInt {
-    var z = a
-    z &*= b
-    let x = z.multipliedFullWidth(by: UInt(im)).high
-    let y = x &* UInt(m)
-    return z &- y &+ (z < y ? UInt(m) : 0)
+    let y = x &* m
+    return Unsigned(z &- y &+ (z < y ? m : 0))
   }
 }
 

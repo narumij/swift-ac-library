@@ -59,7 +59,7 @@ final class internalMathTests: XCTestCase {
       }
 
       let bt = barrett(1)
-      XCTAssertEqual(0, bt.mul(0, 0))
+      XCTAssertEqual(0 as CUnsignedInt, bt.mul(0, 0))
     }
 
     func testBarrettIntBorder() throws {
