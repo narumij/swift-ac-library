@@ -182,31 +182,13 @@ final class mathTests: XCTestCase {
 
   #if DEBUG
     func testFloorSum() throws {
-      //        for (int n = 0; n < 20; n++) {
-      for n in ll(0)..<20 {
-        //            for (int m = 1; m < 20; m++) {
-        for m in ll(1)..<20 {
-          //                for (int a = -20; a < 20; a++) {
-          for a in ll(-20)..<20 {
-            //                    for (int b = -20; b < 20; b++) {
-            for b in ll(-20)..<20 {
-              XCTAssertEqual(
-                floor_sum_naive(n, m, a, b),
-                floor_sum(n, m, a, b))
-            }
-          }
-        }
-      }
-    }
-
-    func testFloorSum_Int() throws {
-      //        for (int n = 0; n < 20; n++) {
+      // for (int n = 0; n < 20; n++) {
       for n in 0..<20 {
-        //            for (int m = 1; m < 20; m++) {
+        // for (int m = 1; m < 20; m++) {
         for m in 1..<20 {
-          //                for (int a = -20; a < 20; a++) {
+          // for (int a = -20; a < 20; a++) {
           for a in -20..<20 {
-            //                    for (int b = -20; b < 20; b++) {
+            // for (int b = -20; b < 20; b++) {
             for b in -20..<20 {
               XCTAssertEqual(
                 floor_sum_naive(n, m, a, b),
@@ -218,7 +200,7 @@ final class mathTests: XCTestCase {
     }
 
   #endif
-  
+
   func testCRTHand() throws {
     let res = crt([1, 2, 1] as [ll], [2, 3, 2] as [ll])
     XCTAssertEqual(5, res.rem)
@@ -261,32 +243,32 @@ final class mathTests: XCTestCase {
         }
       }
     }
-  
-  func testCRT2_Int() throws {
-    for a in 1 ..<= 20 {
-      for b in 1 ..<= 20 {
-        for c in -10 ..<= 10 {
-          for d in -10 ..< 10 {
-            let res = crt([c, d], [a, b])
-            if res.mod == 0 {
-              // for (int x = 0; x < a * b / gcd(a, b); x++) {
-              do {
-                var x = 0
-                while x < a * b / gcd(a, b) {
-                  defer { x += 1 }
-                  XCTAssertTrue(x % a != c || x % b != d)
+
+    func testCRT2_Int() throws {
+      for a in 1 ..<= 20 {
+        for b in 1 ..<= 20 {
+          for c in -10 ..<= 10 {
+            for d in -10..<10 {
+              let res = crt([c, d], [a, b])
+              if res.mod == 0 {
+                // for (int x = 0; x < a * b / gcd(a, b); x++) {
+                do {
+                  var x = 0
+                  while x < a * b / gcd(a, b) {
+                    defer { x += 1 }
+                    XCTAssertTrue(x % a != c || x % b != d)
+                  }
                 }
+                continue
               }
-              continue
+              XCTAssertEqual(a * b / gcd(a, b), res.mod)
+              XCTAssertEqual(_Internal.safe_mod(c, a), res.rem % a)
+              XCTAssertEqual(_Internal.safe_mod(d, b), res.rem % b)
             }
-            XCTAssertEqual(a * b / gcd(a, b), res.mod)
-            XCTAssertEqual(_Internal.safe_mod(c, a), res.rem % a)
-            XCTAssertEqual(_Internal.safe_mod(d, b), res.rem % b)
           }
         }
       }
     }
-  }
   #endif
 
   #if DEBUG
@@ -324,35 +306,35 @@ final class mathTests: XCTestCase {
         }
       }
     }
-  
-  func testCRT3_Int() throws {
-    for a in 1 ..<= 5 {
-      for b in 1 ..<= 5 {
-        for c in 1 ..<= 5 {
-          for d in -5 ..<= 5 {
-            for e in -5 ..<= 5 {
-              for f in -5 ..<= 5 {
-                let res = crt([d, e, f], [a, b, c])
-                var lcm = a * b / gcd(a, b)
-                lcm = lcm * c / gcd(lcm, c)
-                if res.mod == 0 {
-                  // for (int x = 0; x < lcm; x++) {
-                  for x in 0..<lcm {
-                    XCTAssertTrue(x % a != d || x % b != e || x % c != f)
+
+    func testCRT3_Int() throws {
+      for a in 1 ..<= 5 {
+        for b in 1 ..<= 5 {
+          for c in 1 ..<= 5 {
+            for d in -5 ..<= 5 {
+              for e in -5 ..<= 5 {
+                for f in -5 ..<= 5 {
+                  let res = crt([d, e, f], [a, b, c])
+                  var lcm = a * b / gcd(a, b)
+                  lcm = lcm * c / gcd(lcm, c)
+                  if res.mod == 0 {
+                    // for (int x = 0; x < lcm; x++) {
+                    for x in 0..<lcm {
+                      XCTAssertTrue(x % a != d || x % b != e || x % c != f)
+                    }
+                    continue
                   }
-                  continue
+                  XCTAssertEqual(lcm, res.mod)
+                  XCTAssertEqual(_Internal.safe_mod(d, a), res.rem % a)
+                  XCTAssertEqual(_Internal.safe_mod(e, b), res.rem % b)
+                  XCTAssertEqual(_Internal.safe_mod(f, c), res.rem % c)
                 }
-                XCTAssertEqual(lcm, res.mod)
-                XCTAssertEqual(_Internal.safe_mod(d, a), res.rem % a)
-                XCTAssertEqual(_Internal.safe_mod(e, b), res.rem % b)
-                XCTAssertEqual(_Internal.safe_mod(f, c), res.rem % c)
               }
             }
           }
         }
       }
     }
-  }
   #endif
 
   func testCRTOverflow() throws {
@@ -365,7 +347,7 @@ final class mathTests: XCTestCase {
     XCTAssertEqual(r0, res.rem % m0)
     XCTAssertEqual(r1, res.rem % m1)
   }
-  
+
   func testCRTOverflow_Int() throws {
     let r0 = 0
     let r1 = 1_000_000_000_000 - 2

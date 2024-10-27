@@ -108,6 +108,7 @@ where LL: SignedInteger {
   return (r0, m0)
 }
 
+@available(*, deprecated, message: "Use floor_sum(_:Int,_:Int,:Int,_:Int) instead")
 @inlinable
 public func floor_sum(
   _ n: CLongLong,

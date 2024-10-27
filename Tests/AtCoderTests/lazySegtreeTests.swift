@@ -21,15 +21,15 @@ final class lazySegtreeTests: XCTestCase {
 
   func test0() throws {
     do {
-      var s = starry_seg(0)
+      let s = starry_seg(0)
       XCTAssertEqual(-1_000_000_000, s.all_prod())
     }
     do {
-      var s = starry_seg()
+      let s = starry_seg()
       XCTAssertEqual(-1_000_000_000, s.all_prod())
     }
     do {
-      var s = starry_seg(10)
+      let s = starry_seg(10)
       XCTAssertEqual(-1_000_000_000, s.all_prod())
     }
   }
