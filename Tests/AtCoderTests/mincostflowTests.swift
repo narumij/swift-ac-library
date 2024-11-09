@@ -8,7 +8,7 @@ import XCTest
 
 typealias mcf_graph = MCFGraph
 
-extension mcf_graph.Edge: @retroactive ExpressibleByArrayLiteral where Value == Int {
+extension mcf_graph.Edge: ExpressibleByArrayLiteral where Value == Int {
   public init(arrayLiteral elements: Int...) {
     if elements.isEmpty {
       self.init(from: 0, to: 0, cap: 0, flow: 0, cost: 0)
