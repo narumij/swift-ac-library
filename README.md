@@ -44,22 +44,6 @@ dependencies: [
 ```
 import AtCoder
 ```
-提出する際、上記import文は削除する必要があります。
-
-## 提出時
-
-一例ですが、全部連結しています。連結は以下のスクリプトで行うことができます。
-あとは各々の提出のオペレーションに合わせてアレンジしてください。
-
-```
-#!/bin/zsh
-
-# 対象ディレクトリのパス
-TARGET_DIR="<クローンしたディレクトリ>/swift-ac-library/Sources/AtCoder"
-
-# 指定されたディレクトリ内のSwiftファイルを検索し、連結して標準出力に表示
-find "$TARGET_DIR" -type f -name "*.swift" -exec cat {} +
-```
 
 ## ライセンス
 
