@@ -25,10 +25,10 @@ import Foundation
 }
 
 extension mod_value {
-  @usableFromInline static let mod_998_244_353: mod_value = 998_244_353
-  @usableFromInline static let mod_1_000_000_007: mod_value = 1_000_000_007
-  @usableFromInline static let mod_INT32_MAX: mod_value = 2_147_483_647
-  @usableFromInline static let mod_UINT32_MAX: mod_value = -1
+  @usableFromInline nonisolated(unsafe) static let mod_998_244_353: mod_value = 998_244_353
+  @usableFromInline nonisolated(unsafe) static let mod_1_000_000_007: mod_value = 1_000_000_007
+  @usableFromInline nonisolated(unsafe) static let mod_INT32_MAX: mod_value = 2_147_483_647
+  @usableFromInline nonisolated(unsafe) static let mod_UINT32_MAX: mod_value = -1
 }
 
 extension mod_value: ExpressibleByIntegerLiteral {

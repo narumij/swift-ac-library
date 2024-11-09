@@ -1,8 +1,5 @@
 import Foundation
 
-// ABC345-G AC!
-// https://atcoder.jp/contests/abc345/submissions/58064206
-
 extension Array where Element: AdditiveArithmetic {
   @inlinable
   public mutating func resize(_ n: Int) {
@@ -44,6 +41,7 @@ extension _Internal {
   enum __static_const_fft_info {
 
     @usableFromInline
+    nonisolated(unsafe)
     static var cache: [UINT: __cached_fft_info] = [:]
 
     @inlinable

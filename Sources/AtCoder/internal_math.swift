@@ -82,6 +82,7 @@ extension _Internal {
   }
 
   @usableFromInline
+  nonisolated(unsafe)
   static var memoized_pow_mod: Memoized3 = .init(source: _pow_mod_constexpr)
   @inlinable
   static func pow_mod_constexpr(_ x: LL, _ n: LL, _ m: INT) -> LL {
@@ -116,6 +117,7 @@ extension _Internal {
   }
 
   @usableFromInline
+  nonisolated(unsafe)
   static var memoized_is_prime: Memoized = .init(source: _is_prime_constexpr)
   @inlinable
   static func is_prime_constexpr(_ n: INT) -> Bool { memoized_is_prime.get(n) }
@@ -208,6 +210,7 @@ extension _Internal {
   }
 
   @usableFromInline
+  nonisolated(unsafe)
   static var memoized_primitve_root: Memoized = .init(source: _primitive_root_constexpr)
   @inlinable
   static func primitive_root_constexpr(_ m: INT) -> INT { memoized_primitve_root.get(m) }

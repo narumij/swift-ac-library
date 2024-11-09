@@ -9,10 +9,10 @@ import XCTest
 private enum param: LazySegtreeParameter {
   typealias S = Int
   typealias F = Int
-  static let op: Op = max
+  nonisolated(unsafe) static let op: Op = max
   static let e: S = -1_000_000_000
-  static let mapping: Mapping = (+)
-  static let composition: Composition = (+)
+  nonisolated(unsafe) static let mapping: Mapping = (+)
+  nonisolated(unsafe) static let composition: Composition = (+)
   static let id: F = 0
 }
 private typealias starry_seg = LazySegTree<param>

@@ -66,6 +66,7 @@ extension barrett: Equatable {
 }
 
 public enum mod_dynamic: dynamic_mod {
+  nonisolated(unsafe)
   public static var bt: barrett = .default
 }
 

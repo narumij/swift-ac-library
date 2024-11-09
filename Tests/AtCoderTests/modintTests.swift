@@ -22,17 +22,17 @@ extension dynamic_mod {
 final class modintTests: XCTestCase {
 
   @usableFromInline
-  enum mod_1: static_mod_value { static let mod: mod_value = 1 }
+  enum mod_1: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 1 }
   @usableFromInline
-  enum mod_11: static_mod_value { static let mod: mod_value = 11 }
+  enum mod_11: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 11 }
   @usableFromInline
-  enum mod_12: static_mod_value { static let mod: mod_value = 12 }
+  enum mod_12: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 12 }
   @usableFromInline
-  enum mod_1_000_000_007: static_mod_value { static let mod: mod_value = .mod_1_000_000_007 }
+  enum mod_1_000_000_007: static_mod_value { nonisolated(unsafe) static let mod: mod_value = .mod_1_000_000_007 }
   @usableFromInline
-  enum mod_1_000_000_008: static_mod_value { static let mod: mod_value = 1_000_000_008 }
+  enum mod_1_000_000_008: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 1_000_000_008 }
   @usableFromInline
-  enum INT32_MAX: static_mod_value { static let mod: mod_value = .mod_INT32_MAX }
+  enum INT32_MAX: static_mod_value { nonisolated(unsafe) static let mod: mod_value = .mod_INT32_MAX }
 
   func testDynamicBorder() throws {
 
@@ -360,7 +360,7 @@ final class modintTests: XCTestCase {
 
     // C++版では整数で型の区別をしていたようだが、Swiftでは型を挿入することにする。
     // generics型ではstored propertyを使えないため、non genericsのdynamic_mod派生にbtを持たせている。
-    enum _12345: dynamic_mod { static var bt: barrett = .default }
+    enum _12345: dynamic_mod { nonisolated(unsafe) static var bt: barrett = .default }
     XCTAssertEqual(998_244_353, dynamic_modint<_12345>.mod)
 
     dynamic_modint<_12345>.set_mod(11)
