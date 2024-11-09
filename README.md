@@ -5,6 +5,10 @@ swift-ac-libraryは、[AC(AtCoder) Library][ac-library]のSwift移植版です�
 [![Swift](https://github.com/narumij/swift-ac-library/actions/workflows/swift.yml/badge.svg?branch=main)](https://github.com/narumij/swift-ac-library/actions/workflows/swift.yml)
 [![License: CC0-1.0](https://img.shields.io/badge/License-CC0%201.0-lightgrey.svg)](http://creativecommons.org/publicdomain/zero/1.0/)
 
+## お知らせ
+
+[現在のAtCoderの提出に使う場合は、こちらをご利用ください。](https://github.com/narumij/swift-ac-library/tree/release/swift-5.8.1)
+
 ## 公式情報
 
 [AtCoder Library (ACL) - AtCoder][acl]
