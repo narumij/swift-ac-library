@@ -1,4 +1,3 @@
-import BigInt
 import Numerics
 import XCTest
 
@@ -648,6 +647,7 @@ final class internalMathTests: XCTestCase {
       }
     }
 
+#if false
     func testInvGcdBound() throws {
 
       //        throw XCTSkip()
@@ -690,6 +690,7 @@ final class internalMathTests: XCTestCase {
         }
       }
     }
+#endif
 
     func testInvGcdBoundAlt() throws {
       let ab: [(a: ll, b: ll, a2: ll, eg: (ll, ll), g: ll)] = [

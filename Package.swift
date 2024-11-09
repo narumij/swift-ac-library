@@ -41,7 +41,6 @@ let package = Package(
                 .product(name: "Algorithms", package: "swift-algorithms"),
                 .product(name: "Collections", package: "swift-collections"),
                 .product(name: "Numerics", package: "swift-numerics"),
-                .product(name: "BigInt", package: "BigInt"),
             ]),
     ]
 )
