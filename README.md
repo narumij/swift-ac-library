@@ -11,9 +11,6 @@ swift-ac-libraryは、[AC(AtCoder) Library][ac-library]のSwift移植版です�
 
 - tagは0.0.13までがSwift 5.8.1対応です。
 
-- CIが失敗していますが、これはActionがSwift 6に対応していないためです。
-
-
 ## 公式情報
 
 [AtCoder Library (ACL) - AtCoder][acl]
