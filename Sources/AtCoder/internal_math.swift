@@ -55,7 +55,12 @@ public struct barrett {
     // ((ab * im) >> 64) == c or c + 1
     var z = UInt(a)
     z &*= UInt(b)
-    let x = z.multipliedFullWidth(by: im).high
+    let x: UInt
+    if #available(macOS 15.0, *) {
+      x = UInt((UInt128(z) * UInt128(im)) >> 64)
+    } else {
+      x = z.multipliedFullWidth(by: im).high
+    }
     let y = x &* m
     return Unsigned(z &- y &+ (z < y ? m : 0))
   }

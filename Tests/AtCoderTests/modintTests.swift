@@ -28,11 +28,17 @@ final class modintTests: XCTestCase {
   @usableFromInline
   enum mod_12: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 12 }
   @usableFromInline
-  enum mod_1_000_000_007: static_mod_value { nonisolated(unsafe) static let mod: mod_value = .mod_1_000_000_007 }
+  enum mod_1_000_000_007: static_mod_value {
+    nonisolated(unsafe) static let mod: mod_value = .mod_1_000_000_007
+  }
   @usableFromInline
-  enum mod_1_000_000_008: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 1_000_000_008 }
+  enum mod_1_000_000_008: static_mod_value {
+    nonisolated(unsafe) static let mod: mod_value = 1_000_000_008
+  }
   @usableFromInline
-  enum INT32_MAX: static_mod_value { nonisolated(unsafe) static let mod: mod_value = .mod_INT32_MAX }
+  enum INT32_MAX: static_mod_value {
+    nonisolated(unsafe) static let mod: mod_value = .mod_INT32_MAX
+  }
 
   func testDynamicBorder() throws {
 
@@ -198,27 +204,28 @@ final class modintTests: XCTestCase {
     mod_dynamic.reset()
   }
 
-  #if false
-    func testInt128() throws {
-      throw XCTSkip("__int128がSwiftにはない")
-      /*
-         modint::set_mod(998244353);
-         ASSERT_EQ(12345678, modint(__int128_t(12345678)).val());
-         ASSERT_EQ(12345678, modint(__uint128_t(12345678)).val());
-         ASSERT_EQ(12345678, modint(__int128(12345678)).val());
-         ASSERT_EQ(12345678, modint((unsigned __int128)(12345678)).val());
-         ASSERT_EQ(modint(2).pow(100).val(), modint(__int128_t(1) << 100).val());
-         ASSERT_EQ(modint(2).pow(100).val(), modint(__uint128_t(1) << 100).val());
-         using mint = static_modint<998244353>;
-         ASSERT_EQ(12345678, mint(__int128_t(12345678)).val());
-         ASSERT_EQ(12345678, mint(__uint128_t(12345678)).val());
-         ASSERT_EQ(12345678, mint(__int128(12345678)).val());
-         ASSERT_EQ(12345678, mint((unsigned __int128)(12345678)).val());
-         ASSERT_EQ(mint(2).pow(100).val(), mint(__int128_t(1) << 100).val());
-         ASSERT_EQ(mint(2).pow(100).val(), mint(__uint128_t(1) << 100).val());
-         */
+  func testInt128() throws {
+    
+    if #available(macOS 15.0, *) {
+      modint.set_mod(998_244_353)
+      XCTAssertEqual(12_345_678, modint(Int128(12_345_678)).val)
+      XCTAssertEqual(12_345_678, modint(UInt128(12_345_678)).val)
+      XCTAssertEqual(12_345_678, modint(Int128(12_345_678)).val)
+      XCTAssertEqual(12_345_678, modint((UInt128)(12_345_678)).val)
+      XCTAssertEqual(modint(2).pow(100).val, modint(Int128(1) << 100).val)
+      XCTAssertEqual(modint(2).pow(100).val, modint(UInt128(1) << 100).val)
+      typealias mint = static_modint<mod_998_244_353>
+      XCTAssertEqual(12_345_678, mint(Int128(12_345_678)).val)
+      XCTAssertEqual(12_345_678, mint(UInt128(12_345_678)).val)
+      XCTAssertEqual(12_345_678, mint(Int128(12_345_678)).val)
+      XCTAssertEqual(12_345_678, mint((UInt128)(12_345_678)).val)
+      XCTAssertEqual(mint(2).pow(100).val, mint(Int128(1) << 100).val)
+      XCTAssertEqual(mint(2).pow(100).val, mint(UInt128(1) << 100).val)
+    } else {
+      // Fallback on earlier versions
+      throw XCTSkip("__int128がない")
     }
-  #endif
+  }
 
   func testInv() throws {
 
