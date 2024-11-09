@@ -146,7 +146,7 @@ extension MCFGraph {
     @usableFromInline let to: Int
     @inlinable
     static func < (lhs: Q, rhs: Q) -> Bool {
-        lhs.key < rhs.key
+      lhs.key < rhs.key
     }
   }
 
@@ -166,7 +166,7 @@ extension MCFGraph {
     var prev_e = [Int](repeating: 0, count: _n)
     var vis = [Bool](repeating: false, count: _n)
     var que_min = [Int]()
-    var que = Queue()
+    var que = Heap<Q>()
     func dual_ref() -> Bool {
       // for (int i = 0; i < _n; i++) {
       for i in 0..<_n {
@@ -280,43 +280,11 @@ extension MCFGraph {
     }
     return result
   }
-
-  #if false
-    // swift-collections 1.1.0以降はこちら。
-    @usableFromInline
-    typealias Queue = Heap<Q>
-  #else
-    @usableFromInline
-    typealias Queue = [Q]
-  #endif
 }
 
-#if false
-  // swift-collections 1.1.0以降はこちら。
-  extension Heap {
-    @inlinable
-    var startIndex: Int { 0 }
-    @inlinable
-    mutating func push_heap(_ start: Int, _ end: Int) { /* NOP */  }
-  }
-#else
-  extension Array where Element: Comparable {
-
-    @inlinable
-    mutating func push_heap(_ start: Int, _ end: Int) {
-      push_heap(end, <)
-    }
-
-    @inlinable
-    @discardableResult
-    mutating func popMin() -> Element? {
-      pop_heap(<)
-      return removeLast()
-    }
-
-    @inlinable
-    mutating public func insert(_ newElement: Element) {
-      append(newElement)
-    }
-  }
-#endif
+extension Heap {
+  @inlinable
+  var startIndex: Int { 0 }
+  @inlinable
+  mutating func push_heap(_ start: Int, _ end: Int) { /* NOP */  }
+}
