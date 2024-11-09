@@ -3,31 +3,33 @@
 
 name: Swift CI
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+# このワークフローはGitHubによって認定されていないアクションを使用します。
+# それらはサードパーティによって提供され、
+# 別個の利用規約、プライバシーポリシー、
+# ドキュメントを参照してください。
+
+# GitHub では、コミット SHA にアクションをピン留めすることが推奨されます。
+# 新しいバージョンを取得するには、SHA を更新する必要があります。
+# タグまたはブランチを参照することもできますが、アクションは警告なしに変更される可能性があります。
+
+# name: Swift
+
+on: [push]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: Swift ${{ matrix.swift }} on ${{ matrix.os }}
     strategy:
       matrix:
-        swift: [6.0] # ここでswiftのバージョンを指定
-
+        os: [ubuntu-latest, macos-latest]
+        swift: ["6.0"]
+    runs-on: ${{ matrix.os }}
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-    
-    - name: Install Swift
-      uses: fwal/setup-swift@v2
-      with:
-        swift-version: ${{ matrix.swift }}
-
-    - name: Build and test
-      run: |
-        swift build
-        swift test
+      - uses: swift-actions/setup-swift@65540b95f51493d65f5e59e97dcef9629ddf11bf
+        with:
+          swift-version: ${{ matrix.swift }}
+      - uses: actions/checkout@v4
+      - name: Build
+        run: swift build
+      - name: Run tests
+        run: swift test
