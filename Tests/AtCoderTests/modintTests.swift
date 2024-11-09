@@ -204,6 +204,7 @@ final class modintTests: XCTestCase {
     mod_dynamic.reset()
   }
 
+#if os(macOS)
   func testInt128() throws {
     
     if #available(macOS 15.0, *) {
@@ -226,6 +227,7 @@ final class modintTests: XCTestCase {
       throw XCTSkip("__int128がない")
     }
   }
+#endif
 
   func testInv() throws {
 

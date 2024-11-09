@@ -55,7 +55,7 @@ public struct barrett {
     // ((ab * im) >> 64) == c or c + 1
     var z = UInt(a)
     z &*= UInt(b)
-#if false
+#if os(macOS)
     let x: UInt
     if #available(macOS 15.0, *) {
       x = UInt((UInt128(z) * UInt128(im)) >> 64)
