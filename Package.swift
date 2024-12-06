@@ -14,10 +14,10 @@ let package = Package(
   dependencies: [
     .package(
       url: "https://github.com/apple/swift-algorithms.git",
-      .upToNextMajor(from: "1.2.0")),
+      from: "1.2.0"),
     .package(
       url: "https://github.com/apple/swift-collections.git",
-      .upToNextMajor(from: "1.1.4")),
+      from: "1.1.4"),
     .package(
       url: "https://github.com/apple/swift-numerics",
       branch: "main"),
