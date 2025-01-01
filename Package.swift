@@ -3,6 +3,12 @@
 
 import PackageDescription
 
+var defines: [String] = [
+  "DISABLE_COPY_ON_WRITE"
+]
+
+var _settings: [SwiftSetting] = defines.map { .define($0) }
+
 let package = Package(
   name: "swift-ac-library",
   products: [
@@ -29,7 +35,8 @@ let package = Package(
       name: "AtCoder",
       dependencies: [
         .product(name: "Collections", package: "swift-collections")
-      ]),
+      ],
+      swiftSettings: _settings),
     .testTarget(
       name: "AtCoderTests",
       dependencies: [
@@ -37,6 +44,7 @@ let package = Package(
         .product(name: "Algorithms", package: "swift-algorithms"),
         .product(name: "Collections", package: "swift-collections"),
         .product(name: "Numerics", package: "swift-numerics"),
-      ]),
+      ],
+      swiftSettings: _settings),
   ]
 )
