@@ -4,7 +4,8 @@
 import PackageDescription
 
 var defines: [String] = [
-  "DISABLE_COPY_ON_WRITE"
+  "AC_LIBRARY_INTERNAL_CHECKS",
+//  "DISABLE_COPY_ON_WRITE",
 ]
 
 var _settings: [SwiftSetting] = defines.map { .define($0) }

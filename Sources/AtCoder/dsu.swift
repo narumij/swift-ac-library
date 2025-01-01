@@ -9,16 +9,21 @@ public struct DSU {
 }
 
 extension DSU {
-  @inlinable public init() {
+  @inlinable
+  @inline(__always)
+  public init() {
     buffer = .create(withCapacity: 0)
   }
-  @inlinable public init(_ n: Int) {
+  @inlinable
+  @inline(__always)
+  public init(_ n: Int) {
     buffer = .create(withCapacity: n)
   }
 }
 
 extension DSU {
-  @discardableResult @inlinable
+  @inlinable
+  @discardableResult
   public mutating func merge(_ a: Int, _ b: Int) -> Int {
     ensureUnique()
     return buffer.merge(a, b)
@@ -55,7 +60,7 @@ extension DSU {
     }
     @usableFromInline var capacity: Int
     @usableFromInline var _n: Int
-    #if AC_COLLECTIONS_INTERNAL_CHECKS
+    #if AC_LIBRARY_INTERNAL_CHECKS
       @usableFromInline var copyCount: UInt = 0
     #endif
   }
@@ -111,18 +116,18 @@ extension DSU.Buffer {
   @inlinable
   internal func copy(newCapacity: Int? = nil) -> DSU.Buffer {
 
-    let capacity = newCapacity ?? self.header.capacity
-    let _n = newCapacity ?? self.header._n
+    let capacity = newCapacity ?? self._header.pointee.capacity
+    let _n = newCapacity ?? self._header.pointee._n
     #if AC_LIBRARY_INTERNAL_CHECKS
-      let copyCount = self._header.copyCount
+      let copyCount = self._header.pointee.copyCount
     #endif
 
     let newStorage = DSU.Buffer.create(withCapacity: capacity)
 
-    newStorage.header.capacity = capacity
-    newStorage.header._n = _n
-    #if AC_COLLECTIONS_INTERNAL_CHECKS
-      newStorage._header.copyCount = copyCount &+ 1
+    newStorage._header.pointee.capacity = capacity
+    newStorage._header.pointee._n = _n
+    #if AC_LIBRARY_INTERNAL_CHECKS
+      newStorage._header.pointee.copyCount = copyCount &+ 1
     #endif
 
     self.withUnsafeMutablePointerToElements { oldNodes in
