@@ -17,7 +17,7 @@ extension _Internal {
     // @return pair of (# of scc, scc id)
     @inlinable
     public func scc_ids() -> (first: Int, second: [Int]) {
-      let g = csr<edge>(_n, edges)
+      let g = _Internal.csr<edge>(_n, edges)
       var now_ord = 0
       var group_num = 0
       var visited: [edge] = []
