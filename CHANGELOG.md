@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.?] - 2025-?-?
 ### Changed
 - linuxでint128を利用するよう変更 (internal_math)
+- 引数をIntのみに変更 (math)
 
 ## [0.1.1] - 2025-1-2
 ### Changed
