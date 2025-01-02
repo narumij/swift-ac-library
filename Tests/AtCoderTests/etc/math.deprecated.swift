@@ -1,47 +1,44 @@
 import Foundation
+@testable import AtCoder
 
-@inlinable
-public func pow_mod(
-  _ x: Int,
-  _ n: Int,
-  _ m: Int
-) -> Int {
-  var n = n
-  assert(0 <= n && 1 <= m)
-  if m == 1 { return 0 }
-  let bt = barrett(m)
-  var r: UInt = 1
-  var y = UInt(_Internal.safe_mod(x, m))
-  while n != 0 {
-    if n & 1 != 0 { r = bt.mul(r, y) }
-    y = bt.mul(y, y)
-    n >>= 1
-  }
-  return Int(r)
-}
+// MARK: - deprecated
 
+@available(*, deprecated, message: "Use pow_mod(_:Int,_:Int,:Int) instead")
 @inlinable
-public func inv_mod(
-  _ x: Int,
-  _ m: Int
-) -> Int {
+public func inv_mod<LL>(
+  _ x: LL,
+  _ m: LL
+) -> LL
+where LL: SignedInteger {
   assert(1 <= m)
   let z = _Internal.inv_gcd(x, m)
   assert(z.first == 1)
   return z.second
 }
 
-/// (rem, mod)
+@available(*, deprecated, message: "Use pow_mod(_:Int,_:Int,:Int) instead")
 @inlinable
-public func crt(
-  _ r: [Int],
-  _ m: [Int]
-) -> (rem: Int, mod: Int) {
+public func pow_mod(
+  _ x: CLongLong,
+  _ n: CLongLong,
+  _ m: CInt
+) -> CLongLong {
+  CLongLong(pow_mod(Int(x), Int(n), Int(m)))
+}
+
+/// (rem, mod)
+@available(*, deprecated, message: "Use crt(_:[Int],_:[Int]) instead")
+@inlinable
+public func crt<LL>(
+  _ r: [LL],
+  _ m: [LL]
+) -> (rem: LL, mod: LL)
+where LL: SignedInteger {
   assert(r.count == m.count)
   let n = r.count
   // Contracts: 0 <= r0 < m0
-  var r0 = 0
-  var m0 = 1
+  var r0 = 0 as LL
+  var m0 = 1 as LL
   for i in 0..<n {
     assert(1 <= m[i])
     var r1 = _Internal.safe_mod(r[i], m[i])
@@ -64,7 +61,9 @@ public func crt(
     // -> x = (r1 - r0) / g * inv(u0) (mod u1)
 
     // im = inv(u0) (mod u1) (0 <= im < u1)
-    let (g, im) = _Internal.inv_gcd(m0, m1)
+    var g: LL
+    var im: LL
+    (g, im) = _Internal.inv_gcd(m0, m1)
 
     let u1 = (m1 / g)
     // |r1 - r0| < (m0 + m1) <= lcm(m0, m1)
@@ -84,26 +83,13 @@ public func crt(
   return (r0, m0)
 }
 
+@available(*, deprecated, message: "Use floor_sum(_:Int,_:Int,:Int,_:Int) instead")
 @inlinable
 public func floor_sum(
-  _ n: Int,
-  _ m: Int,
-  _ a: Int,
-  _ b: Int
-) -> Int {
-  var (a, b) = (a, b)
-  assert(0 <= n && n < (1 << 32))
-  assert(1 <= m && m < (1 << 32))
-  var ans = 0
-  if a < 0 {
-    let a2 = _Internal.safe_mod(a, m)
-    ans -= 1 * n * (n &- 1) / 2 * ((a2 - a) / m)
-    a = a2
-  }
-  if b < 0 {
-    let b2 = _Internal.safe_mod(b, m)
-    ans -= 1 * n * ((b2 - b) / m)
-    b = b2
-  }
-  return ans + Int(_Internal.floor_sum_unsigned(UInt(n), UInt(m), UInt(a), UInt(b)))
+  _ n: CLongLong,
+  _ m: CLongLong,
+  _ a: CLongLong,
+  _ b: CLongLong
+) -> CLongLong {
+  CLongLong(floor_sum(Int(n), Int(m), Int(a), Int(b)))
 }

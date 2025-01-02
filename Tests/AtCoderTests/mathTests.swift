@@ -55,6 +55,10 @@ where LL: FixedWidthInteger {
 final class mathTests: XCTestCase {
 
   func testPowMod() throws {
+    
+//    typealias ll = Int
+//    typealias CInt = Int
+//    typealias int = Int
 
     func naive(_ x: ll, _ n: ll, _ mod: CInt) -> ll {
       #if DEBUG
@@ -111,6 +115,10 @@ final class mathTests: XCTestCase {
       }
     }
   }
+
+  typealias ll = Int
+  typealias CInt = Int
+  typealias int = Int
 
   func testInvBoundHand() throws {
     let minll = ll.min
