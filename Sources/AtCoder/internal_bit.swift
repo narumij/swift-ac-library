@@ -24,6 +24,7 @@ extension _Internal {
   /// @return same with std::bit::countr_zero
   @inlinable
   static func countr_zero_constexpr<INT: FixedWidthInteger>(_ x: UInt32) -> INT {
+    // キャスト自体が高コストなので、呼び出し側でキャストするぐらいであれば、32を上限とした挙動とするなどした方がよさそう
     countr_zero(x)
   }
 
