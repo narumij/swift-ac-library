@@ -1,36 +1,151 @@
 import Foundation
 
 /// Reference: https://en.wikipedia.org/wiki/Fenwick_tree
-public struct FenwickTree<T: AdditiveArithmetic & ToUnsignedType> where T: ToUnsignedType {
-  @inlinable @inline(__always) var _n: Int { data.count }
-  @usableFromInline var data: [U]
+public struct FenwickTree<T>
+where T: AdditiveArithmetic & ToUnsignedType {
+
+  @usableFromInline
+  var buffer: Buffer
+
+  @inlinable
+  @inline(__always)
+  public init() {
+    self.init(0)
+  }
+
+  @inlinable
+  @inline(__always)
+  public init(_ n: Int) {
+    buffer = .create(withCapacity: n)
+  }
 }
 
 extension FenwickTree {
+
   public typealias U = T.Unsigned
+
   @inlinable
-  public init() { data = [] }
+  public mutating func add(_ p: Int, _ x: T) {
+    ensureUnique()
+    buffer.add(p, x)
+  }
   @inlinable
-  public init(_ n: Int) { data = [U](repeating: 0, count: n) }
+  public func sum(_ l: Int, _ r: Int) -> T {
+    buffer.sum(l, r)
+  }
+  @inlinable
+  public func sum(_ l: Int) -> U {
+    buffer.sum(l)
+  }
 }
 
 extension FenwickTree {
 
   @usableFromInline
-  struct _UnsafeHandle {
-    @inlinable @inline(__always)
-    init(_n: Int, data: UnsafeMutablePointer<U>) {
-      self._n = _n
-      self.data = data
+  struct Header {
+    @inlinable
+    internal init(capacity: Int) {
+      self.capacity = capacity
     }
-    public let _n: Int
-    public let data: UnsafeMutablePointer<U>
+    @usableFromInline var capacity: Int
+    #if AC_LIBRARY_INTERNAL_CHECKS
+      @usableFromInline var copyCount: UInt = 0
+    #endif
+  }
+
+  @usableFromInline
+  class Buffer: ManagedBuffer<Header, U> {
+
     public typealias U = T.Unsigned
+
+    @inlinable
+    deinit {
+      self.withUnsafeMutablePointers { header, elements in
+        elements.deinitialize(count: header.pointee.capacity)
+        header.deinitialize(count: 1)
+      }
+    }
+  }
+
+  @inlinable
+  @inline(__always)
+  mutating func ensureUnique() {
+    #if !DISABLE_COPY_ON_WRITE
+      if !isKnownUniquelyReferenced(&buffer) {
+        buffer = buffer.copy()
+      }
+    #endif
   }
 }
 
-extension FenwickTree._UnsafeHandle {
+extension FenwickTree.Buffer {
+
   @inlinable
+  @inline(__always)
+  internal static func create(
+    withCapacity capacity: Int
+  ) -> FenwickTree.Buffer {
+
+    let storage = FenwickTree.Buffer.create(minimumCapacity: capacity) { _ in
+      FenwickTree.Header(
+        capacity: capacity)
+    }
+
+    storage.withUnsafeMutablePointerToElements { newElements in
+      newElements.initialize(repeating: -1, count: capacity)
+    }
+
+    return unsafeDowncast(storage, to: FenwickTree.Buffer.self)
+  }
+
+  @inlinable
+  internal func copy() -> FenwickTree.Buffer {
+
+    let capacity = self._header.pointee.capacity
+    #if AC_LIBRARY_INTERNAL_CHECKS
+      let copyCount = self._header.pointee.copyCount
+    #endif
+
+    let newStorage = FenwickTree.Buffer.create(withCapacity: capacity)
+
+    newStorage._header.pointee.capacity = capacity
+    #if AC_LIBRARY_INTERNAL_CHECKS
+      newStorage._header.pointee.copyCount = copyCount &+ 1
+    #endif
+
+    self.withUnsafeMutablePointerToElements { oldNodes in
+      newStorage.withUnsafeMutablePointerToElements { newNodes in
+        newNodes.initialize(from: oldNodes, count: capacity)
+      }
+    }
+
+    return newStorage
+  }
+}
+
+extension FenwickTree.Buffer {
+
+  @inlinable
+  @inline(__always)
+  var _header: UnsafeMutablePointer<FenwickTree.Header> {
+    withUnsafeMutablePointerToHeader({ $0 })
+  }
+
+  @inlinable
+  @inline(__always)
+  var data: UnsafeMutablePointer<U> {
+    withUnsafeMutablePointerToElements({ $0 })
+  }
+
+  @inlinable
+  @inline(__always)
+  var _n: Int { _header.pointee.capacity }
+}
+
+extension FenwickTree.Buffer {
+
+  @inlinable
+  @inline(__always)
   func add(_ p: Int, _ x: T) {
     assert(0 <= p && p < _n)
     var p = p + 1
@@ -39,12 +154,16 @@ extension FenwickTree._UnsafeHandle {
       p += p & -p
     }
   }
+
   @inlinable
+  @inline(__always)
   func sum(_ l: Int, _ r: Int) -> T {
     assert(0 <= l && l <= r && r <= _n)
     return T(bitPattern: sum(r) &- sum(l))
   }
-  @inlinable @inline(__always)
+
+  @inlinable
+  @inline(__always)
   func sum(_ r: Int) -> U {
     var r = r
     var s: U = 0
@@ -53,27 +172,5 @@ extension FenwickTree._UnsafeHandle {
       r -= r & -r
     }
     return s
-  }
-}
-
-extension FenwickTree {
-  @inlinable @inline(__always)
-  mutating func _update<R>(_ body: (_UnsafeHandle) -> R) -> R {
-    body(_UnsafeHandle(_n: _n, data: &data))
-  }
-}
-
-extension FenwickTree {
-  @inlinable
-  public mutating func add(_ p: Int, _ x: T) {
-    _update { $0.add(p, x) }
-  }
-  @inlinable
-  public mutating func sum(_ l: Int, _ r: Int) -> T {
-    _update { $0.sum(l, r) }
-  }
-  @inlinable
-  public mutating func sum(_ l: Int) -> U {
-    _update { $0.sum(l) }
   }
 }
