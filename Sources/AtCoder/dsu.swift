@@ -54,12 +54,10 @@ extension DSU {
   @usableFromInline
   struct Header {
     @inlinable
-    internal init(capacity: Int, _n: Int) {
+    internal init(capacity: Int) {
       self.capacity = capacity
-      self._n = _n
     }
     @usableFromInline var capacity: Int
-    @usableFromInline var _n: Int
     #if AC_LIBRARY_INTERNAL_CHECKS
       @usableFromInline var copyCount: UInt = 0
     #endif
@@ -75,7 +73,7 @@ extension DSU {
     @inlinable
     deinit {
       self.withUnsafeMutablePointers { header, elements in
-        elements.deinitialize(count: header.pointee._n)
+        elements.deinitialize(count: header.pointee.capacity)
         header.deinitialize(count: 1)
       }
     }
@@ -102,8 +100,7 @@ extension DSU.Buffer {
 
     let storage = DSU.Buffer.create(minimumCapacity: capacity) { _ in
       DSU.Header(
-        capacity: capacity,
-        _n: capacity)
+        capacity: capacity)
     }
 
     storage.withUnsafeMutablePointerToElements { newElements in
@@ -114,10 +111,9 @@ extension DSU.Buffer {
   }
 
   @inlinable
-  internal func copy(newCapacity: Int? = nil) -> DSU.Buffer {
+  internal func copy() -> DSU.Buffer {
 
-    let capacity = newCapacity ?? self._header.pointee.capacity
-    let _n = newCapacity ?? self._header.pointee._n
+    let capacity = self._header.pointee.capacity
     #if AC_LIBRARY_INTERNAL_CHECKS
       let copyCount = self._header.pointee.copyCount
     #endif
@@ -125,7 +121,6 @@ extension DSU.Buffer {
     let newStorage = DSU.Buffer.create(withCapacity: capacity)
 
     newStorage._header.pointee.capacity = capacity
-    newStorage._header.pointee._n = _n
     #if AC_LIBRARY_INTERNAL_CHECKS
       newStorage._header.pointee.copyCount = copyCount &+ 1
     #endif
@@ -156,7 +151,7 @@ extension DSU.Buffer {
 
   @inlinable
   @inline(__always)
-  var _n: Int { _header.pointee._n }
+  var _n: Int { _header.pointee.capacity }
 
   @inlinable
   @inline(__always)
