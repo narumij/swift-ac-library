@@ -1,51 +1,223 @@
 import Foundation
 
-public protocol SegtreeParameter {
+public protocol SegtreeOperator {
   associatedtype S
   static var op: Op { get }
   static var e: S { get }
 }
 
-extension SegtreeParameter {
+extension SegtreeOperator {
   public typealias Op = (S, S) -> S
 }
 
-public struct SegTree<P: SegtreeParameter> {
-  public typealias S = P.S
+public struct SegTree<O: SegtreeOperator> {
+  public typealias S = O.S
 
-  @inlinable public init() { self.init(0) }
-  @inlinable public init(_ n: Int) { self.init([S](repeating: P.e, count: n)) }
-  @inlinable public init(_ v: [S]) {
-    _n = v.count
-    size = _Internal.bit_ceil(CUnsignedInt(_n))
-    log = _Internal.countr_zero(CUnsignedInt(size))
-    let s = size
-    let n = _n
-    let l = log
-    d = .init(unsafeUninitializedCapacity: 2 * s) { buffer, initializedCount in
-      for i in 0..<s {
-        buffer.initializeElement(at: i, to: P.e)
-        if i < (s - n) {
-          buffer.initializeElement(at: i + s + n, to: P.e)
-        }
-      }
-      for i in s..<s + n {
-        buffer.initializeElement(at: i, to: v[i - s])
-      }
-      let handler = _UnsafeHandle(_n: n, size: s, log: l, d: buffer.baseAddress!)
-      for i in stride(from: s - 1, through: 1, by: -1) {
-        handler.update(i)
-      }
-      initializedCount = 2 * s
-    }
+  @inlinable
+  @inline(__always)
+  public init() { self.init(0) }
+  
+  @inlinable
+  @inline(__always)
+  public init(_ n: Int) { self.init([S](repeating: O.e, count: n)) }
+  
+  @inlinable
+  @inline(__always)
+  public init(_ v: [S]) {
+    self.buffer = .create(withCount: v.count)
+    buffer.initialize(v)
   }
-  @usableFromInline let _n, size, log: Int
-  @usableFromInline var d: [S]
+  
+  @usableFromInline
+  var buffer: Buffer
 }
 
-extension SegTree._UnsafeHandle {
+extension SegTree {
+  @inlinable
+  public mutating func set(_ p: Int, _ x: S) {
+    ensureUnique()
+    buffer.set(p, x)
+  }
+  @inlinable
+  public mutating func get(_ p: Int) -> S {
+    ensureUnique()
+    return buffer.get(p)
+  }
+  @inlinable
+  public mutating func prod(_ l: Int, _ r: Int) -> S {
+    ensureUnique()
+    return buffer.prod(l, r)
+  }
+  @inlinable
+  public func all_prod() -> S {
+    buffer.all_prod()
+  }
+  @inlinable
+  public mutating func max_right(_ l: Int, _ g: (S) -> Bool) -> Int {
+    ensureUnique()
+    return buffer.max_right(l, g)
+  }
+  @inlinable
+  public mutating func min_left(_ r: Int, _ g: (S) -> Bool) -> Int {
+    ensureUnique()
+    return buffer.min_left(r, g)
+  }
+}
 
-  @inlinable func set(_ p: Int, _ x: S) {
+extension SegTree {
+
+  @usableFromInline
+  struct Header {
+    @inlinable
+    @inline(__always)
+    internal init(capacity: Int, _n: Int, _size: Int, _log: Int) {
+      self.capacity = capacity
+      self._n = _n
+      self._size = _size
+      self._log = _log
+    }
+    @usableFromInline var capacity: Int
+    @usableFromInline var _n, _size, _log: Int
+    #if AC_LIBRARY_INTERNAL_CHECKS
+      @usableFromInline var copyCount: UInt = 0
+    #endif
+  }
+
+  @usableFromInline
+  class Buffer: ManagedBuffer<Header, S> {
+
+    public typealias Header = SegTree.Header
+    public typealias S = O.S
+    @inlinable @inline(__always) func op(_ l: S, _ r: S) -> S { O.op(l, r) }
+    @inlinable @inline(__always) func e() -> S { O.e }
+
+    @inlinable
+    deinit {
+      self.withUnsafeMutablePointers { header, elements in
+        elements.deinitialize(count: header.pointee.capacity)
+        header.deinitialize(count: 1)
+      }
+    }
+  }
+
+  @inlinable
+  @inline(__always)
+  mutating func ensureUnique() {
+    #if !DISABLE_COPY_ON_WRITE
+      if !isKnownUniquelyReferenced(&buffer) {
+        buffer = buffer.copy()
+      }
+    #endif
+  }
+}
+
+extension SegTree.Buffer {
+
+  @inlinable
+  @inline(__always)
+  internal static func create(
+    withCapacity capacity: Int
+  ) -> SegTree.Buffer {
+    let storage = SegTree.Buffer.create(minimumCapacity: capacity) { _ in
+      Header(capacity: capacity,_n: 0,_size: 0,_log: 0)
+    }
+    return unsafeDowncast(storage, to: SegTree.Buffer.self)
+  }
+
+  @inlinable
+  @inline(__always)
+  internal static func create(
+    withCount count: Int
+  ) -> SegTree.Buffer {
+
+    let _n: Int = count
+    let size: Int = _Internal.bit_ceil(CUnsignedInt(_n))
+    let log: Int = _Internal.countr_zero(CUnsignedInt(size))
+    let capacity = 2 * size
+
+    let storage = SegTree.Buffer.create(minimumCapacity: capacity) { _ in
+      SegTree.Header(capacity: capacity,_n: _n,_size: size,_log: log)
+    }
+
+    return unsafeDowncast(storage, to: SegTree.Buffer.self)
+  }
+
+  @usableFromInline
+  internal func copy() -> SegTree.Buffer {
+
+    let capacity = self._header.pointee.capacity
+    let _n = self._header.pointee._n
+    let _size = self._header.pointee._size
+    let _log = self._header.pointee._log
+    #if AC_LIBRARY_INTERNAL_CHECKS
+      let copyCount = self._header.pointee.copyCount
+    #endif
+
+    let newStorage = SegTree.Buffer.create(withCapacity: capacity)
+
+    newStorage._header.pointee.capacity = capacity
+    newStorage._header.pointee._n = _n
+    newStorage._header.pointee._size = _size
+    newStorage._header.pointee._log = _log
+    #if AC_LIBRARY_INTERNAL_CHECKS
+      newStorage._header.pointee.copyCount = copyCount &+ 1
+    #endif
+
+    self.withUnsafeMutablePointerToElements { oldNodes in
+      newStorage.withUnsafeMutablePointerToElements { newNodes in
+        newNodes.initialize(from: oldNodes, count: capacity)
+      }
+    }
+
+    return newStorage
+  }
+}
+
+extension SegTree.Buffer {
+
+  @inlinable
+  @inline(__always)
+  var _header: UnsafeMutablePointer<SegTree.Header> {
+    withUnsafeMutablePointerToHeader({ $0 })
+  }
+
+  @inlinable
+  @inline(__always)
+  var d: UnsafeMutablePointer<S> {
+    withUnsafeMutablePointerToElements({ $0 })
+  }
+
+  @inlinable
+  @inline(__always)
+  var _n: Int { _header.pointee._n }
+
+  @inlinable
+  @inline(__always)
+  var size: Int { _header.pointee._size }
+
+  @inlinable
+  @inline(__always)
+  var log: Int { _header.pointee._log }
+
+  @inlinable
+  @inline(__always)
+  func initialize(_ v: [S]) {
+    v.withUnsafeBufferPointer { v in
+      d.initialize(repeating: O.e, count: size)
+      (d + size).initialize(from: v.baseAddress!, count: _n)
+      (d + size + _n).initialize(repeating: O.e, count: size - _n)
+    }
+    for i in stride(from: size - 1, through: 1, by: -1) {
+      update(i)
+    }
+  }
+}
+
+extension SegTree.Buffer {
+
+  @inlinable
+  @inline(__always)
+  func set(_ p: Int, _ x: S) {
     var p = p
     assert(0 <= p && p < _n)
     p += size
@@ -54,12 +226,16 @@ extension SegTree._UnsafeHandle {
     for i in stride(from: 1, through: log, by: 1) { update(p >> i) }
   }
 
-  @inlinable func get(_ p: Int) -> S {
+  @inlinable
+  @inline(__always)
+  func get(_ p: Int) -> S {
     assert(0 <= p && p < _n)
     return d[p + size]
   }
 
-  @inlinable func prod(_ l: Int, _ r: Int) -> S {
+  @inlinable
+  @inline(__always)
+  func prod(_ l: Int, _ r: Int) -> S {
     var l = l
     var r = r
     assert(0 <= l && l <= r && r <= _n)
@@ -83,16 +259,14 @@ extension SegTree._UnsafeHandle {
 
     return op(sml, smr)
   }
-}
 
-extension SegTree {
-  @inlinable @inline(__always)
-  public func all_prod() -> S { return d[1] }
-}
+  @inlinable
+  @inline(__always)
+  func all_prod() -> S { return d[1] }
 
-extension SegTree._UnsafeHandle {
-
-  @inlinable func max_right(_ l: Int, _ f: (S) -> Bool) -> Int {
+  @inlinable
+  @inline(__always)
+  func max_right(_ l: Int, _ f: (S) -> Bool) -> Int {
     var l = l
     assert(0 <= l && l <= _n)
     assert(f(e()))
@@ -117,7 +291,9 @@ extension SegTree._UnsafeHandle {
     return _n
   }
 
-  @inlinable func min_left(_ r: Int, _ f: (S) -> Bool) -> Int {
+  @inlinable
+  @inline(__always)
+  func min_left(_ r: Int, _ f: (S) -> Bool) -> Int {
     var r = r
     assert(0 <= r && r <= _n)
     assert(f(e()))
@@ -142,64 +318,9 @@ extension SegTree._UnsafeHandle {
     return 0
   }
 
-  @inlinable public func update(_ k: Int) {
+  @inlinable
+  @inline(__always)
+  func update(_ k: Int) {
     d[k] = op(d[2 * k], d[2 * k + 1])
-  }
-}
-
-extension SegTree {
-
-  @usableFromInline
-  struct _UnsafeHandle {
-
-    @inlinable @inline(__always)
-    internal init(
-      _n: Int,
-      size: Int,
-      log: Int,
-      d: UnsafeMutablePointer<S>
-    ) {
-      self._n = _n
-      self.size = size
-      self.log = log
-      self.d = d
-    }
-
-    @usableFromInline let _n, size, log: Int
-    @usableFromInline let d: UnsafeMutablePointer<S>
-
-    @usableFromInline typealias S = P.S
-    @inlinable @inline(__always) func op(_ l: S, _ r: S) -> S { P.op(l, r) }
-    @inlinable @inline(__always) func e() -> S { P.e }
-  }
-
-  @inlinable @inline(__always)
-  mutating func _update<R>(_ body: (_UnsafeHandle) -> R) -> R {
-    d.withUnsafeMutableBufferPointer { d in
-      body(_UnsafeHandle(_n: _n, size: size, log: log, d: d.baseAddress!))
-    }
-  }
-}
-
-extension SegTree {
-  @inlinable
-  public mutating func set(_ p: Int, _ x: S) {
-    _update { $0.set(p, x) }
-  }
-  @inlinable
-  public mutating func get(_ p: Int) -> S {
-    _update { $0.get(p) }
-  }
-  @inlinable
-  public mutating func prod(_ l: Int, _ r: Int) -> S {
-    _update { $0.prod(l, r) }
-  }
-  @inlinable
-  public mutating func max_right(_ l: Int, _ g: (S) -> Bool) -> Int {
-    _update { $0.max_right(l, g) }
-  }
-  @inlinable
-  public mutating func min_left(_ r: Int, _ g: (S) -> Bool) -> Int {
-    _update { $0.min_left(r, g) }
   }
 }
