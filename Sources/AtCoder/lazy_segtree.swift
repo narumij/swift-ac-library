@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Lazy SegTree
 
-public protocol LazySegtreeParameter {
+public protocol LazySegtreeOperator {
   associatedtype S
   associatedtype F
   static var op: Op { get }
@@ -12,43 +12,257 @@ public protocol LazySegtreeParameter {
   static var id: F { get }
 }
 
-extension LazySegtreeParameter {
+extension LazySegtreeOperator {
   public typealias Op = (S, S) -> S
   public typealias Mapping = (F, S) -> S
   public typealias Composition = (F, F) -> F
 }
 
-public struct LazySegTree<P: LazySegtreeParameter> {
-  public typealias S = P.S
-  public typealias F = P.F
+public struct LazySegTree<O: LazySegtreeOperator> {
+  public typealias S = O.S
+  public typealias F = O.F
 
   @inlinable
-  public init() { self.init(0) }
+  @inline(__always)
+  public init() {
+    self.init(0)
+  }
+
   @inlinable
-  public init(_ n: Int) { self.init([S](repeating: P.e, count: n)) }
+  @inline(__always)
+  public init(_ n: Int) {
+    self.init([S](repeating: O.e, count: n))
+  }
+
   @inlinable
+  @inline(__always)
   public init(_ v: [S]) {
-    _n = v.count
-    size = _Internal.bit_ceil(CUnsignedInt(_n))
-    log = _Internal.countr_zero(CUnsignedInt(size))
-    d = .init(repeating: P.e, count: 2 * size)
-    lz = .init(repeating: P.id, count: size)
-    // for (int i = 0; i < _n; i++) d[size + i] = v[i];
-    for i in 0..<_n { d[size + i] = v[i] }
-    // for (int i = size - 1; i >= 1; i--) {
-    for i in stride(from: size - 1, through: 1, by: -1) {
-      _update { $0.update(i) }
+    self.buffer = .create(withCount: v.count)
+    buffer.initialize(v)
+  }
+
+  @usableFromInline var buffer: Buffer
+}
+
+extension LazySegTree {
+  @inlinable
+  public mutating func set(_ p: Int, _ x: S) {
+    ensureUnique()
+    buffer.set(p, x)
+  }
+  @inlinable
+  public mutating func get(_ p: Int) -> S {
+    ensureUnique()
+    return buffer.get(p)
+  }
+  @inlinable
+  public mutating func prod(_ l: Int, _ r: Int) -> S {
+    ensureUnique()
+    return buffer.prod(l, r)
+  }
+  @inlinable
+  public func all_prod() -> S {
+    buffer.all_prod()
+  }
+  @inlinable
+  public mutating func apply(_ p: Int, _ f: F) {
+    ensureUnique()
+    buffer.apply(p, f)
+  }
+  @inlinable
+  public mutating func apply(_ l: Int, _ r: Int, _ f: F) {
+    ensureUnique()
+    buffer.apply(l, r, f)
+  }
+  @inlinable
+  public mutating func max_right(_ l: Int, _ g: (S) -> Bool) -> Int {
+    ensureUnique()
+    return buffer.max_right(l, g)
+  }
+  @inlinable
+  public mutating func min_left(_ r: Int, _ g: (S) -> Bool) -> Int {
+    ensureUnique()
+    return buffer.min_left(r, g)
+  }
+}
+
+extension LazySegTree {
+
+  @usableFromInline
+  struct Header {
+    @inlinable
+    @inline(__always)
+    internal init(capacity: Int, _n: Int, _size: Int, _log: Int, _lz: UnsafeMutablePointer<F>?) {
+      self.capacity = capacity
+      self._n = _n
+      self._size = _size
+      self._log = _log
+      self._lz = _lz
+    }
+    @usableFromInline var capacity: Int
+    @usableFromInline var _n, _size, _log: Int
+    @usableFromInline var _lz: UnsafeMutablePointer<F>?
+    #if AC_LIBRARY_INTERNAL_CHECKS
+      @usableFromInline var copyCount: UInt = 0
+    #endif
+  }
+
+  @usableFromInline
+  class Buffer: ManagedBuffer<Header, S> {
+
+    public typealias Header = LazySegTree.Header
+    public typealias S = O.S
+    @usableFromInline func op(_ l: S, _ r: S) -> S { O.op(l, r) }
+    @usableFromInline func e() -> S { O.e }
+
+    public typealias F = O.F
+    @usableFromInline func mapping(_ l: F, _ r: S) -> S { O.mapping(l, r) }
+    @usableFromInline func composition(_ l: F, _ r: F) -> F { O.composition(l, r) }
+    @usableFromInline func id() -> F { O.id }
+
+    @inlinable
+    deinit {
+      self.withUnsafeMutablePointers { header, elements in
+        elements.deinitialize(count: header.pointee.capacity)
+        header.pointee._lz?.deallocate()
+        header.deinitialize(count: 1)
+      }
     }
   }
 
-  @usableFromInline let _n, size, log: Int
-  @usableFromInline var d: ContiguousArray<S>
-  @usableFromInline var lz: ContiguousArray<F>
+  @inlinable
+  @inline(__always)
+  mutating func ensureUnique() {
+    #if !DISABLE_COPY_ON_WRITE
+      if !isKnownUniquelyReferenced(&buffer) {
+        buffer = buffer.copy()
+      }
+    #endif
+  }
 }
 
-extension LazySegTree._UnsafeHandle {
+extension LazySegTree.Buffer {
 
   @inlinable
+  @inline(__always)
+  internal static func create(
+    withCapacity capacity: Int
+  ) -> LazySegTree.Buffer {
+    let storage = LazySegTree.Buffer.create(minimumCapacity: capacity) { _ in
+      Header(capacity: capacity, _n: 0, _size: 0, _log: 0, _lz: nil)
+    }
+    return unsafeDowncast(storage, to: LazySegTree.Buffer.self)
+  }
+
+  @inlinable
+  @inline(__always)
+  internal static func create(
+    withCount count: Int
+  ) -> LazySegTree.Buffer {
+
+    let _n: Int = count
+    let size: Int = _Internal.bit_ceil(CUnsignedInt(_n))
+    let log: Int = _Internal.countr_zero(CUnsignedInt(size))
+    let capacity = 2 * size
+
+    let storage = LazySegTree.Buffer.create(minimumCapacity: capacity) { _ in
+      LazySegTree.Header(
+        capacity: capacity, _n: _n, _size: size, _log: log,
+        _lz: UnsafeMutablePointer<F>.allocate(capacity: size))
+    }
+
+    return unsafeDowncast(storage, to: LazySegTree.Buffer.self)
+  }
+
+  @usableFromInline
+  internal func copy() -> LazySegTree.Buffer {
+
+    let capacity = self._header.pointee.capacity
+    let _n = self._header.pointee._n
+    let _size = self._header.pointee._size
+    let _log = self._header.pointee._log
+    #if AC_LIBRARY_INTERNAL_CHECKS
+      let copyCount = self._header.pointee.copyCount
+    #endif
+
+    let newStorage = LazySegTree.Buffer.create(withCapacity: capacity)
+
+    newStorage._header.pointee.capacity = capacity
+    newStorage._header.pointee._n = _n
+    newStorage._header.pointee._size = _size
+    newStorage._header.pointee._log = _log
+    newStorage._header.pointee._lz = UnsafeMutablePointer<F>.allocate(capacity: _size)
+    #if AC_LIBRARY_INTERNAL_CHECKS
+      newStorage._header.pointee.copyCount = copyCount &+ 1
+    #endif
+
+    self.withUnsafeMutablePointerToElements { oldNodes in
+      newStorage.withUnsafeMutablePointerToElements { newNodes in
+        newNodes.initialize(from: oldNodes, count: capacity)
+      }
+    }
+
+    self._header.pointee._lz.map { oldLz in
+      newStorage._header.pointee._lz.map { newLz in
+        newLz.initialize(from: oldLz, count: _size)
+      }
+    }
+
+    return newStorage
+  }
+}
+
+extension LazySegTree.Buffer {
+
+  @inlinable
+  @inline(__always)
+  var _header: UnsafeMutablePointer<LazySegTree.Header> {
+    withUnsafeMutablePointerToHeader({ $0 })
+  }
+
+  @inlinable
+  @inline(__always)
+  var d: UnsafeMutablePointer<S> {
+    withUnsafeMutablePointerToElements({ $0 })
+  }
+
+  @inlinable
+  @inline(__always)
+  var lz: UnsafeMutablePointer<F> {
+    _header.pointee._lz!
+  }
+
+  @inlinable
+  @inline(__always)
+  var _n: Int { _header.pointee._n }
+
+  @inlinable
+  @inline(__always)
+  var size: Int { _header.pointee._size }
+
+  @inlinable
+  @inline(__always)
+  var log: Int { _header.pointee._log }
+
+  @inlinable
+  @inline(__always)
+  func initialize(_ v: [S]) {
+    v.withUnsafeBufferPointer { v in
+      d.initialize(repeating: O.e, count: size)
+      (d + size).initialize(from: v.baseAddress!, count: _n)
+      (d + size + _n).initialize(repeating: O.e, count: size - _n)
+    }
+    lz.initialize(repeating: O.id, count: size)
+    for i in stride(from: size - 1, through: 1, by: -1) {
+      update(i)
+    }
+  }
+}
+
+extension LazySegTree.Buffer {
+
+  @inlinable
+  @inline(__always)
   func set(_ p: Int, _ x: S) {
     var p = p
     assert(0 <= p && p < _n)
@@ -61,6 +275,7 @@ extension LazySegTree._UnsafeHandle {
   }
 
   @inlinable
+  @inline(__always)
   func get(_ p: Int) -> S {
     var p = p
     assert(0 <= p && p < _n)
@@ -71,6 +286,7 @@ extension LazySegTree._UnsafeHandle {
   }
 
   @inlinable
+  @inline(__always)
   func prod(_ l: Int, _ r: Int) -> S {
     var l = l
     var r = r
@@ -103,16 +319,13 @@ extension LazySegTree._UnsafeHandle {
 
     return op(sml, smr)
   }
-}
-
-extension LazySegTree {
-  @inlinable
-  public func all_prod() -> S { return d[1] }
-}
-
-extension LazySegTree._UnsafeHandle {
 
   @inlinable
+  @inline(__always)
+  public func all_prod() -> S { d[1] }
+
+  @inlinable
+  @inline(__always)
   func apply(_ p: Int, _ f: F) {
     var p = p
     assert(0 <= p && p < _n)
@@ -125,6 +338,7 @@ extension LazySegTree._UnsafeHandle {
   }
 
   @inlinable
+  @inline(__always)
   func apply(_ l: Int, _ r: Int, _ f: F) {
     var l = l
     var r = r
@@ -167,6 +381,7 @@ extension LazySegTree._UnsafeHandle {
   }
 
   @inlinable
+  @inline(__always)
   func max_right(_ l: Int, _ g: (S) -> Bool) -> Int {
     var l = l
     assert(0 <= l && l <= _n)
@@ -196,6 +411,7 @@ extension LazySegTree._UnsafeHandle {
   }
 
   @inlinable
+  @inline(__always)
   func min_left(_ r: Int, _ g: (S) -> Bool) -> Int {
     var r = r
     assert(0 <= r && r <= _n)
@@ -225,95 +441,23 @@ extension LazySegTree._UnsafeHandle {
   }
 
   @inlinable
-  public func update(_ k: Int) { d[k] = op(d[2 * k], d[2 * k + 1]) }
+  @inline(__always)
+  public func update(_ k: Int) {
+    d[k] = op(d[2 * k], d[2 * k + 1])
+  }
 
   @inlinable
+  @inline(__always)
   func all_apply(_ k: Int, _ f: F) {
     d[k] = mapping(f, d[k])
     if k < size { lz[k] = composition(f, lz[k]) }
   }
 
   @inlinable
+  @inline(__always)
   func push(_ k: Int) {
     all_apply(2 * k, lz[k])
     all_apply(2 * k + 1, lz[k])
     lz[k] = id()
-  }
-}
-
-extension LazySegTree {
-
-  @usableFromInline
-  struct _UnsafeHandle {
-
-    @inlinable @inline(__always)
-    internal init(
-      _n: Int,
-      size: Int,
-      log: Int,
-      d: UnsafeMutablePointer<S>,
-      lz: UnsafeMutablePointer<F>
-    ) {
-      self._n = _n
-      self.size = size
-      self.log = log
-      self.d = d
-      self.lz = lz
-    }
-
-    @usableFromInline let _n, size, log: Int
-    @usableFromInline let d: UnsafeMutablePointer<S>
-    @usableFromInline let lz: UnsafeMutablePointer<F>
-
-    @usableFromInline typealias S = P.S
-    @usableFromInline func op(_ l: S, _ r: S) -> S { P.op(l, r) }
-    @usableFromInline func e() -> S { P.e }
-
-    @usableFromInline typealias F = P.F
-    @usableFromInline func mapping(_ l: F, _ r: S) -> S { P.mapping(l, r) }
-    @usableFromInline func composition(_ l: F, _ r: F) -> F { P.composition(l, r) }
-    @usableFromInline func id() -> F { P.id }
-  }
-
-  @inlinable @inline(__always)
-  mutating func _update<R>(_ body: (_UnsafeHandle) -> R) -> R {
-    d.withUnsafeMutableBufferPointer { d in
-      lz.withUnsafeMutableBufferPointer { lz in
-        body(
-          _UnsafeHandle(
-            _n: _n, size: size, log: log, d: d.baseAddress!, lz: lz.baseAddress!))
-      }
-    }
-  }
-}
-
-extension LazySegTree {
-  @inlinable
-  public mutating func set(_ p: Int, _ x: S) {
-    _update { $0.set(p, x) }
-  }
-  @inlinable
-  public mutating func get(_ p: Int) -> S {
-    _update { $0.get(p) }
-  }
-  @inlinable
-  public mutating func prod(_ l: Int, _ r: Int) -> S {
-    _update { $0.prod(l, r) }
-  }
-  @inlinable
-  public mutating func apply(_ p: Int, _ f: F) {
-    _update { $0.apply(p, f) }
-  }
-  @inlinable
-  public mutating func apply(_ l: Int, _ r: Int, _ f: F) {
-    _update { $0.apply(l, r, f) }
-  }
-  @inlinable
-  public mutating func max_right(_ l: Int, _ g: (S) -> Bool) -> Int {
-    _update { $0.max_right(l, g) }
-  }
-  @inlinable
-  public mutating func min_left(_ r: Int, _ g: (S) -> Bool) -> Int {
-    _update { $0.min_left(r, g) }
   }
 }
