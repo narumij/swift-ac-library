@@ -16,7 +16,7 @@ extension _Internal {
 
     // @return pair of (# of scc, scc id)
     @inlinable
-    public func scc_ids() -> (first: Int, second: [Int]) {
+    public func scc_ids() -> (number_of_scc: Int, scc: [Int]) {
       let g = _Internal.csr<edge>(_n, edges)
       var now_ord = 0
       var group_num = 0
@@ -62,15 +62,15 @@ extension _Internal {
     @inlinable
     public func scc() -> [[Int]] {
       let ids = scc_ids()
-      let group_num = ids.first
+      let group_num = ids.number_of_scc
       var counts = [Int](repeating: 0, count: group_num)
-      for x in ids.second { counts[x] += 1 }
-      var groups = [[Int]](repeating: [], count: ids.first)
+      for x in ids.scc { counts[x] += 1 }
+      var groups = [[Int]](repeating: [], count: ids.number_of_scc)
       for i in 0..<group_num {
         groups[i].reserveCapacity(counts[i])
       }
       for i in 0..<_n {
-        groups[ids.second[i]].append(i)
+        groups[ids.scc[i]].append(i)
       }
       return groups
     }
