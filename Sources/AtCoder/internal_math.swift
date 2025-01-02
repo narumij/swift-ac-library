@@ -63,7 +63,8 @@ public struct barrett {
       x = z.multipliedFullWidth(by: im).high
     }
 #else
-    let x: UInt = z.multipliedFullWidth(by: im).high
+//    let x: UInt = z.multipliedFullWidth(by: im).high
+    let x = UInt((UInt128(z) * UInt128(im)) >> 64)
 #endif
     let y = x &* m
     return Unsigned(z &- y &+ (z < y ? m : 0))
