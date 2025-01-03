@@ -39,7 +39,7 @@ final class bitTests: XCTestCase {
       XCTAssertEqual(30, _Internal.countr_zero(1 << 30))
       XCTAssertEqual(0, _Internal.countr_zero((1 << 31) - 1))
       XCTAssertEqual(31, _Internal.countr_zero(1 << 31))
-      XCTAssertEqual(0, _Internal.countr_zero(CUnsignedInt(CInt.max)))
+      XCTAssertEqual(0, _Internal.countr_zero(CInt.max))
     }
 
     func testCountrZeroConstexpr() throws {

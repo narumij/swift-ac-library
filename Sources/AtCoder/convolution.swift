@@ -72,7 +72,7 @@ extension _Internal {
     public init() {
 
       let g: CInt = _Internal.primitive_root(mint.mod)
-      let rank2: Int = _Internal.countr_zero_constexpr(UInt32(mint.mod) - 1)
+      let rank2: Int = _Internal.countr_zero_constexpr(mint.mod - 1)
 
       root = [mint](repeating: 0, count: rank2 + 1)  // root[i]^(2^i) == 1
       iroot = [mint](repeating: 0, count: rank2 + 1)  // root[i] * iroot[i] == 1
@@ -356,8 +356,8 @@ public func convolution<mod: static_mod>(
 ) -> ArraySlice<static_modint<mod>> {
   let (n, m) = (a.count, b.count)
   if n == 0 || m == 0 { return [] }
-  let z: CInt = _Internal.bit_ceil(CUnsignedInt(n + m - 1))
-  assert((static_modint<mod>.mod - 1) % CInt(z) == 0)
+//  let z: CInt = _Internal.bit_ceil(n + m - 1)
+  assert((static_modint<mod>.mod - 1) % CInt(_Internal.bit_ceil(n + m - 1)) == 0)
   if min(n, m) <= 60 {
     return a.withUnsafeBufferPointer { a in
       b.withUnsafeBufferPointer { b in

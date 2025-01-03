@@ -132,8 +132,8 @@ extension SegTree.Buffer {
   ) -> SegTree.Buffer {
 
     let _n: Int = count
-    let size: Int = _Internal.bit_ceil(CUnsignedInt(_n))
-    let log: Int = _Internal.countr_zero(CUnsignedInt(size))
+    let size: Int = _Internal.bit_ceil(_n)
+    let log: Int = _Internal.countr_zero(size)
     let capacity = 2 * size
 
     let storage = SegTree.Buffer.create(minimumCapacity: capacity) { _ in

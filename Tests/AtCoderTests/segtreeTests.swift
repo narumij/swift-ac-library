@@ -27,8 +27,8 @@ extension segtree_naive where S == String {
 final class segtreeTests: XCTestCase {
 
   func test0() {
-    // XCTAssertEqual("$", SegTree(0).all_prod())
-    // XCTAssertEqual("$", SegTree().all_prod())
+    XCTAssertEqual("$", SegTree<Operator>(0).all_prod())
+    XCTAssertEqual("$", SegTree<Operator>().all_prod())
   }
 
   func testInvalid() throws {
