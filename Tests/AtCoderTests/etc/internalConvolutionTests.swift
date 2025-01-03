@@ -165,4 +165,20 @@ final class internalConvolutionTests: XCTestCase {
       XCTAssertEqual(bi, bb)
     }
   #endif
+  
+  func testSimpleInt128() throws {
+    if #available(macOS 15.0, *) {
+      enum MOD2: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 924_844_033 }
+      let a: [Int128] = [924844023, 924844024, ]
+      let b: [Int128] = [924844023, 924844024, 924844025, 924844026, 924844027, 924844028, ]
+      let c: [Int128] = [100, 180, 161, 142, 123, 104, 45, ]
+      let n = 2
+      let m = 6
+      XCTAssertEqual(conv_naive(MOD2.self, a, b), c, "n:\(n), m:\(m)")
+    }
+    else {
+      
+    }
+  }
+  
 }

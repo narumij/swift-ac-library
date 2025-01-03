@@ -204,9 +204,8 @@ final class modintTests: XCTestCase {
     mod_dynamic.reset()
   }
 
-#if os(macOS)
   func testInt128() throws {
-    
+
     if #available(macOS 15.0, *) {
       modint.set_mod(998_244_353)
       XCTAssertEqual(12_345_678, modint(Int128(12_345_678)).val)
@@ -227,7 +226,6 @@ final class modintTests: XCTestCase {
       throw XCTSkip("__int128がない")
     }
   }
-#endif
 
   func testInv() throws {
 
@@ -570,9 +568,9 @@ final class modintTests: XCTestCase {
 
   func testStress() throws {
 
-#if DEBUG
-    throw XCTSkip()
-#endif
+    #if DEBUG
+      throw XCTSkip()
+    #endif
 
     typealias mint = modint998244353
     var (a, b, c, d): (mint, mint, mint, mint) = (100, 100, 100, 100)

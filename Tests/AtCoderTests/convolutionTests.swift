@@ -251,79 +251,111 @@ final class convolutionTests: XCTestCase {
     }
   }
 
-  #if false
-    func testSimpleInt128() throws {
-      throw XCTSkip("__int128はSwiftでは利用できないため")
-      /*
-         const int MOD1 = 998244353;
-         const int MOD2 = 924844033;
+  #warning("FIX ME!!!")
+  func testSimpleInt128() throws {
+    if #available(macOS 15.0, *) {
 
-         std::mt19937 mt;
-         for (int n = 1; n < 20; n++) {
-         for (int m = 1; m < 20; m++) {
-         std::vector<__int128> a(n), b(m);
-         for (int i = 0; i < n; i++) {
-         a[i] = mt() % MOD1;
-         }
-         for (int i = 0; i < m; i++) {
-         b[i] = mt() % MOD1;
-         }
-         ASSERT_EQ(conv_naive<MOD1>(a, b), convolution(a, b));
-         ASSERT_EQ(conv_naive<MOD1>(a, b), (convolution<MOD1>(a, b)));
-         }
-         }
-         for (int n = 1; n < 20; n++) {
-         for (int m = 1; m < 20; m++) {
-         std::vector<__int128> a(n), b(m);
-         for (int i = 0; i < n; i++) {
-         a[i] = mt() % MOD2;
-         }
-         for (int i = 0; i < m; i++) {
-         b[i] = mt() % MOD2;
-         }
-         ASSERT_EQ(conv_naive<MOD2>(a, b), (convolution<MOD2>(a, b)));
-         }
-         }
-         */
+      enum MOD1: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 998_244_353 }
+      enum MOD2: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 924_844_033 }
+
+      // std::mt19937 mt;
+      let mt = { ull.random(in: ull.min...ull.max) }
+
+      for n in 1..<20 {
+        for m in 1..<20 {
+          var a = [Int128](repeating: 0, count: n)
+          var b = [Int128](repeating: 0, count: m)
+          for i in 0..<n {
+            a[i] = Int128(mt() % MOD1.value())
+          }
+          for i in 0..<m {
+            b[i] = Int128(mt() % MOD1.value())
+          }
+          XCTAssertEqual(conv_naive(MOD1.self, a, b), convolution(a, b))
+          // 間違った書き方でコンパイルが通ってしまう問題がある
+          // expect "Cannot explicitly specialize a generic function" error.
+          XCTAssertEqual(conv_naive(MOD1.self, a, b), convolution<MOD1>(a, b))
+          XCTAssertEqual(conv_naive(MOD1.self, a, b), (convolution(MOD1.self, a, b)))
+        }
+      }
+      for n in 1..<20 {
+        for m in 1..<20 {
+          var a = [Int128](repeating: 0, count: n)
+          var b = [Int128](repeating: 0, count: m)
+          for i in 0..<n {
+            a[i] = Int128(mt() % MOD2.value())
+            //            a[i] = Int128(MOD2.value() + i - 10)
+          }
+          for i in 0..<m {
+            b[i] = Int128(mt() % MOD2.value())
+            //            b[i] = Int128(MOD2.value() + i - 10)
+          }
+          // 間違った書き方でコンパイルが通ってしまう問題がある
+          // expect "Cannot explicitly specialize a generic function" error.
+          XCTAssertNotEqual(
+            conv_naive(MOD2.self, a, b), (convolution<MOD2>(a, b)), "n:\(n), m:\(m)")
+          XCTAssertEqual(
+            conv_naive(MOD2.self, a, b), (convolution(MOD2.self, a, b)), "n:\(n), m:\(m)")
+        }
+      }
+    } else {
+      // Fallback on earlier versions
+      throw XCTSkip("__int128がない")
     }
-  #endif
+  }
 
-  #if false
-    func testSimpleUInt128() throws {
-      throw XCTSkip("__int128はSwiftでは利用できないため")
-      /*
-         const int MOD1 = 998244353;
-         const int MOD2 = 924844033;
+  #warning("FIX ME!!!")
+  func testSimpleUInt128() throws {
+    if #available(macOS 15.0, *) {
 
-         std::mt19937 mt;
-         for (int n = 1; n < 20; n++) {
-         for (int m = 1; m < 20; m++) {
-         std::vector<unsigned __int128> a(n), b(m);
-         for (int i = 0; i < n; i++) {
-         a[i] = mt() % MOD1;
-         }
-         for (int i = 0; i < m; i++) {
-         b[i] = mt() % MOD1;
-         }
-         ASSERT_EQ(conv_naive<MOD1>(a, b), convolution(a, b));
-         ASSERT_EQ(conv_naive<MOD1>(a, b), (convolution<998244353>(a, b)));
-         }
-         }
-         for (int n = 1; n < 20; n++) {
-         for (int m = 1; m < 20; m++) {
-         std::vector<unsigned __int128> a(n), b(m);
-         for (int i = 0; i < n; i++) {
-         a[i] = mt() % MOD2;
-         }
-         for (int i = 0; i < m; i++) {
-         b[i] = mt() % MOD2;
-         }
-         ASSERT_EQ(conv_naive<MOD2>(a, b), (convolution<MOD2>(a, b)));
-         }
-         }
-         */
+      enum MOD1: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 998_244_353 }
+      enum MOD2: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 924_844_033 }
+
+      // std::mt19937 mt;
+      let mt = { ull.random(in: ull.min...ull.max) }
+
+      for n in 1..<20 {
+        for m in 1..<20 {
+          var a = [UInt128](repeating: 0, count: n)
+          var b = [UInt128](repeating: 0, count: m)
+          for i in 0..<n {
+            a[i] = UInt128(mt() % MOD1.value())
+          }
+          for i in 0..<m {
+            b[i] = UInt128(mt() % MOD1.value())
+          }
+          XCTAssertEqual(conv_naive(MOD1.self, a, b), convolution(a, b))
+          // 間違った書き方でコンパイルが通ってしまう問題がある
+          // expect "Cannot explicitly specialize a generic function" error.
+          XCTAssertEqual(conv_naive(MOD1.self, a, b), convolution<MOD1>(a, b))
+          XCTAssertEqual(conv_naive(MOD1.self, a, b), (convolution(MOD1.self, a, b)))
+        }
+      }
+      for n in 1..<20 {
+        for m in 1..<20 {
+          var a = [UInt128](repeating: 0, count: n)
+          var b = [UInt128](repeating: 0, count: m)
+          for i in 0..<n {
+            a[i] = UInt128(mt() % MOD2.value())
+            //            a[i] = Int128(MOD2.value() + i - 10)
+          }
+          for i in 0..<m {
+            b[i] = UInt128(mt() % MOD2.value())
+            //            b[i] = Int128(MOD2.value() + i - 10)
+          }
+          // 間違った書き方でコンパイルが通ってしまう問題がある
+          // expect "Cannot explicitly specialize a generic function" error.
+          XCTAssertNotEqual(
+            conv_naive(MOD2.self, a, b), (convolution<MOD2>(a, b)), "n:\(n), m:\(m)")
+          XCTAssertEqual(
+            conv_naive(MOD2.self, a, b), (convolution(MOD2.self, a, b)), "n:\(n), m:\(m)")
+        }
+      }
+    } else {
+      // Fallback on earlier versions
+      throw XCTSkip("__int128がない")
     }
-  #endif
+  }
 
   func testConvLL() throws {
 

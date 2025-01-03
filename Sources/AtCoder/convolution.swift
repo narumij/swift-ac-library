@@ -407,6 +407,7 @@ public func convolution<mod: static_mod, T: FixedWidthInteger>(_ t: mod.Type, _ 
   return c
 }
 
+@available(*, deprecated, message: "mod_998_244_353を意図してない場合、convolution<,>(_:,_:,_:)を使うこと")
 @inlinable
 public func convolution<T: FixedWidthInteger>(_ a: [T], _ b: [T]) -> [T] {
   convolution(mod_998_244_353.self, a, b)
