@@ -5,10 +5,10 @@ import Foundation
 public protocol LazySegtreeOperator {
   associatedtype S
   associatedtype F
-  static var op: Op { get }
+  static var op: (S, S) -> S { get }
   static var e: S { get }
-  static var mapping: Mapping { get }
-  static var composition: Composition { get }
+  static var mapping: (F, S) -> S { get }
+  static var composition: (F, F) -> F { get }
   static var id: F { get }
 }
 
@@ -18,7 +18,9 @@ extension LazySegtreeOperator {
   public typealias Composition = (F, F) -> F
 }
 
-public struct LazySegTree<O: LazySegtreeOperator> {
+public struct LazySegTree<_S_op_e_F_mapping_composition_id_>
+where _S_op_e_F_mapping_composition_id_: LazySegtreeOperator {
+  public typealias O = _S_op_e_F_mapping_composition_id_
   public typealias S = O.S
   public typealias F = O.F
 
@@ -109,16 +111,14 @@ extension LazySegTree {
 
   @usableFromInline
   class Buffer: ManagedBuffer<Header, S> {
-
-    public typealias Header = LazySegTree.Header
+    public typealias O = _S_op_e_F_mapping_composition_id_
     public typealias S = O.S
-    @usableFromInline func op(_ l: S, _ r: S) -> S { O.op(l, r) }
-    @usableFromInline func e() -> S { O.e }
-
+    @inlinable @inline(__always) func op(_ l: S, _ r: S) -> S { O.op(l, r) }
+    @inlinable @inline(__always) func e() -> S { O.e }
     public typealias F = O.F
-    @usableFromInline func mapping(_ l: F, _ r: S) -> S { O.mapping(l, r) }
-    @usableFromInline func composition(_ l: F, _ r: F) -> F { O.composition(l, r) }
-    @usableFromInline func id() -> F { O.id }
+    @inlinable @inline(__always) func mapping(_ l: F, _ r: S) -> S { O.mapping(l, r) }
+    @inlinable @inline(__always) func composition(_ l: F, _ r: F) -> F { O.composition(l, r) }
+    @inlinable @inline(__always) func id() -> F { O.id }
 
     @inlinable
     deinit {
@@ -150,7 +150,7 @@ extension LazySegTree.Buffer {
     withCapacity capacity: Int
   ) -> LazySegTree.Buffer {
     let storage = LazySegTree.Buffer.create(minimumCapacity: capacity) { _ in
-      Header(capacity: capacity, _n: 0, _size: 0, _log: 0, _lz: nil)
+      LazySegTree.Header(capacity: capacity, _n: 0, _size: 0, _log: 0, _lz: nil)
     }
     return unsafeDowncast(storage, to: LazySegTree.Buffer.self)
   }

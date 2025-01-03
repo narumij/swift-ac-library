@@ -2,7 +2,7 @@ import Foundation
 
 public protocol SegtreeOperator {
   associatedtype S
-  static var op: Op { get }
+  static var op: (S, S) -> S { get }
   static var e: S { get }
 }
 
@@ -10,8 +10,9 @@ extension SegtreeOperator {
   public typealias Op = (S, S) -> S
 }
 
-public struct SegTree<_SegtreeOperator: SegtreeOperator> {
-  public typealias O = _SegtreeOperator
+public struct SegTree<_S_op_e_>
+where _S_op_e_: SegtreeOperator {
+  public typealias O = _S_op_e_
   public typealias S = O.S
 
   @inlinable
@@ -86,9 +87,7 @@ extension SegTree {
 
   @usableFromInline
   class Buffer: ManagedBuffer<Header, S> {
-
-    public typealias Header = SegTree.Header
-    public typealias O = _SegtreeOperator
+    public typealias O = _S_op_e_
     public typealias S = O.S
     @inlinable @inline(__always) func op(_ l: S, _ r: S) -> S { O.op(l, r) }
     @inlinable @inline(__always) func e() -> S { O.e }
@@ -121,7 +120,7 @@ extension SegTree.Buffer {
     withCapacity capacity: Int
   ) -> SegTree.Buffer {
     let storage = SegTree.Buffer.create(minimumCapacity: capacity) { _ in
-      Header(capacity: capacity,_n: 0,_size: 0,_log: 0)
+      SegTree.Header(capacity: capacity,_n: 0,_size: 0,_log: 0)
     }
     return unsafeDowncast(storage, to: SegTree.Buffer.self)
   }
