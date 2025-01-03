@@ -47,6 +47,15 @@ dependencies: [
 import AtCoder
 ```
 
+## アンダースコア付き宣言について
+
+「アンダースコア付き宣言」は、完全修飾名のどこかにアンダースコア (`_`) で始まる部分が含まれる宣言のことを指します。たとえば、以下のような名前は技術的に `public` として宣言されていても、パブリックAPIには含まれません：
+
+- `FooModule.Bar._someMember(value:)`（アンダースコア付きのメンバー）
+- `FooModule._Bar.someMember`（アンダースコア付きの型）
+- `_FooModule.Bar`（アンダースコア付きのモジュール）
+- `FooModule.Bar.init(_value:)`（アンダースコア付きの引数を持つイニシャライザ）
+
 ## ライセンス
 
 [CC0]
