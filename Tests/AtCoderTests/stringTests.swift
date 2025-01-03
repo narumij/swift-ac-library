@@ -322,6 +322,7 @@ final class stringTests: XCTestCase {
     }
   }
 
+#warning("FIX ME!!!")
   #if DEBUG
     func testSASingle() throws {
       XCTAssertEqual([0], suffix_array([0]))

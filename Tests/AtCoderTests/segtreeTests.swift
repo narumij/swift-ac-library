@@ -1,10 +1,5 @@
+import AtCoder
 import XCTest
-
-#if DEBUG
-  @testable import AtCoder
-#else
-  import AtCoder
-#endif
 
 private func op(a: String, b: String) -> String {
   assert(a == "$" || b == "$" || a <= b)
@@ -15,13 +10,13 @@ private func op(a: String, b: String) -> String {
 
 private let e: String = "$"
 
-private enum Param: SegtreeOperator {
+private enum Operator: SegtreeOperator {
   typealias S = String
   nonisolated(unsafe) static let op: Op = AtCoderTests.op
   static let e: S = AtCoderTests.e
 }
 
-private typealias segtree = SegTree<Param>
+private typealias segtree = SegTree<Operator>
 
 extension segtree_naive where S == String {
   fileprivate init(_ n: Int) {
@@ -32,26 +27,24 @@ extension segtree_naive where S == String {
 final class segtreeTests: XCTestCase {
 
   func test0() {
-    //        XCTAssertEqual("$", SegTree(0).all_prod())
-    //        XCTAssertEqual("$", SegTree().all_prod())
+    // XCTAssertEqual("$", SegTree(0).all_prod())
+    // XCTAssertEqual("$", SegTree().all_prod())
   }
 
-  #if false
-    func testInvalid() throws {
-      throw XCTSkip("Swift Packageでは実施不可")
-      XCTAssertThrowsError(segtree_naive(-1))
-      let s = SegTree(10)
-      XCTAssertThrowsError(s.get(-1))
-      XCTAssertThrowsError(s.get(10))
-      XCTAssertThrowsError(s.prod(-1, -1))
-      XCTAssertThrowsError(s.prod(3, 2))
-      XCTAssertThrowsError(s.prod(0, 11))
-      XCTAssertThrowsError(s.prod(-1, 11))
-      XCTAssertThrowsError(s.max_right(11, { _ in true }))
-      XCTAssertThrowsError(s.min_left(-1, { _ in true }))
-      XCTAssertThrowsError(s.max_right(0, { _ in false }))
-    }
-  #endif
+  func testInvalid() throws {
+    throw XCTSkip("Swift Packageでは実施不可")
+    XCTAssertThrowsError(segtree_naive(-1))
+    var s = SegTree<Operator>(10)
+    XCTAssertThrowsError(s.get(-1))
+    XCTAssertThrowsError(s.get(10))
+    XCTAssertThrowsError(s.prod(-1, -1))
+    XCTAssertThrowsError(s.prod(3, 2))
+    XCTAssertThrowsError(s.prod(0, 11))
+    XCTAssertThrowsError(s.prod(-1, 11))
+    XCTAssertThrowsError(s.max_right(11, { _ in true }))
+    XCTAssertThrowsError(s.min_left(-1, { _ in true }))
+    XCTAssertThrowsError(s.max_right(0, { _ in false }))
+  }
 
   func testOne() throws {
     var s = segtree(1)
@@ -115,11 +108,18 @@ final class segtreeTests: XCTestCase {
     }
   }
 
-  #if false
-    func testAssign() throws {
-      throw XCTSkip("代入のオーバーロードはSwiftにはない。")
-      var seg0 = SegTree()
-      XCTAssertNoThrow(seg0 = SegTree(10))
-    }
-  #endif
+  func testCopyOnWrite() throws {
+    #if DISABLE_COPY_ON_WRITE
+      throw XCTSkip("コピーオンライト不活性のため")
+    #endif
+    var seg0 = SegTree<Operator>(10)
+    var seg00 = seg0
+    XCTAssertEqual(seg00.all_prod(), "$")
+    seg0.set(0, "a")
+    XCTAssertEqual(seg00.all_prod(), "$")
+    XCTAssertEqual(seg0.all_prod(), "a")
+    seg00.set(0, "b")
+    XCTAssertEqual(seg00.all_prod(), "b")
+    XCTAssertEqual(seg0.all_prod(), "a")
+  }
 }

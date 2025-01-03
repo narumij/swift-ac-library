@@ -10,7 +10,8 @@ extension SegtreeOperator {
   public typealias Op = (S, S) -> S
 }
 
-public struct SegTree<O: SegtreeOperator> {
+public struct SegTree<_SegtreeOperator: SegtreeOperator> {
+  public typealias O = _SegtreeOperator
   public typealias S = O.S
 
   @inlinable
@@ -87,6 +88,7 @@ extension SegTree {
   class Buffer: ManagedBuffer<Header, S> {
 
     public typealias Header = SegTree.Header
+    public typealias O = _SegtreeOperator
     public typealias S = O.S
     @inlinable @inline(__always) func op(_ l: S, _ r: S) -> S { O.op(l, r) }
     @inlinable @inline(__always) func e() -> S { O.e }

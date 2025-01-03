@@ -1,15 +1,12 @@
 import Foundation
 
-@testable import AtCoder
-
 // MARK: -
 
 /*
- カスタムなmod値を扱うためのヘルパーだったが、テストでしか使っていないので移動した。
- 名前も紛らわしく読みにくかった
+ releaseビルドでテストが通る範囲を拡大したかったため、復帰
  */
 
-@usableFromInline struct mod_value {
+public struct mod_value {
 
   @inlinable
   public init<Integer: BinaryInteger>(_ m: Integer) {
@@ -25,10 +22,10 @@ import Foundation
 }
 
 extension mod_value {
-  @usableFromInline nonisolated(unsafe) static let mod_998_244_353: mod_value = 998_244_353
-  @usableFromInline nonisolated(unsafe) static let mod_1_000_000_007: mod_value = 1_000_000_007
-  @usableFromInline nonisolated(unsafe) static let mod_INT32_MAX: mod_value = 2_147_483_647
-  @usableFromInline nonisolated(unsafe) static let mod_UINT32_MAX: mod_value = -1
+  public nonisolated(unsafe) static let mod_998_244_353: mod_value = 998_244_353
+  public nonisolated(unsafe) static let mod_1_000_000_007: mod_value = 1_000_000_007
+  public nonisolated(unsafe) static let mod_INT32_MAX: mod_value = 2_147_483_647
+  public nonisolated(unsafe) static let mod_UINT32_MAX: mod_value = -1
 }
 
 extension mod_value: ExpressibleByIntegerLiteral {
@@ -39,14 +36,14 @@ extension mod_value: ExpressibleByIntegerLiteral {
   }
 }
 
-@usableFromInline
+public
 protocol static_mod_value: static_mod {
   static var mod: mod_value { get }
 }
 
 extension static_mod_value {
-  @inlinable
+  public
   static var umod: CUnsignedInt { mod.umod }
-  @inlinable
+  public
   static var isPrime: Bool { mod.isPrime }
 }

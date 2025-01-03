@@ -570,7 +570,9 @@ final class modintTests: XCTestCase {
 
   func testStress() throws {
 
+#if DEBUG
     throw XCTSkip()
+#endif
 
     typealias mint = modint998244353
     var (a, b, c, d): (mint, mint, mint, mint) = (100, 100, 100, 100)

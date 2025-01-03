@@ -1,4 +1,6 @@
 import Foundation
+
+#if DEBUG
 @testable import AtCoder
 
 // MARK: - deprecated
@@ -93,3 +95,4 @@ public func floor_sum(
 ) -> CLongLong {
   CLongLong(floor_sum(Int(n), Int(m), Int(a), Int(b)))
 }
+#endif

@@ -6,13 +6,24 @@ import XCTest
   import AtCoder
 #endif
 
+#if DEBUG
+  extension DSU {
+    var parent_or_size: [Int] {
+      .init(unsafeUninitializedCapacity: buffer._n) { parent_or_size, initializedCount in
+        parent_or_size.baseAddress?.initialize(from: buffer.parent_or_size, count: buffer._n)
+        initializedCount = buffer._n
+      }
+    }
+  }
+#endif
+
 final class dsuTests: XCTestCase {
 
   typealias dsu = DSU
 
   #if DEBUG
     func test0() {
-//      XCTAssertEqual([], dsu().parent_or_size)
+      XCTAssertEqual([], DSU().parent_or_size)
     }
   #endif
 
@@ -57,5 +68,20 @@ final class dsuTests: XCTestCase {
         dsu.merge(i, j)
       }
     }
+  }
+
+  func testCopyOnWrite() throws {
+    #if DISABLE_COPY_ON_WRITE
+      throw XCTSkip("コピーオンライト不活性のため")
+    #endif
+    var seg0 = DSU(5)
+    var seg00 = seg0
+    XCTAssertEqual(seg00.leader(0), 0)
+    seg0.merge(1, 0)
+    XCTAssertEqual(seg00.leader(0), 0)
+    XCTAssertEqual(seg0.leader(0), 1)
+    seg00.merge(2, 0)
+    XCTAssertEqual(seg00.leader(0), 2)
+    XCTAssertEqual(seg0.leader(0), 1)
   }
 }
