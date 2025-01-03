@@ -274,8 +274,9 @@ final class convolutionTests: XCTestCase {
           XCTAssertEqual(conv_naive(MOD1.self, a, b), convolution(a, b))
           // 間違った書き方でコンパイルが通ってしまう問題がある
           // expect "Cannot explicitly specialize a generic function" error.
-          XCTAssertEqual(conv_naive(MOD1.self, a, b), convolution<MOD1>(a, b))
-          XCTAssertEqual(conv_naive(MOD1.self, a, b), (convolution(MOD1.self, a, b)))
+          // XCTAssertEqual(conv_naive(MOD1.self, a, b), convolution<MOD1>(a, b))
+          // 将来直るはずなのでコメントアウト
+          XCTAssertEqual(conv_naive(MOD1.self, a, b), convolution(MOD1.self, a, b))
         }
       }
       for n in 1..<20 {
@@ -292,10 +293,9 @@ final class convolutionTests: XCTestCase {
           }
           // 間違った書き方でコンパイルが通ってしまう問題がある
           // expect "Cannot explicitly specialize a generic function" error.
-          XCTAssertNotEqual(
-            conv_naive(MOD2.self, a, b), (convolution<MOD2>(a, b)), "n:\(n), m:\(m)")
-          XCTAssertEqual(
-            conv_naive(MOD2.self, a, b), (convolution(MOD2.self, a, b)), "n:\(n), m:\(m)")
+          // XCTAssertNotEqual(conv_naive(MOD2.self, a, b), convolution<MOD2>(a, b))
+          // 将来直るはずなのでコメントアウト
+          XCTAssertEqual(conv_naive(MOD2.self, a, b), convolution(MOD2.self, a, b))
         }
       }
     } else {
@@ -327,8 +327,9 @@ final class convolutionTests: XCTestCase {
           XCTAssertEqual(conv_naive(MOD1.self, a, b), convolution(a, b))
           // 間違った書き方でコンパイルが通ってしまう問題がある
           // expect "Cannot explicitly specialize a generic function" error.
-          XCTAssertEqual(conv_naive(MOD1.self, a, b), convolution<MOD1>(a, b))
-          XCTAssertEqual(conv_naive(MOD1.self, a, b), (convolution(MOD1.self, a, b)))
+          // XCTAssertEqual(conv_naive(MOD1.self, a, b), convolution<MOD1>(a, b))
+          // 将来直るはずなのでコメントアウト
+          XCTAssertEqual(conv_naive(MOD1.self, a, b), convolution(MOD1.self, a, b))
         }
       }
       for n in 1..<20 {
@@ -345,10 +346,10 @@ final class convolutionTests: XCTestCase {
           }
           // 間違った書き方でコンパイルが通ってしまう問題がある
           // expect "Cannot explicitly specialize a generic function" error.
-          XCTAssertNotEqual(
-            conv_naive(MOD2.self, a, b), (convolution<MOD2>(a, b)), "n:\(n), m:\(m)")
+          // XCTAssertNotEqual(conv_naive(MOD2.self, a, b), convolution<MOD2>(a, b), "n:\(n), m:\(m)")
+          // 将来直るはずなのでコメントアウト
           XCTAssertEqual(
-            conv_naive(MOD2.self, a, b), (convolution(MOD2.self, a, b)), "n:\(n), m:\(m)")
+            conv_naive(MOD2.self, a, b), convolution(MOD2.self, a, b), "n:\(n), m:\(m)")
         }
       }
     } else {
