@@ -8,7 +8,7 @@ import XCTest
 
 typealias mcf_graph = MCFGraph
 
-extension mcf_graph.Edge: ExpressibleByArrayLiteral where Value == Int {
+extension mcf_graph.Edge: ExpressibleByArrayLiteral where Cap == Int, Cost == Int {
   public init(arrayLiteral elements: Int...) {
     if elements.isEmpty {
       self.init(from: 0, to: 0, cap: 0, flow: 0, cost: 0)
@@ -17,17 +17,17 @@ extension mcf_graph.Edge: ExpressibleByArrayLiteral where Value == Int {
     self.init(
       from: elements[0], to: elements[1], cap: elements[2], flow: elements[3], cost: elements[4])
   }
-  var values: (Int, Int, MCFGraph.Cap, MCFGraph.Cap, MCFGraph.Cost) { (from, to, cap, flow, cost) }
+  var values: (Int, Int, Cap, Cap, Cost) { (from, to, cap, flow, cost) }
 }
 
 final class mincostflowTests: XCTestCase {
 
   func test0() throws {
-    _ = mcf_graph<Int>()
-    _ = mcf_graph<Int>(count: 0)
+    _ = mcf_graph<Int,Int>()
+    _ = mcf_graph<Int,Int>(count: 0)
   }
 
-  func edge_eq(_ expect: mcf_graph<Int>.Edge, _ actual: mcf_graph<Int>.Edge) {
+  func edge_eq(_ expect: mcf_graph<Int,Int>.Edge, _ actual: mcf_graph<Int,Int>.Edge) {
     XCTAssertEqual(expect.from, actual.from, "expect \(expect.values) but \(actual.values)")
     XCTAssertEqual(expect.to, actual.to, "expect \(expect.values) but \(actual.values)")
     XCTAssertEqual(expect.cap, actual.cap, "expect \(expect.values) but \(actual.values)")
@@ -46,7 +46,7 @@ final class mincostflowTests: XCTestCase {
 
   func testSimple() throws {
 
-    var g = mcf_graph<Int>(count: 4)
+    var g = mcf_graph<Int,Int>(count: 4)
     g.add_edge(0, 1, 1, 1)
     g.add_edge(0, 2, 1, 1)
     g.add_edge(1, 3, 1, 1)
@@ -56,7 +56,7 @@ final class mincostflowTests: XCTestCase {
     let expect = [(0, 0), (2, 4)]
     tuplesEqual(expect, g.slope(0, 3, 10))
 
-    var e = mcf_graph<Int>.Edge()
+    var e = mcf_graph<Int,Int>.Edge()
     e = [0, 1, 1, 1, 1]
     edge_eq(e, g.get_edge(0))
     e = [0, 2, 1, 1, 1]
@@ -71,12 +71,12 @@ final class mincostflowTests: XCTestCase {
 
   func testUsage() throws {
     do {
-      var g = mcf_graph<Int>(count: 2)
+      var g = mcf_graph<Int,Int>(count: 2)
       g.add_edge(0, 1, 1, 2)
       tupleEqual((1, 2), g.flow(0, 1))
     }
     do {
-      var g = mcf_graph<Int>(count: 2)
+      var g = mcf_graph<Int,Int>(count: 2)
       g.add_edge(0, 1, 1, 2)
       let expect = [(0, 0), (1, 2)]
       tuplesEqual(expect, g.slope(0, 1))
@@ -104,15 +104,15 @@ final class mincostflowTests: XCTestCase {
 
   func testSelfLoop() throws {
 
-    var g = mcf_graph<Int>(count: 3)
+    var g = mcf_graph<Int,Int>(count: 3)
     XCTAssertEqual(0, g.add_edge(0, 0, 100, 123))
 
-    let e: mcf_graph<Int>.Edge = [0, 0, 100, 0, 123]
+    let e: mcf_graph<Int,Int>.Edge = [0, 0, 100, 0, 123]
     edge_eq(e, g.get_edge(0))
   }
 
   func testSameCostPath() throws {
-    var g = mcf_graph<Int>(count: 3)
+    var g = mcf_graph<Int,Int>(count: 3)
     XCTAssertEqual(0, g.add_edge(0, 1, 1, 1))
     XCTAssertEqual(1, g.add_edge(1, 2, 1, 0))
     XCTAssertEqual(2, g.add_edge(0, 2, 2, 1))
@@ -149,7 +149,7 @@ final class mincostflowTests: XCTestCase {
         if randbool() { swap(&s, &t) }
 
         var g_mf = mf_graph<Int>(count: n)
-        var g = mcf_graph<Int>(count: n)
+        var g = mcf_graph<Int,Int>(count: n)
         var data: [(Int, Int, Int, Int, Int)] = []
         for _ in 0..<m {
           let u = randint(0, n - 1)
@@ -211,5 +211,11 @@ final class mincostflowTests: XCTestCase {
         }
       }
     }
+  }
+  
+  func testMisc() throws {
+    let _ = MCFGraph<Int,Float>()
+    let _ = MCFGraph<Float,Int>()
+    let _ = MCFGraph<Float,Float>()
   }
 }

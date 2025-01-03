@@ -1,7 +1,9 @@
 import Collections
 import Foundation
 
-public struct MFGraph<Cap: ___numeric_limit & Comparable & ExpressibleByIntegerLiteral> {
+public struct MFGraph<Cap>
+where Cap: ___numeric_limit & Comparable
+{
   @usableFromInline
   let _n: Int
   @usableFromInline

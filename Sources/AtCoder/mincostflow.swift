@@ -1,22 +1,71 @@
 import Collections
 import Foundation
 
-public struct MCFGraph<Value: FixedWidthInteger & SignedInteger> {
+public struct MCFGraph<Cap, Cost>
+where
+  Cap: ___numeric_limit & Comparable,
+  Cost: ___numeric_limit & Comparable & SignedNumeric
+{
   @usableFromInline
   var _n: Int
   @usableFromInline
   var _edges: [Edge] = []
+  @usableFromInline
+  let visitor: AnyNumericCastVisitor<Cap, Cost>
+}
+
+extension MCFGraph where Cap: BinaryInteger, Cost: BinaryInteger, Cap == Cost {
+  public init() {
+    self.init(IntegerToIntegerVisitor(), count: 0)
+  }
+  public init(count n: Int) {
+    self.init(IntegerToIntegerVisitor(), count: n)
+  }
+}
+
+extension MCFGraph where Cap: BinaryInteger, Cost: BinaryFloatingPoint {
+  public init() {
+    self.init(IntegerToFloatVisitor(), count: 0)
+  }
+  public init(count n: Int) {
+    self.init(IntegerToFloatVisitor(), count: n)
+  }
+}
+
+extension MCFGraph where Cap: BinaryFloatingPoint, Cost: BinaryInteger {
+  public init() {
+    self.init(FloatToIntegerVisitor(), count: 0)
+  }
+  public init(count n: Int) {
+    self.init(FloatToIntegerVisitor(), count: n)
+  }
+}
+
+extension MCFGraph where Cap: BinaryFloatingPoint, Cost: BinaryFloatingPoint, Cap == Cost {
+  public init() {
+    self.init(FloatToFloatVisitor(), count: 0)
+  }
+  public init(count n: Int) {
+    self.init(FloatToFloatVisitor(), count: n)
+  }
 }
 
 extension MCFGraph {
 
-  public typealias Cap = Value
-  public typealias Cost = Value
+  public typealias Cap = Cap
+  public typealias Cost = Cost
 
   @inlinable
-  public init() { _n = 0 }
+  init<V: NumericCastVisitor>(_ visitor: V, count n: Int) where V.Cap == Cap, V.Cost == Cost {
+    self.visitor = AnyNumericCastVisitor(visitor)
+    _n = n
+  }
+  
   @inlinable
-  public init(count n: Int) { _n = n }
+  @inline(__always)
+  public func _numericCast(_ value: Cap) -> Cost {
+    return visitor.cast(value)
+  }
 }
 
 extension MCFGraph {
@@ -35,8 +84,8 @@ extension MCFGraph {
 
   public struct Edge {
     public init(
-      from: Int, to: Int, cap: MCFGraph<Value>.Cap, flow: MCFGraph<Value>.Cap,
-      cost: MCFGraph<Value>.Cost
+      from: Int, to: Int, cap: Cap, flow: Cap,
+      cost: Cost
     ) {
       self.from = from
       self.to = to
@@ -62,7 +111,7 @@ extension MCFGraph {
 
   @inlinable
   public mutating func flow(_ s: Int, _ t: Int) -> (Cap, Cost) {
-    return flow(s, t, Cap.max)
+    return flow(s, t, numeric_limit<Cap>.max)
   }
   @inlinable
   public mutating func flow(_ s: Int, _ t: Int, _ flow_limit: Cap) -> (Cap, Cost) {
@@ -70,7 +119,7 @@ extension MCFGraph {
   }
   @inlinable
   public mutating func slope(_ s: Int, _ t: Int) -> [(Cap, Cost)] {
-    return slope(s, t, Cap.max)
+    return slope(s, t, numeric_limit<Cap>.max)
   }
   @inlinable
   public mutating func slope(_ s: Int, _ t: Int, _ flow_limit: Cap) -> [(Cap, Cost)] {
@@ -123,7 +172,7 @@ extension MCFGraph {
   @usableFromInline
   struct _Edge {
     @inlinable
-    init(to: Int, rev: Int, cap: MCFGraph<Value>.Cap, cost: MCFGraph<Value>.Cost) {
+    init(to: Int, rev: Int, cap: Cap, cost: Cost) {
       self.to = to
       self.rev = rev
       self.cap = cap
@@ -138,7 +187,7 @@ extension MCFGraph {
   @usableFromInline
   struct Q: Comparable {
     @inlinable
-    init(key: MCFGraph<Value>.Cost, to: Int) {
+    init(key: Cost, to: Int) {
       self.key = key
       self.to = to
     }
@@ -170,7 +219,7 @@ extension MCFGraph {
     func dual_ref() -> Bool {
       // for (int i = 0; i < _n; i++) {
       for i in 0..<_n {
-        dual_dist[i].second = Cost.max
+        dual_dist[i].second = numeric_limit<Cost>.max
       }
       // std::fill(vis.begin(), vis.end(), false);
       vis.withUnsafeMutableBufferPointer { $0.update(repeating: false) }
@@ -271,7 +320,7 @@ extension MCFGraph {
       }
       let d = -dual_dist[s].first
       flow += c
-      cost += c * d
+      cost += _numericCast(c) * d
       if prev_cost_per_flow == d {
         result.removeLast()
       }
@@ -288,3 +337,5 @@ extension Heap {
   @inlinable
   mutating func push_heap(_ start: Int, _ end: Int) { /* NOP */  }
 }
+
+
