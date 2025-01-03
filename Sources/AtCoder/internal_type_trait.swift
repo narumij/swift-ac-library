@@ -45,5 +45,47 @@ extension UInt: ToUnsignedType {
 }
 
 extension static_modint: ToUnsignedType {}
-
 extension dynamic_modint: ToUnsignedType {}
+
+// MARK: -
+
+public enum numeric_limit<T: ___numeric_limit> {
+  @inlinable @inline(__always)
+  public static var max: T { T.__max }
+}
+
+public
+protocol ___numeric_limit: Numeric
+{
+  static var __max: Self { get }
+}
+extension Int16: ___numeric_limit {
+  @inlinable @inline(__always) public static var __max: Self { .max }
+}
+extension Int32: ___numeric_limit {
+  @inlinable @inline(__always) public static var __max: Self { .max }
+}
+extension Int64: ___numeric_limit {
+  @inlinable @inline(__always) public static var __max: Self { .max }
+}
+extension Int: ___numeric_limit {
+  @inlinable @inline(__always) public static var __max: Self { .max }
+}
+extension UInt16: ___numeric_limit {
+  @inlinable @inline(__always) public static var __max: Self { .max }
+}
+extension UInt32: ___numeric_limit {
+  @inlinable @inline(__always) public static var __max: Self { .max }
+}
+extension UInt64: ___numeric_limit {
+  @inlinable @inline(__always) public static var __max: Self { .max }
+}
+extension UInt: ___numeric_limit {
+  @inlinable @inline(__always) public static var __max: Self { .max }
+}
+extension Double: ___numeric_limit {
+  @inlinable @inline(__always) public static var __max: Self { .greatestFiniteMagnitude }
+}
+extension Float: ___numeric_limit {
+  @inlinable @inline(__always) public static var __max: Self { .greatestFiniteMagnitude }
+}

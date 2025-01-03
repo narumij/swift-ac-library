@@ -1,7 +1,7 @@
 import Collections
 import Foundation
 
-public struct MFGraph<Cap: FixedWidthInteger> {
+public struct MFGraph<Cap: ___numeric_limit & Comparable & ExpressibleByIntegerLiteral> {
   @usableFromInline
   let _n: Int
   @usableFromInline
@@ -84,7 +84,7 @@ extension MFGraph {
 
   @inlinable
   public mutating func flow(_ s: Int, _ t: Int) -> Cap {
-    return flow(s, t, Cap.max)
+    return flow(s, t, numeric_limit<Cap>.max)
   }
 
   @inlinable
@@ -179,3 +179,4 @@ extension MFGraph {
     var cap: Cap
   }
 }
+
