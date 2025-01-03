@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - linuxでint128を利用するよう変更 (internal_math)
 - 引数をIntのみに変更 (math)
-- CapやCostに浮動小数点数が利用できるよう変更 (maxflow, mincostflow)
+- CapやCostに浮動小数点数が指定できるよう変更 (maxflow, mincostflow)
 
 ## [0.1.1] - 2025-1-2
 ### Changed
