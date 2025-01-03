@@ -17,6 +17,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 複数のデータ構造を、ManagedBufferを利用する構造に変更
 - ビルドターゲットをSwift 5.10から6.0に変更
 
-## [0.1.0] - 2024-?-?
+## [0.1.0] - 2024-11-9
 ### Changed
 - ジャッジ用の初期バージョン
