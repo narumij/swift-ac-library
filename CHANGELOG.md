@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - linuxでint128を利用するよう変更 (internal_math)
 - 引数をIntのみに変更 (math)
 - CapやCostに浮動小数点数が指定できるよう変更 (maxflow, mincostflow)
+- 型変数名を修正 (segtree, lazy_segtree)
 
 ## [0.1.1] - 2025-1-2
 ### Changed
