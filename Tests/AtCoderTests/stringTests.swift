@@ -322,16 +322,13 @@ final class stringTests: XCTestCase {
     }
   }
 
-#warning("FIX ME!!!")
-  #if DEBUG
-    func testSASingle() throws {
-      XCTAssertEqual([0], suffix_array([0]))
-      XCTAssertEqual([0], suffix_array([-1]))
-      XCTAssertEqual([0], suffix_array([1]))
-      XCTAssertEqual([0], suffix_array([Int32.min]))
-      XCTAssertEqual([0], suffix_array([Int32.max]))
-    }
-  #endif
+  func testSASingle() throws {
+    XCTAssertEqual([0], suffix_array([0]))
+    XCTAssertEqual([0], suffix_array([-1]))
+    XCTAssertEqual([0], suffix_array([1]))
+    XCTAssertEqual([0], suffix_array([Int32.min]))
+    XCTAssertEqual([0], suffix_array([Int32.max]))
+  }
 
   func testLCP() throws {
     let s = "aab"

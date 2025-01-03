@@ -204,14 +204,14 @@ extension _Internal {
 }
 
 @inlinable
-func suffix_array(_ s: [Int], _ upper: Int) -> [Int] {
+public func suffix_array(_ s: [Int], _ upper: Int) -> [Int] {
   assert(0 <= upper)
   assert(s.allSatisfy { d in (0...upper).contains(d) })
   return _Internal.sa_is(s, count: s.count, upper)
 }
 
 @inlinable
-func suffix_array<V>(_ s: V) -> [Int]
+public func suffix_array<V>(_ s: V) -> [Int]
 where V: Collection, V.Element: Comparable, V.Index == Int {
   let n = s.count
   var idx = [Int](repeating: 0, count: n)
