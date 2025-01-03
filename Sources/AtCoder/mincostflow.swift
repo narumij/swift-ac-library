@@ -14,7 +14,7 @@ where
   let visitor: AnyNumericCastVisitor<Cap, Cost>
 }
 
-extension MCFGraph where Cap: BinaryInteger, Cost: BinaryInteger, Cap == Cost {
+extension MCFGraph where Cap: BinaryInteger, Cost: BinaryInteger {
   public init() {
     self.init(IntegerToIntegerVisitor(), count: 0)
   }
@@ -41,7 +41,7 @@ extension MCFGraph where Cap: BinaryFloatingPoint, Cost: BinaryInteger {
   }
 }
 
-extension MCFGraph where Cap: BinaryFloatingPoint, Cost: BinaryFloatingPoint, Cap == Cost {
+extension MCFGraph where Cap: BinaryFloatingPoint, Cost: BinaryFloatingPoint {
   public init() {
     self.init(FloatToFloatVisitor(), count: 0)
   }

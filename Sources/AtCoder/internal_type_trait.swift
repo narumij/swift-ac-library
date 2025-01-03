@@ -87,11 +87,11 @@ public protocol NumericCastVisitor {
   func cast(_ value: Cap) -> Cost
 }
 
-public struct IntegerToIntegerVisitor<CapCost: BinaryInteger>:
+public struct IntegerToIntegerVisitor<Cap: BinaryInteger, Cost: BinaryInteger>:
   NumericCastVisitor
 {
-  public func cast(_ value: CapCost) -> CapCost {
-    return value
+  public func cast(_ value: Cap) -> Cost {
+    return Cost(value)
   }
 }
 
@@ -111,11 +111,11 @@ public struct FloatToIntegerVisitor<Cap: BinaryFloatingPoint, Cost: BinaryIntege
   }
 }
 
-public struct FloatToFloatVisitor<CapCost: BinaryFloatingPoint>:
+public struct FloatToFloatVisitor<Cap: BinaryFloatingPoint, Cost: BinaryFloatingPoint>:
   NumericCastVisitor
 {
-  public func cast(_ value: CapCost) -> CapCost {
-    return CapCost(value)
+  public func cast(_ value: Cap) -> Cost {
+    return Cost(value)
   }
 }
 

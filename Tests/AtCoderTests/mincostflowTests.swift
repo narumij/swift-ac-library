@@ -216,6 +216,9 @@ final class mincostflowTests: XCTestCase {
   func testMisc() throws {
     let _ = MCFGraph<Int,Float>()
     let _ = MCFGraph<Float,Int>()
+    let _ = MCFGraph<Int,Int>()
+    let _ = MCFGraph<UInt,Int>()
     let _ = MCFGraph<Float,Float>()
+    let _ = MCFGraph<Float,Double>()
   }
 }
