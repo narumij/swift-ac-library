@@ -124,6 +124,7 @@ extension LazySegTree {
     deinit {
       self.withUnsafeMutablePointers { header, elements in
         elements.deinitialize(count: header.pointee.capacity)
+        header.pointee._lz?.deinitialize(count: header.pointee._size)
         header.pointee._lz?.deallocate()
         header.deinitialize(count: 1)
       }
