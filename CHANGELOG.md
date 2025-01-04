@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CapやCostに浮動小数点数が指定できるよう変更 (maxflow, mincostflow)
 - 型変数名を修正 (segtree, lazy_segtree)
 - ビット演算の際のキャストの削減 (internal_bit, segtree, lazy_setree, convolution)
+- コンパイラフラグ-Ouncheckedの追加
 
 ## [0.1.1] - 2025-1-2
 ### Changed
