@@ -1,6 +1,7 @@
 # swift-ac-library
 
-Swift 版 [AC(AtCoder) Library][ac-library]：[AtCoder][ac] の競技プログラミング向けライブラリの移植
+[AtCoder][ac] の競技プログラミング向けライブラリである [AC(AtCoder) Library][ac-library] の Swift 移植版。
+
 
 [![Swift](https://github.com/narumij/swift-ac-library/actions/workflows/swift.yml/badge.svg?branch=main)](https://github.com/narumij/swift-ac-library/actions/workflows/swift.yml)
 [![License: CC0-1.0](https://img.shields.io/badge/License-CC0%201.0-lightgrey.svg)](http://creativecommons.org/publicdomain/zero/1.0/)
