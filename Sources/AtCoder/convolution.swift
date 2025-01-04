@@ -172,9 +172,9 @@ extension _Internal {
         if h &- len == 1 {
           let p = 1 << (h &- len &- 1)
           var rot: mint = 1
-          for s in 0..<(1 << len) {
+          for s in 0 ..< 1 << len {
             let offset = s << (h &- len)
-            for i in 0..<p {
+            for i in 0 ..< p {
               let l = a[i &+ offset]
               let r = a[i &+ offset &+ p] * rot
               a[i &+ offset] = l + r
@@ -190,11 +190,11 @@ extension _Internal {
           let p = 1 << (h &- len &- 2)
           var rot: mint = 1
           let imag = info.root[2]
-          for s in 0..<(1 << len) {
+          for s in 0 ..< 1 << len {
             let rot2 = rot * rot
             let rot3 = rot2 * rot
             let offset = s << (h &- len)
-            for i in 0..<p {
+            for i in 0 ..< p {
               let mod2: ULL = 1 &* umod &* umod
               let a0: ULL = 1 &* ULL(a[i &+ offset].val)
               let a1: ULL = 1 &* ULL(a[i &+ offset &+ p].val) &* ULL(rot.val)
@@ -236,9 +236,9 @@ extension _Internal {
         if len == 1 {
           let p = 1 << (h &- len)
           var irot: mint = 1
-          for s in 0..<(1 << (len &- 1)) {
+          for s in 0 ..< 1 << (len &- 1) {
             let offset = s << (h &- len &+ 1)
-            for i in 0..<p {
+            for i in 0 ..< p {
               let l = a[i &+ offset]
               let r = a[i &+ offset &+ p]
               a[i &+ offset] = l + r
@@ -255,11 +255,11 @@ extension _Internal {
           let p = 1 << (h &- len)
           var irot: mint = 1
           let iimag = info.iroot[2]
-          for s in 0..<(1 << (len &- 2)) {
+          for s in 0 ..< 1 << (len &- 2) {
             let irot2 = irot * irot
             let irot3 = irot2 * irot
             let offset = s << (h &- len &+ 2)
-            for i in 0..<p {
+            for i in 0 ..< p {
               let a0: ULL = 1 &* ULL(a[i &+ offset &+ 0 &* p].val)
               let a1: ULL = 1 &* ULL(a[i &+ offset &+ 1 &* p].val)
               let a2: ULL = 1 &* ULL(a[i &+ offset &+ 2 &* p].val)

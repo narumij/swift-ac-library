@@ -141,20 +141,20 @@ func __modint_v(bool v: Bool, umod: CUnsignedInt) -> CUnsignedInt {
 
 @inlinable @inline(__always)
 func __modint_v(ull v: CUnsignedLongLong, umod: CUnsignedInt) -> CUnsignedInt {
-  CUnsignedInt(truncatingIfNeeded: v % CUnsignedLongLong(umod))
+  CUnsignedInt(v % CUnsignedLongLong(umod))
 }
 
 @inlinable @inline(__always)
 func __modint_v<T: UnsignedInteger>(unsigned v: T, umod: CUnsignedInt) -> CUnsignedInt {
-  CUnsignedInt(truncatingIfNeeded: v % T(umod))
+  CUnsignedInt(v % T(umod))
 }
 
 @inlinable @inline(__always)
 func __modint_v<T: FixedWidthInteger>(_ v: T, umod: CUnsignedInt) -> CUnsignedInt {
-  let umod = T(truncatingIfNeeded: umod)
+  let umod = T(umod)
   var x = v % umod
   if x < 0 { x += umod }
-  let x0 = CInt(truncatingIfNeeded: x)
+  let x0 = CInt(x)
   return CUnsignedInt(bitPattern: x0)
 }
 

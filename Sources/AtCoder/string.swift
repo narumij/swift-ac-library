@@ -84,7 +84,7 @@ extension _Internal {
     }
 
     func index(_ i: Element) -> Int {
-      Int(truncatingIfNeeded: i)
+      Int(i)
     }
 
     var sa = [Int](repeating: 0, count: n)

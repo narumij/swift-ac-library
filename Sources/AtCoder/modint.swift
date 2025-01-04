@@ -46,7 +46,7 @@ extension static_modint {
   public static func *= (lhs: inout Self, rhs: Self) {
     var z: ULL = ULL(lhs._v)
     z &*= ULL(rhs._v)
-    lhs._v = UINT(truncatingIfNeeded: z % ULL(umod))
+    lhs._v = UINT(z % ULL(umod))
   }
   @inlinable
   public static func /= (lhs: inout Self, rhs: Self) {
@@ -76,7 +76,7 @@ extension static_modint {
   public static func * (lhs: Self, rhs: Self) -> Self {
     var z: ULL = ULL(lhs._v)
     z &*= ULL(rhs._v)
-    return .init(raw: UINT(truncatingIfNeeded: z % ULL(umod)))
+    return .init(raw: UINT(z % ULL(umod)))
   }
   @inlinable
   public static func / (lhs: Self, rhs: Self) -> Self {
