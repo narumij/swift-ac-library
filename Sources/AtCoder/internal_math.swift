@@ -5,7 +5,7 @@ extension _Internal {
   /// @return x mod m
   @inlinable
   static func safe_mod<LL>(_ x: LL, _ m: LL) -> LL
-  where LL: SignedInteger {
+  where LL: FixedWidthInteger {
     var x = x
     x %= m
     if x < 0 { x += m }
@@ -137,7 +137,7 @@ extension _Internal {
   /// @return pair(g, x) s.t. g = gcd(a, b), xa = g (mod b), 0 <= x < b/g
   @inlinable
   static func inv_gcd<LL>(_ a: LL, _ b: LL) -> (first: LL, second: LL)
-  where LL: SignedInteger {
+  where LL: FixedWidthInteger {
     let a = safe_mod(a, b)
     if a == 0 { return (b, 0) }
 

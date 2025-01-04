@@ -11,7 +11,7 @@ public func inv_mod<LL>(
   _ x: LL,
   _ m: LL
 ) -> LL
-where LL: SignedInteger {
+where LL: FixedWidthInteger {
   assert(1 <= m)
   let z = _Internal.inv_gcd(x, m)
   assert(z.first == 1)
@@ -35,7 +35,7 @@ public func crt<LL>(
   _ r: [LL],
   _ m: [LL]
 ) -> (rem: LL, mod: LL)
-where LL: SignedInteger {
+where LL: FixedWidthInteger {
   assert(r.count == m.count)
   let n = r.count
   // Contracts: 0 <= r0 < m0
