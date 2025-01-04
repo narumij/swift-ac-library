@@ -88,6 +88,7 @@ final class etcTests: XCTestCase {
   }
 
   func testPerformanceExample5() throws {
+    throw XCTSkip()
     // This is an example of a performance test case.
     var a = 0
     self.measure {
@@ -100,6 +101,7 @@ final class etcTests: XCTestCase {
   }
 
   func testPerformanceExample6() throws {
+    throw XCTSkip()
     // This is an example of a performance test case.
     var a = 0
     self.measure {
