@@ -10,6 +10,11 @@ var defines: [String] = [
 
 var _settings: [SwiftSetting] = defines.map { .define($0) }
 
+let unchecked: [SwiftSetting] = [
+  // -Ounchecked フラグを追加
+  .unsafeFlags(["-Ounchecked"], .when(configuration: .release))
+]
+
 let package = Package(
   name: "swift-ac-library",
   products: [
@@ -37,7 +42,7 @@ let package = Package(
       dependencies: [
         .product(name: "Collections", package: "swift-collections")
       ],
-      swiftSettings: _settings),
+      swiftSettings: _settings + unchecked),
     .testTarget(
       name: "AtCoderTests",
       dependencies: [
