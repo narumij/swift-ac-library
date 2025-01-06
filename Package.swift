@@ -11,8 +11,8 @@ var defines: [String] = [
 var _settings: [SwiftSetting] = defines.map { .define($0) }
 
 let unchecked: [SwiftSetting] = [
-  // -Ounchecked フラグを追加
-  .unsafeFlags(["-Ounchecked"], .when(configuration: .release))
+  // unsafeフラグがあるとコンパイルではじかれるので、不活性
+//  .unsafeFlags(["-Ounchecked"], .when(configuration: .release))
 ]
 
 let package = Package(
