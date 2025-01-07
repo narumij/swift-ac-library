@@ -14,8 +14,8 @@ var _settings: [SwiftSetting] = defines.map { .define($0) }
 // フラグが原因でトラブるようなケースへの迂回策として環境変数での対処を盛り込んでいる
 // 環境変数 "NOT_ATCODER_JUDGE_ENV" または "XCODE_VERSION_ACTUAL" が存在するか確認
 func isUncheckedModeEnabled() -> Bool {
-    let flag = ProcessInfo.processInfo.environment["SWIFT_USE_UNCHECKED"] == "true"
-    print("SWIFT_USE_UNCHECKED is \(flag ? "enabled" : "disabled")")
+    let flag = ProcessInfo.processInfo.environment["SWIFT_AC_LIBRARY_USES_O_UNCHECKED"] == "true"
+    print("SWIFT_AC_LIBRARY_USES_O_UNCHECKED is \(flag ? "enabled" : "disabled")")
     return flag
 }
 
