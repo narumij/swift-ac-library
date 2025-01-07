@@ -11,8 +11,10 @@ var defines: [String] = [
 var _settings: [SwiftSetting] = defines.map { .define($0) }
 
 let unchecked: [SwiftSetting] = [
-  // unsafeフラグがあるとコンパイルではじかれるので、不活性
-//  .unsafeFlags(["-Ounchecked"], .when(configuration: .release))
+  // unsafeフラグがあるとコンパイルではじかれる場合がある。
+  // tag指定の場合そうなるが、revisions指定の場合通るようなので、再度トライすることに。
+  // https://github.com/ggerganov/whisper.spm/issues/4
+  .unsafeFlags(["-Ounchecked"], .when(configuration: .release))
 ]
 
 let package = Package(
