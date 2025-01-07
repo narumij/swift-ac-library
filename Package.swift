@@ -15,7 +15,7 @@ var _settings: [SwiftSetting] = defines.map { .define($0) }
 // フラグが原因でトラブるようなケースへの迂回策として環境変数での対処を盛り込んでいる
 let isNotAtCoderJudge = ProcessInfo.processInfo.environment["NOT_ATCODER_JUDGE_ENV"] == "true"
 
-let unchecked: [SwiftSetting] = isNotAtCoderJudge ? [] : [
+let Ounchecked: [SwiftSetting] = isNotAtCoderJudge ? [] : [
   // unsafeフラグがあるとコンパイルではじかれる場合がある。
   // tag指定の場合そうなるが、revisions指定の場合通るようなので、再度トライすることに。
   // https://github.com/ggerganov/whisper.spm/issues/4
@@ -49,7 +49,7 @@ let package = Package(
       dependencies: [
         .product(name: "Collections", package: "swift-collections")
       ],
-      swiftSettings: _settings + unchecked),
+      swiftSettings: _settings + Ounchecked),
     .testTarget(
       name: "AtCoderTests",
       dependencies: [
