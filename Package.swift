@@ -11,8 +11,7 @@ var defines: [String] = [
 
 var _settings: [SwiftSetting] = defines.map { .define($0) }
 
-// フラグが原因でトラブるようなケースへの迂回策として環境変数での対処を盛り込んでいる
-// 環境変数 "NOT_ATCODER_JUDGE_ENV" または "XCODE_VERSION_ACTUAL" が存在するか確認
+// 環境変数 "SWIFT_AC_LIBRARY_USES_O_UNCHECKED" が存在するか確認
 func isUncheckedModeEnabled() -> Bool {
     let flag = ProcessInfo.processInfo.environment["SWIFT_AC_LIBRARY_USES_O_UNCHECKED"] == "true"
     print("SWIFT_AC_LIBRARY_USES_O_UNCHECKED is \(flag ? "enabled" : "disabled")")
@@ -20,8 +19,7 @@ func isUncheckedModeEnabled() -> Bool {
 }
 
 let Ounchecked: [SwiftSetting] = isUncheckedModeEnabled() ? [
-  // unsafeフラグがあるとコンパイルではじかれる場合がある。
-  // tag指定の場合そうなるが、revisions指定の場合通るようなので、再度トライすることに。
+  // unsafeフラグがあるとパッケージの解決ではじかれる。利用するには迂回策が必要
   // https://github.com/ggerganov/whisper.spm/issues/4
   .unsafeFlags(["-Ounchecked"], .when(configuration: .release))
 ] : []
