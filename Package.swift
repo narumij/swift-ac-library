@@ -34,10 +34,10 @@ let package = Package(
   ],
   dependencies: [
     .package(
-      url: "https://github.com/apple/swift-algorithms.git",
+      url: "https://github.com/apple/swift-algorithms",
       exact: "1.2.0"),
     .package(
-      url: "https://github.com/apple/swift-collections.git",
+      url: "https://github.com/apple/swift-collections",
       exact: "1.1.4"),
     .package(
       url: "https://github.com/apple/swift-numerics",
@@ -58,7 +58,6 @@ let package = Package(
       dependencies: [
         "AtCoder",
         .product(name: "Algorithms", package: "swift-algorithms"),
-        .product(name: "Collections", package: "swift-collections"),
         .product(name: "Numerics", package: "swift-numerics"),
       ],
       swiftSettings: _settings),
