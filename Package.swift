@@ -35,13 +35,14 @@ let package = Package(
   dependencies: [
     .package(
       url: "https://github.com/apple/swift-algorithms.git",
-      from: "1.2.0"),
+      exact: "1.2.0"),
     .package(
       url: "https://github.com/apple/swift-collections.git",
-      from: "1.1.4"),
+      exact: "1.1.4"),
     .package(
       url: "https://github.com/apple/swift-numerics",
-      branch: "main"),
+      revision: "e30276bff2ff5ed80566fbdca49f50aa160b0e83"),
+//      branch: "main"), // e30276b (after 1.0.2)
   ],
   targets: [
     // Targets are the basic building blocks of a package, defining a module or a test suite.
