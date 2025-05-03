@@ -1,17 +1,17 @@
 import Foundation
 
-public protocol SegtreeOperator {
+public protocol SegTreeOperator {
   associatedtype S
   static var op: (S, S) -> S { get }
   static var e: S { get }
 }
 
-extension SegtreeOperator {
+extension SegTreeOperator {
   public typealias Op = (S, S) -> S
 }
 
 public struct SegTree<_S_op_e_>
-where _S_op_e_: SegtreeOperator {
+where _S_op_e_: SegTreeOperator {
   public typealias O = _S_op_e_
   public typealias S = O.S
 

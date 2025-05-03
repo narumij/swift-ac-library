@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Lazy SegTree
 
-public protocol LazySegtreeOperator {
+public protocol LazySegTreeOperator {
   associatedtype S
   associatedtype F
   static var op: (S, S) -> S { get }
@@ -12,14 +12,14 @@ public protocol LazySegtreeOperator {
   static var id: F { get }
 }
 
-extension LazySegtreeOperator {
+extension LazySegTreeOperator {
   public typealias Op = (S, S) -> S
   public typealias Mapping = (F, S) -> S
   public typealias Composition = (F, F) -> F
 }
 
 public struct LazySegTree<_S_op_e_F_mapping_composition_id_>
-where _S_op_e_F_mapping_composition_id_: LazySegtreeOperator {
+where _S_op_e_F_mapping_composition_id_: LazySegTreeOperator {
   public typealias O = _S_op_e_F_mapping_composition_id_
   public typealias S = O.S
   public typealias F = O.F

@@ -6,7 +6,7 @@ import XCTest
   import AtCoder
 #endif
 
-private enum param: LazySegtreeOperator {
+private enum param: LazySegTreeOperator {
   typealias S = Int
   typealias F = Int
   nonisolated(unsafe) static let op: Op = max
