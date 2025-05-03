@@ -5,10 +5,10 @@ import Foundation
 public protocol LazySegTreeOperator {
   associatedtype S
   associatedtype F
-  static var op: (S, S) -> S { get }
+  static func op(_:S,_:S) -> S
   static var e: S { get }
-  static var mapping: (F, S) -> S { get }
-  static var composition: (F, F) -> F { get }
+  static func mapping(_:F,_:S) -> S
+  static func composition(_:F,_:F) -> F
   static var id: F { get }
 }
 
@@ -16,6 +16,22 @@ extension LazySegTreeOperator {
   public typealias Op = (S, S) -> S
   public typealias Mapping = (F, S) -> S
   public typealias Composition = (F, F) -> F
+}
+
+public protocol LazySegTreeOperation: LazySegTreeOperator {
+  associatedtype S
+  associatedtype F
+  static var op: (S, S) -> S { get }
+  static var e: S { get }
+  static var mapping: (F, S) -> S { get }
+  static var composition: (F, F) -> F { get }
+  static var id: F { get }
+}
+
+extension LazySegTreeOperation {
+  public static func op(_ x:S,_ y:S) -> S { (self.op as Op)(x, y) }
+  public static func mapping(_ f:F,_ x:S) -> S { (self.mapping as Mapping)(f,x) }
+  public static func composition(_ g:F,_ f:F) -> F { (self.composition as Composition)(g,f) }
 }
 
 public struct LazySegTree<_S_op_e_F_mapping_composition_id_>
