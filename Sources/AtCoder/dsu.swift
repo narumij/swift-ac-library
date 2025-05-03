@@ -178,9 +178,7 @@ extension DSU.Buffer {
   @inline(__always)
   func leader(_ a: Int) -> Int {
     assert(0 <= a && a < _n)
-    if parent_or_size[a] < 0 { return a }
-    parent_or_size[a] = leader(parent_or_size[a])
-    return parent_or_size[a]
+    return _leader(a)
   }
 
   @inlinable
@@ -208,5 +206,13 @@ extension DSU.Buffer {
     }
     result.removeAll { $0.isEmpty }
     return result
+  }
+  
+  @inlinable
+  @inline(__always)
+  func _leader(_ a: Int) -> Int {
+    if parent_or_size[a] < 0 { return a }
+    parent_or_size[a] = _leader(parent_or_size[a])
+    return parent_or_size[a]
   }
 }

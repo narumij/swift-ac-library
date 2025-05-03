@@ -250,9 +250,11 @@ public func suffix_array(_ s: String) -> [Int] {
 @inlinable
 func lcp_array<Element>(pointer s: UnsafePointer<Element>, count n: Int, _ sa: [Int]) -> [Int]
 where Element: Equatable {
+  assert(n == sa.count)
   assert(n >= 1)
   var rnk = [Int](repeating: 0, count: n)
   for i in 0..<n {
+    assert(0 <= sa[i] && sa[i] < n)
     rnk[sa[i]] = i
   }
   var lcp = [Int](repeating: 0, count: n - 1)

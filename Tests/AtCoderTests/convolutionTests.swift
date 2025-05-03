@@ -157,7 +157,8 @@ final class convolutionTests: XCTestCase {
           b[Int(i)] = mt() % MOD1.value()
         }
         XCTAssertEqual(conv_naive(MOD1.value(), a, b), convolution(a, b))
-        XCTAssertEqual(conv_naive(MOD1.value(), a, b), convolution<MOD1>(a, b))
+        // コンパイラのバグが治ったためコメントアウト
+        // XCTAssertEqual(conv_naive(MOD1.value(), a, b), convolution<MOD1>(a, b))
         XCTAssertEqual(conv_naive(MOD1.value(), a, b), (convolution(MOD1.self, a, b)))
       }
     }
@@ -304,7 +305,6 @@ final class convolutionTests: XCTestCase {
     }
   }
 
-  #warning("FIX ME!!!")
   func testSimpleUInt128() throws {
     if #available(macOS 15.0, *) {
 
