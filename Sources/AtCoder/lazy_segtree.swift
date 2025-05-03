@@ -29,8 +29,11 @@ public protocol LazySegTreeOperation: LazySegTreeOperator {
 }
 
 extension LazySegTreeOperation {
+  @inlinable @inline(__always)
   public static func op(_ x:S,_ y:S) -> S { (self.op as Op)(x, y) }
+  @inlinable @inline(__always)
   public static func mapping(_ f:F,_ x:S) -> S { (self.mapping as Mapping)(f,x) }
+  @inlinable @inline(__always)
   public static func composition(_ g:F,_ f:F) -> F { (self.composition as Composition)(g,f) }
 }
 

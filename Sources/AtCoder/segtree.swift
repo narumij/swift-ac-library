@@ -17,6 +17,7 @@ public protocol SegTreeOperation: SegTreeOperator {
 }
 
 extension SegTreeOperation {
+  @inlinable @inline(__always)
   public static func op(_ x: S,_ y: S) -> S { (self.op as Op)(x, y) }
 }
 
