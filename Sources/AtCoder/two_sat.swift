@@ -7,7 +7,7 @@ import Foundation
 public struct TwoSAT {
   @usableFromInline let _n: Int
   @usableFromInline var _answer: [Bool]
-  @usableFromInline var scc: _Internal.scc_graph<Int>
+  @usableFromInline var scc: _Internal.scc_graph
 }
 
 extension TwoSAT {

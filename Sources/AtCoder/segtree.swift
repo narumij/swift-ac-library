@@ -1,17 +1,28 @@
 import Foundation
 
-public protocol SegtreeOperator {
+public protocol SegTreeOperator {
+  associatedtype S
+  static func op(_ x: S,_ y: S) -> S
+  static var e: S { get }
+}
+
+extension SegTreeOperator {
+  public typealias Op = (S, S) -> S
+}
+
+public protocol SegTreeOperation: SegTreeOperator {
   associatedtype S
   static var op: (S, S) -> S { get }
   static var e: S { get }
 }
 
-extension SegtreeOperator {
-  public typealias Op = (S, S) -> S
+extension SegTreeOperation {
+  @inlinable @inline(__always)
+  public static func op(_ x: S,_ y: S) -> S { (self.op as Op)(x, y) }
 }
 
 public struct SegTree<_S_op_e_>
-where _S_op_e_: SegtreeOperator {
+where _S_op_e_: SegTreeOperator {
   public typealias O = _S_op_e_
   public typealias S = O.S
 
