@@ -48,11 +48,15 @@ public enum static_mod<let m: Int, IsPrime: PrimeFlag>: static_mod_protocol {
 // ValueGenericsはIntしか許容されておらず、数値のキャストが必須になる
 // 数値のキャストのコストが無視できないため、主要な二つについて特殊化した型を用意している
 public enum mod_998_244_353: static_mod_protocol {
+  @inlinable @inline(__always)
   public static var umod: CUnsignedInt { 998_244_353 }
+  @inlinable @inline(__always)
   public static var isPrime: Bool { true }
 }
 public enum mod_1_000_000_007: static_mod_protocol {
+  @inlinable @inline(__always)
   public static var umod: CUnsignedInt { 1_000_000_007 }
+  @inlinable @inline(__always)
   public static var isPrime: Bool { true }
 }
 
