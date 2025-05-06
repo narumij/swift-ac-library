@@ -499,4 +499,9 @@ final class convolutionTests: XCTestCase {
     XCTAssertEqual(conv_naive(MOD.self, a, b), convolution(MOD.self, a, b))
   }
 
+  func testStress0() throws {
+    self.measure {
+      try! testSimpleSMod()
+    }
+  }
 }

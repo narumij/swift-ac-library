@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.5] - 2025-5-6
+### Changed
+- convolutionのbatterfly演算での数値キャスト方法を一部変更
+
+## [0.1.5] - 2025-5-4
+### Changed
+- ac-library v1.6の変更を反映
+- SegtreeOperatorやLazySegtreeOperatorのTを大文字に変更
+- SegTreeOperator及びLazySegTreeOperatorを関数オブジェクトではなく静的関数を用いるよう変更
+- SCCの各メソッドにインライン属性の追加
+- SCCの内部実装から型引数を除去
+- SCCの内部実装でポインタを用いるよう変更
+
 ## [0.1.4] - 2025-1-18
 ### Changed
 - 依存パッケージバージョンの固定
