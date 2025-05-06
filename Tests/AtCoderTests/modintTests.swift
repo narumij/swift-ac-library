@@ -21,24 +21,12 @@ extension dynamic_mod {
 
 final class modintTests: XCTestCase {
 
-  @usableFromInline
-  enum mod_1: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 1 }
-  @usableFromInline
-  enum mod_11: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 11 }
-  @usableFromInline
-  enum mod_12: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 12 }
-  @usableFromInline
-  enum mod_1_000_000_007: static_mod_value {
-    nonisolated(unsafe) static let mod: mod_value = .mod_1_000_000_007
-  }
-  @usableFromInline
-  enum mod_1_000_000_008: static_mod_value {
-    nonisolated(unsafe) static let mod: mod_value = 1_000_000_008
-  }
-  @usableFromInline
-  enum INT32_MAX: static_mod_value {
-    nonisolated(unsafe) static let mod: mod_value = .mod_INT32_MAX
-  }
+  @usableFromInline typealias mod_1 = static_mod<1,IsNotPrime>
+  @usableFromInline typealias mod_11 = static_mod<11, IsPrime>
+  @usableFromInline typealias mod_12 = static_mod<12, IsNotPrime>
+  @usableFromInline typealias mod_1_000_000_007 = static_mod<1_000_000_007, IsPrime>
+  @usableFromInline typealias mod_1_000_000_008 = static_mod<1_000_000_008, IsNotPrime>
+  @usableFromInline typealias INT32_MAX = static_mod<2_147_483_647, IsNotPrime>
 
   func testDynamicBorder() throws {
 
@@ -583,5 +571,4 @@ final class modintTests: XCTestCase {
       }
     }
   }
-
 }

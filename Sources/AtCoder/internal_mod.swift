@@ -2,29 +2,51 @@ import Foundation
 
 // MARK: -
 
-public protocol static_mod {
+public protocol static_mod_protocol {
   static var umod: CUnsignedInt { get }
   // 素数判定を自動では行わないため、注意が必要
   static var isPrime: Bool { get }
 }
 
-extension static_mod {
+extension static_mod_protocol {
   @inlinable @inline(__always)
   public static var m: CUnsignedInt { umod }
+}
+
+public protocol PrimeFlag {
+  static var flag: Bool { get }
+}
+
+public enum IsPrime: PrimeFlag {
+  @inlinable @inline(__always)
+  public static var flag: Bool { true }
+}
+
+public enum IsNotPrime: PrimeFlag {
+  @inlinable @inline(__always)
+  public static var flag: Bool { false }
+}
+
+public enum static_mod<let m: Int, IsPrime: PrimeFlag>: static_mod_protocol {
+  @inlinable @inline(__always)
+  public static var umod: CUnsignedInt { CUnsignedInt(m) }
+  public static func isMatchPrimeType() -> Bool {
+    _Internal.is_prime(CInt(umod)) == IsPrime.flag
+  }
+  public static func checkIsMatchPrimeType() {
+    if !isMatchPrimeType() {
+      fatalError("\(umod) is prime type mismatch.")
+    }
+  }
   @inlinable @inline(__always)
   public static var isPrime: Bool {
-    assert(_Internal.is_prime(CInt(umod)), "\(umod) is not prime number.")
-    return true
+    assert(isMatchPrimeType(), "\(umod) is prime type mismatch.")
+    return IsPrime.flag
   }
 }
 
-public enum mod_998_244_353: static_mod {
-  public static let umod: CUnsignedInt = 998_244_353
-}
-
-public enum mod_1_000_000_007: static_mod {
-  public static let umod: CUnsignedInt = 1_000_000_007
-}
+public typealias mod_998_244_353 = static_mod<998_244_353, IsPrime>
+public typealias mod_1_000_000_007 = static_mod<1_000_000_007, IsPrime>
 
 // MARK: -
 

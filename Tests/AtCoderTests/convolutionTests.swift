@@ -7,7 +7,7 @@ import XCTest
 #endif
 // TODO: [issue #8] C++のメルセンヌツイスターの挙動の確認
 
-extension static_mod {
+extension static_mod_protocol {
   public static func value<T: FixedWidthInteger>() -> T { T(umod) }
 }
 
@@ -60,7 +60,7 @@ func conv_naive<T: FixedWidthInteger>(_ MOD: T, _ a: [T], _ b: [T]) -> [T] {
 }
 
 @inlinable
-func conv_naive<MOD: static_mod, T: FixedWidthInteger>(_ t: MOD.Type, _ a: [T], _ b: [T])
+func conv_naive<MOD: static_mod_protocol, T: FixedWidthInteger>(_ t: MOD.Type, _ a: [T], _ b: [T])
   -> [T]
 {
   conv_naive(t.value(), a, b)
@@ -101,11 +101,8 @@ final class convolutionTests: XCTestCase {
 
   func testSimpleSMod() throws {
 
-    enum MOD1: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 998_244_353 }
-    enum MOD2: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 924_844_033 }
-
-    typealias s_mint1 = static_modint<MOD1>
-    typealias s_mint2 = static_modint<MOD2>
+    typealias s_mint1 = static_modint<static_mod<998_244_353, IsPrime>>
+    typealias s_mint2 = static_modint<static_mod<924_844_033, IsPrime>>
 
     // std::mt19937 mt;
     let mt = { int.random(in: 0...int.max) }
@@ -140,8 +137,8 @@ final class convolutionTests: XCTestCase {
   }
 
   func testSimpleInt() throws {
-    enum MOD1: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 998_244_353 }
-    enum MOD2: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 924_844_033 }
+    typealias MOD1 = static_mod<998_244_353, IsPrime>
+    typealias MOD2 = static_mod<924_844_033, IsPrime>
 
     // std::mt19937 mt;
     let mt = { int.random(in: 0...int.max) }
@@ -179,8 +176,8 @@ final class convolutionTests: XCTestCase {
   }
 
   func testSimpleUint() throws {
-    enum MOD1: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 998_244_353 }
-    enum MOD2: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 924_844_033 }
+    typealias MOD1 = static_mod<998_244_353, IsPrime>
+    typealias MOD2 = static_mod<924_844_033, IsPrime>
 
     // std::mt19937 mt;
     let mt = { uint.random(in: uint.min...uint.max) }
@@ -216,8 +213,8 @@ final class convolutionTests: XCTestCase {
   }
 
   func testSimpleULL() throws {
-    enum MOD1: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 998_244_353 }
-    enum MOD2: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 924_844_033 }
+    typealias MOD1 = static_mod<998_244_353, IsPrime>
+    typealias MOD2 = static_mod<924_844_033, IsPrime>
 
     // std::mt19937 mt;
     let mt = { ull.random(in: ull.min...ull.max) }
@@ -256,8 +253,8 @@ final class convolutionTests: XCTestCase {
   func testSimpleInt128() throws {
     if #available(macOS 15.0, *) {
 
-      enum MOD1: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 998_244_353 }
-      enum MOD2: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 924_844_033 }
+      typealias MOD1 = static_mod<998_244_353, IsPrime>
+      typealias MOD2 = static_mod<924_844_033, IsPrime>
 
       // std::mt19937 mt;
       let mt = { ull.random(in: ull.min...ull.max) }
@@ -308,8 +305,8 @@ final class convolutionTests: XCTestCase {
   func testSimpleUInt128() throws {
     if #available(macOS 15.0, *) {
 
-      enum MOD1: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 998_244_353 }
-      enum MOD2: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 924_844_033 }
+      typealias MOD1 = static_mod<998_244_353, IsPrime>
+      typealias MOD2 = static_mod<924_844_033, IsPrime>
 
       // std::mt19937 mt;
       let mt = { ull.random(in: ull.min...ull.max) }
@@ -411,7 +408,7 @@ final class convolutionTests: XCTestCase {
   // https://github.com/atcoder/ac-library/issues/30
   func testConv641() throws {
     // 641 = 128 * 5 + 1
-    enum MOD: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 641 }
+    typealias MOD = static_mod<641, IsPrime>
 
     var a = [ll](repeating: 0, count: 64)
     var b = [ll](repeating: 0, count: 65)
@@ -430,7 +427,7 @@ final class convolutionTests: XCTestCase {
   func testConv18433() throws {
 
     // 18433 = 2048 * 9 + 1
-    enum MOD: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 18433 }
+    typealias MOD = static_mod<18433, IsPrime>
 
     var a = [ll](repeating: 0, count: 1024)
     var b = [ll](repeating: 0, count: 1025)
@@ -446,13 +443,13 @@ final class convolutionTests: XCTestCase {
   }
 
   func testConv2() throws {
-    enum mod_2: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 2 }
+    typealias mod_2 = static_mod<2, IsPrime>
     let empty: [ll] = []
     XCTAssertEqual(empty, convolution(mod_2.self, empty, empty))
   }
 
   func testConv257() throws {
-    enum MOD: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 257 }
+    typealias MOD = static_mod<257, IsPrime>
 
     var a = [ll](repeating: 0, count: 128)
     var b = [ll](repeating: 0, count: 129)
@@ -468,7 +465,7 @@ final class convolutionTests: XCTestCase {
   }
 
   func testConv2147483647() throws {
-    enum MOD: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 2_147_483_647 }
+    typealias MOD = static_mod<2_147_483_647, IsPrime>
 
     var a = [ll](repeating: 0, count: 1)
     var b = [ll](repeating: 0, count: 2)
@@ -484,7 +481,7 @@ final class convolutionTests: XCTestCase {
   }
 
   func testConv2130706433() throws {
-    enum MOD: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 2_130_706_433 }
+    typealias MOD = static_mod<2_130_706_433, IsPrime>
 
     var a = [ll](repeating: 0, count: 1024)
     var b = [ll](repeating: 0, count: 1024)

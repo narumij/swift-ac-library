@@ -45,7 +45,7 @@ extension _Internal {
     static var cache: [UINT: __cached_fft_info] = [:]
 
     @inlinable
-    static func info<MOD: static_mod>(_ t: MOD.Type) -> fft_info<MOD> {
+    static func info<MOD: static_mod_protocol>(_ t: MOD.Type) -> fft_info<MOD> {
       if let cached = cache[MOD.umod] {
         return cached as! fft_info<MOD>
       }
@@ -56,7 +56,7 @@ extension _Internal {
   }
 
   @usableFromInline
-  struct fft_info<mod: static_mod>: __cached_fft_info {
+  struct fft_info<mod: static_mod_protocol>: __cached_fft_info {
 
     @usableFromInline
     typealias mint = static_modint<mod>
@@ -156,7 +156,7 @@ extension _Internal {
 
   @inline(never)
   @inlinable
-  static func butterfly<mod: static_mod>(
+  static func butterfly<mod: static_mod_protocol>(
     _ a: UnsafeMutableBufferPointer<static_modint<mod>>
   ) {
     typealias mint = static_modint<mod>
@@ -219,7 +219,7 @@ extension _Internal {
 
   @inline(never)
   @inlinable
-  static func butterfly_inv<mod: static_mod>(
+  static func butterfly_inv<mod: static_mod_protocol>(
     _ a: UnsafeMutableBufferPointer<static_modint<mod>>
   ) {
     typealias mint = static_modint<mod>
@@ -296,7 +296,7 @@ extension _Internal {
 
   @inline(never)
   @inlinable
-  static func convolution_naive<mod: static_mod>(
+  static func convolution_naive<mod: static_mod_protocol>(
     _ a: UnsafeBufferPointer<static_modint<mod>>, _ b: UnsafeBufferPointer<static_modint<mod>>
   ) -> ArraySlice<static_modint<mod>> {
     let n = a.count
@@ -324,7 +324,7 @@ extension _Internal {
 
   @inline(never)
   @inlinable
-  static func convolution_fft<mod: static_mod>(
+  static func convolution_fft<mod: static_mod_protocol>(
     _ a: ArraySlice<static_modint<mod>>, _ b: ArraySlice<static_modint<mod>>
   ) -> ArraySlice<static_modint<mod>> {
     var (a, b) = (a, b)
@@ -352,7 +352,7 @@ extension _Internal {
 }  // _Internal
 
 @inlinable
-public func convolution<mod: static_mod>(
+public func convolution<mod: static_mod_protocol>(
   _ a: ArraySlice<static_modint<mod>>, _ b: ArraySlice<static_modint<mod>>
 ) -> ArraySlice<static_modint<mod>> {
   let (n, m) = (a.count, b.count)
@@ -370,7 +370,7 @@ public func convolution<mod: static_mod>(
 }
 
 @inlinable
-public func convolution<mod: static_mod, A, B>(_ a: A, _ b: B) -> [static_modint<mod>]
+public func convolution<mod: static_mod_protocol, A, B>(_ a: A, _ b: B) -> [static_modint<mod>]
 where
   A: Collection, A.Element == static_modint<mod>,
   B: Collection, B.Element == static_modint<mod>
@@ -379,7 +379,7 @@ where
 }
 
 @inlinable
-public func convolution<mod: static_mod, T: FixedWidthInteger>(_ t: mod.Type, _ a: [T], _ b: [T])
+public func convolution<mod: static_mod_protocol, T: FixedWidthInteger>(_ t: mod.Type, _ a: [T], _ b: [T])
   -> [T]
 {
 
@@ -425,46 +425,21 @@ public func convolution_ll(
   typealias ULL = CUnsignedLongLong
   typealias LL = CLongLong
 
-  enum const {
-    static let MOD1: ULL = 754_974_721  // 2^24
-    static let MOD2: ULL = 167_772_161  // 2^25
-    static let MOD3: ULL = 469_762_049  // 2^26
-    static let M2M3: ULL = MOD2 &* MOD3
-    static let M1M3: ULL = MOD1 &* MOD3
-    static let M1M2: ULL = MOD1 &* MOD2
-    static let M1M2M3: ULL = MOD1 &* MOD2 &* MOD3
-    enum mod1: static_mod {
-      static let umod = CUnsignedInt(MOD1)
-      static let isPrime: Bool = false
-    }
-    enum mod2: static_mod {
-      static let umod = CUnsignedInt(MOD2)
-      static let isPrime: Bool = false
-    }
-    enum mod3: static_mod {
-      static let umod = CUnsignedInt(MOD3)
-      static let isPrime: Bool = false
-    }
-    static let i1 = ULL(_Internal.inv_gcd(LL(MOD2) * LL(MOD3), LL(MOD1)).second)
-    static let i2 = ULL(_Internal.inv_gcd(LL(MOD1) * LL(MOD3), LL(MOD2)).second)
-    static let i3 = ULL(_Internal.inv_gcd(LL(MOD1) * LL(MOD2), LL(MOD3)).second)
-  }
+  typealias mod1 = static_mod<754_974_721, IsNotPrime> // 2^24
+  typealias mod2 = static_mod<167_772_161, IsNotPrime> // 2^25
+  typealias mod3 = static_mod<469_762_049, IsNotPrime> // 2^26
+  
+  let MOD1: ULL = ULL(mod1.umod)
+  let MOD2: ULL = ULL(mod2.umod)
+  let MOD3: ULL = ULL(mod3.umod)
+  let M2M3: ULL = MOD2 &* MOD3
+  let M1M3: ULL = MOD1 &* MOD3
+  let M1M2: ULL = MOD1 &* MOD2
+  let M1M2M3: ULL = MOD1 &* MOD2 &* MOD3
 
-  typealias mod1 = const.mod1
-  typealias mod2 = const.mod2
-  typealias mod3 = const.mod3
-
-  let MOD1: ULL = const.MOD1
-  let MOD2: ULL = const.MOD2
-  let MOD3: ULL = const.MOD3
-  let M2M3: ULL = const.M2M3
-  let M1M3: ULL = const.M1M3
-  let M1M2: ULL = const.M1M2
-  let M1M2M3: ULL = const.M1M2M3
-
-  let i1: ULL = const.i1
-  let i2: ULL = const.i2
-  let i3: ULL = const.i3
+  let i1: ULL = ULL(_Internal.inv_gcd(LL(MOD2) * LL(MOD3), LL(MOD1)).second)
+  let i2: ULL = ULL(_Internal.inv_gcd(LL(MOD1) * LL(MOD3), LL(MOD2)).second)
+  let i3: ULL = ULL(_Internal.inv_gcd(LL(MOD1) * LL(MOD2), LL(MOD3)).second)
 
   let MAX_AB_BIT: ULL = 24
   assert(MOD1 % (1 << MAX_AB_BIT) == 1, "MOD1 isn't enough to support an array length of 2^24.")
