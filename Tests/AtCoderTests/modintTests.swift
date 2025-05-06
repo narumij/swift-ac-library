@@ -21,12 +21,12 @@ extension dynamic_mod {
 
 final class modintTests: XCTestCase {
 
-  @usableFromInline typealias mod_1 = static_mod<1,IsNotPrime>
-  @usableFromInline typealias mod_11 = static_mod<11, IsPrime>
-  @usableFromInline typealias mod_12 = static_mod<12, IsNotPrime>
-  @usableFromInline typealias mod_1_000_000_007 = static_mod<1_000_000_007, IsPrime>
-  @usableFromInline typealias mod_1_000_000_008 = static_mod<1_000_000_008, IsNotPrime>
-  @usableFromInline typealias INT32_MAX = static_mod<2_147_483_647, IsNotPrime>
+  @usableFromInline typealias mod_1 = mod<1,IsNotPrime>
+  @usableFromInline typealias mod_11 = mod<11, IsPrime>
+  @usableFromInline typealias mod_12 = mod<12, IsNotPrime>
+  @usableFromInline typealias mod_1_000_000_007 = mod<1_000_000_007, IsPrime>
+  @usableFromInline typealias mod_1_000_000_008 = mod<1_000_000_008, IsNotPrime>
+  @usableFromInline typealias INT32_MAX = mod<2_147_483_647, IsNotPrime>
 
   func testDynamicBorder() throws {
 

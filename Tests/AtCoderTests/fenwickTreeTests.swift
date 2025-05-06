@@ -80,7 +80,7 @@ final class fenwickTreeTests: XCTestCase {
   }
 
   func testSMintTest() throws {
-    typealias mod_11 = static_mod<11,IsPrime>
+    typealias mod_11 = mod<11,IsPrime>
     typealias mint = static_modint<mod_11>
     for n in 0 ..<= 5 {
       var fw = fenwick_tree<mint>(n)

@@ -6,7 +6,7 @@ public protocol dynamic_modint_base: modint_base {
   static func set_mod(_ m: CInt)
 }
 
-public struct static_modint<m: static_mod_protocol>: static_modint_base & modint_raw {
+public struct static_modint<m: static_mod>: static_modint_base & modint_raw {
   @usableFromInline
   typealias static_mod = m
 

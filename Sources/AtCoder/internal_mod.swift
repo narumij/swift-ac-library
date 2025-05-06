@@ -2,13 +2,13 @@ import Foundation
 
 // MARK: -
 
-public protocol static_mod_protocol {
+public protocol static_mod {
   static var umod: CUnsignedInt { get }
   // 素数判定を自動では行わないため、注意が必要
   static var isPrime: Bool { get }
 }
 
-extension static_mod_protocol {
+extension static_mod {
   @inlinable @inline(__always)
   public static var m: CUnsignedInt { umod }
 }
@@ -27,7 +27,7 @@ public enum IsNotPrime: PrimeFlag {
   public static var flag: Bool { false }
 }
 
-public enum static_mod<let m: Int, IsPrime: PrimeFlag>: static_mod_protocol {
+public enum mod<let m: Int, IsPrime: PrimeFlag>: static_mod {
   @inlinable @inline(__always)
   public static var umod: CUnsignedInt { CUnsignedInt(m) }
   public static func isMatchPrimeType() -> Bool {
@@ -47,13 +47,13 @@ public enum static_mod<let m: Int, IsPrime: PrimeFlag>: static_mod_protocol {
 
 // ValueGenericsはIntしか許容されておらず、数値のキャストが必須になる
 // 数値のキャストのコストが無視できないため、主要な二つについて特殊化した型を用意している
-public enum mod_998_244_353: static_mod_protocol {
+public enum mod_998_244_353: static_mod {
   @inlinable @inline(__always)
   public static var umod: CUnsignedInt { 998_244_353 }
   @inlinable @inline(__always)
   public static var isPrime: Bool { true }
 }
-public enum mod_1_000_000_007: static_mod_protocol {
+public enum mod_1_000_000_007: static_mod {
   @inlinable @inline(__always)
   public static var umod: CUnsignedInt { 1_000_000_007 }
   @inlinable @inline(__always)
