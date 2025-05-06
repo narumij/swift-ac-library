@@ -243,7 +243,8 @@ extension _Internal {
               let r = a[i &+ offset &+ p]
               a[i &+ offset] = l + r
               a[i &+ offset &+ p] = mint(
-                ull: (ULL(UINT(l.val) &- UINT(r.val) &+ mod.umod) &* ULL(irot.val)))
+              ull: (ULL(UINT(bitPattern: l.val) &- UINT(bitPattern: r.val) &+ mod.umod)
+                    &* ULL(irot.val)))
             }
             if s &+ 1 != 1 << (len &- 1) {
               irot *= info.irate2[min(32, (~s).trailingZeroBitCount)]
