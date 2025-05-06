@@ -39,6 +39,20 @@ final class sccTests: XCTestCase {
     let scc = graph.scc()
     XCTAssertEqual(2, scc.count)
   }
+  
+  func testPractice2() throws {
+    var graph: scc_graph = .init(6)
+    graph.add_edge(1, 4)
+    graph.add_edge(5, 2)
+    graph.add_edge(3, 0)
+    graph.add_edge(5, 5)
+    graph.add_edge(4, 1)
+    graph.add_edge(0, 3)
+    graph.add_edge(4, 2)
+    let scc = graph.scc()
+    XCTAssertEqual(4, scc.count)
+    XCTAssertEqual([[5], [1, 4], [2], [0, 3]], scc)
+  }
 
   #if false
     func testInvalid() throws {
