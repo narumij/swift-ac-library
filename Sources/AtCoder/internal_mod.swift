@@ -179,6 +179,11 @@ func __modint_v(ull v: CUnsignedLongLong, umod: CUnsignedInt) -> CUnsignedInt {
 }
 
 @inlinable @inline(__always)
+func __modint_v(ull v: CUnsignedLongLong, umod: CUnsignedLongLong) -> CUnsignedInt {
+  CUnsignedInt(v % umod)
+}
+
+@inlinable @inline(__always)
 func __modint_v<T: UnsignedInteger>(unsigned v: T, umod: CUnsignedInt) -> CUnsignedInt {
   CUnsignedInt(v % T(umod))
 }

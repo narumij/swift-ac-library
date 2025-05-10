@@ -21,8 +21,8 @@ extension _Internal {
       for i in stride(from: 1, through: n, by: 1) {
         start[i] += start[i - 1]
       }
-      var counter = start
       let elist = [E](unsafeUninitializedCapacity: edges.count) { elist, elistCount in
+        var counter = start
         for e in edges {
           elist[counter[e.first]] = e.second
           counter[e.first] += 1

@@ -241,19 +241,20 @@ extension _Internal {
     var ans: ULL = 0
     while true {
       if a >= m {
-        ans += n * (n &- 1) / 2 * (a / m)
-        a %= m
+        let a_m = a.quotientAndRemainder(dividingBy: m)
+        ans += n * (n &- 1) / 2 * a_m.quotient
+        a = a_m.remainder
       }
       if b >= m {
-        ans += n * (b / m)
-        b %= m
+        let b_m = b.quotientAndRemainder(dividingBy: m)
+        ans += n * b_m.quotient
+        b = b_m.remainder
       }
       let y_max = a * n + b
       if y_max < m { break }
       // y_max < m * (n + 1)
       // floor(y_max / m) <= n
-      n = y_max / m
-      b = y_max % m
+      (n, b) = y_max.quotientAndRemainder(dividingBy: m)
       swap(&m, &a)
     }
     return ans
