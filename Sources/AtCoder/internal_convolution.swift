@@ -25,9 +25,14 @@ extension ArraySlice where Element: AdditiveArithmetic {
 }
 
 extension static_modint {
+//  @inlinable
+//  init(ull v: CUnsignedLongLong) {
+//    _v = __modint_v(ull: v, umod: static_mod.umod)
+//  }
+  
   @inlinable
-  init(ull v: CUnsignedLongLong) {
-    _v = __modint_v(ull: v, umod: static_mod.umod)
+  init(ull v: CUnsignedLongLong, umod: CUnsignedLongLong) {
+    _v = __modint_v(ull: v, umod: umod)
   }
   
   @inlinable @inline(__always)
@@ -123,20 +128,15 @@ extension _Internal {
     )
 }
 
-@usableFromInline
-enum mod_754_974_721: static_mod {
-  public static let umod: CUnsignedInt = 754_974_721
-}
 
 @usableFromInline
-enum mod_167_772_161: static_mod {
-  public static let umod: CUnsignedInt = 167_772_161
-}
+typealias mod_754_974_721 = mod<754_974_721, IsPrime>
 
 @usableFromInline
-enum mod_469_762_049: static_mod {
-  public static let umod: CUnsignedInt = 469_762_049
-}
+typealias mod_167_772_161 = mod<167_772_161, IsPrime>
+
+@usableFromInline
+typealias mod_469_762_049 = mod<469_762_049, IsPrime>
 
 extension _Internal {
 

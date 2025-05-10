@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.1
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -9,7 +9,10 @@ var defines: [String] = [
 //  "DISABLE_COPY_ON_WRITE",
 ]
 
-var _settings: [SwiftSetting] = defines.map { .define($0) }
+var _settings: [SwiftSetting] = defines.map { .define($0) } + [
+  .enableExperimentalFeature("ValueGenerics"),
+  .unsafeFlags(["-Xfrontend", "-disable-availability-checking"])
+]
 
 // 環境変数 "SWIFT_AC_LIBRARY_USES_O_UNCHECKED" が存在するか確認
 func isUncheckedModeEnabled() -> Bool {

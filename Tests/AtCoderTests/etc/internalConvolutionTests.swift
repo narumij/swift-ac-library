@@ -168,7 +168,7 @@ final class internalConvolutionTests: XCTestCase {
   
   func testSimpleInt128() throws {
     if #available(macOS 15.0, *) {
-      enum MOD2: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 924_844_033 }
+      typealias MOD2 = mod<924_844_033, IsNotPrime>
       let a: [Int128] = [924844023, 924844024, ]
       let b: [Int128] = [924844023, 924844024, 924844025, 924844026, 924844027, 924844028, ]
       let c: [Int128] = [100, 180, 161, 142, 123, 104, 45, ]

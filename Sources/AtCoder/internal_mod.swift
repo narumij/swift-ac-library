@@ -11,19 +11,53 @@ public protocol static_mod {
 extension static_mod {
   @inlinable @inline(__always)
   public static var m: CUnsignedInt { umod }
+}
+
+public protocol PrimeFlag {
+  static var flag: Bool { get }
+}
+
+public enum IsPrime: PrimeFlag {
+  @inlinable @inline(__always)
+  public static var flag: Bool { true }
+}
+
+public enum IsNotPrime: PrimeFlag {
+  @inlinable @inline(__always)
+  public static var flag: Bool { false }
+}
+
+public enum mod<let m: Int, IsPrime: PrimeFlag>: static_mod {
+  @inlinable @inline(__always)
+  public static var umod: CUnsignedInt { CUnsignedInt(m) }
+  public static func isMatchPrimeType() -> Bool {
+    _Internal.is_prime(CInt(umod)) == IsPrime.flag
+  }
+  public static func checkIsMatchPrimeType() {
+    if !isMatchPrimeType() {
+      fatalError("\(umod) is prime type mismatch.")
+    }
+  }
   @inlinable @inline(__always)
   public static var isPrime: Bool {
-    assert(_Internal.is_prime(CInt(umod)), "\(umod) is not prime number.")
-    return true
+    assert(isMatchPrimeType(), "\(umod) is prime type mismatch.")
+    return IsPrime.flag
   }
 }
 
+// ValueGenericsはIntしか許容されておらず、数値のキャストが必須になる
+// 数値のキャストのコストが無視できないため、主要な二つについて特殊化した型を用意している
 public enum mod_998_244_353: static_mod {
-  public static let umod: CUnsignedInt = 998_244_353
+  @inlinable @inline(__always)
+  public static var umod: CUnsignedInt { 998_244_353 }
+  @inlinable @inline(__always)
+  public static var isPrime: Bool { true }
 }
-
 public enum mod_1_000_000_007: static_mod {
-  public static let umod: CUnsignedInt = 1_000_000_007
+  @inlinable @inline(__always)
+  public static var umod: CUnsignedInt { 1_000_000_007 }
+  @inlinable @inline(__always)
+  public static var isPrime: Bool { true }
 }
 
 // MARK: -
