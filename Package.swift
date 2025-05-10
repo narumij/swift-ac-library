@@ -41,8 +41,7 @@ let package = Package(
       exact: "1.1.4"),
     .package(
       url: "https://github.com/apple/swift-numerics",
-      revision: "e30276bff2ff5ed80566fbdca49f50aa160b0e83"),
-//      branch: "main"), // e30276b (after 1.0.2)
+      revision: "2b458e8aeb9cf3f3a156f54ba427b9f101a4511a"),
   ],
   targets: [
     // Targets are the basic building blocks of a package, defining a module or a test suite.
