@@ -25,9 +25,14 @@ extension ArraySlice where Element: AdditiveArithmetic {
 }
 
 extension static_modint {
+//  @inlinable
+//  init(ull v: CUnsignedLongLong) {
+//    _v = __modint_v(ull: v, umod: static_mod.umod)
+//  }
+  
   @inlinable
-  init(ull v: CUnsignedLongLong) {
-    _v = __modint_v(ull: v, umod: static_mod.umod)
+  init(ull v: CUnsignedLongLong, umod: CUnsignedLongLong) {
+    _v = __modint_v(ull: v, umod: umod)
   }
   
   @inlinable @inline(__always)
