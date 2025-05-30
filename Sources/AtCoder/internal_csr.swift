@@ -103,7 +103,7 @@ extension _Internal.csr {
     
     @inlinable
     public subscript(index: Int) -> Element {
-      get { pointer[index] }
+      _read { yield pointer[index] }
       _modify { yield &pointer[index] }
     }
     

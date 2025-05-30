@@ -140,18 +140,18 @@ extension DSU.Buffer {
   @inlinable
   @inline(__always)
   var _header: UnsafeMutablePointer<DSU.Header> {
-    withUnsafeMutablePointerToHeader({ $0 })
+    _read { yield withUnsafeMutablePointerToHeader({ $0 }) }
   }
 
   @inlinable
   @inline(__always)
   var parent_or_size: UnsafeMutablePointer<Int> {
-    withUnsafeMutablePointerToElements({ $0 })
+    _read { yield withUnsafeMutablePointerToElements({ $0 }) }
   }
 
   @inlinable
   @inline(__always)
-  var _n: Int { _header.pointee.capacity }
+  var _n: Int { _read { yield _header.pointee.capacity } }
 
   @inlinable
   @inline(__always)

@@ -112,10 +112,10 @@ extension static_modint {
   }
 
   @inlinable @inline(__always)
-  public static var umod: CUnsignedInt { m.umod }
+  public static var umod: CUnsignedInt { _read { yield m.umod } }
 
   @inlinable @inline(__always)
-  var isPrime: Bool { m.isPrime }
+  var isPrime: Bool { _read { yield m.isPrime } }
 }
 
 public struct dynamic_modint<bt: dynamic_mod>: dynamic_modint_base & modint_raw {

@@ -128,18 +128,18 @@ extension FenwickTree.Buffer {
   @inlinable
   @inline(__always)
   var _header: UnsafeMutablePointer<FenwickTree.Header> {
-    withUnsafeMutablePointerToHeader({ $0 })
+    _read { yield withUnsafeMutablePointerToHeader({ $0 }) }
   }
 
   @inlinable
   @inline(__always)
   var data: UnsafeMutablePointer<U> {
-    withUnsafeMutablePointerToElements({ $0 })
+    _read { yield withUnsafeMutablePointerToElements({ $0 }) }
   }
 
   @inlinable
   @inline(__always)
-  var _n: Int { _header.pointee.capacity }
+  var _n: Int { _read { yield _header.pointee.capacity } }
 }
 
 extension FenwickTree.Buffer {

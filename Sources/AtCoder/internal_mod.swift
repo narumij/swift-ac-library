@@ -10,7 +10,7 @@ public protocol static_mod {
 
 extension static_mod {
   @inlinable @inline(__always)
-  public static var m: CUnsignedInt { umod }
+  public static var m: CUnsignedInt { _read { yield umod } }
   @inlinable @inline(__always)
   public static var isPrime: Bool {
     assert(_Internal.is_prime(CInt(umod)), "\(umod) is not prime number.")

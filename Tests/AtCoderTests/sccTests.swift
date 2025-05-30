@@ -61,4 +61,10 @@ final class sccTests: XCTestCase {
       XCTAssertThrowsError(graph.add_edge(0, 10), ".*")
     }
   #endif
+  
+  func testPractice2Performanc() throws {
+    self.measure {
+      try! testPractice2()
+    }
+  }
 }

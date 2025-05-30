@@ -43,7 +43,7 @@ protocol static_mod_value: static_mod {
 
 extension static_mod_value {
   public
-  static var umod: CUnsignedInt { mod.umod }
+  static var umod: CUnsignedInt { _read { yield mod.umod } }
   public
-  static var isPrime: Bool { mod.isPrime }
+  static var isPrime: Bool { _read { yield mod.isPrime } }
 }

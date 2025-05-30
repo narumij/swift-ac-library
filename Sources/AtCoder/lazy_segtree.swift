@@ -237,32 +237,32 @@ extension LazySegTree.Buffer {
   @inlinable
   @inline(__always)
   var _header: UnsafeMutablePointer<LazySegTree.Header> {
-    withUnsafeMutablePointerToHeader({ $0 })
+    _read { yield withUnsafeMutablePointerToHeader({ $0 }) }
   }
 
   @inlinable
   @inline(__always)
   var d: UnsafeMutablePointer<S> {
-    withUnsafeMutablePointerToElements({ $0 })
+    _read { yield withUnsafeMutablePointerToElements({ $0 }) }
   }
 
   @inlinable
   @inline(__always)
   var lz: UnsafeMutablePointer<F> {
-    _header.pointee._lz!
+    _read { yield _header.pointee._lz! }
   }
 
   @inlinable
   @inline(__always)
-  var _n: Int { _header.pointee._n }
+  var _n: Int { _read { yield _header.pointee._n } }
 
   @inlinable
   @inline(__always)
-  var size: Int { _header.pointee._size }
+  var size: Int { _read { yield _header.pointee._size } }
 
   @inlinable
   @inline(__always)
-  var log: Int { _header.pointee._log }
+  var log: Int { _read { yield _header.pointee._log } }
 
   @inlinable
   @inline(__always)
