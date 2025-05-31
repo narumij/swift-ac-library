@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.9] - 2025-5-31
 ### Changed
-- getアクセサを_readアクセサに変更
+- `get`アクセサを`_read`アクセサに変更
 
 ## [0.1.8] - 2025-5-10
 ### Added
