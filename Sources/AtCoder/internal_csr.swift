@@ -3,6 +3,7 @@ import Foundation
 #if true
 extension _Internal {
 
+  @frozen
   public struct csr<E> {
 
     @usableFromInline

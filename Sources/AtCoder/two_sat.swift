@@ -4,6 +4,7 @@ import Foundation
 /// B. Aspvall, M. Plass, and R. Tarjan,
 /// A Linear-Time Algorithm for Testing the Truth of Certain Quantified Boolean
 /// Formulas
+@frozen
 public struct TwoSAT {
   @usableFromInline let _n: Int
   @usableFromInline var _answer: [Bool]
@@ -13,6 +14,7 @@ public struct TwoSAT {
 extension TwoSAT {
 
   @inlinable
+  @inline(__always)
   public init() {
     _n = 0
     _answer = []
@@ -20,6 +22,7 @@ extension TwoSAT {
   }
 
   @inlinable
+  @inline(__always)
   public init(_ n: Int) {
     _n = n
     _answer = [Bool](repeating: false, count: n)
@@ -27,6 +30,7 @@ extension TwoSAT {
   }
 
   @inlinable
+  @inline(never)
   public mutating func add_clause(_ i: Int, _ f: Bool, _ j: Int, _ g: Bool) {
     assert(0 <= i && i < _n)
     assert(0 <= j && j < _n)
@@ -35,6 +39,7 @@ extension TwoSAT {
   }
 
   @inlinable
+  @inline(never)
   public mutating func satisfiable() -> Bool {
     let id = scc.scc_ids().scc
     for i in 0..<_n {
@@ -45,5 +50,6 @@ extension TwoSAT {
   }
 
   @inlinable
+  @inline(__always)
   public func answer() -> [Bool] { return _answer }
 }

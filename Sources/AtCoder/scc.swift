@@ -1,5 +1,6 @@
 import Foundation
 
+@frozen
 public struct SCCGraph {
 
   @inlinable @inline(__always)

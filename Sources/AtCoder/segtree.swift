@@ -23,6 +23,7 @@ extension SegTreeOperation {
   public static func op(_ x: S, _ y: S) -> S { (self.op as Op)(x, y) }
 }
 
+@frozen
 public struct SegTree<_S_op_e_>
 where _S_op_e_: SegTreeOperator {
   public typealias O = _S_op_e_
