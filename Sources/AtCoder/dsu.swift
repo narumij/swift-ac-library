@@ -73,6 +73,7 @@ extension DSU {
 
   /// root node: -1 * component size
   /// otherwise: parent
+  @_fixed_layout
   @usableFromInline
   final class Buffer: ManagedBuffer<Header, Int> {
 

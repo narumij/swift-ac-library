@@ -59,6 +59,7 @@ extension FenwickTree {
     #endif
   }
 
+  @_fixed_layout
   @usableFromInline
   final class Buffer: ManagedBuffer<Header, U> {
 

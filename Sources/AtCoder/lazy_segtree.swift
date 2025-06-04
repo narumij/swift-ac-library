@@ -138,6 +138,7 @@ extension LazySegTree {
     #endif
   }
 
+  @_fixed_layout
   @usableFromInline
   final class Buffer: ManagedBuffer<Header, S> {
     public typealias O = _S_op_e_F_mapping_composition_id_
