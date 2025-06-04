@@ -55,7 +55,7 @@ public enum numeric_limit<T: ___numeric_limit> {
 }
 
 public
-protocol ___numeric_limit: Numeric
+  protocol ___numeric_limit: Numeric
 {
   static var __max: Self { get }
 }
@@ -65,7 +65,9 @@ extension FixedWidthInteger {
 }
 
 extension BinaryFloatingPoint {
-  @inlinable @inline(__always) public static var __max: Self { _read { yield .greatestFiniteMagnitude } }
+  @inlinable @inline(__always) public static var __max: Self {
+    _read { yield .greatestFiniteMagnitude }
+  }
 }
 
 extension Int16: ___numeric_limit {}
