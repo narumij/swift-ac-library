@@ -88,6 +88,7 @@ extension SegTree {
 
 extension SegTree {
 
+  @frozen
   @usableFromInline
   struct Header {
     @inlinable
@@ -106,7 +107,7 @@ extension SegTree {
   }
 
   @usableFromInline
-  class Buffer: ManagedBuffer<Header, S> {
+  final class Buffer: ManagedBuffer<Header, S> {
     public typealias O = _S_op_e_
     public typealias S = O.S
     @inlinable @inline(__always) func op(_ l: S, _ r: S) -> S { O.op(l, r) }
@@ -134,6 +135,7 @@ extension SegTree {
 
 extension SegTree.Buffer {
 
+  @nonobjc
   @inlinable
   @inline(__always)
   internal static func create(
@@ -145,6 +147,7 @@ extension SegTree.Buffer {
     return unsafeDowncast(storage, to: SegTree.Buffer.self)
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   internal static func create(
@@ -163,7 +166,8 @@ extension SegTree.Buffer {
     return unsafeDowncast(storage, to: SegTree.Buffer.self)
   }
 
-  @usableFromInline
+  @nonobjc
+  @inlinable
   @inline(__always)
   internal func copy() -> SegTree.Buffer {
 
@@ -197,30 +201,36 @@ extension SegTree.Buffer {
 
 extension SegTree.Buffer {
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var _header: UnsafeMutablePointer<SegTree.Header> {
     _read { yield withUnsafeMutablePointerToHeader({ $0 }) }
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var d: UnsafeMutablePointer<S> {
     _read { yield withUnsafeMutablePointerToElements({ $0 }) }
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var _n: Int { _read { yield _header.pointee._n } }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var size: Int { _read { yield _header.pointee._size } }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var log: Int { _read { yield _header.pointee._log } }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func initialize(_ v: [S]) {
@@ -237,6 +247,7 @@ extension SegTree.Buffer {
 
 extension SegTree.Buffer {
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func set(_ p: Int, _ x: S) {
@@ -248,6 +259,7 @@ extension SegTree.Buffer {
     for i in stride(from: 1, through: log, by: 1) { update(p >> i) }
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func get(_ p: Int) -> S {
@@ -255,6 +267,7 @@ extension SegTree.Buffer {
     return d[p + size]
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func prod(_ l: Int, _ r: Int) -> S {
@@ -282,10 +295,12 @@ extension SegTree.Buffer {
     return op(sml, smr)
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func all_prod() -> S { return d[1] }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func max_right(_ l: Int, _ f: (S) -> Bool) -> Int {
@@ -313,6 +328,7 @@ extension SegTree.Buffer {
     return _n
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func min_left(_ r: Int, _ f: (S) -> Bool) -> Int {
@@ -340,6 +356,7 @@ extension SegTree.Buffer {
     return 0
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func update(_ k: Int) {
