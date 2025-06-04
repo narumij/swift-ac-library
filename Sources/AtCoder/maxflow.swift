@@ -1,6 +1,7 @@
 import Collections
 import Foundation
 
+@frozen
 public struct MFGraph<Cap>
 where Cap: ___numeric_limit & Comparable
 {
@@ -40,6 +41,7 @@ extension MFGraph {
     return m
   }
 
+  @frozen
   public struct Edge {
     @inlinable
     public init(from: Int, to: Int, cap: Cap, flow: Cap) {
@@ -167,6 +169,7 @@ extension MFGraph {
 }
 
 extension MFGraph {
+  @frozen
   @usableFromInline
   struct _Edge {
     @inlinable

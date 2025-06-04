@@ -1,6 +1,7 @@
 import Collections
 import Foundation
 
+@frozen
 public struct MCFGraph<Cap, Cost>
 where
   Cap: ___numeric_limit & Comparable,

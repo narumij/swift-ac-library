@@ -89,6 +89,7 @@ public protocol NumericCastVisitor {
   func cast(_ value: Cap) -> Cost
 }
 
+@frozen
 public struct IntegerToIntegerVisitor<Cap: BinaryInteger, Cost: BinaryInteger>:
   NumericCastVisitor
 {
@@ -97,6 +98,7 @@ public struct IntegerToIntegerVisitor<Cap: BinaryInteger, Cost: BinaryInteger>:
   }
 }
 
+@frozen
 public struct IntegerToFloatVisitor<Cap: BinaryInteger, Cost: BinaryFloatingPoint>:
   NumericCastVisitor
 {
@@ -105,6 +107,7 @@ public struct IntegerToFloatVisitor<Cap: BinaryInteger, Cost: BinaryFloatingPoin
   }
 }
 
+@frozen
 public struct FloatToIntegerVisitor<Cap: BinaryFloatingPoint, Cost: BinaryInteger>:
   NumericCastVisitor
 {
@@ -113,6 +116,7 @@ public struct FloatToIntegerVisitor<Cap: BinaryFloatingPoint, Cost: BinaryIntege
   }
 }
 
+@frozen
 public struct FloatToFloatVisitor<Cap: BinaryFloatingPoint, Cost: BinaryFloatingPoint>:
   NumericCastVisitor
 {
@@ -121,6 +125,7 @@ public struct FloatToFloatVisitor<Cap: BinaryFloatingPoint, Cost: BinaryFloating
   }
 }
 
+@frozen
 public struct AnyNumericCastVisitor<Cap, Cost>: NumericCastVisitor {
   private let _cast: (Cap) -> Cost
   public init<V: NumericCastVisitor>(_ visitor: V) where V.Cap == Cap, V.Cost == Cost {
