@@ -4,6 +4,7 @@ import Foundation
 /// Reference:
 /// Zvi Galil and Giuseppe F. Italiano,
 /// Data structures and algorithms for disjoint set union problems
+@frozen
 public struct DSU {
   @usableFromInline var buffer: Buffer
 }
@@ -23,26 +24,31 @@ extension DSU {
 
 extension DSU {
   @inlinable
+  @inline(never)
   @discardableResult
   public mutating func merge(_ a: Int, _ b: Int) -> Int {
     ensureUnique()
     return buffer.merge(a, b)
   }
   @inlinable
+  @inline(never)
   public mutating func same(_ a: Int, _ b: Int) -> Bool {
     ensureUnique()
     return buffer.same(a, b)
   }
   @inlinable
+  @inline(never)
   public mutating func leader(_ a: Int) -> Int {
     ensureUnique()
     return buffer.leader(a)
   }
   @inlinable
+  @inline(never)
   public mutating func size(_ a: Int) -> Int {
     buffer.size(a)
   }
   @inlinable
+  @inline(never)
   public mutating func groups() -> [[Int]] {
     ensureUnique()
     return buffer.groups()
@@ -51,9 +57,11 @@ extension DSU {
 
 extension DSU {
 
+  @frozen
   @usableFromInline
   struct Header {
     @inlinable
+    @inline(__always)
     internal init(capacity: Int) {
       self.capacity = capacity
     }
@@ -66,7 +74,7 @@ extension DSU {
   /// root node: -1 * component size
   /// otherwise: parent
   @usableFromInline
-  class Buffer: ManagedBuffer<Header, Int> {
+  final class Buffer: ManagedBuffer<Header, Int> {
 
     public typealias Header = DSU.Header
 
@@ -92,6 +100,7 @@ extension DSU {
 
 extension DSU.Buffer {
 
+  @nonobjc
   @inlinable
   @inline(__always)
   internal static func create(
@@ -110,7 +119,9 @@ extension DSU.Buffer {
     return unsafeDowncast(storage, to: DSU.Buffer.self)
   }
 
+  @nonobjc
   @inlinable
+  @inline(__always)
   internal func copy() -> DSU.Buffer {
 
     let capacity = self._header.pointee.capacity
@@ -137,22 +148,26 @@ extension DSU.Buffer {
 
 extension DSU.Buffer {
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var _header: UnsafeMutablePointer<DSU.Header> {
     _read { yield withUnsafeMutablePointerToHeader({ $0 }) }
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var parent_or_size: UnsafeMutablePointer<Int> {
     _read { yield withUnsafeMutablePointerToElements({ $0 }) }
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var _n: Int { _read { yield _header.pointee.capacity } }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func merge(_ a: Int, _ b: Int) -> Int {
@@ -166,6 +181,7 @@ extension DSU.Buffer {
     return x
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func same(_ a: Int, _ b: Int) -> Bool {
@@ -174,6 +190,7 @@ extension DSU.Buffer {
     return leader(a) == leader(b)
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func leader(_ a: Int) -> Int {
@@ -181,6 +198,7 @@ extension DSU.Buffer {
     return _leader(a)
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func size(_ a: Int) -> Int {
@@ -188,6 +206,7 @@ extension DSU.Buffer {
     return -parent_or_size[leader(a)]
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func groups() -> [[Int]] {
@@ -208,6 +227,7 @@ extension DSU.Buffer {
     return result
   }
   
+  @nonobjc
   @inlinable
   @inline(__always)
   func _leader(_ a: Int) -> Int {
