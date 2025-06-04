@@ -37,6 +37,7 @@ extension LazySegTreeOperation {
   public static func composition(_ g: F, _ f: F) -> F { (self.composition as Composition)(g, f) }
 }
 
+@frozen
 public struct LazySegTree<_S_op_e_F_mapping_composition_id_>
 where _S_op_e_F_mapping_composition_id_: LazySegTreeOperator {
   public typealias O = _S_op_e_F_mapping_composition_id_
@@ -117,6 +118,7 @@ extension LazySegTree {
 
 extension LazySegTree {
 
+  @frozen
   @usableFromInline
   struct Header {
     @inlinable
@@ -137,7 +139,7 @@ extension LazySegTree {
   }
 
   @usableFromInline
-  class Buffer: ManagedBuffer<Header, S> {
+  final class Buffer: ManagedBuffer<Header, S> {
     public typealias O = _S_op_e_F_mapping_composition_id_
     public typealias S = O.S
     @inlinable @inline(__always) func op(_ l: S, _ r: S) -> S { O.op(l, r) }
@@ -170,7 +172,8 @@ extension LazySegTree {
 }
 
 extension LazySegTree.Buffer {
-
+  
+  @nonobjc
   @inlinable
   @inline(__always)
   internal static func create(
@@ -182,6 +185,7 @@ extension LazySegTree.Buffer {
     return unsafeDowncast(storage, to: LazySegTree.Buffer.self)
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   internal static func create(
@@ -202,6 +206,7 @@ extension LazySegTree.Buffer {
     return unsafeDowncast(storage, to: LazySegTree.Buffer.self)
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   internal func copy() -> LazySegTree.Buffer {
@@ -243,36 +248,43 @@ extension LazySegTree.Buffer {
 
 extension LazySegTree.Buffer {
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var _header: UnsafeMutablePointer<LazySegTree.Header> {
     _read { yield withUnsafeMutablePointerToHeader({ $0 }) }
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var d: UnsafeMutablePointer<S> {
     _read { yield withUnsafeMutablePointerToElements({ $0 }) }
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var lz: UnsafeMutablePointer<F> {
     _read { yield _header.pointee._lz! }
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var _n: Int { _read { yield _header.pointee._n } }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var size: Int { _read { yield _header.pointee._size } }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var log: Int { _read { yield _header.pointee._log } }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func initialize(_ v: [S]) {
@@ -290,6 +302,7 @@ extension LazySegTree.Buffer {
 
 extension LazySegTree.Buffer {
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func set(_ p: Int, _ x: S) {
@@ -303,6 +316,7 @@ extension LazySegTree.Buffer {
     for i in stride(from: 1, through: log, by: 1) { update(p >> i) }
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func get(_ p: Int) -> S {
@@ -314,6 +328,7 @@ extension LazySegTree.Buffer {
     return d[p]
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func prod(_ l: Int, _ r: Int) -> S {
@@ -349,10 +364,12 @@ extension LazySegTree.Buffer {
     return op(sml, smr)
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   public func all_prod() -> S { d[1] }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func apply(_ p: Int, _ f: F) {
@@ -366,6 +383,7 @@ extension LazySegTree.Buffer {
     for i in stride(from: 1, through: log, by: 1) { update(p >> i) }
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func apply(_ l: Int, _ r: Int, _ f: F) {
@@ -409,6 +427,7 @@ extension LazySegTree.Buffer {
     }
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func max_right(_ l: Int, _ g: (S) -> Bool) -> Int {
@@ -439,6 +458,7 @@ extension LazySegTree.Buffer {
     return _n
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func min_left(_ r: Int, _ g: (S) -> Bool) -> Int {
@@ -469,12 +489,14 @@ extension LazySegTree.Buffer {
     return 0
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   public func update(_ k: Int) {
     d[k] = op(d[k << 1], d[(k << 1) + 1])
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func all_apply(_ k: Int, _ f: F) {
@@ -482,6 +504,7 @@ extension LazySegTree.Buffer {
     if k < size { lz[k] = composition(f, lz[k]) }
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func push(_ k: Int) {
