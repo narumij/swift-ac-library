@@ -1,8 +1,10 @@
 import Foundation
 
+// MARK: - Segment Tree
+
 public protocol SegTreeOperator {
   associatedtype S
-  static func op(_ x: S,_ y: S) -> S
+  static func op(_ x: S, _ y: S) -> S
   static var e: S { get }
 }
 
@@ -18,7 +20,7 @@ public protocol SegTreeOperation: SegTreeOperator {
 
 extension SegTreeOperation {
   @inlinable @inline(__always)
-  public static func op(_ x: S,_ y: S) -> S { (self.op as Op)(x, y) }
+  public static func op(_ x: S, _ y: S) -> S { (self.op as Op)(x, y) }
 }
 
 public struct SegTree<_S_op_e_>
@@ -29,48 +31,54 @@ where _S_op_e_: SegTreeOperator {
   @inlinable
   @inline(__always)
   public init() { self.init(0) }
-  
+
   @inlinable
   @inline(__always)
   public init(_ n: Int) { self.init([S](repeating: O.e, count: n)) }
-  
+
   @inlinable
   @inline(__always)
   public init(_ v: [S]) {
     self.buffer = .create(withCount: v.count)
     buffer.initialize(v)
   }
-  
+
   @usableFromInline
   var buffer: Buffer
 }
 
 extension SegTree {
   @inlinable
+  @inline(never)
   public mutating func set(_ p: Int, _ x: S) {
     ensureUnique()
     buffer.set(p, x)
   }
   @inlinable
+  @inline(never)
   public mutating func get(_ p: Int) -> S {
     ensureUnique()
     return buffer.get(p)
   }
   @inlinable
+  @inline(never)
   public mutating func prod(_ l: Int, _ r: Int) -> S {
     ensureUnique()
     return buffer.prod(l, r)
   }
   @inlinable
+  @inline(never)
   public func all_prod() -> S {
     buffer.all_prod()
   }
   @inlinable
+  @inline(never)
   public mutating func max_right(_ l: Int, _ g: (S) -> Bool) -> Int {
     ensureUnique()
     return buffer.max_right(l, g)
   }
   @inlinable
+  @inline(never)
   public mutating func min_left(_ r: Int, _ g: (S) -> Bool) -> Int {
     ensureUnique()
     return buffer.min_left(r, g)
@@ -131,7 +139,7 @@ extension SegTree.Buffer {
     withCapacity capacity: Int
   ) -> SegTree.Buffer {
     let storage = SegTree.Buffer.create(minimumCapacity: capacity) { _ in
-      SegTree.Header(capacity: capacity,_n: 0,_size: 0,_log: 0)
+      SegTree.Header(capacity: capacity, _n: 0, _size: 0, _log: 0)
     }
     return unsafeDowncast(storage, to: SegTree.Buffer.self)
   }
@@ -148,13 +156,14 @@ extension SegTree.Buffer {
     let capacity = 2 * size
 
     let storage = SegTree.Buffer.create(minimumCapacity: capacity) { _ in
-      SegTree.Header(capacity: capacity,_n: _n,_size: size,_log: log)
+      SegTree.Header(capacity: capacity, _n: _n, _size: size, _log: log)
     }
 
     return unsafeDowncast(storage, to: SegTree.Buffer.self)
   }
 
   @usableFromInline
+  @inline(__always)
   internal func copy() -> SegTree.Buffer {
 
     let capacity = self._header.pointee.capacity
@@ -286,10 +295,10 @@ extension SegTree.Buffer {
     l += size
     var sm: S = e()
     repeat {
-      while l % 2 == 0 { l >>= 1 }
+      while l & 1 == 0 { l >>= 1 }
       if !f(op(sm, d[l])) {
         while l < size {
-          l = (2 * l)
+          l = (l << 1)
           if f(op(sm, d[l])) {
             sm = op(sm, d[l])
             l += 1
@@ -314,10 +323,10 @@ extension SegTree.Buffer {
     var sm: S = e()
     repeat {
       r -= 1
-      while r > 1 && r % 2 != 0 { r >>= 1 }
+      while r > 1 && (r & 1) != 0 { r >>= 1 }
       if !f(op(d[r], sm)) {
         while r < size {
-          r = (2 * r + 1)
+          r = (r << 1) + 1
           if f(op(d[r], sm)) {
             sm = op(d[r], sm)
             r -= 1
@@ -333,6 +342,6 @@ extension SegTree.Buffer {
   @inlinable
   @inline(__always)
   func update(_ k: Int) {
-    d[k] = op(d[2 * k], d[2 * k + 1])
+    d[k] = op(d[k << 1], d[(k << 1) + 1])
   }
 }

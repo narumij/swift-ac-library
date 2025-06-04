@@ -1,14 +1,14 @@
 import Foundation
 
-// MARK: - Lazy SegTree
+// MARK: - Lazy Segment Tree
 
 public protocol LazySegTreeOperator {
   associatedtype S
   associatedtype F
-  static func op(_:S,_:S) -> S
+  static func op(_: S, _: S) -> S
   static var e: S { get }
-  static func mapping(_:F,_:S) -> S
-  static func composition(_:F,_:F) -> F
+  static func mapping(_: F, _: S) -> S
+  static func composition(_: F, _: F) -> F
   static var id: F { get }
 }
 
@@ -30,11 +30,11 @@ public protocol LazySegTreeOperation: LazySegTreeOperator {
 
 extension LazySegTreeOperation {
   @inlinable @inline(__always)
-  public static func op(_ x:S,_ y:S) -> S { (self.op as Op)(x, y) }
+  public static func op(_ x: S, _ y: S) -> S { (self.op as Op)(x, y) }
   @inlinable @inline(__always)
-  public static func mapping(_ f:F,_ x:S) -> S { (self.mapping as Mapping)(f,x) }
+  public static func mapping(_ f: F, _ x: S) -> S { (self.mapping as Mapping)(f, x) }
   @inlinable @inline(__always)
-  public static func composition(_ g:F,_ f:F) -> F { (self.composition as Composition)(g,f) }
+  public static func composition(_ g: F, _ f: F) -> F { (self.composition as Composition)(g, f) }
 }
 
 public struct LazySegTree<_S_op_e_F_mapping_composition_id_>
@@ -67,40 +67,48 @@ where _S_op_e_F_mapping_composition_id_: LazySegTreeOperator {
 
 extension LazySegTree {
   @inlinable
+  @inline(never)
   public mutating func set(_ p: Int, _ x: S) {
     ensureUnique()
     buffer.set(p, x)
   }
   @inlinable
+  @inline(never)
   public mutating func get(_ p: Int) -> S {
     ensureUnique()
     return buffer.get(p)
   }
   @inlinable
+  @inline(never)
   public mutating func prod(_ l: Int, _ r: Int) -> S {
     ensureUnique()
     return buffer.prod(l, r)
   }
   @inlinable
+  @inline(never)
   public func all_prod() -> S {
     buffer.all_prod()
   }
   @inlinable
+  @inline(never)
   public mutating func apply(_ p: Int, _ f: F) {
     ensureUnique()
     buffer.apply(p, f)
   }
   @inlinable
+  @inline(never)
   public mutating func apply(_ l: Int, _ r: Int, _ f: F) {
     ensureUnique()
     buffer.apply(l, r, f)
   }
   @inlinable
+  @inline(never)
   public mutating func max_right(_ l: Int, _ g: (S) -> Bool) -> Int {
     ensureUnique()
     return buffer.max_right(l, g)
   }
   @inlinable
+  @inline(never)
   public mutating func min_left(_ r: Int, _ g: (S) -> Bool) -> Int {
     ensureUnique()
     return buffer.min_left(r, g)
@@ -194,7 +202,8 @@ extension LazySegTree.Buffer {
     return unsafeDowncast(storage, to: LazySegTree.Buffer.self)
   }
 
-  @usableFromInline
+  @inlinable
+  @inline(__always)
   internal func copy() -> LazySegTree.Buffer {
 
     let capacity = self._header.pointee.capacity
@@ -412,7 +421,7 @@ extension LazySegTree.Buffer {
     for i in stride(from: log, through: 1, by: -1) { push(l >> i) }
     var sm: S = e()
     repeat {
-      while l % 2 == 0 { l >>= 1 }
+      while (l & 1) == 0 { l >>= 1 }
       if !g(op(sm, d[l])) {
         while l < size {
           push(l)
@@ -443,11 +452,11 @@ extension LazySegTree.Buffer {
     var sm: S = e()
     repeat {
       r -= 1
-      while r > 1 && r % 2 != 0 { r >>= 1 }
+      while r > 1 && (r & 1) != 0 { r >>= 1 }
       if !g(op(d[r], sm)) {
         while r < size {
           push(r)
-          r = (2 * r + 1)
+          r = (r << 1 + 1)
           if g(op(d[r], sm)) {
             sm = op(d[r], sm)
             r -= 1
@@ -463,7 +472,7 @@ extension LazySegTree.Buffer {
   @inlinable
   @inline(__always)
   public func update(_ k: Int) {
-    d[k] = op(d[2 * k], d[2 * k + 1])
+    d[k] = op(d[k << 1], d[(k << 1) + 1])
   }
 
   @inlinable
@@ -476,8 +485,8 @@ extension LazySegTree.Buffer {
   @inlinable
   @inline(__always)
   func push(_ k: Int) {
-    all_apply(2 * k, lz[k])
-    all_apply(2 * k + 1, lz[k])
+    all_apply(k << 1, lz[k])
+    all_apply(k << 1 + 1, lz[k])
     lz[k] = id()
   }
 }
