@@ -1,6 +1,7 @@
 import Foundation
 
 /// Reference: https://en.wikipedia.org/wiki/Fenwick_tree
+@frozen
 public struct FenwickTree<T>
 where T: AdditiveArithmetic & ToUnsignedType {
 
@@ -25,15 +26,18 @@ extension FenwickTree {
   public typealias U = T.Unsigned
 
   @inlinable
+  @inline(never)
   public mutating func add(_ p: Int, _ x: T) {
     ensureUnique()
     buffer.add(p, x)
   }
   @inlinable
+  @inline(never)
   public func sum(_ l: Int, _ r: Int) -> T {
     buffer.sum(l, r)
   }
   @inlinable
+  @inline(never)
   public func sum(_ l: Int) -> U {
     buffer.sum(l)
   }
@@ -41,9 +45,11 @@ extension FenwickTree {
 
 extension FenwickTree {
 
+  @frozen
   @usableFromInline
   struct Header {
     @inlinable
+    @inline(__always)
     internal init(capacity: Int) {
       self.capacity = capacity
     }
@@ -54,7 +60,7 @@ extension FenwickTree {
   }
 
   @usableFromInline
-  class Buffer: ManagedBuffer<Header, U> {
+  final class Buffer: ManagedBuffer<Header, U> {
 
     public typealias U = T.Unsigned
 
@@ -80,6 +86,7 @@ extension FenwickTree {
 
 extension FenwickTree.Buffer {
 
+  @nonobjc
   @inlinable
   @inline(__always)
   internal static func create(
@@ -98,7 +105,9 @@ extension FenwickTree.Buffer {
     return unsafeDowncast(storage, to: FenwickTree.Buffer.self)
   }
 
+  @nonobjc
   @inlinable
+  @inline(__always)
   internal func copy() -> FenwickTree.Buffer {
 
     let capacity = self._header.pointee.capacity
@@ -125,18 +134,21 @@ extension FenwickTree.Buffer {
 
 extension FenwickTree.Buffer {
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var _header: UnsafeMutablePointer<FenwickTree.Header> {
     _read { yield withUnsafeMutablePointerToHeader({ $0 }) }
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var data: UnsafeMutablePointer<U> {
     _read { yield withUnsafeMutablePointerToElements({ $0 }) }
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var _n: Int { _read { yield _header.pointee.capacity } }
@@ -144,6 +156,7 @@ extension FenwickTree.Buffer {
 
 extension FenwickTree.Buffer {
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func add(_ p: Int, _ x: T) {
@@ -155,6 +168,7 @@ extension FenwickTree.Buffer {
     }
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func sum(_ l: Int, _ r: Int) -> T {
@@ -162,6 +176,7 @@ extension FenwickTree.Buffer {
     return T(bitPattern: sum(r) &- sum(l))
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func sum(_ r: Int) -> U {
