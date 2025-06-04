@@ -38,6 +38,7 @@ extension _Internal {
 #else
 extension _Internal {
 
+  @frozen
   public struct csr<E> {
     
     @usableFromInline
@@ -86,8 +87,9 @@ extension _Internal.csr {
     @usableFromInline var capacity: Int
   }
 
+  @_fixed_layout
   @usableFromInline
-  class Buffer<Element>: ManagedBuffer<Header, Element> {
+  final class Buffer<Element>: ManagedBuffer<Header, Element> {
     
     @inlinable
     deinit {
@@ -96,18 +98,22 @@ extension _Internal.csr {
         header.deinitialize(count: 1)
       }
     }
+    
+    @nonobjc
     @inlinable
     @inline(__always)
     var pointer: UnsafeMutablePointer<Element> {
       withUnsafeMutablePointerToElements({ $0 })
     }
     
+    @nonobjc
     @inlinable
     public subscript(index: Int) -> Element {
       _read { yield pointer[index] }
       _modify { yield &pointer[index] }
     }
     
+    @nonobjc
     @inlinable
     @inline(__always)
     internal static func create(
