@@ -60,5 +60,13 @@ let package = Package(
         .product(name: "Numerics", package: "swift-numerics"),
       ],
       swiftSettings: _settings),
+    .executableTarget(
+      name: "Executable",
+      dependencies: [
+        "AtCoder",
+      ],
+      path: "Tests/Executable",
+      swiftSettings: _settings
+    ),
   ]
 )

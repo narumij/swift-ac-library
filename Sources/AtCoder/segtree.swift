@@ -1,8 +1,10 @@
 import Foundation
 
+// MARK: - Segment Tree
+
 public protocol SegTreeOperator {
   associatedtype S
-  static func op(_ x: S,_ y: S) -> S
+  static func op(_ x: S, _ y: S) -> S
   static var e: S { get }
 }
 
@@ -18,9 +20,10 @@ public protocol SegTreeOperation: SegTreeOperator {
 
 extension SegTreeOperation {
   @inlinable @inline(__always)
-  public static func op(_ x: S,_ y: S) -> S { (self.op as Op)(x, y) }
+  public static func op(_ x: S, _ y: S) -> S { (self.op as Op)(x, y) }
 }
 
+@frozen
 public struct SegTree<_S_op_e_>
 where _S_op_e_: SegTreeOperator {
   public typealias O = _S_op_e_
@@ -29,48 +32,54 @@ where _S_op_e_: SegTreeOperator {
   @inlinable
   @inline(__always)
   public init() { self.init(0) }
-  
+
   @inlinable
   @inline(__always)
   public init(_ n: Int) { self.init([S](repeating: O.e, count: n)) }
-  
+
   @inlinable
   @inline(__always)
   public init(_ v: [S]) {
     self.buffer = .create(withCount: v.count)
     buffer.initialize(v)
   }
-  
+
   @usableFromInline
   var buffer: Buffer
 }
 
 extension SegTree {
   @inlinable
+  @inline(never)
   public mutating func set(_ p: Int, _ x: S) {
     ensureUnique()
     buffer.set(p, x)
   }
   @inlinable
+  @inline(never)
   public mutating func get(_ p: Int) -> S {
     ensureUnique()
     return buffer.get(p)
   }
   @inlinable
+  @inline(never)
   public mutating func prod(_ l: Int, _ r: Int) -> S {
     ensureUnique()
     return buffer.prod(l, r)
   }
   @inlinable
+  @inline(never)
   public func all_prod() -> S {
     buffer.all_prod()
   }
   @inlinable
+  @inline(never)
   public mutating func max_right(_ l: Int, _ g: (S) -> Bool) -> Int {
     ensureUnique()
     return buffer.max_right(l, g)
   }
   @inlinable
+  @inline(never)
   public mutating func min_left(_ r: Int, _ g: (S) -> Bool) -> Int {
     ensureUnique()
     return buffer.min_left(r, g)
@@ -79,6 +88,7 @@ extension SegTree {
 
 extension SegTree {
 
+  @frozen
   @usableFromInline
   struct Header {
     @inlinable
@@ -96,8 +106,9 @@ extension SegTree {
     #endif
   }
 
+  @_fixed_layout
   @usableFromInline
-  class Buffer: ManagedBuffer<Header, S> {
+  final class Buffer: ManagedBuffer<Header, S> {
     public typealias O = _S_op_e_
     public typealias S = O.S
     @inlinable @inline(__always) func op(_ l: S, _ r: S) -> S { O.op(l, r) }
@@ -125,17 +136,19 @@ extension SegTree {
 
 extension SegTree.Buffer {
 
+  @nonobjc
   @inlinable
   @inline(__always)
   internal static func create(
     withCapacity capacity: Int
   ) -> SegTree.Buffer {
     let storage = SegTree.Buffer.create(minimumCapacity: capacity) { _ in
-      SegTree.Header(capacity: capacity,_n: 0,_size: 0,_log: 0)
+      SegTree.Header(capacity: capacity, _n: 0, _size: 0, _log: 0)
     }
     return unsafeDowncast(storage, to: SegTree.Buffer.self)
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   internal static func create(
@@ -148,13 +161,15 @@ extension SegTree.Buffer {
     let capacity = 2 * size
 
     let storage = SegTree.Buffer.create(minimumCapacity: capacity) { _ in
-      SegTree.Header(capacity: capacity,_n: _n,_size: size,_log: log)
+      SegTree.Header(capacity: capacity, _n: _n, _size: size, _log: log)
     }
 
     return unsafeDowncast(storage, to: SegTree.Buffer.self)
   }
 
-  @usableFromInline
+  @nonobjc
+  @inlinable
+  @inline(__always)
   internal func copy() -> SegTree.Buffer {
 
     let capacity = self._header.pointee.capacity
@@ -187,30 +202,36 @@ extension SegTree.Buffer {
 
 extension SegTree.Buffer {
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var _header: UnsafeMutablePointer<SegTree.Header> {
     _read { yield withUnsafeMutablePointerToHeader({ $0 }) }
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var d: UnsafeMutablePointer<S> {
     _read { yield withUnsafeMutablePointerToElements({ $0 }) }
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var _n: Int { _read { yield _header.pointee._n } }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var size: Int { _read { yield _header.pointee._size } }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   var log: Int { _read { yield _header.pointee._log } }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func initialize(_ v: [S]) {
@@ -227,6 +248,7 @@ extension SegTree.Buffer {
 
 extension SegTree.Buffer {
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func set(_ p: Int, _ x: S) {
@@ -238,6 +260,7 @@ extension SegTree.Buffer {
     for i in stride(from: 1, through: log, by: 1) { update(p >> i) }
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func get(_ p: Int) -> S {
@@ -245,6 +268,7 @@ extension SegTree.Buffer {
     return d[p + size]
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func prod(_ l: Int, _ r: Int) -> S {
@@ -272,10 +296,12 @@ extension SegTree.Buffer {
     return op(sml, smr)
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func all_prod() -> S { return d[1] }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func max_right(_ l: Int, _ f: (S) -> Bool) -> Int {
@@ -286,10 +312,10 @@ extension SegTree.Buffer {
     l += size
     var sm: S = e()
     repeat {
-      while l % 2 == 0 { l >>= 1 }
+      while l & 1 == 0 { l >>= 1 }
       if !f(op(sm, d[l])) {
         while l < size {
-          l = (2 * l)
+          l = (l << 1)
           if f(op(sm, d[l])) {
             sm = op(sm, d[l])
             l += 1
@@ -303,6 +329,7 @@ extension SegTree.Buffer {
     return _n
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func min_left(_ r: Int, _ f: (S) -> Bool) -> Int {
@@ -314,10 +341,10 @@ extension SegTree.Buffer {
     var sm: S = e()
     repeat {
       r -= 1
-      while r > 1 && r % 2 != 0 { r >>= 1 }
+      while r > 1 && (r & 1) != 0 { r >>= 1 }
       if !f(op(d[r], sm)) {
         while r < size {
-          r = (2 * r + 1)
+          r = (r << 1) + 1
           if f(op(d[r], sm)) {
             sm = op(d[r], sm)
             r -= 1
@@ -330,9 +357,10 @@ extension SegTree.Buffer {
     return 0
   }
 
+  @nonobjc
   @inlinable
   @inline(__always)
   func update(_ k: Int) {
-    d[k] = op(d[2 * k], d[2 * k + 1])
+    d[k] = op(d[k << 1], d[(k << 1) + 1])
   }
 }

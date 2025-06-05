@@ -55,7 +55,7 @@ public enum numeric_limit<T: ___numeric_limit> {
 }
 
 public
-protocol ___numeric_limit: Numeric
+  protocol ___numeric_limit: Numeric
 {
   static var __max: Self { get }
 }
@@ -65,7 +65,9 @@ extension FixedWidthInteger {
 }
 
 extension BinaryFloatingPoint {
-  @inlinable @inline(__always) public static var __max: Self { _read { yield .greatestFiniteMagnitude } }
+  @inlinable @inline(__always) public static var __max: Self {
+    _read { yield .greatestFiniteMagnitude }
+  }
 }
 
 extension Int16: ___numeric_limit {}
@@ -87,6 +89,7 @@ public protocol NumericCastVisitor {
   func cast(_ value: Cap) -> Cost
 }
 
+@frozen
 public struct IntegerToIntegerVisitor<Cap: BinaryInteger, Cost: BinaryInteger>:
   NumericCastVisitor
 {
@@ -95,6 +98,7 @@ public struct IntegerToIntegerVisitor<Cap: BinaryInteger, Cost: BinaryInteger>:
   }
 }
 
+@frozen
 public struct IntegerToFloatVisitor<Cap: BinaryInteger, Cost: BinaryFloatingPoint>:
   NumericCastVisitor
 {
@@ -103,6 +107,7 @@ public struct IntegerToFloatVisitor<Cap: BinaryInteger, Cost: BinaryFloatingPoin
   }
 }
 
+@frozen
 public struct FloatToIntegerVisitor<Cap: BinaryFloatingPoint, Cost: BinaryInteger>:
   NumericCastVisitor
 {
@@ -111,6 +116,7 @@ public struct FloatToIntegerVisitor<Cap: BinaryFloatingPoint, Cost: BinaryIntege
   }
 }
 
+@frozen
 public struct FloatToFloatVisitor<Cap: BinaryFloatingPoint, Cost: BinaryFloatingPoint>:
   NumericCastVisitor
 {
@@ -119,6 +125,7 @@ public struct FloatToFloatVisitor<Cap: BinaryFloatingPoint, Cost: BinaryFloating
   }
 }
 
+@frozen
 public struct AnyNumericCastVisitor<Cap, Cost>: NumericCastVisitor {
   private let _cast: (Cap) -> Cost
   public init<V: NumericCastVisitor>(_ visitor: V) where V.Cap == Cap, V.Cost == Cost {

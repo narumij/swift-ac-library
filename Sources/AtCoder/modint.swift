@@ -6,6 +6,7 @@ public protocol dynamic_modint_base: modint_base {
   static func set_mod(_ m: CInt)
 }
 
+@frozen
 public struct static_modint<m: static_mod>: static_modint_base & modint_raw {
   @usableFromInline
   typealias static_mod = m
@@ -118,6 +119,7 @@ extension static_modint {
   var isPrime: Bool { _read { yield m.isPrime } }
 }
 
+@frozen
 public struct dynamic_modint<bt: dynamic_mod>: dynamic_modint_base & modint_raw {
 
   @inlinable @inline(__always)
