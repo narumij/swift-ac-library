@@ -152,16 +152,16 @@ extension _Internal {
             let offset = s << (h &- len)
             for i in 0 ..< p {
               let mod2: UInt = umod &* umod
-              let a0: UInt = a[i &+ offset].value()
-              let a1: UInt = a[i &+ offset &+ p].value() &* rot.value()
-              let a2: UInt = a[i &+ offset &+ 2 &* p].value() &* rot2.value()
-              let a3: UInt = a[i &+ offset &+ 3 &* p].value() &* rot3.value()
-              let a1na3imag: UInt = 1 &* mint(ull: a1 &+ mod2 &- a3).value() &* imag.value()
+              let a0: UInt = a[i &+ offset].value
+              let a1: UInt = a[i &+ offset &+ p].value &* rot.value
+              let a2: UInt = a[i &+ offset &+ 2 &* p].value &* rot2.value
+              let a3: UInt = a[i &+ offset &+ 3 &* p].value &* rot3.value
+              let a1na3imag: UInt = 1 &* mint(UInt: a1 &+ mod2 &- a3).value &* imag.value
               let na2: UInt = mod2 &- a2
-              a[i &+ offset] = mint(ull: a0 &+ a2 &+ a1 &+ a3)
-              a[i &+ offset &+ p] = mint(ull: a0 &+ a2 &+ (2 * mod2 &- (a1 &+ a3)))
-              a[i &+ offset &+ 2 &* p] = mint(ull: a0 &+ na2 &+ a1na3imag)
-              a[i &+ offset &+ 3 &* p] = mint(ull: a0 &+ na2 &+ (mod2 &- a1na3imag))
+              a[i &+ offset] = mint(UInt: a0 &+ a2 &+ a1 &+ a3)
+              a[i &+ offset &+ p] = mint(UInt: a0 &+ a2 &+ (2 * mod2 &- (a1 &+ a3)))
+              a[i &+ offset &+ 2 &* p] = mint(UInt: a0 &+ na2 &+ a1na3imag)
+              a[i &+ offset &+ 3 &* p] = mint(UInt: a0 &+ na2 &+ (mod2 &- a1na3imag))
             }
             if s &+ 1 != 1 << len {
               rot *= info.rate3[min(32, (~s).trailingZeroBitCount)]
@@ -198,8 +198,8 @@ extension _Internal {
               let r = a[i &+ offset &+ p]
               a[i &+ offset] = l + r
               a[i &+ offset &+ p] = mint(
-              ull: (UInt(l.value() &- r.value() &+ UInt(mod.umod))
-                    &* irot.value()))
+              UInt: (l.value &- r.value &+ mod.umod)
+                    &* irot.value)
             }
             if s &+ 1 != 1 << (len &- 1) {
               irot *= info.irate2[min(32, (~s).trailingZeroBitCount)]
@@ -216,15 +216,15 @@ extension _Internal {
             let irot3 = irot2 * irot
             let offset = s << (h &- len &+ 2)
             for i in 0 ..< p {
-              let a0: UInt = a[i &+ offset].value()
-              let a1: UInt = a[i &+ offset &+ p].value()
-              let a2: UInt = a[i &+ offset &+ 2 &* p].value()
-              let a3: UInt = a[i &+ offset &+ 3 &* p].value()
-              let a2na3iimag: UInt = mint(ull: (umod &+ a2 &- a3) &* iimag.value()).value()
-              a[i &+ offset] = mint(ull: a0 &+ a1 &+ a2 &+ a3)
-              a[i &+ offset &+ p] = mint(ull: (a0 &+ (umod &- a1) &+ a2na3iimag) &* irot.value())
-              a[i &+ offset &+ 2 &* p] = mint(ull: (a0 &+ a1 &+ (umod &- a2) &+ (umod &- a3)) &* irot2.value())
-              a[i &+ offset &+ 3 &* p] = mint(ull: (a0 &+ (umod &- a1) &+ (umod &- a2na3iimag)) &* irot3.value())
+              let a0: UInt = a[i &+ offset].value
+              let a1: UInt = a[i &+ offset &+ p].value
+              let a2: UInt = a[i &+ offset &+ 2 &* p].value
+              let a3: UInt = a[i &+ offset &+ 3 &* p].value
+              let a2na3iimag: UInt = mint(UInt: (umod &+ a2 &- a3) &* iimag.value).value
+              a[i &+ offset] = mint(UInt: a0 &+ a1 &+ a2 &+ a3)
+              a[i &+ offset &+ p] = mint(UInt: (a0 &+ (umod &- a1) &+ a2na3iimag) &* irot.value)
+              a[i &+ offset &+ 2 &* p] = mint(UInt: (a0 &+ a1 &+ (umod &- a2) &+ (umod &- a3)) &* irot2.value)
+              a[i &+ offset &+ 3 &* p] = mint(UInt: (a0 &+ (umod &- a1) &+ (umod &- a2na3iimag)) &* irot3.value)
             }
             if s &+ 1 != 1 << (len &- 2) {
               irot *= info.irate3[min(32, (~s).trailingZeroBitCount)]

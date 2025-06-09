@@ -25,24 +25,16 @@ extension ArraySlice where Element: AdditiveArithmetic {
 }
 
 extension static_modint {
-  @inlinable
-  init(ull v: CUnsignedLongLong) {
-    _v = __modint_v(ull: v, umod: static_mod.umod)
-  }
 
   @inlinable
-  init(ull v: UInt) {
+  init(UInt v: UInt) {
     _v = v % static_mod.umod
   }
 
+//  @inlinable @inline(__always)
+//  func value() -> UInt { _v }
   @inlinable @inline(__always)
-  func value() -> UINT { UINT(_v) }
-  
-  @inlinable @inline(__always)
-  func value() -> ULL { ULL(_v) }
-  
-  @inlinable @inline(__always)
-  func value() -> UInt { _v }
+  var value: UInt { _read { yield _v } }
 }
 
 @usableFromInline
