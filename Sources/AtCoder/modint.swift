@@ -3,7 +3,7 @@ import Foundation
 public protocol static_modint_base: modint_base {}
 
 public protocol dynamic_modint_base: modint_base {
-  static func set_mod(_ m: CInt)
+  static func set_mod(_ m: Int)
 }
 
 @frozen
@@ -88,10 +88,10 @@ extension static_modint {
   }
   @inlinable
   public func pow<LL: SignedInteger>(_ n: LL) -> Self {
-    pow(CLongLong(n))
+    pow(Int(n))
   }
   @inlinable
-  public func pow(_ n: CLongLong) -> Self {
+  public func pow(_ n: Int) -> Self {
     assert(0 <= n)
     var n = n
     var x = self
@@ -107,11 +107,11 @@ extension static_modint {
   public var inv: Self {
     if isPrime {
       assert(_v != 0)
-      return pow(LL(Self.umod) - 2)
+      return pow(Int(Self.umod) - 2)
     } else {
-      let eg = _Internal.inv_gcd(LL(_v), LL(m.m))
+      let eg = _Internal.inv_gcd(Int(_v), Int(m.m))
       assert(eg.first == 1)
-      return Self.init(CInt(eg.second))
+      return Self.init(eg.second)
     }
   }
 
@@ -139,7 +139,7 @@ public struct dynamic_modint<bt: dynamic_mod>: dynamic_modint_base & modint_raw 
   var _v: UInt
 
   @inlinable
-  public static func set_mod(_ m: CInt) {
+  public static func set_mod(_ m: Int) {
     bt.set_mod(m)
   }
 }
@@ -205,11 +205,11 @@ extension dynamic_modint {
 
   @inlinable
   public func pow<LL: SignedInteger>(_ n: LL) -> Self {
-    pow(CLongLong(n))
+    pow(Int(n))
   }
 
   @inlinable
-  public func pow(_ n: CLongLong) -> Self {
+  public func pow(_ n: Int) -> Self {
     assert(0 <= n)
     var n = n
     var x = self
@@ -224,13 +224,13 @@ extension dynamic_modint {
 
   @inlinable
   public var inv: Self {
-    let eg = _Internal.inv_gcd(LL(_v), LL(Self.mod))
+    let eg = _Internal.inv_gcd(Int(_v), Int(Self.mod))
     assert(eg.first == 1)
-    return .init(CInt(eg.second))
+    return .init(eg.second)
   }
 
   @inlinable @inline(__always)
-  public static var umod: UInt { return UInt(bt.umod) }
+  public static var umod: UInt { return bt.umod }
 }
 
 public typealias modint998244353 = static_modint<mod_998_244_353>

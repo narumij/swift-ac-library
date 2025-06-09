@@ -41,17 +41,13 @@ public protocol dynamic_mod {
 
 extension dynamic_mod {
   @inlinable @inline(__always)
-  public static var umod: CUnsignedInt { bt.umod() }
-  @inlinable @inline(__always)
-  static func mul(_ a: CUnsignedInt, _ b: CUnsignedInt) -> CUnsignedInt {
-    bt.mul(a, b)
-  }
+  public static var umod: UInt { bt.umod() }
   @inlinable @inline(__always)
   static func mul(_ a: UInt, _ b: UInt) -> UInt {
     bt.mul(a, b)
   }
   @inlinable
-  public static func set_mod(_ m: CInt) {
+  public static func set_mod(_ m: Int) {
     assert(1 <= m)
     bt = .init(m)
   }
@@ -139,11 +135,6 @@ extension modint_base {
 // MARK: -
 
 @inlinable @inline(__always)
-func __modint_v(bool v: Bool, umod: CUnsignedInt) -> CUnsignedInt {
-  (v ? 1 : 0) % umod
-}
-
-@inlinable @inline(__always)
 func __modint_v(bool v: Bool, umod: UInt) -> UInt {
   (v ? 1 : 0) % umod
 }
@@ -159,32 +150,13 @@ func __modint_v(ull v: CUnsignedLongLong, umod: CUnsignedLongLong) -> CUnsignedI
 }
 
 @inlinable @inline(__always)
-func __modint_v(ull v: CUnsignedLongLong, umod: UInt) -> CUnsignedInt {
-  CUnsignedInt(v % CUnsignedLongLong(umod))
-}
-
-@inlinable @inline(__always)
 func __modint_v(ull v: CUnsignedLongLong, umod: UInt) -> UInt {
   UInt(v) % umod
 }
 
 @inlinable @inline(__always)
-func __modint_v<T: UnsignedInteger>(unsigned v: T, umod: CUnsignedInt) -> CUnsignedInt {
-  CUnsignedInt(v % T(umod))
-}
-
-@inlinable @inline(__always)
 func __modint_v<T: UnsignedInteger>(unsigned v: T, umod: UInt) -> UInt {
   UInt(v) % umod
-}
-
-@inlinable @inline(__always)
-func __modint_v<T: FixedWidthInteger>(_ v: T, umod: CUnsignedInt) -> CUnsignedInt {
-  let umod = T(umod)
-  var x = v % umod
-  if x < 0 { x += umod }
-  let x0 = CInt(x)
-  return CUnsignedInt(bitPattern: x0)
 }
 
 @inlinable @inline(__always)
