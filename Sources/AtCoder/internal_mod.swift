@@ -3,14 +3,18 @@ import Foundation
 // MARK: -
 
 public protocol static_mod {
-  static var umod: CUnsignedInt { get }
+  static var umod: UInt { get }
   // 素数判定を自動では行わないため、注意が必要
   static var isPrime: Bool { get }
 }
 
 extension static_mod {
-  @inlinable @inline(__always)
-  public static var m: CUnsignedInt { _read { yield umod } }
+  @inlinable
+  public static var m: UInt {
+    @inline(__always) _read {
+      yield umod
+    }
+  }
   @inlinable @inline(__always)
   public static var isPrime: Bool {
     assert(_Internal.is_prime(CInt(umod)), "\(umod) is not prime number.")
@@ -19,18 +23,18 @@ extension static_mod {
 }
 
 public enum mod_998_244_353: static_mod {
-  public static let umod: CUnsignedInt = 998_244_353
+  public static let umod: UInt = 998_244_353
 }
 
 public enum mod_1_000_000_007: static_mod {
-  public static let umod: CUnsignedInt = 1_000_000_007
+  public static let umod: UInt = 1_000_000_007
 }
 
 // MARK: -
 
 extension barrett: ExpressibleByIntegerLiteral {
   @inlinable @inline(__always)
-  public init(integerLiteral value: CInt) {
+  public init(integerLiteral value: Int) {
     self.init(value)
   }
 }
@@ -41,13 +45,13 @@ public protocol dynamic_mod {
 
 extension dynamic_mod {
   @inlinable @inline(__always)
-  public static var umod: CUnsignedInt { bt.umod() }
+  public static var umod: UInt { bt.umod() }
   @inlinable @inline(__always)
-  static func mul(_ a: CUnsignedInt, _ b: CUnsignedInt) -> CUnsignedInt {
+  static func mul(_ a: UInt, _ b: UInt) -> UInt {
     bt.mul(a, b)
   }
   @inlinable
-  public static func set_mod(_ m: CInt) {
+  public static func set_mod(_ m: Int) {
     assert(1 <= m)
     bt = .init(m)
   }
@@ -67,7 +71,7 @@ extension barrett: Equatable {
 
 public enum mod_dynamic: dynamic_mod {
   nonisolated(unsafe)
-  public static var bt: barrett = .default
+    public static var bt: barrett = .default
 }
 
 // MARK: -
@@ -79,7 +83,7 @@ public protocol modint_base: Hashable & AdditiveArithmetic
   init(_ v: Bool)
   init(_ v: CInt)
   init<T: FixedWidthInteger>(_ v: T)
-  var val: CInt { get }
+  var val: Int { get }
   static func + (lhs: Self, rhs: Self) -> Self
   static func - (lhs: Self, rhs: Self) -> Self
   static func * (lhs: Self, rhs: Self) -> Self
@@ -122,12 +126,6 @@ extension modint_base {
 }
 
 extension modint_base {
-  @usableFromInline typealias ULL = CUnsignedLongLong
-  @usableFromInline typealias LL = CLongLong
-  @usableFromInline typealias UINT = CUnsignedInt
-}
-
-extension modint_base {
   @inlinable
   public var description: String { val.description }
 }
@@ -135,41 +133,36 @@ extension modint_base {
 // MARK: -
 
 @inlinable @inline(__always)
-func __modint_v(bool v: Bool, umod: CUnsignedInt) -> CUnsignedInt {
+func __modint_v(bool v: Bool, umod: UInt) -> UInt {
   (v ? 1 : 0) % umod
 }
 
 @inlinable @inline(__always)
-func __modint_v(ull v: CUnsignedLongLong, umod: CUnsignedInt) -> CUnsignedInt {
-  CUnsignedInt(v % CUnsignedLongLong(umod))
+func __modint_v(UInt v: UInt, umod: UInt) -> UInt {
+  v % umod
 }
 
 @inlinable @inline(__always)
-func __modint_v(ull v: CUnsignedLongLong, umod: CUnsignedLongLong) -> CUnsignedInt {
-  CUnsignedInt(v % umod)
+func __modint_v<T: UnsignedInteger>(unsigned v: T, umod: UInt) -> UInt {
+  UInt(v) % umod
 }
 
 @inlinable @inline(__always)
-func __modint_v<T: UnsignedInteger>(unsigned v: T, umod: CUnsignedInt) -> CUnsignedInt {
-  CUnsignedInt(v % T(umod))
-}
-
-@inlinable @inline(__always)
-func __modint_v<T: FixedWidthInteger>(_ v: T, umod: CUnsignedInt) -> CUnsignedInt {
+func __modint_v<T: FixedWidthInteger>(_ v: T, umod: UInt) -> UInt {
   let umod = T(umod)
   var x = v % umod
   if x < 0 { x += umod }
-  let x0 = CInt(x)
-  return CUnsignedInt(bitPattern: x0)
+  let x0 = Int(x)
+  return UInt(bitPattern: x0)
 }
 
 @usableFromInline
 protocol modint_raw {
-  init(raw: CUnsignedInt)
-  var _v: CUnsignedInt { get set }
-  var val: CInt { get }
-  static var mod: CInt { get }
-  static var umod: CUnsignedInt { get }
+  init(raw: UInt)
+  var _v: UInt { get set }
+  var val: Int { get }
+  static var mod: Int { get }
+  static var umod: UInt { get }
 }
 
 extension modint_raw {
@@ -186,16 +179,16 @@ extension modint_raw {
 
 extension modint_raw {
   @inlinable @inline(__always)
-  public init(integerLiteral value: CInt) {
+  public init(integerLiteral value: Int) {
     self.init(value)
   }
 }
 
 extension modint_raw {
   @inlinable @inline(__always)
-  public init(bitPattern i: CUnsignedInt) {
+  public init(bitPattern i: UInt) {
     self.init(raw: __modint_v(unsigned: i, umod: Self.umod))
   }
   @inlinable @inline(__always)
-  public var unsigned: CUnsignedInt { .init(bitPattern: val) }
+  public var unsigned: UInt { .init(bitPattern: val) }
 }

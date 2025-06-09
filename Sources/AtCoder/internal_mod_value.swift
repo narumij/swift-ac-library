@@ -8,14 +8,14 @@ import Foundation
 
 public struct mod_value {
 
-  @inlinable
+  @inlinable @inline(__always)
   public init<Integer: BinaryInteger>(_ m: Integer) {
-    self.umod = CUnsignedInt(m)
+    self.umod = UInt(m)
     self.isPrime = _Internal.is_prime(CInt(m))
   }
 
   @usableFromInline
-  let umod: CUnsignedInt
+  let umod: UInt
 
   @usableFromInline
   let isPrime: Bool
@@ -31,19 +31,30 @@ extension mod_value {
 extension mod_value: ExpressibleByIntegerLiteral {
   @inlinable @inline(__always)
   public init(integerLiteral value: CInt) {
-    self.umod = CUnsignedInt(bitPattern: value)
+    self.umod = UInt(bitPattern: Int(value))
     self.isPrime = _Internal.is_prime(value)
   }
 }
 
 public
-protocol static_mod_value: static_mod {
+  protocol static_mod_value: static_mod
+{
   static var mod: mod_value { get }
 }
 
 extension static_mod_value {
-  public
-  static var umod: CUnsignedInt { _read { yield mod.umod } }
-  public
-  static var isPrime: Bool { _read { yield mod.isPrime } }
+
+  @inlinable
+  public static var umod: UInt {
+    @inline(__always) _read {
+      yield mod.umod
+    }
+  }
+
+  @inlinable
+  public static var isPrime: Bool {
+    @inline(__always) _read {
+      yield mod.isPrime
+    }
+  }
 }

@@ -14,9 +14,10 @@ extension _Internal {
     var rate2, irate2: [mint]
     @usableFromInline
     var rate3, irate3: [mint]
-    
+
     @inlinable @inline(__always)
-    init(root: [mint], iroot: [mint], rate2: [mint], irate2: [mint], rate3: [mint], irate3: [mint]) {
+    init(root: [mint], iroot: [mint], rate2: [mint], irate2: [mint], rate3: [mint], irate3: [mint])
+    {
       self.root = root
       self.iroot = iroot
       self.rate2 = rate2
@@ -28,7 +29,7 @@ extension _Internal {
     @inlinable
     public init() {
 
-      let g: CInt = _Internal.primitive_root(mint.mod)
+      let g: CInt = _Internal.primitive_root(INT(mint.mod))
       let rank2: Int = _Internal.countr_zero_constexpr(mint.mod - 1)
 
       root = [mint](repeating: 0, count: rank2 + 1)  // root[i]^(2^i) == 1
@@ -110,7 +111,7 @@ extension _Internal {
           rate3: rate3, irate3: irate3))
     }
   }
-  
+
   @inline(never)
   @inlinable
   static func butterfly<mod: static_mod>(
@@ -120,18 +121,18 @@ extension _Internal {
     let info = __static_const_fft_info.info(mod.self)
 
     info._unsafe { info in
-      
+
       let h: Int = min(32, a.count.trailingZeroBitCount)
-      let umod = ULL(mod.umod)      
+      let umod = mod.umod
       var len: Int = 0  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
 
       while len < h {
         if h &- len == 1 {
           let p = 1 << (h &- len &- 1)
           var rot: mint = 1
-          for s in 0 ..< 1 << len {
+          for s in 0..<1 << len {
             let offset = s << (h &- len)
-            for i in 0 ..< p {
+            for i in 0..<p {
               let l = a[i &+ offset]
               let r = a[i &+ offset &+ p] * rot
               a[i &+ offset] = l + r
@@ -147,22 +148,22 @@ extension _Internal {
           let p = 1 << (h &- len &- 2)
           var rot: mint = 1
           let imag = info.root[2]
-          for s in 0 ..< 1 << len {
+          for s in 0..<1 << len {
             let rot2 = rot * rot
             let rot3 = rot2 * rot
             let offset = s << (h &- len)
-            for i in 0 ..< p {
-              let mod2: ULL = umod &* umod
-              let a0: ULL = a[i &+ offset].value()
-              let a1: ULL = a[i &+ offset &+ p].value() &* rot.value()
-              let a2: ULL = a[i &+ offset &+ 2 &* p].value() &* rot2.value()
-              let a3: ULL = a[i &+ offset &+ 3 &* p].value() &* rot3.value()
-              let a1na3imag: ULL = 1 &* mint(ull: a1 &+ mod2 &- a3).value() &* imag.value()
-              let na2: ULL = mod2 &- a2
-              a[i &+ offset] = mint(ull: a0 &+ a2 &+ a1 &+ a3)
-              a[i &+ offset &+ p] = mint(ull: a0 &+ a2 &+ (2 * mod2 &- (a1 &+ a3)))
-              a[i &+ offset &+ 2 &* p] = mint(ull: a0 &+ na2 &+ a1na3imag)
-              a[i &+ offset &+ 3 &* p] = mint(ull: a0 &+ na2 &+ (mod2 &- a1na3imag))
+            for i in 0..<p {
+              let mod2: UInt = umod &* umod
+              let a0: UInt = a[i &+ offset].value
+              let a1: UInt = a[i &+ offset &+ p].value &* rot.value
+              let a2: UInt = a[i &+ offset &+ 2 &* p].value &* rot2.value
+              let a3: UInt = a[i &+ offset &+ 3 &* p].value &* rot3.value
+              let a1na3imag: UInt = 1 &* mint(UInt: a1 &+ mod2 &- a3).value &* imag.value
+              let na2: UInt = mod2 &- a2
+              a[i &+ offset] = mint(UInt: a0 &+ a2 &+ a1 &+ a3)
+              a[i &+ offset &+ p] = mint(UInt: a0 &+ a2 &+ (2 * mod2 &- (a1 &+ a3)))
+              a[i &+ offset &+ 2 &* p] = mint(UInt: a0 &+ na2 &+ a1na3imag)
+              a[i &+ offset &+ 3 &* p] = mint(UInt: a0 &+ na2 &+ (mod2 &- a1na3imag))
             }
             if s &+ 1 != 1 << len {
               rot *= info.rate3[min(32, (~s).trailingZeroBitCount)]
@@ -185,22 +186,22 @@ extension _Internal {
     info._unsafe { info in
 
       let h: Int = min(32, a.count.trailingZeroBitCount)
-      let umod = ULL(mod.umod)
+      let umod = mod.umod
       var len = h  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
 
       while len != 0 {
         if len == 1 {
           let p = 1 << (h &- len)
           var irot: mint = 1
-          for s in 0 ..< 1 << (len &- 1) {
+          for s in 0..<1 << (len &- 1) {
             let offset = s << (h &- len &+ 1)
-            for i in 0 ..< p {
+            for i in 0..<p {
               let l = a[i &+ offset]
               let r = a[i &+ offset &+ p]
               a[i &+ offset] = l + r
               a[i &+ offset &+ p] = mint(
-              ull: (ULL(l.value() &- r.value() &+ mod.umod)
-                    &* irot.value()))
+                UInt: (l.value &- r.value &+ umod)
+                  &* irot.value)
             }
             if s &+ 1 != 1 << (len &- 1) {
               irot *= info.irate2[min(32, (~s).trailingZeroBitCount)]
@@ -212,20 +213,22 @@ extension _Internal {
           let p = 1 << (h &- len)
           var irot: mint = 1
           let iimag = info.iroot[2]
-          for s in 0 ..< 1 << (len &- 2) {
+          for s in 0..<1 << (len &- 2) {
             let irot2 = irot * irot
             let irot3 = irot2 * irot
             let offset = s << (h &- len &+ 2)
-            for i in 0 ..< p {
-              let a0: ULL = a[i &+ offset].value()
-              let a1: ULL = a[i &+ offset &+ p].value()
-              let a2: ULL = a[i &+ offset &+ 2 &* p].value()
-              let a3: ULL = a[i &+ offset &+ 3 &* p].value()
-              let a2na3iimag: ULL = mint(ull: (umod &+ a2 &- a3) &* iimag.value()).value()
-              a[i &+ offset] = mint(ull: a0 &+ a1 &+ a2 &+ a3)
-              a[i &+ offset &+ p] = mint(ull: (a0 &+ (umod &- a1) &+ a2na3iimag) &* irot.value())
-              a[i &+ offset &+ 2 &* p] = mint(ull: (a0 &+ a1 &+ (umod &- a2) &+ (umod &- a3)) &* irot2.value())
-              a[i &+ offset &+ 3 &* p] = mint(ull: (a0 &+ (umod &- a1) &+ (umod &- a2na3iimag)) &* irot3.value())
+            for i in 0..<p {
+              let a0: UInt = a[i &+ offset].value
+              let a1: UInt = a[i &+ offset &+ p].value
+              let a2: UInt = a[i &+ offset &+ 2 &* p].value
+              let a3: UInt = a[i &+ offset &+ 3 &* p].value
+              let a2na3iimag: UInt = mint(UInt: (umod &+ a2 &- a3) &* iimag.value).value
+              a[i &+ offset] = mint(UInt: a0 &+ a1 &+ a2 &+ a3)
+              a[i &+ offset &+ p] = mint(UInt: (a0 &+ (umod &- a1) &+ a2na3iimag) &* irot.value)
+              a[i &+ offset &+ 2 &* p] = mint(
+                UInt: (a0 &+ a1 &+ (umod &- a2) &+ (umod &- a3)) &* irot2.value)
+              a[i &+ offset &+ 3 &* p] = mint(
+                UInt: (a0 &+ (umod &- a1) &+ (umod &- a2na3iimag)) &* irot3.value)
             }
             if s &+ 1 != 1 << (len &- 2) {
               irot *= info.irate3[min(32, (~s).trailingZeroBitCount)]
@@ -300,8 +303,8 @@ public func convolution<mod: static_mod>(
 ) -> ArraySlice<static_modint<mod>> {
   let (n, m) = (a.count, b.count)
   if n == 0 || m == 0 { return [] }
-//  let z: CInt = _Internal.bit_ceil(n + m - 1)
-  assert((static_modint<mod>.mod - 1) % CInt(_Internal.bit_ceil(n + m - 1)) == 0)
+  //  let z: CInt = _Internal.bit_ceil(n + m - 1)
+  assert((static_modint<mod>.mod - 1) % Int(_Internal.bit_ceil(n + m - 1)) == 0)
   if min(n, m) <= 60 {
     return a.withUnsafeBufferPointer { a in
       b.withUnsafeBufferPointer { b in
@@ -377,15 +380,15 @@ public func convolution_ll(
     static let M1M2: ULL = MOD1 &* MOD2
     static let M1M2M3: ULL = MOD1 &* MOD2 &* MOD3
     enum mod1: static_mod {
-      static let umod = CUnsignedInt(MOD1)
+      static let umod = UInt(MOD1)
       static let isPrime: Bool = false
     }
     enum mod2: static_mod {
-      static let umod = CUnsignedInt(MOD2)
+      static let umod = UInt(MOD2)
       static let isPrime: Bool = false
     }
     enum mod3: static_mod {
-      static let umod = CUnsignedInt(MOD3)
+      static let umod = UInt(MOD3)
       static let isPrime: Bool = false
     }
     static let i1 = ULL(_Internal.inv_gcd(LL(MOD2) * LL(MOD3), LL(MOD1)).second)
@@ -454,5 +457,3 @@ public func convolution_ll(
 
   return c
 }
-
-

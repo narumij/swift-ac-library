@@ -25,22 +25,20 @@ extension ArraySlice where Element: AdditiveArithmetic {
 }
 
 extension static_modint {
+
   @inlinable
-  init(ull v: CUnsignedLongLong) {
-    _v = __modint_v(ull: v, umod: static_mod.umod)
+  init(UInt v: UInt) {
+    _v = __modint_v(UInt: v, umod: static_mod.umod)
   }
-  
+
   @inlinable @inline(__always)
-  func value() -> UINT { _v }
-  
-  @inlinable @inline(__always)
-  func value() -> ULL { ULL(_v) }
+  var value: UInt { _read { yield _v } }
 }
 
 @usableFromInline
 protocol __cached_fft_info {}
 
-extension _Internal.fft_info: __cached_fft_info { }
+extension _Internal.fft_info: __cached_fft_info {}
 
 extension _Internal {
 
@@ -49,7 +47,7 @@ extension _Internal {
 
     @usableFromInline
     nonisolated(unsafe)
-      static var cache: [UINT: __cached_fft_info] = [:]
+      static var cache: [UInt: __cached_fft_info] = [:]
 
     @inlinable
     static func info<MOD: static_mod>(_ t: MOD.Type) -> fft_info<MOD> {
@@ -125,17 +123,17 @@ extension _Internal {
 
 @usableFromInline
 enum mod_754_974_721: static_mod {
-  public static let umod: CUnsignedInt = 754_974_721
+  public static let umod: UInt = 754_974_721
 }
 
 @usableFromInline
 enum mod_167_772_161: static_mod {
-  public static let umod: CUnsignedInt = 167_772_161
+  public static let umod: UInt = 167_772_161
 }
 
 @usableFromInline
 enum mod_469_762_049: static_mod {
-  public static let umod: CUnsignedInt = 469_762_049
+  public static let umod: UInt = 469_762_049
 }
 
 extension _Internal {

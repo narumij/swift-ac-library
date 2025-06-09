@@ -3,7 +3,7 @@ import Foundation
 public protocol static_modint_base: modint_base {}
 
 public protocol dynamic_modint_base: modint_base {
-  static func set_mod(_ m: CInt)
+  static func set_mod(_ m: Int)
 }
 
 @frozen
@@ -13,28 +13,32 @@ public struct static_modint<m: static_mod>: static_modint_base & modint_raw {
 
   @inlinable @inline(__always)
   public init() {
-      _v = 0
+    _v = 0
   }
 
   @inlinable @inline(__always)
-  init(raw v: CUnsignedInt) {
+  init(raw v: UInt) {
     _v = v
   }
 
   @usableFromInline
-  var _v: CUnsignedInt
+  var _v: UInt
 }
 
 extension static_modint {
 
   @inlinable @inline(__always)
-  public static var mod: CInt { return CInt(bitPattern: m.umod) }
+  public static var mod: Int { return Int(bitPattern: m.umod) }
+
+  @inlinable
+  public var uval: UInt {
+    @inline(__always) _read {
+      yield _v
+    }
+  }
 
   @inlinable @inline(__always)
-  public var uval: CUnsignedInt { _read { yield _v } }
-
-  @inlinable @inline(__always)
-  public var val: CInt { return .init(bitPattern: _v) }
+  public var val: Int { return Int(bitPattern: _v) }
 
   @inlinable
   public static func += (lhs: inout Self, rhs: Self) {
@@ -48,9 +52,9 @@ extension static_modint {
   }
   @inlinable
   public static func *= (lhs: inout Self, rhs: Self) {
-    var z: ULL = ULL(lhs._v)
-    z &*= ULL(rhs._v)
-    lhs._v = UINT(z % ULL(umod))
+    var z = lhs._v
+    z &*= rhs._v
+    lhs._v = z % umod
   }
   @inlinable
   public static func /= (lhs: inout Self, rhs: Self) {
@@ -64,34 +68,34 @@ extension static_modint {
   public static prefix func - (_ m: Self) -> Self {
     return .init(raw: 0) - m
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static func + (lhs: Self, rhs: Self) -> Self {
     var _v = lhs._v &+ rhs._v
     if _v >= umod { _v &-= umod }
     return .init(raw: _v)
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static func - (lhs: Self, rhs: Self) -> Self {
     var _v = lhs._v &- rhs._v
     if _v >= umod { _v &+= umod }
     return .init(raw: _v)
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static func * (lhs: Self, rhs: Self) -> Self {
-    var z: ULL = ULL(lhs._v)
-    z &*= ULL(rhs._v)
-    return .init(raw: UINT(z % ULL(umod)))
+    var z = lhs._v
+    z &*= rhs._v
+    return .init(raw: z % umod)
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static func / (lhs: Self, rhs: Self) -> Self {
     lhs * rhs.inv
   }
-  @inlinable
+  @inlinable @inline(__always)
   public func pow<LL: SignedInteger>(_ n: LL) -> Self {
-    pow(CLongLong(n))
+    pow(Int(n))
   }
   @inlinable
-  public func pow(_ n: CLongLong) -> Self {
+  public func pow(_ n: Int) -> Self {
     assert(0 <= n)
     var n = n
     var x = self
@@ -103,23 +107,31 @@ extension static_modint {
     }
     return r
   }
-  @inlinable
+  @inlinable @inline(__always)
   public var inv: Self {
     if isPrime {
       assert(_v != 0)
-      return pow(LL(Self.umod) - 2)
+      return pow(Int(Self.umod) - 2)
     } else {
-      let eg = _Internal.inv_gcd(LL(_v), LL(m.m))
+      let eg = _Internal.inv_gcd(Int(_v), Int(m.m))
       assert(eg.first == 1)
-      return Self.init(CInt(eg.second))
+      return Self.init(eg.second)
     }
   }
 
-  @inlinable @inline(__always)
-  public static var umod: CUnsignedInt { _read { yield m.umod } }
+  @inlinable
+  public static var umod: UInt {
+    @inline(__always) _read {
+      yield m.umod
+    }
+  }
 
-  @inlinable @inline(__always)
-  var isPrime: Bool { _read { yield m.isPrime } }
+  @inlinable
+  var isPrime: Bool {
+    @inline(__always) _read {
+      yield m.isPrime
+    }
+  }
 }
 
 @frozen
@@ -127,19 +139,19 @@ public struct dynamic_modint<bt: dynamic_mod>: dynamic_modint_base & modint_raw 
 
   @inlinable @inline(__always)
   public init() {
-      _v = 0
+    _v = 0
   }
 
   @inlinable @inline(__always)
-  init(raw v: CUnsignedInt) {
+  init(raw v: UInt) {
     _v = v
   }
 
   @usableFromInline
-  var _v: CUnsignedInt
+  var _v: UInt
 
   @inlinable
-  public static func set_mod(_ m: CInt) {
+  public static func set_mod(_ m: Int) {
     bt.set_mod(m)
   }
 }
@@ -147,13 +159,17 @@ public struct dynamic_modint<bt: dynamic_mod>: dynamic_modint_base & modint_raw 
 extension dynamic_modint {
 
   @inlinable @inline(__always)
-  public static var mod: CInt { return CInt(bitPattern: bt.umod) }
-
-  @inlinable @inline(__always)
-  public var uval: CUnsignedInt { _read { yield _v } }
+  public static var mod: Int { return Int(bitPattern: UInt(bt.umod)) }
 
   @inlinable
-  public var val: CInt { return .init(bitPattern: _v) }
+  public var uval: UInt {
+    @inline(__always) _read {
+      yield _v
+    }
+  }
+
+  @inlinable @inline(__always)
+  public var val: Int { return .init(bitPattern: _v) }
 
   @inlinable
   public static func += (lhs: inout Self, rhs: Self) {
@@ -173,43 +189,43 @@ extension dynamic_modint {
   public static func /= (lhs: inout Self, rhs: Self) {
     lhs *= rhs.inv
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static prefix func + (_ m: Self) -> Self {
     return m
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static prefix func - (_ m: Self) -> Self {
     return .init(raw: 0) - m
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static func + (lhs: Self, rhs: Self) -> Self {
     var _v = lhs._v &+ rhs._v
     if _v >= umod { _v &-= umod }
     return .init(raw: _v)
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static func - (lhs: Self, rhs: Self) -> Self {
     var _v = lhs._v &+ umod &- rhs._v
     if _v >= umod { _v &-= umod }
     return .init(raw: _v)
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static func * (lhs: Self, rhs: Self) -> Self {
     let _v = bt.mul(lhs._v, rhs._v)
     return .init(raw: _v)
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static func / (lhs: Self, rhs: Self) -> Self {
     lhs * rhs.inv
   }
 
-  @inlinable
+  @inlinable @inline(__always)
   public func pow<LL: SignedInteger>(_ n: LL) -> Self {
-    pow(CLongLong(n))
+    pow(Int(n))
   }
 
   @inlinable
-  public func pow(_ n: CLongLong) -> Self {
+  public func pow(_ n: Int) -> Self {
     assert(0 <= n)
     var n = n
     var x = self
@@ -222,15 +238,15 @@ extension dynamic_modint {
     return r
   }
 
-  @inlinable
+  @inlinable @inline(__always)
   public var inv: Self {
-    let eg = _Internal.inv_gcd(LL(_v), LL(Self.mod))
+    let eg = _Internal.inv_gcd(Int(_v), Int(Self.mod))
     assert(eg.first == 1)
-    return .init(CInt(eg.second))
+    return .init(eg.second)
   }
 
   @inlinable @inline(__always)
-  public static var umod: CUnsignedInt { return bt.umod }
+  public static var umod: UInt { return bt.umod }
 }
 
 public typealias modint998244353 = static_modint<mod_998_244_353>
