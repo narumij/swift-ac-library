@@ -13,7 +13,7 @@ public struct static_modint<m: static_mod>: static_modint_base & modint_raw {
 
   @inlinable @inline(__always)
   public init() {
-      _v = 0
+    _v = 0
   }
 
   @inlinable @inline(__always)
@@ -30,8 +30,12 @@ extension static_modint {
   @inlinable @inline(__always)
   public static var mod: Int { return Int(bitPattern: m.umod) }
 
-  @inlinable @inline(__always)
-  public var uval: UInt { _read { yield _v } }
+  @inlinable
+  public var uval: UInt {
+    @inline(__always) _read {
+      yield _v
+    }
+  }
 
   @inlinable @inline(__always)
   public var val: Int { return Int(bitPattern: _v) }
@@ -115,11 +119,19 @@ extension static_modint {
     }
   }
 
-  @inlinable @inline(__always)
-  public static var umod: UInt { _read { yield m.umod } }
+  @inlinable
+  public static var umod: UInt {
+    @inline(__always) _read {
+      yield m.umod
+    }
+  }
 
-  @inlinable @inline(__always)
-  var isPrime: Bool { _read { yield m.isPrime } }
+  @inlinable
+  var isPrime: Bool {
+    @inline(__always) _read {
+      yield m.isPrime
+    }
+  }
 }
 
 @frozen
@@ -127,7 +139,7 @@ public struct dynamic_modint<bt: dynamic_mod>: dynamic_modint_base & modint_raw 
 
   @inlinable @inline(__always)
   public init() {
-      _v = 0
+    _v = 0
   }
 
   @inlinable @inline(__always)
@@ -149,8 +161,12 @@ extension dynamic_modint {
   @inlinable @inline(__always)
   public static var mod: Int { return Int(bitPattern: UInt(bt.umod)) }
 
-  @inlinable @inline(__always)
-  public var uval: UInt { _read { yield _v } }
+  @inlinable
+  public var uval: UInt {
+    @inline(__always) _read {
+      yield _v
+    }
+  }
 
   @inlinable @inline(__always)
   public var val: Int { return .init(bitPattern: _v) }

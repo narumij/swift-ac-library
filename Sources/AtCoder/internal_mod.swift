@@ -9,8 +9,12 @@ public protocol static_mod {
 }
 
 extension static_mod {
-  @inlinable @inline(__always)
-  public static var m: UInt { _read { yield umod } }
+  @inlinable
+  public static var m: UInt {
+    @inline(__always) _read {
+      yield umod
+    }
+  }
   @inlinable @inline(__always)
   public static var isPrime: Bool {
     assert(_Internal.is_prime(CInt(umod)), "\(umod) is not prime number.")
@@ -67,7 +71,7 @@ extension barrett: Equatable {
 
 public enum mod_dynamic: dynamic_mod {
   nonisolated(unsafe)
-  public static var bt: barrett = .default
+    public static var bt: barrett = .default
 }
 
 // MARK: -

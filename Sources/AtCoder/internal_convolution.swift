@@ -38,7 +38,7 @@ extension static_modint {
 @usableFromInline
 protocol __cached_fft_info {}
 
-extension _Internal.fft_info: __cached_fft_info { }
+extension _Internal.fft_info: __cached_fft_info {}
 
 extension _Internal {
 

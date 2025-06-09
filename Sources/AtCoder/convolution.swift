@@ -1,21 +1,23 @@
 import Foundation
+
 extension _Internal {
 
   @usableFromInline
   struct fft_info<mod: static_mod> {
-    
+
     @usableFromInline
     typealias mint = static_modint<mod>
-    
+
     @usableFromInline
     var root, iroot: [mint]
     @usableFromInline
     var rate2, irate2: [mint]
     @usableFromInline
     var rate3, irate3: [mint]
-    
+
     @inlinable @inline(__always)
-    init(root: [mint], iroot: [mint], rate2: [mint], irate2: [mint], rate3: [mint], irate3: [mint]) {
+    init(root: [mint], iroot: [mint], rate2: [mint], irate2: [mint], rate3: [mint], irate3: [mint])
+    {
       self.root = root
       self.iroot = iroot
       self.rate2 = rate2
@@ -23,34 +25,34 @@ extension _Internal {
       self.rate3 = rate3
       self.irate3 = irate3
     }
-    
+
     @inlinable
     public init() {
-      
+
       let g: CInt = _Internal.primitive_root(INT(mint.mod))
       let rank2: Int = _Internal.countr_zero_constexpr(mint.mod - 1)
-      
+
       root = [mint](repeating: 0, count: rank2 + 1)  // root[i]^(2^i) == 1
       iroot = [mint](repeating: 0, count: rank2 + 1)  // root[i] * iroot[i] == 1
-      
+
       rate2 = [mint](repeating: 0, count: max(0, rank2 - 2 + 1))
       irate2 = [mint](repeating: 0, count: max(0, rank2 - 2 + 1))
-      
+
       rate3 = [mint](repeating: 0, count: max(0, rank2 - 3 + 1))
       irate3 = [mint](repeating: 0, count: max(0, rank2 - 3 + 1))
-      
+
       root[rank2] = mint(g).pow(CLongLong((mint.mod - 1) >> rank2))
       iroot[rank2] = root[rank2].inv
-      
+
       root.withUnsafeMutableBufferPointer { root in
         iroot.withUnsafeMutableBufferPointer { iroot in
-          
+
           // for (int i = rank2 - 1; i >= 0; i--) {
           for i in stride(from: Int(rank2 - 1), through: 0, by: -1) {
             root[i] = root[i + 1] * root[i + 1]
             iroot[i] = iroot[i + 1] * iroot[i + 1]
           }
-          
+
           do {
             var prod: mint = 1
             var iprod: mint = 1
@@ -62,7 +64,7 @@ extension _Internal {
               iprod *= root[i + 2]
             }
           }
-          
+
           do {
             var prod: mint = 1
             var iprod: mint = 1
@@ -119,7 +121,7 @@ extension _Internal {
     let info = __static_const_fft_info.info(mod.self)
 
     info._unsafe { info in
-      
+
       let h: Int = min(32, a.count.trailingZeroBitCount)
       let umod = mod.umod
       var len: Int = 0  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
@@ -128,9 +130,9 @@ extension _Internal {
         if h &- len == 1 {
           let p = 1 << (h &- len &- 1)
           var rot: mint = 1
-          for s in 0 ..< 1 << len {
+          for s in 0..<1 << len {
             let offset = s << (h &- len)
-            for i in 0 ..< p {
+            for i in 0..<p {
               let l = a[i &+ offset]
               let r = a[i &+ offset &+ p] * rot
               a[i &+ offset] = l + r
@@ -146,11 +148,11 @@ extension _Internal {
           let p = 1 << (h &- len &- 2)
           var rot: mint = 1
           let imag = info.root[2]
-          for s in 0 ..< 1 << len {
+          for s in 0..<1 << len {
             let rot2 = rot * rot
             let rot3 = rot2 * rot
             let offset = s << (h &- len)
-            for i in 0 ..< p {
+            for i in 0..<p {
               let mod2: UInt = umod &* umod
               let a0: UInt = a[i &+ offset].value
               let a1: UInt = a[i &+ offset &+ p].value &* rot.value
@@ -191,15 +193,15 @@ extension _Internal {
         if len == 1 {
           let p = 1 << (h &- len)
           var irot: mint = 1
-          for s in 0 ..< 1 << (len &- 1) {
+          for s in 0..<1 << (len &- 1) {
             let offset = s << (h &- len &+ 1)
-            for i in 0 ..< p {
+            for i in 0..<p {
               let l = a[i &+ offset]
               let r = a[i &+ offset &+ p]
               a[i &+ offset] = l + r
               a[i &+ offset &+ p] = mint(
-              UInt: (l.value &- r.value &+ umod)
-                    &* irot.value)
+                UInt: (l.value &- r.value &+ umod)
+                  &* irot.value)
             }
             if s &+ 1 != 1 << (len &- 1) {
               irot *= info.irate2[min(32, (~s).trailingZeroBitCount)]
@@ -211,11 +213,11 @@ extension _Internal {
           let p = 1 << (h &- len)
           var irot: mint = 1
           let iimag = info.iroot[2]
-          for s in 0 ..< 1 << (len &- 2) {
+          for s in 0..<1 << (len &- 2) {
             let irot2 = irot * irot
             let irot3 = irot2 * irot
             let offset = s << (h &- len &+ 2)
-            for i in 0 ..< p {
+            for i in 0..<p {
               let a0: UInt = a[i &+ offset].value
               let a1: UInt = a[i &+ offset &+ p].value
               let a2: UInt = a[i &+ offset &+ 2 &* p].value
@@ -223,8 +225,10 @@ extension _Internal {
               let a2na3iimag: UInt = mint(UInt: (umod &+ a2 &- a3) &* iimag.value).value
               a[i &+ offset] = mint(UInt: a0 &+ a1 &+ a2 &+ a3)
               a[i &+ offset &+ p] = mint(UInt: (a0 &+ (umod &- a1) &+ a2na3iimag) &* irot.value)
-              a[i &+ offset &+ 2 &* p] = mint(UInt: (a0 &+ a1 &+ (umod &- a2) &+ (umod &- a3)) &* irot2.value)
-              a[i &+ offset &+ 3 &* p] = mint(UInt: (a0 &+ (umod &- a1) &+ (umod &- a2na3iimag)) &* irot3.value)
+              a[i &+ offset &+ 2 &* p] = mint(
+                UInt: (a0 &+ a1 &+ (umod &- a2) &+ (umod &- a3)) &* irot2.value)
+              a[i &+ offset &+ 3 &* p] = mint(
+                UInt: (a0 &+ (umod &- a1) &+ (umod &- a2na3iimag)) &* irot3.value)
             }
             if s &+ 1 != 1 << (len &- 2) {
               irot *= info.irate3[min(32, (~s).trailingZeroBitCount)]
@@ -299,7 +303,7 @@ public func convolution<mod: static_mod>(
 ) -> ArraySlice<static_modint<mod>> {
   let (n, m) = (a.count, b.count)
   if n == 0 || m == 0 { return [] }
-//  let z: CInt = _Internal.bit_ceil(n + m - 1)
+  //  let z: CInt = _Internal.bit_ceil(n + m - 1)
   assert((static_modint<mod>.mod - 1) % Int(_Internal.bit_ceil(n + m - 1)) == 0)
   if min(n, m) <= 60 {
     return a.withUnsafeBufferPointer { a in
