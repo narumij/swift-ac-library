@@ -1,13 +1,12 @@
 import Foundation
-
 extension _Internal {
 
   @usableFromInline
   struct fft_info<mod: static_mod> {
-
+    
     @usableFromInline
     typealias mint = static_modint<mod>
-
+    
     @usableFromInline
     var root, iroot: [mint]
     @usableFromInline
@@ -24,34 +23,34 @@ extension _Internal {
       self.rate3 = rate3
       self.irate3 = irate3
     }
-
+    
     @inlinable
     public init() {
-
-      let g: CInt = _Internal.primitive_root(mint.mod)
+      
+      let g: CInt = _Internal.primitive_root(INT(mint.mod))
       let rank2: Int = _Internal.countr_zero_constexpr(mint.mod - 1)
-
+      
       root = [mint](repeating: 0, count: rank2 + 1)  // root[i]^(2^i) == 1
       iroot = [mint](repeating: 0, count: rank2 + 1)  // root[i] * iroot[i] == 1
-
+      
       rate2 = [mint](repeating: 0, count: max(0, rank2 - 2 + 1))
       irate2 = [mint](repeating: 0, count: max(0, rank2 - 2 + 1))
-
+      
       rate3 = [mint](repeating: 0, count: max(0, rank2 - 3 + 1))
       irate3 = [mint](repeating: 0, count: max(0, rank2 - 3 + 1))
-
+      
       root[rank2] = mint(g).pow(CLongLong((mint.mod - 1) >> rank2))
       iroot[rank2] = root[rank2].inv
-
+      
       root.withUnsafeMutableBufferPointer { root in
         iroot.withUnsafeMutableBufferPointer { iroot in
-
+          
           // for (int i = rank2 - 1; i >= 0; i--) {
           for i in stride(from: Int(rank2 - 1), through: 0, by: -1) {
             root[i] = root[i + 1] * root[i + 1]
             iroot[i] = iroot[i + 1] * iroot[i + 1]
           }
-
+          
           do {
             var prod: mint = 1
             var iprod: mint = 1
@@ -63,7 +62,7 @@ extension _Internal {
               iprod *= root[i + 2]
             }
           }
-
+          
           do {
             var prod: mint = 1
             var iprod: mint = 1
@@ -110,7 +109,7 @@ extension _Internal {
           rate3: rate3, irate3: irate3))
     }
   }
-  
+
   @inline(never)
   @inlinable
   static func butterfly<mod: static_mod>(
@@ -199,7 +198,7 @@ extension _Internal {
               let r = a[i &+ offset &+ p]
               a[i &+ offset] = l + r
               a[i &+ offset &+ p] = mint(
-              ull: (ULL(l.value() &- r.value() &+ mod.umod)
+              ull: (ULL(l.value() &- r.value() &+ ULL(mod.umod))
                     &* irot.value()))
             }
             if s &+ 1 != 1 << (len &- 1) {
@@ -301,7 +300,7 @@ public func convolution<mod: static_mod>(
   let (n, m) = (a.count, b.count)
   if n == 0 || m == 0 { return [] }
 //  let z: CInt = _Internal.bit_ceil(n + m - 1)
-  assert((static_modint<mod>.mod - 1) % CInt(_Internal.bit_ceil(n + m - 1)) == 0)
+  assert((static_modint<mod>.mod - 1) % Int(_Internal.bit_ceil(n + m - 1)) == 0)
   if min(n, m) <= 60 {
     return a.withUnsafeBufferPointer { a in
       b.withUnsafeBufferPointer { b in
@@ -377,15 +376,15 @@ public func convolution_ll(
     static let M1M2: ULL = MOD1 &* MOD2
     static let M1M2M3: ULL = MOD1 &* MOD2 &* MOD3
     enum mod1: static_mod {
-      static let umod = CUnsignedInt(MOD1)
+      static let umod = UInt(MOD1)
       static let isPrime: Bool = false
     }
     enum mod2: static_mod {
-      static let umod = CUnsignedInt(MOD2)
+      static let umod = UInt(MOD2)
       static let isPrime: Bool = false
     }
     enum mod3: static_mod {
-      static let umod = CUnsignedInt(MOD3)
+      static let umod = UInt(MOD3)
       static let isPrime: Bool = false
     }
     static let i1 = ULL(_Internal.inv_gcd(LL(MOD2) * LL(MOD3), LL(MOD1)).second)
@@ -454,5 +453,3 @@ public func convolution_ll(
 
   return c
 }
-
-

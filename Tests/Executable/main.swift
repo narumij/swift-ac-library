@@ -1,5 +1,6 @@
 import AtCoder
 
+#if false
 typealias mint = modint998244353
 // std::mt19937 mt;
 let n = 524288
@@ -23,3 +24,4 @@ let b = (0..<m).map{ mint($0) }
 let c = convolution(a, b)
 
 print(c)
+#endif

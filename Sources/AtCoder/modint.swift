@@ -17,24 +17,24 @@ public struct static_modint<m: static_mod>: static_modint_base & modint_raw {
   }
 
   @inlinable @inline(__always)
-  init(raw v: CUnsignedInt) {
+  init(raw v: UInt) {
     _v = v
   }
 
   @usableFromInline
-  var _v: CUnsignedInt
+  var _v: UInt
 }
 
 extension static_modint {
 
   @inlinable @inline(__always)
-  public static var mod: CInt { return CInt(bitPattern: m.umod) }
+  public static var mod: Int { return Int(bitPattern: m.umod) }
 
   @inlinable @inline(__always)
-  public var uval: CUnsignedInt { _read { yield _v } }
+  public var uval: UInt { _read { yield _v } }
 
   @inlinable @inline(__always)
-  public var val: CInt { return .init(bitPattern: _v) }
+  public var val: Int { return .init(bitPattern: _v) }
 
   @inlinable
   public static func += (lhs: inout Self, rhs: Self) {
@@ -48,9 +48,9 @@ extension static_modint {
   }
   @inlinable
   public static func *= (lhs: inout Self, rhs: Self) {
-    var z: ULL = ULL(lhs._v)
-    z &*= ULL(rhs._v)
-    lhs._v = UINT(z % ULL(umod))
+    var z = lhs._v
+    z &*= rhs._v
+    lhs._v = z % umod
   }
   @inlinable
   public static func /= (lhs: inout Self, rhs: Self) {
@@ -78,9 +78,9 @@ extension static_modint {
   }
   @inlinable
   public static func * (lhs: Self, rhs: Self) -> Self {
-    var z: ULL = ULL(lhs._v)
-    z &*= ULL(rhs._v)
-    return .init(raw: UINT(z % ULL(umod)))
+    var z = lhs._v
+    z &*= rhs._v
+    return .init(raw: z % umod)
   }
   @inlinable
   public static func / (lhs: Self, rhs: Self) -> Self {
@@ -116,7 +116,7 @@ extension static_modint {
   }
 
   @inlinable @inline(__always)
-  public static var umod: CUnsignedInt { _read { yield m.umod } }
+  public static var umod: UInt { _read { yield m.umod } }
 
   @inlinable @inline(__always)
   var isPrime: Bool { _read { yield m.isPrime } }
@@ -131,12 +131,12 @@ public struct dynamic_modint<bt: dynamic_mod>: dynamic_modint_base & modint_raw 
   }
 
   @inlinable @inline(__always)
-  init(raw v: CUnsignedInt) {
+  init(raw v: UInt) {
     _v = v
   }
 
   @usableFromInline
-  var _v: CUnsignedInt
+  var _v: UInt
 
   @inlinable
   public static func set_mod(_ m: CInt) {
@@ -147,13 +147,13 @@ public struct dynamic_modint<bt: dynamic_mod>: dynamic_modint_base & modint_raw 
 extension dynamic_modint {
 
   @inlinable @inline(__always)
-  public static var mod: CInt { return CInt(bitPattern: bt.umod) }
+  public static var mod: Int { return Int(bitPattern: UInt(bt.umod)) }
 
   @inlinable @inline(__always)
-  public var uval: CUnsignedInt { _read { yield _v } }
+  public var uval: UInt { _read { yield _v } }
 
   @inlinable
-  public var val: CInt { return .init(bitPattern: _v) }
+  public var val: Int { return .init(bitPattern: _v) }
 
   @inlinable
   public static func += (lhs: inout Self, rhs: Self) {
@@ -230,7 +230,7 @@ extension dynamic_modint {
   }
 
   @inlinable @inline(__always)
-  public static var umod: CUnsignedInt { return bt.umod }
+  public static var umod: UInt { return UInt(bt.umod) }
 }
 
 public typealias modint998244353 = static_modint<mod_998_244_353>

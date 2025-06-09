@@ -31,7 +31,7 @@ extension static_modint {
   }
   
   @inlinable @inline(__always)
-  func value() -> UINT { _v }
+  func value() -> UINT { UINT(_v) }
   
   @inlinable @inline(__always)
   func value() -> ULL { ULL(_v) }
@@ -49,7 +49,7 @@ extension _Internal {
 
     @usableFromInline
     nonisolated(unsafe)
-      static var cache: [UINT: __cached_fft_info] = [:]
+      static var cache: [UInt: __cached_fft_info] = [:]
 
     @inlinable
     static func info<MOD: static_mod>(_ t: MOD.Type) -> fft_info<MOD> {
@@ -125,17 +125,17 @@ extension _Internal {
 
 @usableFromInline
 enum mod_754_974_721: static_mod {
-  public static let umod: CUnsignedInt = 754_974_721
+  public static let umod: UInt = 754_974_721
 }
 
 @usableFromInline
 enum mod_167_772_161: static_mod {
-  public static let umod: CUnsignedInt = 167_772_161
+  public static let umod: UInt = 167_772_161
 }
 
 @usableFromInline
 enum mod_469_762_049: static_mod {
-  public static let umod: CUnsignedInt = 469_762_049
+  public static let umod: UInt = 469_762_049
 }
 
 extension _Internal {
