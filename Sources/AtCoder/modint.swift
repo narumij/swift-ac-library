@@ -31,6 +31,9 @@ extension static_modint {
   public static var mod: CInt { return CInt(bitPattern: m.umod) }
 
   @inlinable @inline(__always)
+  public var uval: CUnsignedInt { _read { yield _v } }
+
+  @inlinable @inline(__always)
   public var val: CInt { return .init(bitPattern: _v) }
 
   @inlinable
@@ -145,6 +148,9 @@ extension dynamic_modint {
 
   @inlinable @inline(__always)
   public static var mod: CInt { return CInt(bitPattern: bt.umod) }
+
+  @inlinable @inline(__always)
+  public var uval: CUnsignedInt { _read { yield _v } }
 
   @inlinable
   public var val: CInt { return .init(bitPattern: _v) }
