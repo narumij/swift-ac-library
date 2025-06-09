@@ -34,7 +34,7 @@ extension static_modint {
   public var uval: UInt { _read { yield _v } }
 
   @inlinable @inline(__always)
-  public var val: Int { return .init(bitPattern: _v) }
+  public var val: Int { return Int(bitPattern: _v) }
 
   @inlinable
   public static func += (lhs: inout Self, rhs: Self) {
@@ -64,29 +64,29 @@ extension static_modint {
   public static prefix func - (_ m: Self) -> Self {
     return .init(raw: 0) - m
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static func + (lhs: Self, rhs: Self) -> Self {
     var _v = lhs._v &+ rhs._v
     if _v >= umod { _v &-= umod }
     return .init(raw: _v)
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static func - (lhs: Self, rhs: Self) -> Self {
     var _v = lhs._v &- rhs._v
     if _v >= umod { _v &+= umod }
     return .init(raw: _v)
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static func * (lhs: Self, rhs: Self) -> Self {
     var z = lhs._v
     z &*= rhs._v
     return .init(raw: z % umod)
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static func / (lhs: Self, rhs: Self) -> Self {
     lhs * rhs.inv
   }
-  @inlinable
+  @inlinable @inline(__always)
   public func pow<LL: SignedInteger>(_ n: LL) -> Self {
     pow(Int(n))
   }
@@ -103,7 +103,7 @@ extension static_modint {
     }
     return r
   }
-  @inlinable
+  @inlinable @inline(__always)
   public var inv: Self {
     if isPrime {
       assert(_v != 0)
@@ -152,7 +152,7 @@ extension dynamic_modint {
   @inlinable @inline(__always)
   public var uval: UInt { _read { yield _v } }
 
-  @inlinable
+  @inlinable @inline(__always)
   public var val: Int { return .init(bitPattern: _v) }
 
   @inlinable
@@ -173,37 +173,37 @@ extension dynamic_modint {
   public static func /= (lhs: inout Self, rhs: Self) {
     lhs *= rhs.inv
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static prefix func + (_ m: Self) -> Self {
     return m
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static prefix func - (_ m: Self) -> Self {
     return .init(raw: 0) - m
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static func + (lhs: Self, rhs: Self) -> Self {
     var _v = lhs._v &+ rhs._v
     if _v >= umod { _v &-= umod }
     return .init(raw: _v)
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static func - (lhs: Self, rhs: Self) -> Self {
     var _v = lhs._v &+ umod &- rhs._v
     if _v >= umod { _v &-= umod }
     return .init(raw: _v)
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static func * (lhs: Self, rhs: Self) -> Self {
     let _v = bt.mul(lhs._v, rhs._v)
     return .init(raw: _v)
   }
-  @inlinable
+  @inlinable @inline(__always)
   public static func / (lhs: Self, rhs: Self) -> Self {
     lhs * rhs.inv
   }
 
-  @inlinable
+  @inlinable @inline(__always)
   public func pow<LL: SignedInteger>(_ n: LL) -> Self {
     pow(Int(n))
   }
@@ -222,7 +222,7 @@ extension dynamic_modint {
     return r
   }
 
-  @inlinable
+  @inlinable @inline(__always)
   public var inv: Self {
     let eg = _Internal.inv_gcd(Int(_v), Int(Self.mod))
     assert(eg.first == 1)

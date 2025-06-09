@@ -30,7 +30,7 @@ public enum mod_1_000_000_007: static_mod {
 
 extension barrett: ExpressibleByIntegerLiteral {
   @inlinable @inline(__always)
-  public init(integerLiteral value: CInt) {
+  public init(integerLiteral value: Int) {
     self.init(value)
   }
 }
@@ -122,12 +122,6 @@ extension modint_base {
 }
 
 extension modint_base {
-  @usableFromInline typealias ULL = CUnsignedLongLong
-  @usableFromInline typealias LL = CLongLong
-  @usableFromInline typealias UINT = CUnsignedInt
-}
-
-extension modint_base {
   @inlinable
   public var description: String { val.description }
 }
@@ -139,19 +133,9 @@ func __modint_v(bool v: Bool, umod: UInt) -> UInt {
   (v ? 1 : 0) % umod
 }
 
-//@inlinable @inline(__always)
-//func __modint_v(ull v: CUnsignedLongLong, umod: CUnsignedInt) -> CUnsignedInt {
-//  CUnsignedInt(v % CUnsignedLongLong(umod))
-//}
-//
-//@inlinable @inline(__always)
-//func __modint_v(ull v: CUnsignedLongLong, umod: CUnsignedLongLong) -> CUnsignedInt {
-//  CUnsignedInt(v % umod)
-//}
-
 @inlinable @inline(__always)
-func __modint_v(ull v: CUnsignedLongLong, umod: UInt) -> UInt {
-  UInt(v) % umod
+func __modint_v(UInt v: UInt, umod: UInt) -> UInt {
+  v % umod
 }
 
 @inlinable @inline(__always)
@@ -191,7 +175,7 @@ extension modint_raw {
 
 extension modint_raw {
   @inlinable @inline(__always)
-  public init(integerLiteral value: CInt) {
+  public init(integerLiteral value: Int) {
     self.init(value)
   }
 }

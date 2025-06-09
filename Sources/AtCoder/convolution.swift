@@ -198,7 +198,7 @@ extension _Internal {
               let r = a[i &+ offset &+ p]
               a[i &+ offset] = l + r
               a[i &+ offset &+ p] = mint(
-              UInt: (l.value &- r.value &+ mod.umod)
+              UInt: (l.value &- r.value &+ umod)
                     &* irot.value)
             }
             if s &+ 1 != 1 << (len &- 1) {

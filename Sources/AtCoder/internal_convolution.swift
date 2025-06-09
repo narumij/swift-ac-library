@@ -28,11 +28,9 @@ extension static_modint {
 
   @inlinable
   init(UInt v: UInt) {
-    _v = v % static_mod.umod
+    _v = __modint_v(UInt: v, umod: static_mod.umod)
   }
 
-//  @inlinable @inline(__always)
-//  func value() -> UInt { _v }
   @inlinable @inline(__always)
   var value: UInt { _read { yield _v } }
 }
