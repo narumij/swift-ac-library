@@ -139,15 +139,15 @@ func __modint_v(bool v: Bool, umod: UInt) -> UInt {
   (v ? 1 : 0) % umod
 }
 
-@inlinable @inline(__always)
-func __modint_v(ull v: CUnsignedLongLong, umod: CUnsignedInt) -> CUnsignedInt {
-  CUnsignedInt(v % CUnsignedLongLong(umod))
-}
-
-@inlinable @inline(__always)
-func __modint_v(ull v: CUnsignedLongLong, umod: CUnsignedLongLong) -> CUnsignedInt {
-  CUnsignedInt(v % umod)
-}
+//@inlinable @inline(__always)
+//func __modint_v(ull v: CUnsignedLongLong, umod: CUnsignedInt) -> CUnsignedInt {
+//  CUnsignedInt(v % CUnsignedLongLong(umod))
+//}
+//
+//@inlinable @inline(__always)
+//func __modint_v(ull v: CUnsignedLongLong, umod: CUnsignedLongLong) -> CUnsignedInt {
+//  CUnsignedInt(v % umod)
+//}
 
 @inlinable @inline(__always)
 func __modint_v(ull v: CUnsignedLongLong, umod: UInt) -> UInt {
