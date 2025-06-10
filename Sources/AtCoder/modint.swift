@@ -17,7 +17,7 @@ public struct static_modint<m: static_mod>: static_modint_base & modint_raw {
   }
 
   @inlinable @inline(__always)
-  init(raw v: UInt) {
+  public init(raw v: UInt) {
     _v = v
   }
 
@@ -143,7 +143,7 @@ public struct dynamic_modint<bt: dynamic_mod>: dynamic_modint_base & modint_raw 
   }
 
   @inlinable @inline(__always)
-  init(raw v: UInt) {
+  public init(raw v: UInt) {
     _v = v
   }
 

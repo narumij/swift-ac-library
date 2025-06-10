@@ -187,8 +187,8 @@ extension modint_raw {
 extension modint_raw {
   @inlinable @inline(__always)
   public init(bitPattern i: UInt) {
-    self.init(raw: __modint_v(unsigned: i, umod: Self.umod))
+    self.init(raw: __modint_v(UInt: i, umod: Self.umod))
   }
   @inlinable @inline(__always)
-  public var unsigned: UInt { .init(bitPattern: val) }
+  public var unsigned: UInt { _v }
 }
