@@ -158,7 +158,7 @@ func __modint_v<T: FixedWidthInteger>(_ v: T, umod: UInt) -> UInt {
 
 @usableFromInline
 protocol modint_raw {
-  init(raw: UInt)
+  init(rawValue: UInt)
   var _v: UInt { get set }
   var val: Int { get }
   static var mod: Int { get }
@@ -169,11 +169,11 @@ extension modint_raw {
 
   @inlinable @inline(__always)
   public init(_ v: Bool) {
-    self.init(raw: __modint_v(bool: v, umod: Self.umod))
+    self.init(rawValue: __modint_v(bool: v, umod: Self.umod))
   }
   @inlinable @inline(__always)
   public init<T: FixedWidthInteger>(_ v: T) {
-    self.init(raw: __modint_v(v, umod: Self.umod))
+    self.init(rawValue: __modint_v(v, umod: Self.umod))
   }
 }
 
@@ -187,7 +187,7 @@ extension modint_raw {
 extension modint_raw {
   @inlinable @inline(__always)
   public init(bitPattern i: UInt) {
-    self.init(raw: __modint_v(UInt: i, umod: Self.umod))
+    self.init(rawValue: __modint_v(UInt: i, umod: Self.umod))
   }
   @inlinable @inline(__always)
   public var unsigned: UInt { _v }
