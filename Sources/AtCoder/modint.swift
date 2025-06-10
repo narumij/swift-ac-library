@@ -17,7 +17,7 @@ public struct static_modint<m: static_mod>: static_modint_base & modint_raw {
   }
 
   @inlinable @inline(__always)
-  init(raw v: UInt) {
+  public init(rawValue v: UInt) {
     _v = v
   }
 
@@ -66,25 +66,25 @@ extension static_modint {
   }
   @inlinable @inline(__always)
   public static prefix func - (_ m: Self) -> Self {
-    return .init(raw: 0) - m
+    return .init(rawValue: 0) - m
   }
   @inlinable @inline(__always)
   public static func + (lhs: Self, rhs: Self) -> Self {
     var _v = lhs._v &+ rhs._v
     if _v >= umod { _v &-= umod }
-    return .init(raw: _v)
+    return .init(rawValue: _v)
   }
   @inlinable @inline(__always)
   public static func - (lhs: Self, rhs: Self) -> Self {
     var _v = lhs._v &- rhs._v
     if _v >= umod { _v &+= umod }
-    return .init(raw: _v)
+    return .init(rawValue: _v)
   }
   @inlinable @inline(__always)
   public static func * (lhs: Self, rhs: Self) -> Self {
     var z = lhs._v
     z &*= rhs._v
-    return .init(raw: z % umod)
+    return .init(rawValue: z % umod)
   }
   @inlinable @inline(__always)
   public static func / (lhs: Self, rhs: Self) -> Self {
@@ -99,7 +99,7 @@ extension static_modint {
     assert(0 <= n)
     var n = n
     var x = self
-    var r: Self = .init(raw: 1)
+    var r: Self = .init(rawValue: 1)
     while n != 0 {
       if (n & 1) != 0 { r *= x }
       x *= x
@@ -143,7 +143,7 @@ public struct dynamic_modint<bt: dynamic_mod>: dynamic_modint_base & modint_raw 
   }
 
   @inlinable @inline(__always)
-  init(raw v: UInt) {
+  public init(rawValue v: UInt) {
     _v = v
   }
 
@@ -195,24 +195,24 @@ extension dynamic_modint {
   }
   @inlinable @inline(__always)
   public static prefix func - (_ m: Self) -> Self {
-    return .init(raw: 0) - m
+    return .init(rawValue: 0) - m
   }
   @inlinable @inline(__always)
   public static func + (lhs: Self, rhs: Self) -> Self {
     var _v = lhs._v &+ rhs._v
     if _v >= umod { _v &-= umod }
-    return .init(raw: _v)
+    return .init(rawValue: _v)
   }
   @inlinable @inline(__always)
   public static func - (lhs: Self, rhs: Self) -> Self {
     var _v = lhs._v &+ umod &- rhs._v
     if _v >= umod { _v &-= umod }
-    return .init(raw: _v)
+    return .init(rawValue: _v)
   }
   @inlinable @inline(__always)
   public static func * (lhs: Self, rhs: Self) -> Self {
     let _v = bt.mul(lhs._v, rhs._v)
-    return .init(raw: _v)
+    return .init(rawValue: _v)
   }
   @inlinable @inline(__always)
   public static func / (lhs: Self, rhs: Self) -> Self {
@@ -229,7 +229,7 @@ extension dynamic_modint {
     assert(0 <= n)
     var n = n
     var x = self
-    var r: Self = .init(raw: 1)
+    var r: Self = .init(rawValue: 1)
     while n != 0 {
       if (n & 1) != 0 { r *= x }
       x *= x

@@ -29,7 +29,7 @@ extension _Internal {
     @inlinable
     public init() {
 
-      let g: CInt = _Internal.primitive_root(INT(mint.mod))
+      let g: Int = _Internal.primitive_root(mint.mod)
       let rank2: Int = _Internal.countr_zero_constexpr(mint.mod - 1)
 
       root = [mint](repeating: 0, count: rank2 + 1)  // root[i]^(2^i) == 1

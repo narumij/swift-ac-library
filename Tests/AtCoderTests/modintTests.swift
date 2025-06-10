@@ -273,7 +273,8 @@ final class modintTests: XCTestCase {
       XCTAssertEqual(1, (ll(x) * ll(i) % ll(int.max)))
     }
 
-    if #available(macOS 15.0, *) {
+    if #available(macOS 15.0, *), false {
+      // テスト自体は通るが、modint全体で一旦CIntやCUnsignedIntの範囲に限定している
       modint.set_mod(Int.max)
       for i in 1..<100000 as Range<Int> {
         if gcd(i, Int.max) != 1 { continue }

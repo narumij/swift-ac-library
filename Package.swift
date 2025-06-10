@@ -42,6 +42,9 @@ let package = Package(
     .package(
       url: "https://github.com/apple/swift-numerics",
       revision: "2b458e8aeb9cf3f3a156f54ba427b9f101a4511a"),
+    .package(
+      url: "https://github.com/attaswift/BigInt",
+      exact: "5.5.1"),
   ],
   targets: [
     // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -58,6 +61,7 @@ let package = Package(
         "AtCoder",
         .product(name: "Algorithms", package: "swift-algorithms"),
         .product(name: "Numerics", package: "swift-numerics"),
+        .product(name: "BigInt", package: "BigInt"),
       ],
       swiftSettings: _settings),
     .executableTarget(

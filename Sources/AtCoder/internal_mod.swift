@@ -2,7 +2,10 @@ import Foundation
 
 // MARK: -
 
+// できるだけキャストを減らす修正の一環でCUunsignedIntではなくUIntを採用している
+// 内部計算に制限があり、UIntの幅全てが使えるわけでは無いことに注意
 public protocol static_mod {
+  /// - Important: 1 ... CInt.maxまで有効。それ以外は未定義
   static var umod: UInt { get }
   // 素数判定を自動では行わないため、注意が必要
   static var isPrime: Bool { get }
@@ -50,6 +53,7 @@ extension dynamic_mod {
   static func mul(_ a: UInt, _ b: UInt) -> UInt {
     bt.mul(a, b)
   }
+  /// - Important: 1 ... CInt.maxまで有効。それ以外は未定義
   @inlinable
   public static func set_mod(_ m: Int) {
     assert(1 <= m)
@@ -81,8 +85,9 @@ public protocol modint_base: Hashable & AdditiveArithmetic
 {
   init()
   init(_ v: Bool)
-  init(_ v: CInt)
+  init(_ v: Int)
   init<T: FixedWidthInteger>(_ v: T)
+  // できるだけキャストを減らす修正の一環でCIntではなくIntを採用している
   var val: Int { get }
   static func + (lhs: Self, rhs: Self) -> Self
   static func - (lhs: Self, rhs: Self) -> Self
@@ -158,7 +163,7 @@ func __modint_v<T: FixedWidthInteger>(_ v: T, umod: UInt) -> UInt {
 
 @usableFromInline
 protocol modint_raw {
-  init(raw: UInt)
+  init(rawValue: UInt)
   var _v: UInt { get set }
   var val: Int { get }
   static var mod: Int { get }
@@ -169,11 +174,11 @@ extension modint_raw {
 
   @inlinable @inline(__always)
   public init(_ v: Bool) {
-    self.init(raw: __modint_v(bool: v, umod: Self.umod))
+    self.init(rawValue: __modint_v(bool: v, umod: Self.umod))
   }
   @inlinable @inline(__always)
   public init<T: FixedWidthInteger>(_ v: T) {
-    self.init(raw: __modint_v(v, umod: Self.umod))
+    self.init(rawValue: __modint_v(v, umod: Self.umod))
   }
 }
 
@@ -187,8 +192,8 @@ extension modint_raw {
 extension modint_raw {
   @inlinable @inline(__always)
   public init(bitPattern i: UInt) {
-    self.init(raw: __modint_v(unsigned: i, umod: Self.umod))
+    self.init(rawValue: __modint_v(UInt: i, umod: Self.umod))
   }
   @inlinable @inline(__always)
-  public var unsigned: UInt { .init(bitPattern: val) }
+  public var unsigned: UInt { _v }
 }

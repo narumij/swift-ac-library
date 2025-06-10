@@ -2,10 +2,6 @@ import Foundation
 
 // MARK: -
 
-/*
- releaseビルドでテストが通る範囲を拡大したかったため、復帰
- */
-
 public struct mod_value {
 
   @inlinable @inline(__always)
@@ -30,9 +26,9 @@ extension mod_value {
 
 extension mod_value: ExpressibleByIntegerLiteral {
   @inlinable @inline(__always)
-  public init(integerLiteral value: CInt) {
-    self.umod = UInt(bitPattern: Int(value))
-    self.isPrime = _Internal.is_prime(value)
+  public init(integerLiteral value: Int) {
+    self.umod = UInt(bitPattern: value)
+    self.isPrime = _Internal.is_prime(CInt(value))
   }
 }
 
