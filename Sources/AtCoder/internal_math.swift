@@ -17,7 +17,7 @@ extension _Internal {
 /// Reference: https://en.wikipedia.org/wiki/Barrett_reduction
 /// NOTE: reconsider after Ice Lake
 public struct barrett {
-  
+
   @usableFromInline
   let m, im: UInt
 
@@ -55,16 +55,16 @@ public struct barrett {
     // ((ab * im) >> 64) == c or c + 1
     var z = UInt(a)
     z &*= UInt(b)
-#if os(macOS)
-    let x: UInt
-    if #available(macOS 15.0, *) {
-      x = UInt((UInt128(z) * UInt128(im)) >> 64)
-    } else {
-      x = z.multipliedFullWidth(by: im).high
-    }
-#else
-    let x = UInt((UInt128(z) * UInt128(im)) >> 64)
-#endif
+    #if os(macOS)
+      let x: UInt
+      if #available(macOS 15.0, *) {
+        x = UInt((UInt128(z) * UInt128(im)) >> 64)
+      } else {
+        x = z.multipliedFullWidth(by: im).high
+      }
+    #else
+      let x = UInt((UInt128(z) * UInt128(im)) >> 64)
+    #endif
     let y = x &* m
     return Unsigned(z &- y &+ (z < y ? m : 0))
   }
@@ -79,7 +79,7 @@ extension _Internal {
   static func _pow_mod_constexpr(_ x: LL, _ n: LL, _ m: INT) -> LL {
     var n = n
     if m == 1 { return 0 }
-    let _m = LL(CUnsignedInt(m))
+    let _m = LL(UINT(bitPattern: m))  // Swiftではオーバーフローでクラッシュなので、負の値の挙動を再現するのがむずかしい
     var r = 1 as LL
     var y = safe_mod(x, LL(m))
     while (n) != 0 {
@@ -177,19 +177,19 @@ extension _Internal {
   /// @param m must be prime
   /// @return primitive root (and minimum in now)
   @inlinable
-  static func _primitive_root_constexpr(_ m: INT) -> INT {
+  static func _primitive_root_constexpr(_ m: Int) -> Int {
     if m == 2 { return 1 }
     if m == 167_772_161 { return 3 }
     if m == 469_762_049 { return 3 }
     if m == 754_974_721 { return 11 }
     if m == 998_244_353 { return 3 }
-    var divs = [INT](repeating: 0, count: 20)
+    var divs = [Int](repeating: 0, count: 20)
     divs[0] = 2
     var cnt = 1
     var x = (m - 1) / 2
     while x % 2 == 0 { x /= 2 }
     //    for (int i = 3; (long long)(i)*i <= x; i += 2) {
-    for i in sequence(first: INT(3), next: { LL($0) * LL($0) <= x ? $0 + 2 : nil }) {
+    for i in sequence(first: 3, next: { $0 * $0 <= x ? $0 + 2 : nil }) {
       if x % i == 0 {
         divs[cnt] = i
         cnt += 1
@@ -204,10 +204,10 @@ extension _Internal {
       cnt += 1
     }
     // for (int g = 2;; g++) {
-    for g in sequence(first: INT(2), next: { $0 + 1 }) {
+    for g in sequence(first: 2, next: { $0 + 1 }) {
       var ok = true
       for i in 0..<INT(cnt) {
-        if pow_mod_constexpr(LL(g), LL((m - 1) / divs[Int(i)]), m) == 1 {
+        if pow_mod_constexpr(LL(g), LL((m - 1) / divs[Int(i)]), INT(m)) == 1 {
           ok = false
           break
         }
@@ -220,11 +220,11 @@ extension _Internal {
 
   @usableFromInline
   nonisolated(unsafe)
-  static var memoized_primitve_root: Memoized = .init(source: _primitive_root_constexpr)
+    static var memoized_primitve_root: Memoized = .init(source: _primitive_root_constexpr)
   @inlinable
-  static func primitive_root_constexpr(_ m: INT) -> INT { memoized_primitve_root.get(m) }
+  static func primitive_root_constexpr(_ m: Int) -> Int { memoized_primitve_root.get(m) }
   @inlinable
-  static func primitive_root(_ m: INT) -> INT { primitive_root_constexpr(m) }
+  static func primitive_root(_ m: Int) -> Int { primitive_root_constexpr(m) }
 
   /// @param n `n < 2^32`
   /// @param m `1 <= m < 2^32`
