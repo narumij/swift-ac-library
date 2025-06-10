@@ -8,27 +8,6 @@ import XCTest
   import AtCoder
 #endif
 
-//private typealias uint = CUnsignedInt
-//private typealias ll = CLongLong
-//private typealias ull = CUnsignedLongLong
-
-//private func pow_mod_naive(_ x: ll, _ n: ull, _ mod: uint) -> ll {
-//  let y: ull = ull((x % ll(mod) + ll(mod)) % ll(mod))
-//  var z: ull = 1
-//  for _ in 0..<n as Range<ull> {
-//    z = (z * y) % ull(mod)
-//  }
-//  return ll(z % ull(mod))
-//}
-
-//private func floor_sum_naive(_ n: Int, _ m: Int, _ a: Int, _ b: Int) -> Int {
-//  var sum = 0
-//  for i in 0..<n {
-//    sum += (a * i + b) / m
-//  }
-//  return sum
-//}
-
 private func is_prime_naive(_ n: Int) -> Bool {
   assert(0 <= n && n <= ll(CInt.max))
   if n == 0 || n == 1 { return false }
