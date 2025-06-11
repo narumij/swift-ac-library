@@ -1891,6 +1891,17 @@ final class internalMathTests: XCTestCase {
           is_primitive_root(x, _Internal.primitive_root_constexpr(x)))
       }
     }
+  
+  func testHoge() throws {
+    
+    XCTAssertEqual(_Internal._pow_mod_constexpr(10, 2, -10), 0)
+    XCTAssertEqual(_Internal._pow_mod_constexpr(10, 2, CInt.min), 100)
+    XCTAssertEqual(_Internal._pow_mod_constexpr(10, 2, -1024), 100)
+    XCTAssertEqual(_Internal._pow_mod_constexpr(-10, 2, -10), 0)
+    XCTAssertEqual(_Internal._pow_mod_constexpr(-10, 2, CInt.min), 100)
+    XCTAssertEqual(_Internal._pow_mod_constexpr(-10, 2, -1024), 1069156)
+  }
+  
   #endif
 
 }

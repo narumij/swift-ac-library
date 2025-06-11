@@ -71,7 +71,7 @@ public struct barrett {
 }
 
 extension _Internal {
-
+  
   /// @param n `0 <= n`
   /// @param m `1 <= m`
   /// @return `(x ** n) % m`
@@ -79,15 +79,15 @@ extension _Internal {
   static func _pow_mod_constexpr(_ x: LL, _ n: LL, _ m: INT) -> LL {
     var n = n
     if m == 1 { return 0 }
-    let _m = LL(UINT(bitPattern: m))  // Swiftではオーバーフローでクラッシュなので、負の値の挙動を再現するのがむずかしい
-    var r = 1 as LL
-    var y = safe_mod(x, LL(m))
+    let _m = ULL(UINT(bitPattern: m))
+    var r: ULL = 1
+    var y = ULL(bitPattern: safe_mod(x, LL(m)))
     while (n) != 0 {
       if n & 1 != 0 { r = (r * y) % _m }
       y = (y &* y) % _m
       n >>= 1
     }
-    return r
+    return LL(bitPattern: r)
   }
 
   @usableFromInline
