@@ -238,7 +238,7 @@ extension _Internal {
     while true {
       if a >= m {
         let a_m = a.quotientAndRemainder(dividingBy: m)
-        ans &+= n * (n &- 1) / 2 &* a_m.quotient
+        ans &+= n &* (n &- 1) / 2 &* a_m.quotient
         a = a_m.remainder
       }
       if b >= m {
