@@ -97,13 +97,18 @@ public func floor_sum(
   var ans = 0
   if a < 0 {
     let a2 = _Internal.safe_mod(a, m)
-    ans -= 1 * n * (n &- 1) / 2 * ((a2 - a) / m)
+    ans -= 1 &* n &* (n &- 1) / 2 &* ((a2 &- a) / m)
     a = a2
   }
   if b < 0 {
     let b2 = _Internal.safe_mod(b, m)
-    ans -= 1 * n * ((b2 - b) / m)
+    ans -= 1 &* n &* ((b2 &- b) / m)
     b = b2
   }
-  return ans + Int(_Internal.floor_sum_unsigned(UInt(n), UInt(m), UInt(a), UInt(b)))
+  return ans + Int(bitPattern:
+                    _Internal.floor_sum_unsigned(
+                      UInt(bitPattern: n),
+                      UInt(bitPattern: m),
+                      UInt(bitPattern: a),
+                      UInt(bitPattern: b)))
 }

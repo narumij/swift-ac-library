@@ -1,6 +1,7 @@
 import AtCoder
 
 #if true
+#if true
 typealias mint = modint998244353
 // std::mt19937 mt;
 let n = 524288
@@ -24,4 +25,15 @@ let b = (0..<m).map{ mint($0) }
 let c = convolution(a, b)
 
 print(c)
+#endif
+#else
+for (N,M,A,B) in [
+  (4, 10, 6, 3),
+  (6, 5, 4, 3),
+  (1, 1, 0, 0),
+  (31415, 92653, 58979, 32384),
+  (1000000000, 1000000000, 999999999, 999999999)
+] {
+    print(floor_sum(N, M, A, B))
+}
 #endif

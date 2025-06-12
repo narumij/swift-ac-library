@@ -21,6 +21,102 @@ private func is_prime_naive(_ n: Int) -> Bool {
   return true
 }
 
+func ___safe_mod<LL>(_ x: LL, _ m: LL) -> LL
+where LL: FixedWidthInteger {
+  var x = x
+  x %= m
+  if x < 0 { x += m }
+  return x
+}
+
+#if DEBUG
+  private typealias INT = CInt
+  private typealias UINT = CUnsignedInt
+  private typealias LL = CLongLong
+  private typealias ULL = CUnsignedLongLong
+
+  private func _pow_mod_constexpr(_ x: LL, _ n: LL, _ m: INT) -> LL {
+    var n = n
+    if m == 1 { return 0 }
+    let _m = ULL(UINT(bitPattern: m))
+    var r: ULL = 1
+    var y = ULL(bitPattern: ___safe_mod(x, LL(m)))
+    while (n) != 0 {
+      if n & 1 != 0 { r = (r * y) % _m }
+      y = (y &* y) % _m
+      n >>= 1
+    }
+    return LL(bitPattern: r)
+  }
+
+  nonisolated(unsafe)
+    private var memoized_pow_mod: _Internal.Memoized3 = .init(source: _pow_mod_constexpr)
+
+  private func pow_mod_constexpr(_ x: LL, _ n: LL, _ m: INT) -> LL {
+    memoized_pow_mod.get(x, n, m)
+  }
+
+  private func _is_prime_constexpr(_ n: INT) -> Bool {
+    if n <= 1 { return false }
+    if ((1 << n) & (1 << 2 | 1 << 7 | 1 << 61)) != 0 { return true }
+    if 1 & n == 0 { return false }
+    var d = LL(n - 1)
+    while 1 & d == 0 { d >>= 1 }
+    let bases: [LL] = [2, 7, 61]
+    for a in bases {
+      var t: LL = d
+      var y: LL = pow_mod_constexpr(a, t, n)
+      let n = LL(n)
+      while t != n - 1, y != 1, y != n - 1 {
+        y = y * y % n
+        t <<= 1
+      }
+      if y != n - 1, t & 1 == 0 {
+        return false
+      }
+    }
+    return true
+  }
+#endif
+
+func inv_gcd<LL>(_ a: LL, _ b: LL) -> (first: LL, second: LL)
+where LL: FixedWidthInteger {
+  let a = ___safe_mod(a, b)
+  if a == 0 { return (b, 0) }
+
+  // Contracts:
+  // [1] s - m0 * a = 0 (mod b)
+  // [2] t - m1 * a = 0 (mod b)
+  // [3] s * |m1| + t * |m0| <= b
+  var s = b
+  var t = a
+  var m0: LL = 0
+  var m1: LL = 1
+
+  while t != 0 {
+    let u: LL = s / t
+    s -= t * u
+    m0 -= m1 * u  // |m1 * u| <= |m1| * s <= b
+
+    // [3]:
+    // (s - t * u) * |m1| + t * |m0 - m1 * u|
+    // <= s * |m1| - t * u * |m1| + t * (|m0| + |m1| * u)
+    // = s * |m1| + t * |m0| <= b
+
+    var tmp = s
+    s = t
+    t = tmp
+    tmp = m0
+    m0 = m1
+    m1 = tmp
+  }
+  // by [3]: |m0| <= b/g
+  // by g != b: |m0| < b/g
+  if m0 < 0 { m0 += b / s }
+  return (s, m0)
+}
+
+
 final class internalMathTests: XCTestCase {
 
   #if DEBUG
@@ -42,14 +138,17 @@ final class internalMathTests: XCTestCase {
     }
 
     func testBarrettCIntBorder() throws {
-      let mod_upper = CUnsignedInt(CInt.max)
+      
+      typealias ll = Int
+      
+      let mod_upper = UInt(CInt.max)
 
       //        for (unsigned int mod = mod_upper; mod >= mod_upper - 20; mod--) {
       for mod in stride(from: mod_upper, through: mod_upper - 20, by: -1) {
-        let bt = barrett(UInt32(mod))
-        var v: [CUnsignedInt] = []
+        let bt = barrett(UInt(mod))
+        var v: [UInt] = []
         //            for (int i = 0; i < 10; i++) {
-        for i in CUnsignedInt(0)..<CUnsignedInt(10) {
+        for i in UInt(0)..<UInt(10) {
           v.append(i)
           v.append(mod - i)
           v.append(mod / 2 + i)
@@ -61,7 +160,7 @@ final class internalMathTests: XCTestCase {
           XCTAssertEqual(((a2 &* a2) % ll(mod) &* a2) % ll(mod), ll(bt.mul(a, bt.mul(a, a))))
           for b in v {
             let b2 = ll(b)
-            XCTAssertEqual((a2 * b2) % ll(mod), ll(bt.mul(UInt32(a), UInt32(b))))
+            XCTAssertEqual((a2 * b2) % ll(mod), ll(bt.mul(UInt(a), UInt(b))))
           }
         }
       }
@@ -69,15 +168,16 @@ final class internalMathTests: XCTestCase {
 
     func testBarrettCUnsignedIntBorder() throws {
 
+      typealias ull = UInt
       //        throw XCTSkip()
 
-      let mod_upper = CUnsignedInt.max
+      let mod_upper = UInt(CUnsignedInt.max)
       //        for (unsigned int mod = mod_upper; mod >= mod_upper - 20; mod--) {
       for mod in stride(from: mod_upper, through: mod_upper - 20, by: -1) {
         let bt = barrett(mod)
-        var v: [CUnsignedInt] = []
+        var v: [UInt] = []
         //            for (int i = 0; i < 10; i++) {
-        for i in CUnsignedInt(0)..<CUnsignedInt(10) {
+        for i in UInt(0)..<UInt(10) {
           v.append(i)
           v.append(mod - i)
           v.append(mod / 2 + i)
@@ -103,12 +203,12 @@ final class internalMathTests: XCTestCase {
       XCTAssertTrue(_Internal.is_prime(1_000_000_009))
       //        for (int i = 0; i <= 10000; i++) {
       for i in 0 ..<= 10000 {
-        XCTAssertEqual(is_prime_naive(i), _Internal.is_prime_constexpr(CInt(i)))
+        XCTAssertEqual(is_prime_naive(i), _Internal.is_prime_constexpr(Int(i)))
       }
       //        for (int i = 0; i <= 10000; i++) {
       for i in 0 ..<= 10000 {
         let x = Int(CInt.max) - i
-        XCTAssertEqual(is_prime_naive(x), _Internal.is_prime_constexpr(CInt(x)))
+        XCTAssertEqual(is_prime_naive(x), _Internal.is_prime_constexpr(Int(x)))
       }
     }
 
@@ -139,6 +239,9 @@ final class internalMathTests: XCTestCase {
     #endif
 
     func testSafeModAlt() throws {
+      
+      typealias ll = Int
+      
       let ab: [(a: ll, b: ll, ans: ll)] = [
         (0, 9_223_372_036_854_775_807, 0),
         (0, 1, 0),
@@ -628,6 +731,8 @@ final class internalMathTests: XCTestCase {
     }
 
     func testInvGcdBound() throws {
+      
+      typealias ll = Int
 
       //        throw XCTSkip()
 
@@ -714,6 +819,9 @@ final class internalMathTests: XCTestCase {
     }
 
     func testInvGcdBoundAlt() throws {
+      
+      typealias ll = Int
+
       let ab: [(a: ll, b: ll, a2: ll, eg: (ll, ll), g: ll)] = [
         (
           0, 9_223_372_036_854_775_807, 0, (9_223_372_036_854_775_807, 0), 9_223_372_036_854_775_807
@@ -1848,7 +1956,7 @@ final class internalMathTests: XCTestCase {
     func testPrimitiveRootTestNaive() throws {
       //        for (int m = 2; m <= 10000; m++) {
       for m in 2 ..<= 10000 {
-        if !_Internal.is_prime_constexpr(CInt(m)) { continue }
+        if !_Internal.is_prime_constexpr(Int(m)) { continue }
         let n = _Internal.primitive_root_constexpr(m)
         XCTAssertLessThanOrEqual(1, n)
         XCTAssertLessThan(n, m)
@@ -1886,11 +1994,35 @@ final class internalMathTests: XCTestCase {
       //        for (int i = 0; i < 1000; i++) {
       for i in 0..<1000 {
         let x = Int(CInt.max) - i
-        if !_Internal.is_prime_constexpr(CInt(x)) { continue }
+        if !_Internal.is_prime_constexpr(Int(x)) { continue }
         XCTAssertTrue(
           is_primitive_root(x, _Internal.primitive_root_constexpr(x)))
       }
     }
-  #endif
 
+    func testPrimitiveRootTest2() throws {
+      for x in Int(CInt.max - 1000)...(Int(CInt.max)) {
+        XCTAssertEqual(
+          _Internal.is_prime_constexpr(x),
+          _is_prime_constexpr(CInt(x)))
+      }
+    }
+
+    func testPrimitiveRootTest3() throws {
+      for x in Int(CInt.max)...(Int(CInt.max) + 128 * 1024) {
+        if !_Internal.is_prime_constexpr(Int(x)) { continue }
+        XCTAssertTrue(
+          is_primitive_root(x, _Internal.primitive_root_constexpr(x)))
+      }
+    }
+
+    func testPrimitiveRootIntMaxTest() throws {
+      for x in (Int.max - 1024)...Int.max {
+        if !_Internal.is_prime_constexpr(Int(x)) { continue }
+        XCTAssertTrue(
+          is_primitive_root(x, _Internal.primitive_root_constexpr(x)))
+      }
+    }
+
+  #endif
 }

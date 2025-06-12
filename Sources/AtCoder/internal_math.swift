@@ -4,8 +4,7 @@ extension _Internal {
   /// @param m `1 <= m`
   /// @return x mod m
   @inlinable
-  static func safe_mod<LL>(_ x: LL, _ m: LL) -> LL
-  where LL: FixedWidthInteger {
+  static func safe_mod(_ x: Int, _ m: Int) -> Int {
     var x = x
     x %= m
     if x < 0 { x += m }
@@ -21,28 +20,29 @@ public struct barrett {
   @usableFromInline
   let m, im: UInt
 
+  /// - Important: 1 ... CInt.maxまで有効。それ以外は未定義
   @inlinable @inline(__always)
-  public init<Unsigned: UnsignedInteger>(_ _m: Unsigned) {
-    m = UInt(_m)
-    im = UInt(bitPattern: -1) / UInt(_m) &+ 1
+  public init(_ _m: UInt) {
+    m = _m
+    im = UInt(bitPattern: -1) / _m &+ 1
   }
 
+  /// - Important: 1 ... CInt.maxまで有効。それ以外は未定義
   @inlinable @inline(__always)
-  public init<Signed: SignedInteger>(_ _m: Signed) {
-    m = UInt(bitPattern: Int(_m))
-    im = UInt(bitPattern: -1) / UInt(bitPattern: Int(_m)) &+ 1
+  public init(_ _m: Int) {
+    m = UInt(bitPattern: _m)
+    im = UInt(bitPattern: -1) / UInt(bitPattern: _m) &+ 1
   }
 
   /// @return m
   @inlinable
-  public func umod<Unsigned>() -> Unsigned where Unsigned: UnsignedInteger { Unsigned(m) }
+  public func umod() -> UInt { m }
 
   /// @param a `0 <= a < m`
   /// @param b `0 <= b < m`
   /// @return `a * b % m`
   @inlinable
-  public func mul<Unsigned>(_ a: Unsigned, _ b: Unsigned) -> Unsigned
-  where Unsigned: UnsignedInteger {
+  public func mul(_ a: UInt, _ b: UInt) -> UInt {
     // [1] m = 1
     // a = b = im = 0, so okay
 
@@ -66,35 +66,35 @@ public struct barrett {
       let x = UInt((UInt128(z) * UInt128(im)) >> 64)
     #endif
     let y = x &* m
-    return Unsigned(z &- y &+ (z < y ? m : 0))
+    return z &- y &+ (z < y ? m : 0)
   }
 }
 
 extension _Internal {
-
+  
   /// @param n `0 <= n`
   /// @param m `1 <= m`
   /// @return `(x ** n) % m`
   @inlinable
-  static func _pow_mod_constexpr(_ x: LL, _ n: LL, _ m: INT) -> LL {
-    var n = n
+  static func _pow_mod_constexpr(_ x: Int, _ n: Int, _ m: Int) -> Int {
     if m == 1 { return 0 }
-    let _m = LL(UINT(bitPattern: m))  // Swiftではオーバーフローでクラッシュなので、負の値の挙動を再現するのがむずかしい
-    var r = 1 as LL
-    var y = safe_mod(x, LL(m))
+    let _m = UInt(bitPattern: m)
+    var r: UInt = 1
+    var y = UInt(bitPattern: safe_mod(x, m))
+    var n = n
     while (n) != 0 {
       if n & 1 != 0 { r = (r * y) % _m }
       y = (y &* y) % _m
       n >>= 1
     }
-    return r
+    return Int(bitPattern: r)
   }
 
   @usableFromInline
   nonisolated(unsafe)
   static var memoized_pow_mod: Memoized3 = .init(source: _pow_mod_constexpr)
   @inlinable
-  static func pow_mod_constexpr(_ x: LL, _ n: LL, _ m: INT) -> LL {
+  static func pow_mod_constexpr(_ x: Int, _ n: Int, _ m: Int) -> Int {
     memoized_pow_mod.get(x, n, m)
   }
 
@@ -103,17 +103,17 @@ extension _Internal {
   /// Fast Primality Testing for Integers That Fit into a Machine Word
   /// @param n `0 <= n`
   @inlinable
-  static func _is_prime_constexpr(_ n: INT) -> Bool {
+  static func _is_prime_constexpr(_ n: Int) -> Bool {
     if n <= 1 { return false }
     if ((1 << n) & (1 << 2 | 1 << 7 | 1 << 61)) != 0 { return true }
     if 1 & n == 0 { return false }
-    var d = LL(n - 1)
+    var d = n - 1
     while 1 & d == 0 { d >>= 1 }
-    let bases: [LL] = [2, 7, 61]
+    let bases: [Int] = [2, 7, 61]
     for a in bases {
-      var t: LL = d
-      var y: LL = pow_mod_constexpr(a, t, n)
-      let n = LL(n)
+      var t: Int = d
+      var y: Int = pow_mod_constexpr(a, t, n)
+      let n = Int(n)
       while t != n - 1, y != 1, y != n - 1 {
         y = y * y % n
         t <<= 1
@@ -129,15 +129,14 @@ extension _Internal {
   nonisolated(unsafe)
   static var memoized_is_prime: Memoized = .init(source: _is_prime_constexpr)
   @inlinable
-  static func is_prime_constexpr(_ n: INT) -> Bool { memoized_is_prime.get(n) }
+  static func is_prime_constexpr(_ n: Int) -> Bool { memoized_is_prime.get(n) }
   @inlinable
-  static func is_prime(_ n: INT) -> Bool { is_prime_constexpr(n) }
+  static func is_prime(_ n: Int) -> Bool { is_prime_constexpr(n) }
 
   /// @param b `1 <= b`
   /// @return pair(g, x) s.t. g = gcd(a, b), xa = g (mod b), 0 <= x < b/g
   @inlinable
-  static func inv_gcd<LL>(_ a: LL, _ b: LL) -> (first: LL, second: LL)
-  where LL: FixedWidthInteger {
+  static func inv_gcd(_ a: Int, _ b: Int) -> (first: Int, second: Int) {
     let a = safe_mod(a, b)
     if a == 0 { return (b, 0) }
 
@@ -147,11 +146,11 @@ extension _Internal {
     // [3] s * |m1| + t * |m0| <= b
     var s = b
     var t = a
-    var m0: LL = 0
-    var m1: LL = 1
+    var m0 = 0
+    var m1 = 1
 
     while t != 0 {
-      let u: LL = s / t
+      let u = s / t
       s -= t * u
       m0 -= m1 * u  // |m1 * u| <= |m1| * s <= b
 
@@ -206,8 +205,8 @@ extension _Internal {
     // for (int g = 2;; g++) {
     for g in sequence(first: 2, next: { $0 + 1 }) {
       var ok = true
-      for i in 0..<INT(cnt) {
-        if pow_mod_constexpr(LL(g), LL((m - 1) / divs[Int(i)]), INT(m)) == 1 {
+      for i in 0..<cnt {
+        if pow_mod_constexpr(g, (m - 1) / divs[i], m) == 1 {
           ok = false
           break
         }
@@ -230,27 +229,26 @@ extension _Internal {
   /// @param m `1 <= m < 2^32`
   /// @return sum_{i=0}^{n-1} floor((ai + b) / m) (mod 2^64)
   @inlinable
-  static func floor_sum_unsigned<ULL>(
-    _ n: ULL,
-    _ m: ULL,
-    _ a: ULL,
-    _ b: ULL
-  ) -> ULL
-  where ULL: FixedWidthInteger & UnsignedInteger {
+  static func floor_sum_unsigned(
+    _ n: UInt,
+    _ m: UInt,
+    _ a: UInt,
+    _ b: UInt
+  ) -> UInt {
     var (n, m, a, b) = (n, m, a, b)
-    var ans: ULL = 0
+    var ans: UInt = 0
     while true {
       if a >= m {
         let a_m = a.quotientAndRemainder(dividingBy: m)
-        ans += n * (n &- 1) / 2 * a_m.quotient
+        ans &+= n &* (n &- 1) / 2 &* a_m.quotient
         a = a_m.remainder
       }
       if b >= m {
         let b_m = b.quotientAndRemainder(dividingBy: m)
-        ans += n * b_m.quotient
+        ans &+= n &* b_m.quotient
         b = b_m.remainder
       }
-      let y_max = a * n + b
+      let y_max = a &* n &+ b
       if y_max < m { break }
       // y_max < m * (n + 1)
       // floor(y_max / m) <= n

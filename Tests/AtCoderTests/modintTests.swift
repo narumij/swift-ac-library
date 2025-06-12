@@ -1,3 +1,4 @@
+import BigInt
 import Numerics
 import XCTest
 
@@ -38,6 +39,10 @@ final class modintTests: XCTestCase {
   @usableFromInline
   enum INT32_MAX: static_mod_value {
     nonisolated(unsafe) static let mod: mod_value = .mod_INT32_MAX
+  }
+  @usableFromInline
+  enum INT_MAX: static_mod_value {
+    nonisolated(unsafe) static let mod: mod_value = .init(Int.max)
   }
 
   func testDynamicBorder() throws {
@@ -251,6 +256,13 @@ final class modintTests: XCTestCase {
       XCTAssertEqual(1, (ll(x) * ll(i)) % 1_000_000_008)
     }
 
+    // テスト自体は通る
+    for i in 1..<100_000 as Range<Int> {
+      if gcd(i, Int.max) != 1 { continue }
+      let x = static_modint<INT_MAX>(i).inv.val
+      XCTAssertEqual(1, (BigInt(x) * BigInt(i)) % BigInt(Int.max))
+    }
+
     modint.set_mod(998_244_353)
     for i in 1..<100000 as Range<int> {
       let x = modint(i).inv.val
@@ -273,14 +285,12 @@ final class modintTests: XCTestCase {
       XCTAssertEqual(1, (ll(x) * ll(i) % ll(int.max)))
     }
 
-    if #available(macOS 15.0, *), false {
-      // テスト自体は通るが、modint全体で一旦CIntやCUnsignedIntの範囲に限定している
-      modint.set_mod(Int.max)
-      for i in 1..<100000 as Range<Int> {
-        if gcd(i, Int.max) != 1 { continue }
-        let x = modint(i).inv.val
-        XCTAssertEqual(1, (Int128(x) * Int128(i) % Int128(Int.max)))
-      }
+    // テスト自体は通る
+    modint.set_mod(Int.max)
+    for i in 1..<100000 as Range<Int> {
+      if gcd(i, Int.max) != 1 { continue }
+      let x = modint(i).inv.val
+      XCTAssertEqual(1, (BigInt(x) * BigInt(i) % BigInt(Int.max)))
     }
 
     mod_dynamic.reset()
