@@ -21,10 +21,10 @@ typealias ll = CLongLong
 typealias ull = CUnsignedLongLong
 
 @usableFromInline
-func conv_ll_naive(_ a: [ll], _ b: [ll]) -> [ll] {
+func conv_ll_naive(_ a: [Int], _ b: [Int]) -> [Int] {
   let n = a.count
   let m = b.count
-  var c = [ll](repeating: 0, count: n + m - 1)
+  var c = [Int](repeating: 0, count: n + m - 1)
   for i in 0..<n {
     for j in 0..<m {
       c[i + j] += a[i] * b[j]
@@ -361,12 +361,12 @@ final class convolutionTests: XCTestCase {
   func testConvLL() throws {
 
     // std::mt19937 mt;
-    let mt = { ll.random(in: ll.min...ll.max) }
+    let mt = { Int.random(in: Int.min...Int.max) }
 
     for n in 1..<20 {
       for m in 1..<20 {
-        var a = [ll](repeating: 0, count: n)
-        var b = [ll](repeating: 0, count: m)
+        var a = [Int](repeating: 0, count: n)
+        var b = [Int](repeating: 0, count: m)
         for i in 0..<n {
           a[i] = mt() % 1_000_000 - 500_000
         }
@@ -379,6 +379,7 @@ final class convolutionTests: XCTestCase {
   }
 
   func testConvLLBound() throws {
+    typealias ll = Int
     let MOD1: ll = 469_762_049  // 2^26
     let MOD2: ll = 167_772_161  // 2^25
     let MOD3: ll = 754_974_721  // 2^24

@@ -361,15 +361,15 @@ public func convolution<T: FixedWidthInteger>(_ a: [T], _ b: [T]) -> [T] {
 }
 
 public func convolution_ll(
-  _ a: [CLongLong],
-  _ b: [CLongLong]
-) -> [CLongLong] {
+  _ a: [Int],
+  _ b: [Int]
+) -> [Int] {
   let n = a.count
   let m = b.count
   if n == 0 || m == 0 { return [] }
 
-  typealias ULL = CUnsignedLongLong
-  typealias LL = CLongLong
+  typealias ULL = UInt
+  typealias LL = Int
 
   enum const {
     static let MOD1: ULL = 754_974_721  // 2^24
