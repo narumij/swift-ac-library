@@ -77,7 +77,6 @@ extension _Internal {
   /// @return `(x ** n) % m`
   @inlinable
   static func _pow_mod_constexpr(_ x: LL, _ n: LL, _ m: INT) -> LL {
-    precondition(n >= 0)
     if m == 1 { return 0 }
     let _m = ULL(UINT(bitPattern: m))
     var r: ULL = 1
@@ -86,7 +85,7 @@ extension _Internal {
     while (n) != 0 {
       if n & 1 != 0 { r = (r * y) % _m }
       y = (y &* y) % _m
-      n >>= 1 // 負の数の場合、符号ビットがあるため、永遠に-1のまま
+      n >>= 1
     }
     return LL(bitPattern: r)
   }
