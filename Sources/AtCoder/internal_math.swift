@@ -20,12 +20,14 @@ public struct barrett {
   @usableFromInline
   let m, im: UInt
 
+  /// - Important: 1 ... CInt.maxまで有効。それ以外は未定義
   @inlinable @inline(__always)
   public init(_ _m: UInt) {
     m = _m
     im = UInt(bitPattern: -1) / _m &+ 1
   }
 
+  /// - Important: 1 ... CInt.maxまで有効。それ以外は未定義
   @inlinable @inline(__always)
   public init(_ _m: Int) {
     m = UInt(bitPattern: _m)
