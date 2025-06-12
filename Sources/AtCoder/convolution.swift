@@ -111,18 +111,34 @@ extension _Internal {
           rate3: rate3, irate3: irate3))
     }
   }
+  
+  @usableFromInline
+  struct Rep: Sequence, IteratorProtocol {
+    @inlinable @inline(__always)
+    init(_ end: Int) {
+      self.current = 0
+      self.end = end
+    }
+    @inlinable @inline(__always)
+    mutating func next() -> Int? {
+      guard current < end else { return nil }
+      defer { current += 1 }
+      return current
+    }
+    @usableFromInline var current, end: Int
+  }
 
   @inline(never)
   @inlinable
   static func butterfly<mod: static_mod>(
-    _ a: UnsafeMutableBufferPointer<static_modint<mod>>
+    _ a: UnsafeMutablePointer<static_modint<mod>>, _ count: Int
   ) {
     typealias mint = static_modint<mod>
     let info = __static_const_fft_info.info(mod.self)
 
     info._unsafe { info in
 
-      let h: Int = min(32, a.count.trailingZeroBitCount)
+      let h: Int = min(32, count.trailingZeroBitCount)
       let umod = mod.umod
       var len: Int = 0  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
 
@@ -130,9 +146,11 @@ extension _Internal {
         if h &- len == 1 {
           let p = 1 << (h &- len &- 1)
           var rot: mint = 1
-          for s in 0..<1 << len {
+//          for s in 0..<1 << len {
+          for s in Rep(1 << len) {
             let offset = s << (h &- len)
-            for i in 0..<p {
+//            for i in 0..<p {
+            for i in Rep(p) {
               let l = a[i &+ offset]
               let r = a[i &+ offset &+ p] * rot
               a[i &+ offset] = l + r
@@ -148,11 +166,13 @@ extension _Internal {
           let p = 1 << (h &- len &- 2)
           var rot: mint = 1
           let imag = info.root[2]
-          for s in 0..<1 << len {
+//          for s in 0..<1 << len {
+          for s in Rep(1 << len) {
             let rot2 = rot * rot
             let rot3 = rot2 * rot
             let offset = s << (h &- len)
-            for i in 0..<p {
+//            for i in 0..<p {
+            for i in Rep(p) {
               let mod2: UInt = umod &* umod
               let a0: UInt = a[i &+ offset].value
               let a1: UInt = a[i &+ offset &+ p].value &* rot.value
@@ -178,14 +198,14 @@ extension _Internal {
   @inline(never)
   @inlinable
   static func butterfly_inv<mod: static_mod>(
-    _ a: UnsafeMutableBufferPointer<static_modint<mod>>
+    _ a: UnsafeMutablePointer<static_modint<mod>>, _ count: Int
   ) {
     typealias mint = static_modint<mod>
     let info = __static_const_fft_info.info(mod.self)
 
     info._unsafe { info in
 
-      let h: Int = min(32, a.count.trailingZeroBitCount)
+      let h: Int = min(32, count.trailingZeroBitCount)
       let umod = mod.umod
       var len = h  // a[i, i+(n>>len), i+2*(n>>len), ..] is transformed
 
@@ -193,9 +213,11 @@ extension _Internal {
         if len == 1 {
           let p = 1 << (h &- len)
           var irot: mint = 1
-          for s in 0..<1 << (len &- 1) {
+//          for s in 0..<1 << (len &- 1) {
+          for s in Rep(1 << (len &- 1)) {
             let offset = s << (h &- len &+ 1)
-            for i in 0..<p {
+//            for i in 0..<p {
+            for i in Rep(p) {
               let l = a[i &+ offset]
               let r = a[i &+ offset &+ p]
               a[i &+ offset] = l + r
@@ -213,11 +235,13 @@ extension _Internal {
           let p = 1 << (h &- len)
           var irot: mint = 1
           let iimag = info.iroot[2]
-          for s in 0..<1 << (len &- 2) {
+//          for s in 0..<1 << (len &- 2) {
+          for s in Rep(1 << (len &- 2)) {
             let irot2 = irot * irot
             let irot3 = irot2 * irot
             let offset = s << (h &- len &+ 2)
-            for i in 0..<p {
+//            for i in 0..<p {
+            for i in Rep(p) {
               let a0: UInt = a[i &+ offset].value
               let a1: UInt = a[i &+ offset &+ p].value
               let a2: UInt = a[i &+ offset &+ 2 &* p].value
@@ -244,73 +268,82 @@ extension _Internal {
   @inlinable
   static func convolution_naive<mod: static_mod>(
     _ a: UnsafeBufferPointer<static_modint<mod>>, _ b: UnsafeBufferPointer<static_modint<mod>>
-  ) -> ArraySlice<static_modint<mod>> {
+  ) -> [static_modint<mod>] {
     let n = a.count
     let m = b.count
-    return .init(
-      [static_modint<mod>](unsafeUninitializedCapacity: n + m - 1) {
-        ans, initializedCount in
-        ans.initialize(repeating: .init())
-        if n < m {
-          for j in 0..<m {
-            for i in 0..<n {
-              ans[i &+ j] += a[i] * b[j]
-            }
-          }
-        } else {
+    return .init(unsafeUninitializedCapacity: n + m - 1) {
+      ans, initializedCount in
+      ans.initialize(repeating: .init())
+      if n < m {
+        for j in 0..<m {
           for i in 0..<n {
-            for j in 0..<m {
-              ans[i &+ j] += a[i] * b[j]
-            }
+            ans[i &+ j] += a[i] * b[j]
           }
         }
-        initializedCount = n &+ m &- 1
-      })
+      } else {
+        for i in 0..<n {
+          for j in 0..<m {
+            ans[i &+ j] += a[i] * b[j]
+          }
+        }
+      }
+      initializedCount = n &+ m &- 1
+    }
   }
 
   @inline(never)
   @inlinable
   static func convolution_fft<mod: static_mod>(
-    _ a: ArraySlice<static_modint<mod>>, _ b: ArraySlice<static_modint<mod>>
-  ) -> ArraySlice<static_modint<mod>> {
-    var (a, b) = (a, b)
-    let (n, m) = (a.count, b.count)
+    _ _a: UnsafeBufferPointer<static_modint<mod>>,
+    _ _b: UnsafeBufferPointer<static_modint<mod>>
+  ) -> [static_modint<mod>] {
+
+    let (n, m) = (_a.count, _b.count)
     let z: Int = _Internal.bit_ceil(n + m - 1)
-    a.resize(z)
-    b.resize(z)
-    a.withUnsafeMutableBufferPointer { a in
-      b.withUnsafeMutableBufferPointer { b in
-        _Internal.butterfly(a)
-        _Internal.butterfly(b)
-        for i in 0..<z {
+    let size = n &+ m &- 1
+
+    return .init(unsafeUninitializedCapacity: max(z, size)) { a, initializedCount in
+      withUnsafeTemporaryAllocation(of: static_modint<mod>.self, capacity: z) { b in
+
+        _ = a.initialize(from: _a)
+        _ = b.initialize(from: _b)
+
+        if z > n {
+          (a.baseAddress! + n).initialize(repeating: .zero, count: max(z, size) - n)
+        }
+        if z > m {
+          (b.baseAddress! + m).initialize(repeating: .zero, count: z - m)
+        }
+
+        butterfly(a.baseAddress!, z)
+        butterfly(b.baseAddress!, z)
+//        for i in 0..<z {
+        for i in Rep(z) {
           a[i] *= b[i]
         }
-        _Internal.butterfly_inv(a)
+        butterfly_inv(a.baseAddress!, z)
+        // resize(size)
+        let iz = static_modint<mod>(z).inv
+//        for i in 0..<size { a[i] *= iz }
+        for i in Rep(size) { a[i] *= iz }
+
+        initializedCount = size
       }
     }
-    a.resize(n &+ m &- 1)
-    let iz = static_modint<mod>(z).inv
-    a.withUnsafeMutableBufferPointer { a in
-      for i in 0..<(n &+ m &- 1) { a[i] *= iz }
-    }
-    return a
   }
 }  // _Internal
 
 @inlinable
 public func convolution<mod: static_mod>(
-  _ a: ArraySlice<static_modint<mod>>, _ b: ArraySlice<static_modint<mod>>
-) -> ArraySlice<static_modint<mod>> {
+  _ a: UnsafeBufferPointer<static_modint<mod>>,
+  _ b: UnsafeBufferPointer<static_modint<mod>>
+) -> [static_modint<mod>] {
   let (n, m) = (a.count, b.count)
   if n == 0 || m == 0 { return [] }
   //  let z: CInt = _Internal.bit_ceil(n + m - 1)
   assert((static_modint<mod>.mod - 1) % _Internal.bit_ceil(n + m - 1) == 0)
   if min(n, m) <= 60 {
-    return a.withUnsafeBufferPointer { a in
-      b.withUnsafeBufferPointer { b in
-        _Internal.convolution_naive(a, b)
-      }
-    }
+    return _Internal.convolution_naive(a, b)
   }
   return _Internal.convolution_fft(a, b)
 }
@@ -321,7 +354,22 @@ where
   A: Collection, A.Element == static_modint<mod>,
   B: Collection, B.Element == static_modint<mod>
 {
-  convolution(ArraySlice(a), ArraySlice(b)) + []
+  let result =
+  a.withContiguousStorageIfAvailable { a in
+    b.withContiguousStorageIfAvailable { b in
+      return convolution(a, b)
+    }
+  }.flatMap{ $0 }
+  
+  if let result {
+    return result
+  }
+  
+  return ArraySlice(a).withUnsafeBufferPointer { a in
+    ArraySlice(b).withUnsafeBufferPointer { b in
+      return convolution(a, b)
+    }
+  }
 }
 
 @inlinable
