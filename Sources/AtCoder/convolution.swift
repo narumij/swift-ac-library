@@ -111,22 +111,6 @@ extension _Internal {
           rate3: rate3, irate3: irate3))
     }
   }
-  
-  @usableFromInline
-  struct Rep: Sequence, IteratorProtocol {
-    @inlinable @inline(__always)
-    init(_ end: Int) {
-      self.current = 0
-      self.end = end
-    }
-    @inlinable @inline(__always)
-    mutating func next() -> Int? {
-      guard current < end else { return nil }
-      defer { current += 1 }
-      return current
-    }
-    @usableFromInline var current, end: Int
-  }
 
   @inline(never)
   @inlinable
@@ -146,11 +130,9 @@ extension _Internal {
         if h &- len == 1 {
           let p = 1 << (h &- len &- 1)
           var rot: mint = 1
-//          for s in 0..<1 << len {
-          for s in Rep(1 << len) {
+          for s in 0..<1 << len {
             let offset = s << (h &- len)
-//            for i in 0..<p {
-            for i in Rep(p) {
+            for i in 0..<p {
               let l = a[i &+ offset]
               let r = a[i &+ offset &+ p] * rot
               a[i &+ offset] = l + r
@@ -166,13 +148,11 @@ extension _Internal {
           let p = 1 << (h &- len &- 2)
           var rot: mint = 1
           let imag = info.root[2]
-//          for s in 0..<1 << len {
-          for s in Rep(1 << len) {
+          for s in 0..<1 << len {
             let rot2 = rot * rot
             let rot3 = rot2 * rot
             let offset = s << (h &- len)
-//            for i in 0..<p {
-            for i in Rep(p) {
+            for i in 0..<p {
               let mod2: UInt = umod &* umod
               let a0: UInt = a[i &+ offset].value
               let a1: UInt = a[i &+ offset &+ p].value &* rot.value
@@ -213,11 +193,9 @@ extension _Internal {
         if len == 1 {
           let p = 1 << (h &- len)
           var irot: mint = 1
-//          for s in 0..<1 << (len &- 1) {
-          for s in Rep(1 << (len &- 1)) {
+          for s in 0..<1 << (len &- 1) {
             let offset = s << (h &- len &+ 1)
-//            for i in 0..<p {
-            for i in Rep(p) {
+            for i in 0..<p {
               let l = a[i &+ offset]
               let r = a[i &+ offset &+ p]
               a[i &+ offset] = l + r
@@ -235,13 +213,11 @@ extension _Internal {
           let p = 1 << (h &- len)
           var irot: mint = 1
           let iimag = info.iroot[2]
-//          for s in 0..<1 << (len &- 2) {
-          for s in Rep(1 << (len &- 2)) {
+          for s in 0..<1 << (len &- 2) {
             let irot2 = irot * irot
             let irot3 = irot2 * irot
             let offset = s << (h &- len &+ 2)
-//            for i in 0..<p {
-            for i in Rep(p) {
+            for i in 0..<p {
               let a0: UInt = a[i &+ offset].value
               let a1: UInt = a[i &+ offset &+ p].value
               let a2: UInt = a[i &+ offset &+ 2 &* p].value
@@ -317,15 +293,15 @@ extension _Internal {
 
         butterfly(a.baseAddress!, z)
         butterfly(b.baseAddress!, z)
-//        for i in 0..<z {
-        for i in Rep(z) {
+        for i in 0..<z {
+//        for i in Rep(z) {
           a[i] *= b[i]
         }
         butterfly_inv(a.baseAddress!, z)
         // resize(size)
         let iz = static_modint<mod>(z).inv
-//        for i in 0..<size { a[i] *= iz }
-        for i in Rep(size) { a[i] *= iz }
+        for i in 0..<size { a[i] *= iz }
+//        for i in Rep(size) { a[i] *= iz }
 
         initializedCount = size
       }
@@ -351,8 +327,8 @@ public func convolution<mod: static_mod>(
 @inlinable
 public func convolution<mod: static_mod, A, B>(_ a: A, _ b: B) -> [static_modint<mod>]
 where
-  A: Collection, A.Element == static_modint<mod>,
-  B: Collection, B.Element == static_modint<mod>
+  A: Sequence, A.Element == static_modint<mod>,
+  B: Sequence, B.Element == static_modint<mod>
 {
   let result =
   a.withContiguousStorageIfAvailable { a in
