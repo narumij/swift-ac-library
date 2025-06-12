@@ -4,8 +4,7 @@ extension _Internal {
   /// @param m `1 <= m`
   /// @return x mod m
   @inlinable
-  static func safe_mod<LL>(_ x: LL, _ m: LL) -> LL
-  where LL: FixedWidthInteger {
+  static func safe_mod(_ x: Int, _ m: Int) -> Int {
     var x = x
     x %= m
     if x < 0 { x += m }
@@ -22,27 +21,26 @@ public struct barrett {
   let m, im: UInt
 
   @inlinable @inline(__always)
-  public init<Unsigned: UnsignedInteger>(_ _m: Unsigned) {
-    m = UInt(_m)
-    im = UInt(bitPattern: -1) / UInt(_m) &+ 1
+  public init(_ _m: UInt) {
+    m = _m
+    im = UInt(bitPattern: -1) / _m &+ 1
   }
 
   @inlinable @inline(__always)
-  public init<Signed: SignedInteger>(_ _m: Signed) {
-    m = UInt(bitPattern: Int(_m))
-    im = UInt(bitPattern: -1) / UInt(bitPattern: Int(_m)) &+ 1
+  public init(_ _m: Int) {
+    m = UInt(bitPattern: _m)
+    im = UInt(bitPattern: -1) / UInt(bitPattern: _m) &+ 1
   }
 
   /// @return m
   @inlinable
-  public func umod<Unsigned>() -> Unsigned where Unsigned: UnsignedInteger { Unsigned(m) }
+  public func umod() -> UInt { m }
 
   /// @param a `0 <= a < m`
   /// @param b `0 <= b < m`
   /// @return `a * b % m`
   @inlinable
-  public func mul<Unsigned>(_ a: Unsigned, _ b: Unsigned) -> Unsigned
-  where Unsigned: UnsignedInteger {
+  public func mul(_ a: UInt, _ b: UInt) -> UInt {
     // [1] m = 1
     // a = b = im = 0, so okay
 
@@ -66,7 +64,7 @@ public struct barrett {
       let x = UInt((UInt128(z) * UInt128(im)) >> 64)
     #endif
     let y = x &* m
-    return Unsigned(z &- y &+ (z < y ? m : 0))
+    return z &- y &+ (z < y ? m : 0)
   }
 }
 
@@ -136,8 +134,8 @@ extension _Internal {
   /// @param b `1 <= b`
   /// @return pair(g, x) s.t. g = gcd(a, b), xa = g (mod b), 0 <= x < b/g
   @inlinable
-  static func inv_gcd<LL>(_ a: LL, _ b: LL) -> (first: LL, second: LL)
-  where LL: FixedWidthInteger {
+  static func inv_gcd(_ a: Int, _ b: Int) -> (first: Int, second: Int) {
+    typealias LL = Int
     let a = safe_mod(a, b)
     if a == 0 { return (b, 0) }
 

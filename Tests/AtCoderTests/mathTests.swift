@@ -29,7 +29,7 @@ private func pow_mod_naive(_ x: ll, _ n: ull, _ mod: uint) -> ll {
     var sum: LL = 0
     for i in 0..<n {
       let z: LL = a * i + b
-      sum += (z - _Internal.safe_mod(z, m)) / m
+      sum += (z - AtCoderTests.___safe_mod(z, m)) / m
     }
     return sum
   }
@@ -44,13 +44,13 @@ private func is_prime_naive(_ n: ll) -> Bool {
   return true
 }
 
-private func safe_mod<LL>(_ x: LL, _ m: LL) -> LL
-where LL: FixedWidthInteger {
-  var x = x
-  x %= m
-  if x < 0 { x += m }
-  return x
-}
+//private func safe_mod<LL>(_ x: LL, _ m: LL) -> LL
+//where LL: FixedWidthInteger {
+//  var x = x
+//  x %= m
+//  if x < 0 { x += m }
+//  return x
+//}
 
 final class mathTests: XCTestCase {
 
@@ -96,7 +96,7 @@ final class mathTests: XCTestCase {
 
     func naive(_ x: Int, _ n: Int, _ mod: Int) -> Int {
       #if DEBUG
-        let y = Int(safe_mod(x, mod))
+        let y = Int(___safe_mod(x, mod))
       #else
         let y = safe_mod(x, mod)
       #endif
