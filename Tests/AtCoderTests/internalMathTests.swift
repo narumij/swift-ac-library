@@ -1900,6 +1900,9 @@ final class internalMathTests: XCTestCase {
     XCTAssertEqual(_Internal._pow_mod_constexpr(-10, 2, -10), 0)
     XCTAssertEqual(_Internal._pow_mod_constexpr(-10, 2, CInt.min), 100)
     XCTAssertEqual(_Internal._pow_mod_constexpr(-10, 2, -1024), 1069156)
+//    XCTAssertEqual(_Internal._pow_mod_constexpr(-10, -2, -10), 0)
+//    XCTAssertEqual(_Internal._pow_mod_constexpr(-10, -2, CInt.min), 0)
+//    XCTAssertEqual(_Internal._pow_mod_constexpr(-10, -2, -1024), 99791872)
   }
   
   #endif
