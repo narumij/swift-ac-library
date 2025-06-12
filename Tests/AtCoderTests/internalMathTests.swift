@@ -1892,10 +1892,16 @@ final class internalMathTests: XCTestCase {
       }
     }
 
+    func testPrimitiveRootTest2() throws {
+      for x in Int(CInt.max)...(Int(CInt.max) + 128 * 1024) {
+        if !_Internal.is_prime_constexpr(Int(x)) { continue }
+        XCTAssertTrue(
+          is_primitive_root(x, _Internal.primitive_root_constexpr(x)))
+      }
+    }
+
     func testPrimitiveRootIntMaxTest() throws {
-      //        for (int i = 0; i < 1000; i++) {
-      for i in 0..<1000 {
-        let x = Int(Int.max) - i
+      for x in (Int.max - 1024)...Int.max {
         if !_Internal.is_prime_constexpr(Int(x)) { continue }
         XCTAssertTrue(
           is_primitive_root(x, _Internal.primitive_root_constexpr(x)))
