@@ -294,14 +294,12 @@ extension _Internal {
         butterfly(a.baseAddress!, z)
         butterfly(b.baseAddress!, z)
         for i in 0..<z {
-//        for i in Rep(z) {
           a[i] *= b[i]
         }
         butterfly_inv(a.baseAddress!, z)
         // resize(size)
         let iz = static_modint<mod>(z).inv
         for i in 0..<size { a[i] *= iz }
-//        for i in Rep(size) { a[i] *= iz }
 
         initializedCount = size
       }
