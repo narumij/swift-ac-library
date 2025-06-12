@@ -135,7 +135,6 @@ extension _Internal {
   /// @return pair(g, x) s.t. g = gcd(a, b), xa = g (mod b), 0 <= x < b/g
   @inlinable
   static func inv_gcd(_ a: Int, _ b: Int) -> (first: Int, second: Int) {
-    typealias LL = Int
     let a = safe_mod(a, b)
     if a == 0 { return (b, 0) }
 
@@ -145,11 +144,11 @@ extension _Internal {
     // [3] s * |m1| + t * |m0| <= b
     var s = b
     var t = a
-    var m0: LL = 0
-    var m1: LL = 1
+    var m0 = 0
+    var m1 = 1
 
     while t != 0 {
-      let u: LL = s / t
+      let u = s / t
       s -= t * u
       m0 -= m1 * u  // |m1 * u| <= |m1| * s <= b
 
@@ -204,8 +203,8 @@ extension _Internal {
     // for (int g = 2;; g++) {
     for g in sequence(first: 2, next: { $0 + 1 }) {
       var ok = true
-      for i in 0..<INT(cnt) {
-        if pow_mod_constexpr(Int(g), Int((m - 1) / divs[Int(i)]), Int(m)) == 1 {
+      for i in 0..<cnt {
+        if pow_mod_constexpr(g, (m - 1) / divs[i], m) == 1 {
           ok = false
           break
         }
@@ -228,15 +227,14 @@ extension _Internal {
   /// @param m `1 <= m < 2^32`
   /// @return sum_{i=0}^{n-1} floor((ai + b) / m) (mod 2^64)
   @inlinable
-  static func floor_sum_unsigned<ULL>(
-    _ n: ULL,
-    _ m: ULL,
-    _ a: ULL,
-    _ b: ULL
-  ) -> ULL
-  where ULL: FixedWidthInteger & UnsignedInteger {
+  static func floor_sum_unsigned(
+    _ n: UInt,
+    _ m: UInt,
+    _ a: UInt,
+    _ b: UInt
+  ) -> UInt {
     var (n, m, a, b) = (n, m, a, b)
-    var ans: ULL = 0
+    var ans: UInt = 0
     while true {
       if a >= m {
         let a_m = a.quotientAndRemainder(dividingBy: m)

@@ -105,5 +105,10 @@ public func floor_sum(
     ans -= 1 * n * ((b2 - b) / m)
     b = b2
   }
-  return ans + Int(_Internal.floor_sum_unsigned(UInt(n), UInt(m), UInt(a), UInt(b)))
+  return ans + Int(bitPattern:
+                    _Internal.floor_sum_unsigned(
+                      UInt(bitPattern: n),
+                      UInt(bitPattern: m),
+                      UInt(bitPattern: a),
+                      UInt(bitPattern: b)))
 }
