@@ -21,6 +21,56 @@ private func is_prime_naive(_ n: Int) -> Bool {
   return true
 }
 
+#if DEBUG
+  private typealias INT = CInt
+  private typealias UINT = CUnsignedInt
+  private typealias LL = CLongLong
+  private typealias ULL = CUnsignedLongLong
+
+  private func _pow_mod_constexpr(_ x: LL, _ n: LL, _ m: INT) -> LL {
+    var n = n
+    if m == 1 { return 0 }
+    let _m = ULL(UINT(bitPattern: m))
+    var r: ULL = 1
+    var y = ULL(bitPattern: _Internal.safe_mod(x, LL(m)))
+    while (n) != 0 {
+      if n & 1 != 0 { r = (r * y) % _m }
+      y = (y &* y) % _m
+      n >>= 1
+    }
+    return LL(bitPattern: r)
+  }
+
+  nonisolated(unsafe)
+    private var memoized_pow_mod: _Internal.Memoized3 = .init(source: _pow_mod_constexpr)
+
+  private func pow_mod_constexpr(_ x: LL, _ n: LL, _ m: INT) -> LL {
+    memoized_pow_mod.get(x, n, m)
+  }
+
+  private func _is_prime_constexpr(_ n: INT) -> Bool {
+    if n <= 1 { return false }
+    if ((1 << n) & (1 << 2 | 1 << 7 | 1 << 61)) != 0 { return true }
+    if 1 & n == 0 { return false }
+    var d = LL(n - 1)
+    while 1 & d == 0 { d >>= 1 }
+    let bases: [LL] = [2, 7, 61]
+    for a in bases {
+      var t: LL = d
+      var y: LL = pow_mod_constexpr(a, t, n)
+      let n = LL(n)
+      while t != n - 1, y != 1, y != n - 1 {
+        y = y * y % n
+        t <<= 1
+      }
+      if y != n - 1, t & 1 == 0 {
+        return false
+      }
+    }
+    return true
+  }
+#endif
+
 final class internalMathTests: XCTestCase {
 
   #if DEBUG
@@ -1893,6 +1943,14 @@ final class internalMathTests: XCTestCase {
     }
 
     func testPrimitiveRootTest2() throws {
+      for x in Int(CInt.max - 1000)...(Int(CInt.max)) {
+        XCTAssertEqual(
+          _Internal.is_prime_constexpr(x),
+          _is_prime_constexpr(CInt(x)))
+      }
+    }
+
+    func testPrimitiveRootTest3() throws {
       for x in Int(CInt.max)...(Int(CInt.max) + 128 * 1024) {
         if !_Internal.is_prime_constexpr(Int(x)) { continue }
         XCTAssertTrue(
