@@ -76,25 +76,25 @@ extension _Internal {
   /// @param m `1 <= m`
   /// @return `(x ** n) % m`
   @inlinable
-  static func _pow_mod_constexpr(_ x: LL, _ n: LL, _ m: INT) -> LL {
+  static func _pow_mod_constexpr(_ x: Int, _ n: Int, _ m: Int) -> Int {
     if m == 1 { return 0 }
-    let _m = ULL(UINT(bitPattern: m))
-    var r: ULL = 1
-    var y = ULL(bitPattern: safe_mod(x, LL(m)))
+    let _m = UInt(bitPattern: m)
+    var r: UInt = 1
+    var y = UInt(bitPattern: safe_mod(x, m))
     var n = n
     while (n) != 0 {
       if n & 1 != 0 { r = (r * y) % _m }
       y = (y &* y) % _m
       n >>= 1
     }
-    return LL(bitPattern: r)
+    return Int(bitPattern: r)
   }
 
   @usableFromInline
   nonisolated(unsafe)
   static var memoized_pow_mod: Memoized3 = .init(source: _pow_mod_constexpr)
   @inlinable
-  static func pow_mod_constexpr(_ x: LL, _ n: LL, _ m: INT) -> LL {
+  static func pow_mod_constexpr(_ x: Int, _ n: Int, _ m: Int) -> Int {
     memoized_pow_mod.get(x, n, m)
   }
 
@@ -103,17 +103,17 @@ extension _Internal {
   /// Fast Primality Testing for Integers That Fit into a Machine Word
   /// @param n `0 <= n`
   @inlinable
-  static func _is_prime_constexpr(_ n: INT) -> Bool {
+  static func _is_prime_constexpr(_ n: Int) -> Bool {
     if n <= 1 { return false }
     if ((1 << n) & (1 << 2 | 1 << 7 | 1 << 61)) != 0 { return true }
     if 1 & n == 0 { return false }
-    var d = LL(n - 1)
+    var d = n - 1
     while 1 & d == 0 { d >>= 1 }
-    let bases: [LL] = [2, 7, 61]
+    let bases: [Int] = [2, 7, 61]
     for a in bases {
-      var t: LL = d
-      var y: LL = pow_mod_constexpr(a, t, n)
-      let n = LL(n)
+      var t: Int = d
+      var y: Int = pow_mod_constexpr(a, t, n)
+      let n = Int(n)
       while t != n - 1, y != 1, y != n - 1 {
         y = y * y % n
         t <<= 1
@@ -129,9 +129,9 @@ extension _Internal {
   nonisolated(unsafe)
   static var memoized_is_prime: Memoized = .init(source: _is_prime_constexpr)
   @inlinable
-  static func is_prime_constexpr(_ n: INT) -> Bool { memoized_is_prime.get(n) }
+  static func is_prime_constexpr(_ n: Int) -> Bool { memoized_is_prime.get(n) }
   @inlinable
-  static func is_prime(_ n: INT) -> Bool { is_prime_constexpr(n) }
+  static func is_prime(_ n: Int) -> Bool { is_prime_constexpr(n) }
 
   /// @param b `1 <= b`
   /// @return pair(g, x) s.t. g = gcd(a, b), xa = g (mod b), 0 <= x < b/g
@@ -207,7 +207,7 @@ extension _Internal {
     for g in sequence(first: 2, next: { $0 + 1 }) {
       var ok = true
       for i in 0..<INT(cnt) {
-        if pow_mod_constexpr(LL(g), LL((m - 1) / divs[Int(i)]), INT(m)) == 1 {
+        if pow_mod_constexpr(Int(g), Int((m - 1) / divs[Int(i)]), Int(m)) == 1 {
           ok = false
           break
         }

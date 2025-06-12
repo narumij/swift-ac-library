@@ -103,12 +103,12 @@ final class internalMathTests: XCTestCase {
       XCTAssertTrue(_Internal.is_prime(1_000_000_009))
       //        for (int i = 0; i <= 10000; i++) {
       for i in 0 ..<= 10000 {
-        XCTAssertEqual(is_prime_naive(i), _Internal.is_prime_constexpr(CInt(i)))
+        XCTAssertEqual(is_prime_naive(i), _Internal.is_prime_constexpr(Int(i)))
       }
       //        for (int i = 0; i <= 10000; i++) {
       for i in 0 ..<= 10000 {
         let x = Int(CInt.max) - i
-        XCTAssertEqual(is_prime_naive(x), _Internal.is_prime_constexpr(CInt(x)))
+        XCTAssertEqual(is_prime_naive(x), _Internal.is_prime_constexpr(Int(x)))
       }
     }
 
@@ -1848,7 +1848,7 @@ final class internalMathTests: XCTestCase {
     func testPrimitiveRootTestNaive() throws {
       //        for (int m = 2; m <= 10000; m++) {
       for m in 2 ..<= 10000 {
-        if !_Internal.is_prime_constexpr(CInt(m)) { continue }
+        if !_Internal.is_prime_constexpr(Int(m)) { continue }
         let n = _Internal.primitive_root_constexpr(m)
         XCTAssertLessThanOrEqual(1, n)
         XCTAssertLessThan(n, m)
@@ -1886,25 +1886,21 @@ final class internalMathTests: XCTestCase {
       //        for (int i = 0; i < 1000; i++) {
       for i in 0..<1000 {
         let x = Int(CInt.max) - i
-        if !_Internal.is_prime_constexpr(CInt(x)) { continue }
+        if !_Internal.is_prime_constexpr(Int(x)) { continue }
         XCTAssertTrue(
           is_primitive_root(x, _Internal.primitive_root_constexpr(x)))
       }
     }
-  
-  func testHoge() throws {
-    
-    XCTAssertEqual(_Internal._pow_mod_constexpr(10, 2, -10), 0)
-    XCTAssertEqual(_Internal._pow_mod_constexpr(10, 2, CInt.min), 100)
-    XCTAssertEqual(_Internal._pow_mod_constexpr(10, 2, -1024), 100)
-    XCTAssertEqual(_Internal._pow_mod_constexpr(-10, 2, -10), 0)
-    XCTAssertEqual(_Internal._pow_mod_constexpr(-10, 2, CInt.min), 100)
-    XCTAssertEqual(_Internal._pow_mod_constexpr(-10, 2, -1024), 1069156)
-//    XCTAssertEqual(_Internal._pow_mod_constexpr(-10, -2, -10), 0)
-//    XCTAssertEqual(_Internal._pow_mod_constexpr(-10, -2, CInt.min), 0)
-//    XCTAssertEqual(_Internal._pow_mod_constexpr(-10, -2, -1024), 99791872)
-  }
-  
-  #endif
 
+    func testPrimitiveRootIntMaxTest() throws {
+      //        for (int i = 0; i < 1000; i++) {
+      for i in 0..<1000 {
+        let x = Int(Int.max) - i
+        if !_Internal.is_prime_constexpr(Int(x)) { continue }
+        XCTAssertTrue(
+          is_primitive_root(x, _Internal.primitive_root_constexpr(x)))
+      }
+    }
+
+  #endif
 }

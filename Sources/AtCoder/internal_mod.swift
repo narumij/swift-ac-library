@@ -20,7 +20,7 @@ extension static_mod {
   }
   @inlinable @inline(__always)
   public static var isPrime: Bool {
-    assert(_Internal.is_prime(CInt(umod)), "\(umod) is not prime number.")
+    assert(_Internal.is_prime(Int(umod)), "\(umod) is not prime number.")
     return true
   }
 }

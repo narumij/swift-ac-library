@@ -36,7 +36,7 @@ final class utilsMathTests: XCTestCase {
   #if DEBUG
     func testIsPrimitiveRootTest() throws {
       for m in Int(2) ..<= 500 {
-        if !_Internal.is_prime_constexpr(CInt(m)) { continue }
+        if !_Internal.is_prime_constexpr(Int(m)) { continue }
         for g in 1..<m {
           XCTAssertEqual(is_primitive_root_naive(m, g), is_primitive_root(m, g))
         }

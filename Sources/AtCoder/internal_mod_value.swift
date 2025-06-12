@@ -7,7 +7,7 @@ public struct mod_value {
   @inlinable @inline(__always)
   public init<Integer: BinaryInteger>(_ m: Integer) {
     self.umod = UInt(m)
-    self.isPrime = _Internal.is_prime(CInt(m))
+    self.isPrime = _Internal.is_prime(Int(m))
   }
 
   @usableFromInline
@@ -28,7 +28,7 @@ extension mod_value: ExpressibleByIntegerLiteral {
   @inlinable @inline(__always)
   public init(integerLiteral value: Int) {
     self.umod = UInt(bitPattern: value)
-    self.isPrime = _Internal.is_prime(CInt(value))
+    self.isPrime = _Internal.is_prime(Int(value))
   }
 }
 
