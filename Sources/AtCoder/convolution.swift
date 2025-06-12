@@ -275,7 +275,7 @@ extension _Internal {
   ) -> ArraySlice<static_modint<mod>> {
     var (a, b) = (a, b)
     let (n, m) = (a.count, b.count)
-    let z: Int = _Internal.bit_ceil(CUnsignedInt(n + m - 1))
+    let z: Int = _Internal.bit_ceil(n + m - 1)
     a.resize(z)
     b.resize(z)
     a.withUnsafeMutableBufferPointer { a in
@@ -304,7 +304,7 @@ public func convolution<mod: static_mod>(
   let (n, m) = (a.count, b.count)
   if n == 0 || m == 0 { return [] }
   //  let z: CInt = _Internal.bit_ceil(n + m - 1)
-  assert((static_modint<mod>.mod - 1) % Int(_Internal.bit_ceil(n + m - 1)) == 0)
+  assert((static_modint<mod>.mod - 1) % _Internal.bit_ceil(n + m - 1) == 0)
   if min(n, m) <= 60 {
     return a.withUnsafeBufferPointer { a in
       b.withUnsafeBufferPointer { b in
@@ -335,7 +335,7 @@ public func convolution<mod: static_mod, T: FixedWidthInteger>(_ t: mod.Type, _ 
 
   typealias mint = static_modint<mod>
 
-  let z: Int = _Internal.bit_ceil(CUnsignedInt(n + m - 1))
+  let z: Int = _Internal.bit_ceil(n + m - 1)
   assert((Int(mint.mod) - 1) % z == 0)
 
   var a2 = [mint](repeating: 0, count: n)
