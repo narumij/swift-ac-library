@@ -243,7 +243,8 @@ extension _Internal {
   @inline(never)
   @inlinable
   static func convolution_naive<mod: static_mod>(
-    _ a: UnsafeBufferPointer<static_modint<mod>>, _ b: UnsafeBufferPointer<static_modint<mod>>
+    _ a: UnsafeBufferPointer<static_modint<mod>>,
+    _ b: UnsafeBufferPointer<static_modint<mod>>
   ) -> [static_modint<mod>] {
     let n = a.count
     let m = b.count
