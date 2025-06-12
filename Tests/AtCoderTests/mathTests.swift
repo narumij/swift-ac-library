@@ -64,7 +64,7 @@ final class mathTests: XCTestCase {
       #if DEBUG
         let y: ll = _Internal.safe_mod(x, ll(mod))
       #else
-        let y: ll = safe_mod(x, ll(mod))
+        let y: ll = ___safe_mod(x, ll(mod))
       #endif
       var z: ull = 1 % ull(mod)
       for _ in 0..<n as Range<ll> {
@@ -98,7 +98,7 @@ final class mathTests: XCTestCase {
       #if DEBUG
         let y = Int(___safe_mod(x, mod))
       #else
-        let y = safe_mod(x, mod)
+        let y = ___safe_mod(x, mod)
       #endif
       var z = 1 % mod
       for _ in 0..<n {
