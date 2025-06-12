@@ -4,6 +4,7 @@ import Foundation
 
 // できるだけキャストを減らす修正の一環でCUunsignedIntではなくUIntを採用している
 // 内部計算に制限があり、UIntの幅全てが使えるわけでは無いことに注意
+// クラッシュは取れたが、性能は出ない模様
 public protocol static_mod {
   /// - Important: 1 ... CInt.maxまで有効。それ以外は未定義
   static var umod: UInt { get }
