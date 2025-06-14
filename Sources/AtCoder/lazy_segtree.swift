@@ -195,7 +195,7 @@ extension LazySegTree.Buffer {
 
     let _n: Int = count
     let size: Int = _Internal.bit_ceil(_n)
-    let log: Int = _Internal.countr_zero(size)
+    let log: Int = size.trailingZeroBitCount
     let capacity = 2 * size
 
     let storage = LazySegTree.Buffer.create(minimumCapacity: capacity) { _ in

@@ -148,7 +148,7 @@ final class internalConvolutionTests: XCTestCase {
       var b = repeatElement(1, count: 128).map { mint($0) }
       let n = CInt(a.count)
       let m = CInt(b.count)
-      let z = _Internal.bit_ceil(n + m - 1)
+      let z = _Internal.bit_ceil(Int(n + m - 1))
       a.resize(z)
       a.withUnsafeMutableBufferPointer { a in
         _Internal.butterfly(a.baseAddress!, a.count)

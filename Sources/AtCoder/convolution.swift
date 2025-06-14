@@ -30,7 +30,7 @@ extension _Internal {
     public init() {
 
       let g: Int = _Internal.primitive_root(mint.mod)
-      let rank2: Int = _Internal.countr_zero_constexpr(mint.mod - 1)
+      let rank2: Int = (mint.mod - 1).trailingZeroBitCount
 
       root = [mint](repeating: 0, count: rank2 + 1)  // root[i]^(2^i) == 1
       iroot = [mint](repeating: 0, count: rank2 + 1)  // root[i] * iroot[i] == 1
