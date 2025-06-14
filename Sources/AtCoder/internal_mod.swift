@@ -54,7 +54,7 @@ extension dynamic_mod {
   static func mul(_ a: UInt, _ b: UInt) -> UInt {
     bt.mul(a, b)
   }
-  /// - Important: 1 ... CInt.maxまで有効。それ以外は未定義
+  
   @inlinable
   public static func set_mod(_ m: Int) {
     assert(1 <= m)

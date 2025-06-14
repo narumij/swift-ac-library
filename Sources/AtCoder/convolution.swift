@@ -391,51 +391,48 @@ public func convolution_ll(
   let m = b.count
   if n == 0 || m == 0 { return [] }
 
-  typealias ULL = UInt
-  typealias LL = Int
-
   enum const {
-    static let MOD1: ULL = 754_974_721  // 2^24
-    static let MOD2: ULL = 167_772_161  // 2^25
-    static let MOD3: ULL = 469_762_049  // 2^26
-    static let M2M3: ULL = MOD2 &* MOD3
-    static let M1M3: ULL = MOD1 &* MOD3
-    static let M1M2: ULL = MOD1 &* MOD2
-    static let M1M2M3: ULL = MOD1 &* MOD2 &* MOD3
+    static let MOD1: UInt = 754_974_721  // 2^24
+    static let MOD2: UInt = 167_772_161  // 2^25
+    static let MOD3: UInt = 469_762_049  // 2^26
+    static let M2M3: UInt = MOD2 &* MOD3
+    static let M1M3: UInt = MOD1 &* MOD3
+    static let M1M2: UInt = MOD1 &* MOD2
+    static let M1M2M3: UInt = MOD1 &* MOD2 &* MOD3
     enum mod1: static_mod {
-      static let umod = UInt(MOD1)
+      static let umod = MOD1
       static let isPrime: Bool = false
     }
     enum mod2: static_mod {
-      static let umod = UInt(MOD2)
+      static let umod = MOD2
       static let isPrime: Bool = false
     }
     enum mod3: static_mod {
-      static let umod = UInt(MOD3)
+      static let umod = MOD3
       static let isPrime: Bool = false
     }
-    static let i1 = ULL(_Internal.inv_gcd(LL(MOD2) * LL(MOD3), LL(MOD1)).second)
-    static let i2 = ULL(_Internal.inv_gcd(LL(MOD1) * LL(MOD3), LL(MOD2)).second)
-    static let i3 = ULL(_Internal.inv_gcd(LL(MOD1) * LL(MOD2), LL(MOD3)).second)
+    static let i1 = UInt(_Internal.inv_gcd(Int(MOD2) * Int(MOD3), Int(MOD1)).second)
+    static let i2 = UInt(_Internal.inv_gcd(Int(MOD1) * Int(MOD3), Int(MOD2)).second)
+    static let i3 = UInt(_Internal.inv_gcd(Int(MOD1) * Int(MOD2), Int(MOD3)).second)
   }
 
   typealias mod1 = const.mod1
   typealias mod2 = const.mod2
   typealias mod3 = const.mod3
 
-  let MOD1: ULL = const.MOD1
-  let MOD2: ULL = const.MOD2
-  let MOD3: ULL = const.MOD3
-  let M2M3: ULL = const.M2M3
-  let M1M3: ULL = const.M1M3
-  let M1M2: ULL = const.M1M2
-  let M1M2M3: ULL = const.M1M2M3
+  let MOD1: UInt = const.MOD1
+  let MOD2: UInt = const.MOD2
+  let MOD3: UInt = const.MOD3
+  let M2M3: UInt = const.M2M3
+  let M1M3: UInt = const.M1M3
+  let M1M2: UInt = const.M1M2
+  let M1M2M3: UInt = const.M1M2M3
 
-  let i1: ULL = const.i1
-  let i2: ULL = const.i2
-  let i3: ULL = const.i3
+  let i1: UInt = const.i1
+  let i2: UInt = const.i2
+  let i3: UInt = const.i3
 
-  let MAX_AB_BIT: ULL = 24
+  let MAX_AB_BIT: UInt = 24
   assert(MOD1 % (1 << MAX_AB_BIT) == 1, "MOD1 isn't enough to support an array length of 2^24.")
   assert(MOD2 % (1 << MAX_AB_BIT) == 1, "MOD2 isn't enough to support an array length of 2^24.")
   assert(MOD3 % (1 << MAX_AB_BIT) == 1, "MOD3 isn't enough to support an array length of 2^24.")
@@ -445,12 +442,12 @@ public func convolution_ll(
   let c2 = convolution(mod2.self, a, b)
   let c3 = convolution(mod3.self, a, b)
 
-  var c = [LL](repeating: 0, count: n + m - 1)
+  var c = [Int](repeating: 0, count: n + m - 1)
   for i in 0..<(n + m - 1) {
-    var x: ULL = 0
-    x &+= (ULL(bitPattern: c1[i]) * i1) % MOD1 &* M2M3
-    x &+= (ULL(bitPattern: c2[i]) * i2) % MOD2 &* M1M3
-    x &+= (ULL(bitPattern: c3[i]) * i3) % MOD3 &* M1M2
+    var x: UInt = 0
+    x &+= (UInt(bitPattern: c1[i]) * i1) % MOD1 &* M2M3
+    x &+= (UInt(bitPattern: c2[i]) * i2) % MOD2 &* M1M3
+    x &+= (UInt(bitPattern: c3[i]) * i3) % MOD3 &* M1M2
     // B = 2^63, -B <= x, r(real value) < B
     // (x, x - M, x - 2M, or x - 3M) = r (mod 2B)
     // r = c1[i] (mod MOD1)
@@ -468,14 +465,14 @@ public func convolution_ll(
     //   ((1) mod MOD1) mod 5 = 2
     //   ((2) mod MOD1) mod 5 = 3
     //   ((3) mod MOD1) mod 5 = 4
-    var diff: LL =
-      c1[i] - _Internal.safe_mod(LL(bitPattern: x), LL(bitPattern: MOD1))
-    if diff < 0 { diff += LL(bitPattern: MOD1) }
-    let offset: [ULL] = [
+    var diff: Int =
+      c1[i] - _Internal.safe_mod(Int(bitPattern: x), Int(bitPattern: MOD1))
+    if diff < 0 { diff += Int(bitPattern: MOD1) }
+    let offset: [UInt] = [
       0, 0, M1M2M3, 2 * M1M2M3, 3 * M1M2M3,
     ]
-    x &-= offset[Int(diff % 5)]
-    c[i] = LL(bitPattern: x)
+    x &-= offset[diff % 5]
+    c[i] = Int(bitPattern: x)
   }
 
   return c
