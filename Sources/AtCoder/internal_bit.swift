@@ -2,8 +2,7 @@ import Foundation
 
 extension _Internal {
 
-  /// @param n `1 <= n`
-  /// @return same with std::bit::countr_zero
+  /// @return same with std::bit::bit_ceil
   @inlinable
   @inline(__always)
   static func bit_ceil(_ n: Int) -> Int {

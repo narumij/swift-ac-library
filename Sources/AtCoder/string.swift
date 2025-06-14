@@ -233,7 +233,7 @@ public func suffix_array(_ s: [UInt8]) -> [Int] {
 
 @inlinable
 public func suffix_array(_ s: [Character]) -> [Int] {
-  _Internal.sa_is(s.map { Int($0.asciiValue!) }, count: s.count, 255)
+  _Internal.sa_is(s.map { $0.asciiValue! }, count: s.count, 255)
 }
 
 @inlinable
