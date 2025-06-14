@@ -3,6 +3,7 @@ import Foundation
 public protocol static_modint_base: modint_base {}
 
 public protocol dynamic_modint_base: modint_base {
+  /// - Important: 1 ... CUnsingedInt.maxまで有効。それ以外は未定義
   static func set_mod(_ m: Int)
 }
 

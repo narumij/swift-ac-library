@@ -22,6 +22,15 @@ extension dynamic_mod {
 
 final class modintTests: XCTestCase {
 
+  override func setUpWithError() throws {
+    // Put setup code here. This method is called before the invocation of each test method in the class.
+  }
+
+  override func tearDownWithError() throws {
+    // Put teardown code here. This method is called after the invocation of each test method in the class.
+    mod_dynamic.reset()
+  }
+
   @usableFromInline
   enum mod_1: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 1 }
   @usableFromInline
@@ -44,6 +53,19 @@ final class modintTests: XCTestCase {
   enum INT_MAX: static_mod_value {
     nonisolated(unsafe) static let mod: mod_value = .init(Int.max)
   }
+
+  #if DEBUG
+    func testModulus() throws {
+      XCTAssertEqual(mod_1.isPrime, _Internal.is_prime(Int(mod_1.m)))
+      XCTAssertEqual(mod_11.isPrime, _Internal.is_prime(Int(mod_11.m)))
+      XCTAssertEqual(mod_12.isPrime, _Internal.is_prime(Int(mod_12.m)))
+      XCTAssertEqual(mod_1_000_000_007.isPrime, _Internal.is_prime(Int(mod_1_000_000_007.m)))
+      XCTAssertEqual(mod_1_000_000_008.isPrime, _Internal.is_prime(Int(mod_1_000_000_008.m)))
+      XCTAssertEqual(INT32_MAX.isPrime, _Internal.is_prime(Int(INT32_MAX.m)))
+      XCTAssertEqual(INT_MAX.isPrime, _Internal.is_prime(Int(INT_MAX.m)))
+      XCTAssertEqual(mod_value.mod_UINT32_MAX.umod, UInt(CUnsignedInt.max))
+    }
+  #endif
 
   func testDynamicBorder() throws {
 
@@ -71,8 +93,6 @@ final class modintTests: XCTestCase {
         }
       }
     }
-
-    mod_dynamic.reset()
   }
 
   func testDynamicBorderAlt() throws {
@@ -129,8 +149,6 @@ final class modintTests: XCTestCase {
         XCTAssertEqual(ans4, int((mint(a) * mint(b)).val), "* mod = \(mod)")
       }
     }
-
-    mod_dynamic.reset()
   }
 
   func testULL() throws {
@@ -140,8 +158,6 @@ final class modintTests: XCTestCase {
     typealias mint = modint998244353
     XCTAssertNotEqual(int(mint.mod - 1), int(mint(ull(bitPattern: -1)).val))
     XCTAssertNotEqual(0, (ull(bitPattern: -1) + mint(1)).val)
-
-    mod_dynamic.reset()
   }
 
   func testMod1() throws {
@@ -176,8 +192,6 @@ final class modintTests: XCTestCase {
     XCTAssertEqual(0, modint(0).inv)
 
     XCTAssertEqual(0, mint(true).val)
-
-    mod_dynamic.reset()
   }
 
   func testModIntMax() throws {
@@ -205,8 +219,6 @@ final class modintTests: XCTestCase {
     XCTAssertEqual(int((mint(1234) - mint(5678)).val), int(Int32.max - 5678 + 1234))
     XCTAssertEqual((mint(1234) * mint(5678)).val, 1234 * 5678)
     XCTAssertEqual((mint(Int32.max) + mint(Int32.max)).val, 0)
-
-    mod_dynamic.reset()
   }
 
   func testInt128() throws {
@@ -292,8 +304,6 @@ final class modintTests: XCTestCase {
       let x = modint(i).inv.val
       XCTAssertEqual(1, (BigInt(x) * BigInt(i) % BigInt(Int.max)))
     }
-
-    mod_dynamic.reset()
   }
 
   func testConstUsage() throws {
@@ -421,8 +431,6 @@ final class modintTests: XCTestCase {
 
     // Swift Packageでは実施不可
     // XCTAssertThrowsError(mint(3).pow(-1), ".*")
-
-    mod_dynamic.reset()
   }
 
   func testDynamicUsage2() throws {
@@ -457,8 +465,6 @@ final class modintTests: XCTestCase {
       m *= mint(5)
       XCTAssertEqual(4, m.val)
     }
-
-    mod_dynamic.reset()
   }
 
   func testConstructor() throws {
@@ -486,8 +492,6 @@ final class modintTests: XCTestCase {
 
     let m = modint()
     XCTAssertEqual(0, m.val)
-
-    mod_dynamic.reset()
   }
 
   func testConstructorStatic() throws {
@@ -568,8 +572,6 @@ final class modintTests: XCTestCase {
     a += 3
     a -= 2
     XCTAssertEqual(4, a)
-
-    mod_dynamic.reset()
   }
 
   func testEtc() throws {
