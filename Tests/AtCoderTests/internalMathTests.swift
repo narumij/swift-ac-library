@@ -50,7 +50,7 @@ where LL: FixedWidthInteger {
   }
 
   nonisolated(unsafe)
-    private var memoized_pow_mod: _Internal.Memoized3 = .init(source: _pow_mod_constexpr)
+    private var memoized_pow_mod: _Internal.Cache = .init(source: _pow_mod_constexpr)
 
   private func pow_mod_constexpr(_ x: LL, _ n: LL, _ m: INT) -> LL {
     memoized_pow_mod.get(x, n, m)
