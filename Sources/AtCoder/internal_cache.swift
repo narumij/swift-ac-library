@@ -4,17 +4,17 @@ extension _Internal {
 
   @usableFromInline
   struct Cache<each T: Hashable, Output> {
-    
+
     @usableFromInline
-    var cache: [Key: Output] = [:]
-    
+    var cache: [Params: Output] = [:]
+
     @usableFromInline
     let source: (repeat each T) -> Output
-    
+
     @inlinable
     @inline(__always)
     mutating func get(_ values: repeat each T) -> Output {
-      let key = Key(repeat each values)
+      let key = Params(repeat each values)
       if let p = cache[key] { return p }
       let p = source(repeat each values)
       cache[key] = p
@@ -24,16 +24,17 @@ extension _Internal {
 }
 
 extension _Internal.Cache {
-  
+
   public
-  struct Key {
-    
+    struct Params
+  {
+
     public
       typealias Tuple = (repeat each T)
 
     @usableFromInline
     var tuple: Tuple
-    
+
     @inlinable
     @inline(__always)
     public init(_ values: repeat each T) {
@@ -42,8 +43,8 @@ extension _Internal.Cache {
   }
 }
 
-extension _Internal.Cache.Key: Equatable where repeat each T: Equatable {
-  
+extension _Internal.Cache.Params: Equatable where repeat each T: Equatable {
+
   @inlinable
   @inline(__always)
   static func == (lhs: Self, rhs: Self) -> Bool {
@@ -56,8 +57,8 @@ extension _Internal.Cache.Key: Equatable where repeat each T: Equatable {
   }
 }
 
-extension _Internal.Cache.Key: Hashable where repeat each T: Hashable {
-  
+extension _Internal.Cache.Params: Hashable where repeat each T: Hashable {
+
   @inlinable
   @inline(__always)
   func hash(into hasher: inout Hasher) {
