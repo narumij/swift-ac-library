@@ -588,6 +588,13 @@ final class modintTests: XCTestCase {
     XCTAssertEqual(
       ne2.1, int((modint(CUnsignedLongLong(bitPattern: CLongLong(-1))) + modint(1)).val))
   }
+  
+  func testNumeric() throws {
+    XCTAssertNotNil(modint998244353(exactly: 0))
+    XCTAssertNotNil(modint998244353(exactly: mod_998_244_353.umod - 1))
+    XCTAssertNil(modint998244353(exactly: -1))
+    XCTAssertNil(modint998244353(exactly: mod_998_244_353.umod + 1))
+  }
 
   func testStress() throws {
 

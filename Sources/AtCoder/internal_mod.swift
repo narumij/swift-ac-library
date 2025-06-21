@@ -82,7 +82,7 @@ public enum mod_dynamic: dynamic_mod {
 
 // MARK: -
 
-public protocol modint_base: Hashable & AdditiveArithmetic
+public protocol modint_base: Hashable & Numeric & AdditiveArithmetic
     & ExpressibleByIntegerLiteral & CustomStringConvertible
 {
   init()
@@ -202,4 +202,24 @@ extension modint_raw {
       yield _v
     }
   }
+}
+
+extension modint_raw { // Numeric Comformance
+  
+  public init?<T>(exactly source: T) where T : BinaryInteger {
+    guard
+      let s = UInt(exactly: source),
+      s < Self.umod
+    else {
+      return nil
+    }
+    
+    self.init(rawValue: s)
+  }
+  
+  public var magnitude: UInt.Magnitude {
+    _v.magnitude
+  }
+  
+  public typealias Magnitude = UInt.Magnitude
 }
