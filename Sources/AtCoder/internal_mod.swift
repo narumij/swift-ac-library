@@ -218,7 +218,7 @@ extension modint_raw { // Numeric Comformance
   }
   
   public var magnitude: UInt.Magnitude {
-    val.magnitude
+    _v.magnitude
   }
   
   public typealias Magnitude = UInt.Magnitude
