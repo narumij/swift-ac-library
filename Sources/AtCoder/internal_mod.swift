@@ -6,9 +6,10 @@ import Foundation
 // 内部計算に制限があり、UIntの幅全てが使えるわけでは無いことに注意
 // クラッシュは取れたが、性能は出ない模様
 public protocol static_mod {
-  /// - Important: 1 ... CInt.maxまで有効。それ以外は未定義
+  /// - Important: 1 ... CUnsingedInt.maxまで有効。それ以外は未定義
   static var umod: UInt { get }
   // 素数判定を自動では行わないため、注意が必要
+  // 素数以外を利用する場合、オーバーライドする必要がある
   static var isPrime: Bool { get }
 }
 
@@ -37,6 +38,7 @@ public enum mod_1_000_000_007: static_mod {
 // MARK: -
 
 extension barrett: ExpressibleByIntegerLiteral {
+  /// - Important: 1 ... CUnsingedInt.maxまで有効。それ以外は未定義
   @inlinable @inline(__always)
   public init(integerLiteral value: Int) {
     self.init(value)
@@ -54,7 +56,6 @@ extension dynamic_mod {
   static func mul(_ a: UInt, _ b: UInt) -> UInt {
     bt.mul(a, b)
   }
-  /// - Important: 1 ... CInt.maxまで有効。それ以外は未定義
   @inlinable
   public static func set_mod(_ m: Int) {
     assert(1 <= m)
@@ -195,6 +196,10 @@ extension modint_raw {
   public init(bitPattern i: UInt) {
     self.init(rawValue: __modint_v(UInt: i, umod: Self.umod))
   }
-  @inlinable @inline(__always)
-  public var unsigned: UInt { _v }
+  @inlinable
+  public var unsigned: UInt {
+    @inline(__always) _read {
+      yield _v
+    }
+  }
 }

@@ -92,7 +92,7 @@ extension _Internal {
 
   @usableFromInline
   nonisolated(unsafe)
-  static var memoized_pow_mod: Memoized3 = .init(source: _pow_mod_constexpr)
+  static var memoized_pow_mod: Cache = .init(source: _pow_mod_constexpr)
   @inlinable
   static func pow_mod_constexpr(_ x: Int, _ n: Int, _ m: Int) -> Int {
     memoized_pow_mod.get(x, n, m)
@@ -127,7 +127,7 @@ extension _Internal {
 
   @usableFromInline
   nonisolated(unsafe)
-  static var memoized_is_prime: Memoized = .init(source: _is_prime_constexpr)
+  static var memoized_is_prime: Cache = .init(source: _is_prime_constexpr)
   @inlinable
   static func is_prime_constexpr(_ n: Int) -> Bool { memoized_is_prime.get(n) }
   @inlinable
@@ -219,7 +219,7 @@ extension _Internal {
 
   @usableFromInline
   nonisolated(unsafe)
-    static var memoized_primitve_root: Memoized = .init(source: _primitive_root_constexpr)
+    static var memoized_primitve_root: Cache = .init(source: _primitive_root_constexpr)
   @inlinable
   static func primitive_root_constexpr(_ m: Int) -> Int { memoized_primitve_root.get(m) }
   @inlinable
@@ -259,42 +259,4 @@ extension _Internal {
   }
 }
 
-extension _Internal {
 
-  @usableFromInline
-  struct Memoized<A: Hashable, Output> {
-    @usableFromInline var cache: [A: Output] = [:]
-    @usableFromInline let source: (A) -> Output
-    @inlinable
-    mutating func get(_ a: A) -> Output {
-      if let p = cache[a] { return p }
-      let p = source(a)
-      cache[a] = p
-      return p
-    }
-  }
-
-  @usableFromInline
-  struct Memoized3<A: Hashable, B: Hashable, C: Hashable, Output> {
-    public struct Key: Hashable {
-      @inlinable init(a: A, b: B, c: C) {
-        self.a = a
-        self.b = b
-        self.c = c
-      }
-      public var a: A
-      public var b: B
-      public var c: C
-    }
-    @usableFromInline var cache: [Key: Output] = [:]
-    @usableFromInline let source: (A, B, C) -> Output
-    @inlinable
-    mutating func get(_ a: A, _ b: B, _ c: C) -> Output {
-      let key = Key(a: a, b: b, c: c)
-      if let p = cache[key] { return p }
-      let p = source(a, b, c)
-      cache[key] = p
-      return p
-    }
-  }
-}

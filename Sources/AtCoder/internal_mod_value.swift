@@ -4,10 +4,18 @@ import Foundation
 
 public struct mod_value {
 
+  /// - Important: 1 ... CUnsingedInt.maxまで有効。それ以外は未定義
   @inlinable @inline(__always)
-  public init<Integer: BinaryInteger>(_ m: Integer) {
-    self.umod = UInt(m)
+  public init(_ m: UInt) {
+    self.umod = m
     self.isPrime = _Internal.is_prime(Int(m))
+  }
+
+  /// - Important: 1 ... CUnsingedInt.maxまで有効。それ以外は未定義
+  @inlinable @inline(__always)
+  public init(_ m: Int) {
+    self.umod = UInt(bitPattern: m)
+    self.isPrime = _Internal.is_prime(m)
   }
 
   @usableFromInline
@@ -25,10 +33,10 @@ extension mod_value {
 }
 
 extension mod_value: ExpressibleByIntegerLiteral {
+  /// - Important: 1 ... CUnsingedInt.maxまで有効。それ以外は未定義
   @inlinable @inline(__always)
-  public init(integerLiteral value: Int) {
-    self.umod = UInt(bitPattern: value)
-    self.isPrime = _Internal.is_prime(Int(value))
+  public init(integerLiteral value: CInt) {
+    self.init(UInt(CUnsignedInt(bitPattern: value)))
   }
 }
 
