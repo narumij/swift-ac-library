@@ -6,7 +6,7 @@ extension _Internal {
   struct Cache<each T: Hashable, Output> {
 
     @usableFromInline
-    var cache: [Params: Output] = [:]
+    var cache: [Pack: Output] = [:]
 
     @usableFromInline
     let source: (repeat each T) -> Output
@@ -14,7 +14,7 @@ extension _Internal {
     @inlinable
     @inline(__always)
     mutating func get(_ values: repeat each T) -> Output {
-      let key = Params(repeat each values)
+      let key = Pack(repeat each values)
       if let p = cache[key] { return p }
       let p = source(repeat each values)
       cache[key] = p
@@ -26,29 +26,28 @@ extension _Internal {
 extension _Internal.Cache {
 
   public
-    struct Params
+    struct Pack
   {
-
     public
-      typealias Tuple = (repeat each T)
+      typealias RawValue = (repeat each T)
 
     @usableFromInline
-    var tuple: Tuple
+    var rawValue: RawValue
 
     @inlinable
     @inline(__always)
     public init(_ values: repeat each T) {
-      self.tuple = (repeat each values)
+      self.rawValue = (repeat each values)
     }
   }
 }
 
-extension _Internal.Cache.Params: Equatable where repeat each T: Equatable {
+extension _Internal.Cache.Pack: Equatable where repeat each T: Equatable {
 
   @inlinable
   @inline(__always)
   static func == (lhs: Self, rhs: Self) -> Bool {
-    for (l, r) in repeat (each lhs.tuple, each rhs.tuple) {
+    for (l, r) in repeat (each lhs.rawValue, each rhs.rawValue) {
       if l != r {
         return false
       }
@@ -57,12 +56,12 @@ extension _Internal.Cache.Params: Equatable where repeat each T: Equatable {
   }
 }
 
-extension _Internal.Cache.Params: Hashable where repeat each T: Hashable {
+extension _Internal.Cache.Pack: Hashable where repeat each T: Hashable {
 
   @inlinable
   @inline(__always)
   func hash(into hasher: inout Hasher) {
-    for l in repeat (each tuple) {
+    for l in repeat (each rawValue) {
       hasher.combine(l)
     }
   }
