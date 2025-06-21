@@ -207,10 +207,14 @@ extension modint_raw {
 extension modint_raw { // Numeric Comformance
   
   public init?<T>(exactly source: T) where T : BinaryInteger {
-    if let s = UInt(exactly: source), s < Self.umod {
-      self.init(rawValue: s)
+    guard
+      let s = UInt(exactly: source),
+      s < Self.umod
+    else {
+      return nil
     }
-    return nil
+    
+    self.init(rawValue: s)
   }
   
   public var magnitude: UInt.Magnitude {
