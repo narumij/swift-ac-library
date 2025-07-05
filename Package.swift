@@ -36,16 +36,16 @@ let package = Package(
   dependencies: [
     .package(
       url: "https://github.com/apple/swift-algorithms",
-      exact: "1.2.0"),
+      from: "1.2.0"),
     .package(
       url: "https://github.com/apple/swift-collections",
-      exact: "1.1.4"),
+      from: "1.2.0"),
     .package(
       url: "https://github.com/apple/swift-numerics",
-      revision: "2b458e8aeb9cf3f3a156f54ba427b9f101a4511a"),
+      branch: "main"),
     .package(
       url: "https://github.com/attaswift/BigInt",
-      exact: "5.5.1"),
+      from: "5.6.0"),
   ],
   targets: [
     // Targets are the basic building blocks of a package, defining a module or a test suite.
