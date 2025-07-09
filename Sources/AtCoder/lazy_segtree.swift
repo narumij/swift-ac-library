@@ -18,7 +18,7 @@ extension LazySegTreeOperator {
   public typealias Composition = (F, F) -> F
 }
 
-public protocol LazySegTreeOperation: LazySegTreeOperator {
+public protocol ___LazySegTreeOperation: LazySegTreeOperator & ___OpOperation {
   associatedtype S
   associatedtype F
   static var op: (S, S) -> S { get }
@@ -28,9 +28,7 @@ public protocol LazySegTreeOperation: LazySegTreeOperator {
   static var id: F { get }
 }
 
-extension LazySegTreeOperation {
-  @inlinable @inline(__always)
-  public static func op(_ x: S, _ y: S) -> S { (self.op as Op)(x, y) }
+extension ___LazySegTreeOperation {
   @inlinable @inline(__always)
   public static func mapping(_ f: F, _ x: S) -> S { (self.mapping as Mapping)(f, x) }
   @inlinable @inline(__always)

@@ -12,16 +12,23 @@ extension SegTreeOperator {
   public typealias Op = (S, S) -> S
 }
 
-public protocol SegTreeOperation: SegTreeOperator {
+public protocol ___OpOperation {
+  associatedtype S
+  static var op: (S, S) -> S { get }
+}
+
+extension ___OpOperation {
+  @inlinable @inline(__always)
+  public static func op(_ x: S, _ y: S) -> S { (self.op as (S, S) -> S)(x, y) }
+}
+
+public protocol ___SegTreeOperation: SegTreeOperator & ___OpOperation {
   associatedtype S
   static var op: (S, S) -> S { get }
   static var e: S { get }
 }
 
-extension SegTreeOperation {
-  @inlinable @inline(__always)
-  public static func op(_ x: S, _ y: S) -> S { (self.op as Op)(x, y) }
-}
+extension ___SegTreeOperation { }
 
 @frozen
 public struct SegTree<_S_op_e_>

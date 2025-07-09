@@ -6,7 +6,7 @@ import XCTest
   import AtCoder
 #endif
 
-private enum param: LazySegTreeOperation {
+private enum param: ___LazySegTreeOperation {
   typealias S = Int
   typealias F = Int
   nonisolated(unsafe) static let op: Op = max
@@ -14,6 +14,26 @@ private enum param: LazySegTreeOperation {
   nonisolated(unsafe) static let mapping: Mapping = (+)
   nonisolated(unsafe) static let composition: Composition = (+)
   static let id: F = 0
+}
+
+enum DummyOperator: LazySegTreeOperator & SegTreeOperator {
+  static func op(_ x: S,_ y: S) -> S { min(x,y) }
+  static var e: S { 1 << 60 }
+  static func mapping(_ x: F,_ y: S) -> S { x ?? y }
+  static func composition(_ x: F,_ y: F) -> F { x ?? y }
+  static var id: F { nil }
+  typealias F = Int?
+  typealias S = Int
+}
+
+enum DummyOperation: ___LazySegTreeOperation & ___SegTreeOperation {
+  nonisolated(unsafe) static let mapping: (F, S) -> S = { $0 ?? $1 }
+  nonisolated(unsafe) static let composition: (F, F) -> F = { $0 ?? $1 }
+  static var id: F { nil }
+  nonisolated(unsafe) static let op: (S, S) -> S = min
+  static var e: S { 1 << 60 }
+  typealias F = Int?
+  typealias S = Int
 }
 
 private typealias starry_seg = LazySegTree<param>

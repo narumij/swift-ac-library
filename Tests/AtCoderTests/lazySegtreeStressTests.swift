@@ -61,7 +61,7 @@ private func op_tt(_ l: T, _ r: T) -> T {
 private func e_s() -> S { return S(-1, -1, -1) }
 private func e_t() -> T { return T(-1) }
 
-private enum param: LazySegTreeOperation {
+private enum param: ___LazySegTreeOperation {
   typealias S = AtCoderTests.S
   typealias F = AtCoderTests.T
 
