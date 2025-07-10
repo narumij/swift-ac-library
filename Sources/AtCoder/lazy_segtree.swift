@@ -12,13 +12,7 @@ public protocol LazySegTreeOperator {
   static var id: F { get }
 }
 
-extension LazySegTreeOperator {
-  public typealias Op = (S, S) -> S
-  public typealias Mapping = (F, S) -> S
-  public typealias Composition = (F, F) -> F
-}
-
-public protocol LazySegTreeOperation: LazySegTreeOperator {
+public protocol LazySegTreeOperation: LazySegTreeOperator & ___OpOperation {
   associatedtype S
   associatedtype F
   static var op: (S, S) -> S { get }
@@ -29,12 +23,16 @@ public protocol LazySegTreeOperation: LazySegTreeOperator {
 }
 
 extension LazySegTreeOperation {
+  public typealias Op = @Sendable (S, S) -> S
+  public typealias Mapping = @Sendable (F, S) -> S
+  public typealias Composition = @Sendable (F, F) -> F
+}
+
+extension LazySegTreeOperation {
   @inlinable @inline(__always)
-  public static func op(_ x: S, _ y: S) -> S { (self.op as Op)(x, y) }
+  public static func mapping(_ f: F, _ x: S) -> S { (self.mapping as (F, S) -> S)(f, x) }
   @inlinable @inline(__always)
-  public static func mapping(_ f: F, _ x: S) -> S { (self.mapping as Mapping)(f, x) }
-  @inlinable @inline(__always)
-  public static func composition(_ g: F, _ f: F) -> F { (self.composition as Composition)(g, f) }
+  public static func composition(_ g: F, _ f: F) -> F { (self.composition as (F, F) -> F)(g, f) }
 }
 
 @frozen

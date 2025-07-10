@@ -8,19 +8,25 @@ public protocol SegTreeOperator {
   static var e: S { get }
 }
 
-extension SegTreeOperator {
-  public typealias Op = (S, S) -> S
+
+public protocol ___OpOperation {
+  associatedtype S
+  static var op: (S, S) -> S { get }
 }
 
-public protocol SegTreeOperation: SegTreeOperator {
+extension ___OpOperation {
+  @inlinable @inline(__always)
+  public static func op(_ x: S, _ y: S) -> S { (self.op as (S, S) -> S)(x, y) }
+}
+
+public protocol SegTreeOperation: SegTreeOperator & ___OpOperation {
   associatedtype S
   static var op: (S, S) -> S { get }
   static var e: S { get }
 }
 
 extension SegTreeOperation {
-  @inlinable @inline(__always)
-  public static func op(_ x: S, _ y: S) -> S { (self.op as Op)(x, y) }
+  public typealias Op = @Sendable (S, S) -> S
 }
 
 @frozen
