@@ -14,7 +14,7 @@ var _settings: [SwiftSetting] = defines.map { .define($0) }
 // 環境変数 "SWIFT_AC_LIBRARY_USES_O_UNCHECKED" が存在するか確認
 func isUncheckedModeEnabled() -> Bool {
     let flag = ProcessInfo.processInfo.environment["SWIFT_AC_LIBRARY_USES_O_UNCHECKED"] == "true"
-    print("SWIFT_AC_LIBRARY_USES_O_UNCHECKED is \(flag ? "enabled" : "disabled")")
+//    print("SWIFT_AC_LIBRARY_USES_O_UNCHECKED is \(flag ? "enabled" : "disabled")")
     return flag
 }
 

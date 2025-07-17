@@ -1,5 +1,6 @@
 import Foundation
 
+#if false
 extension _Internal {
 
   @usableFromInline
@@ -66,3 +67,4 @@ extension _Internal.Cache.Pack: Hashable where repeat each T: Hashable {
     }
   }
 }
+#endif
