@@ -70,7 +70,7 @@ extension _Internal {
       return (group_num, ids)
     }
 
-#if true
+#if false
     @inlinable @inline(never)
     public func scc() -> [[Int]] {
       let ids = scc_ids()
