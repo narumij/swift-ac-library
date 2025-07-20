@@ -12,7 +12,7 @@ private let e: String = "$"
 
 private enum Operator: SegTreeOperation {
   typealias S = String
-  nonisolated(unsafe) static let op: Op = AtCoderTests.op
+  static let op: Op = AtCoderTests.op
   static let e: S = AtCoderTests.e
 }
 

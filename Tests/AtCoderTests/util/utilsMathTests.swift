@@ -6,15 +6,15 @@ import XCTest
   import AtCoder
 #endif
 
-func is_primitive_root_naive(_ m: CInt, _ g: CInt) -> Bool {
+func is_primitive_root_naive(_ m: Int, _ g: Int) -> Bool {
   assert(1 <= g && g < m)
-  var x: CInt = 1
+  var x: Int = 1
   for _ in 1 ..<= (m - 2) {
-    x = CInt(CLongLong(x) * CLongLong(g) % CLongLong(m))
+    x = x * g % m
     // x == n^i
     if x == 1 { return false }
   }
-  x = CInt(CLongLong(x) * CLongLong(g) % CLongLong(m))
+  x = x * g % m
   assert(x == 1)
   return true
 }
@@ -22,7 +22,7 @@ func is_primitive_root_naive(_ m: CInt, _ g: CInt) -> Bool {
 final class utilsMathTests: XCTestCase {
 
   func testFactorsTest() throws {
-    for m in CInt(1) ..<= 50000 {
+    for m in Int(1) ..<= 50000 {
       let f = factors(m)
       var m2 = m
       for x in f {
@@ -35,8 +35,8 @@ final class utilsMathTests: XCTestCase {
 
   #if DEBUG
     func testIsPrimitiveRootTest() throws {
-      for m in CInt(2) ..<= 500 {
-        if !_Internal.is_prime_constexpr(m) { continue }
+      for m in Int(2) ..<= 500 {
+        if !_Internal.is_prime_constexpr(Int(m)) { continue }
         for g in 1..<m {
           XCTAssertEqual(is_primitive_root_naive(m, g), is_primitive_root(m, g))
         }

@@ -1,51 +1,20 @@
-extension Array where Element: AdditiveArithmetic {
-  @inlinable
-  public mutating func resize(_ n: Int) {
-    guard count != n else { return }
-    if count > n {
-      removeLast(count - n)
-      return
-    }
-    reserveCapacity(Swift.max(count, n))
-    append(contentsOf: repeatElement(.zero, count: n - count))
-  }
-}
-
-extension ArraySlice where Element: AdditiveArithmetic {
-  @inlinable
-  public mutating func resize(_ n: Int) {
-    guard count != n else { return }
-    if count > n {
-      removeLast(count - n)
-      return
-    }
-    reserveCapacity(Swift.max(count, n))
-    append(contentsOf: repeatElement(.zero, count: n - count))
-  }
-}
+import Foundation
 
 extension static_modint {
-//  @inlinable
-//  init(ull v: CUnsignedLongLong) {
-//    _v = __modint_v(ull: v, umod: static_mod.umod)
-//  }
-  
+
   @inlinable
-  init(ull v: CUnsignedLongLong, umod: CUnsignedLongLong) {
-    _v = __modint_v(ull: v, umod: umod)
+  init(UInt v: UInt) {
+    _v = __modint_v(UInt: v, umod: static_mod.umod)
   }
-  
+
   @inlinable @inline(__always)
-  func value() -> UINT { _v }
-  
-  @inlinable @inline(__always)
-  func value() -> ULL { ULL(_v) }
+  var value: UInt { _read { yield _v } }
 }
 
 @usableFromInline
 protocol __cached_fft_info {}
 
-extension _Internal.fft_info: __cached_fft_info { }
+extension _Internal.fft_info: __cached_fft_info {}
 
 extension _Internal {
 
@@ -54,7 +23,7 @@ extension _Internal {
 
     @usableFromInline
     nonisolated(unsafe)
-      static var cache: [UINT: __cached_fft_info] = [:]
+      static var cache: [UInt: __cached_fft_info] = [:]
 
     @inlinable
     static func info<MOD: static_mod>(_ t: MOD.Type) -> fft_info<MOD> {

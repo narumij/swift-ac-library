@@ -15,17 +15,17 @@ extension UnsignedInteger {
 extension Int32: ToUnsignedType {
   @inlinable
   @inline(__always)
-  public var unsigned: UInt32 { .init(bitPattern: self) }
+  public var unsigned: UInt32 { _read { yield .init(bitPattern: self) } }
 }
 extension Int64: ToUnsignedType {
   @inlinable
   @inline(__always)
-  public var unsigned: UInt64 { .init(bitPattern: self) }
+  public var unsigned: UInt64 { _read { yield .init(bitPattern: self) } }
 }
 extension Int: ToUnsignedType {
   @inlinable
   @inline(__always)
-  public var unsigned: UInt { .init(bitPattern: self) }
+  public var unsigned: UInt { _read { yield .init(bitPattern: self) } }
 }
 
 extension UInt32: ToUnsignedType {
@@ -51,21 +51,23 @@ extension dynamic_modint: ToUnsignedType {}
 
 public enum numeric_limit<T: ___numeric_limit> {
   @inlinable @inline(__always)
-  public static var max: T { T.__max }
+  public static var max: T { _read { yield T.__max } }
 }
 
 public
-protocol ___numeric_limit: Numeric
+  protocol ___numeric_limit: Numeric
 {
   static var __max: Self { get }
 }
 
 extension FixedWidthInteger {
-  @inlinable @inline(__always) public static var __max: Self { .max }
+  @inlinable @inline(__always) public static var __max: Self { _read { yield .max } }
 }
 
 extension BinaryFloatingPoint {
-  @inlinable @inline(__always) public static var __max: Self { .greatestFiniteMagnitude }
+  @inlinable @inline(__always) public static var __max: Self {
+    _read { yield .greatestFiniteMagnitude }
+  }
 }
 
 extension Int16: ___numeric_limit {}
@@ -87,6 +89,7 @@ public protocol NumericCastVisitor {
   func cast(_ value: Cap) -> Cost
 }
 
+@frozen
 public struct IntegerToIntegerVisitor<Cap: BinaryInteger, Cost: BinaryInteger>:
   NumericCastVisitor
 {
@@ -95,6 +98,7 @@ public struct IntegerToIntegerVisitor<Cap: BinaryInteger, Cost: BinaryInteger>:
   }
 }
 
+@frozen
 public struct IntegerToFloatVisitor<Cap: BinaryInteger, Cost: BinaryFloatingPoint>:
   NumericCastVisitor
 {
@@ -103,6 +107,7 @@ public struct IntegerToFloatVisitor<Cap: BinaryInteger, Cost: BinaryFloatingPoin
   }
 }
 
+@frozen
 public struct FloatToIntegerVisitor<Cap: BinaryFloatingPoint, Cost: BinaryInteger>:
   NumericCastVisitor
 {
@@ -111,6 +116,7 @@ public struct FloatToIntegerVisitor<Cap: BinaryFloatingPoint, Cost: BinaryIntege
   }
 }
 
+@frozen
 public struct FloatToFloatVisitor<Cap: BinaryFloatingPoint, Cost: BinaryFloatingPoint>:
   NumericCastVisitor
 {
@@ -119,6 +125,7 @@ public struct FloatToFloatVisitor<Cap: BinaryFloatingPoint, Cost: BinaryFloating
   }
 }
 
+@frozen
 public struct AnyNumericCastVisitor<Cap, Cost>: NumericCastVisitor {
   private let _cast: (Cap) -> Cost
   public init<V: NumericCastVisitor>(_ visitor: V) where V.Cap == Cap, V.Cost == Cost {

@@ -9,11 +9,31 @@ import XCTest
 private enum param: LazySegTreeOperation {
   typealias S = Int
   typealias F = Int
-  nonisolated(unsafe) static let op: Op = max
+  static let op: Op = max
   static let e: S = -1_000_000_000
-  nonisolated(unsafe) static let mapping: Mapping = (+)
-  nonisolated(unsafe) static let composition: Composition = (+)
+  static let mapping: Mapping = (+)
+  static let composition: Composition = (+)
   static let id: F = 0
+}
+
+enum DummyOperator: LazySegTreeOperator & SegTreeOperator {
+  static func op(_ x: S,_ y: S) -> S { min(x,y) }
+  static var e: S { 1 << 60 }
+  static func mapping(_ x: F,_ y: S) -> S { x ?? y }
+  static func composition(_ x: F,_ y: F) -> F { x ?? y }
+  static var id: F { nil }
+  typealias F = Int?
+  typealias S = Int
+}
+
+enum DummyOperation: LazySegTreeOperation & SegTreeOperation {
+  static let mapping: @Sendable (F, S) -> S = { $0 ?? $1 }
+  static let composition: @Sendable (F, F) -> F = { $0 ?? $1 }
+  static var id: F { nil }
+  static let op: @Sendable (S, S) -> S = min
+  static var e: S { 1 << 60 }
+  typealias F = Int?
+  typealias S = Int
 }
 
 private typealias starry_seg = LazySegTree<param>

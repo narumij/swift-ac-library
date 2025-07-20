@@ -6,14 +6,13 @@ import Foundation
 // MARK: - deprecated
 
 @available(*, deprecated, message: "Use pow_mod(_:Int,_:Int,:Int) instead")
-@inlinable
-public func inv_mod<LL>(
+func inv_mod<LL>(
   _ x: LL,
   _ m: LL
 ) -> LL
 where LL: FixedWidthInteger {
   assert(1 <= m)
-  let z = _Internal.inv_gcd(x, m)
+  let z = inv_gcd(x, m)
   assert(z.first == 1)
   return z.second
 }
@@ -30,7 +29,6 @@ public func pow_mod(
 
 /// (rem, mod)
 @available(*, deprecated, message: "Use crt(_:[Int],_:[Int]) instead")
-@inlinable
 public func crt<LL>(
   _ r: [LL],
   _ m: [LL]
@@ -43,7 +41,7 @@ where LL: FixedWidthInteger {
   var m0 = 1 as LL
   for i in 0..<n {
     assert(1 <= m[i])
-    var r1 = _Internal.safe_mod(r[i], m[i])
+    var r1 = ___safe_mod(r[i], m[i])
     var m1 = m[i]
     if m0 < m1 {
       swap(&r0, &r1)
@@ -65,7 +63,7 @@ where LL: FixedWidthInteger {
     // im = inv(u0) (mod u1) (0 <= im < u1)
     var g: LL
     var im: LL
-    (g, im) = _Internal.inv_gcd(m0, m1)
+    (g, im) = inv_gcd(m0, m1)
 
     let u1 = (m1 / g)
     // |r1 - r0| < (m0 + m1) <= lcm(m0, m1)

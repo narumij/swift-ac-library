@@ -5,7 +5,55 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.5] - 2025-5-6
+## [0.1.22] - 2025-7-18
+### Fix
+- macOSのswiftコマンドでreleaseビルドでクラッシュする不具合の迂回
+
+## [0.1.21] - 2025-7-18
+## [0.1.20] - 2025-7-18
+- タグミス
+
+## [0.1.14] - 2025-6-14
+### Changed
+- 些末な修正
+
+## [0.1.14] - 2025-6-13
+### Changed
+- convolution_llの型を変更
+- internal mathの型を変更
+
+## [0.1.13] - 2025-6-10
+### Changed
+- internal mathの型を変更
+
+## [0.1.12] - 2025-6-10
+### Changed
+- modintの内部データ型を変更
+
+## [0.1.11] - 2025-6-9
+### Added
+- modintにuvalプロパティを追加
+
+## [0.1.10] - 2025-6-5
+### Changed
+- チューニング等
+
+## [0.1.9] - 2025-5-31
+### Changed
+- `get`アクセサを`_read`アクセサに変更
+
+## [0.1.8] - 2025-5-10
+### Added
+- 事前定義のfft_infoを追加
+### Changed
+- convolutionのbutterfly演算でのキャスト回数を削減する修正
+
+## [0.1.7] - 2025-5-7
+### Changed
+- floor_sumの商と余の演算をquotientAndRemainderに変更
+- sccの内部実装をポインタ主体に変更
+
+## [0.1.6] - 2025-5-6
 ### Changed
 - convolutionのbatterfly演算での数値キャスト方法を一部変更
 
