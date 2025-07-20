@@ -2,6 +2,7 @@ import Foundation
 
 // MARK: -
 
+#if false
 public struct mod_value {
 
   /// - Important: 1 ... CUnsingedInt.maxまで有効。それ以外は未定義
@@ -62,3 +63,4 @@ extension static_mod_value {
     }
   }
 }
+#endif

@@ -27,8 +27,8 @@ final class modintTests: XCTestCase {
   @usableFromInline typealias mod_12 = mod<12, IsNotPrime>
   @usableFromInline typealias mod_1_000_000_007 = mod<1_000_000_007, IsPrime>
   @usableFromInline typealias mod_1_000_000_008 = mod<1_000_000_008, IsNotPrime>
-  @usableFromInline typealias INT32_MAX = mod<2_147_483_647, IsNotPrime>
-//  @usableFromInline typealias INT_MAX = mod<9_223_372_036_854_775_807, IsNotPrime>
+  @usableFromInline typealias mod_INT32_MAX = mod<2_147_483_647, IsPrime>
+  @usableFromInline typealias mod_INT_MAX = mod<9_223_372_036_854_775_807, IsNotPrime>
 
   override func setUpWithError() throws {
     // Put setup code here. This method is called before the invocation of each test method in the class.
@@ -47,9 +47,9 @@ final class modintTests: XCTestCase {
       XCTAssertEqual(mod_12.isPrime, _Internal.is_prime(Int(mod_12.m)))
       XCTAssertEqual(mod_1_000_000_007.isPrime, _Internal.is_prime(Int(mod_1_000_000_007.m)))
       XCTAssertEqual(mod_1_000_000_008.isPrime, _Internal.is_prime(Int(mod_1_000_000_008.m)))
-      XCTAssertEqual(INT32_MAX.isPrime, _Internal.is_prime(Int(INT32_MAX.m)))
-//      XCTAssertEqual(INT_MAX.isPrime, _Internal.is_prime(Int(INT_MAX.m)))
-      XCTAssertEqual(mod_value.mod_UINT32_MAX.umod, UInt(CUnsignedInt.max))
+      XCTAssertEqual(mod_INT32_MAX.isPrime, _Internal.is_prime(Int(mod_INT32_MAX.m)))
+      XCTAssertEqual(mod_INT_MAX.isPrime, _Internal.is_prime(Int(mod_INT_MAX.m)))
+//      XCTAssertEqual(mod_value.mod_UINT32_MAX.umod, UInt(CUnsignedInt.max))
     }
   #endif
 
@@ -193,7 +193,7 @@ final class modintTests: XCTestCase {
     XCTAssertEqual(int((modint(1234) - modint(5678)).val), int(CInt.max - 5678 + 1234))
     XCTAssertEqual((modint(1234) * modint(5678)).val, 1234 * 5678)
 
-    typealias mint = static_modint<INT32_MAX>
+    typealias mint = static_modint<mod_INT32_MAX>
     // for (int i = 0; i < 100; i++) {
     for i in 0..<100 as Range<int> {
       // for (int j = 0; j < 100; j++) {
@@ -255,11 +255,11 @@ final class modintTests: XCTestCase {
     }
 
     // テスト自体は通る
-//    for i in 1..<100_000 as Range<Int> {
-//      if gcd(i, Int.max) != 1 { continue }
-//      let x = static_modint<INT_MAX>(i).inv.val
-//      XCTAssertEqual(1, (BigInt(x) * BigInt(i)) % BigInt(Int.max))
-//    }
+    for i in 1..<100_000 as Range<Int> {
+      if gcd(i, Int.max) != 1 { continue }
+      let x = static_modint<mod_INT_MAX>(i).inv.val
+      XCTAssertEqual(1, (BigInt(x) * BigInt(i)) % BigInt(Int.max))
+    }
 
     modint.set_mod(998_244_353)
     for i in 1..<100000 as Range<int> {
