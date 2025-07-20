@@ -152,20 +152,6 @@ extension _Internal {
             let rot2 = rot * rot
             let rot3 = rot2 * rot
             let offset = s << (h &- len)
-<<<<<<< HEAD
-            for i in 0 ..< p {
-              let mod2: ULL = umod &* umod
-              let a0: ULL = a[i &+ offset].value()
-              let a1: ULL = a[i &+ offset &+ p].value() &* rot.value()
-              let a2: ULL = a[i &+ offset &+ 2 &* p].value() &* rot2.value()
-              let a3: ULL = a[i &+ offset &+ 3 &* p].value() &* rot3.value()
-              let a1na3imag: ULL = 1 &* mint(ull: a1 &+ mod2 &- a3, umod: umod).value() &* imag.value()
-              let na2: ULL = mod2 &- a2
-              a[i &+ offset] = mint(ull: a0 &+ a2 &+ a1 &+ a3, umod: umod)
-              a[i &+ offset &+ p] = mint(ull: a0 &+ a2 &+ (2 * mod2 &- (a1 &+ a3)), umod: umod)
-              a[i &+ offset &+ 2 &* p] = mint(ull: a0 &+ na2 &+ a1na3imag, umod: umod)
-              a[i &+ offset &+ 3 &* p] = mint(ull: a0 &+ na2 &+ (mod2 &- a1na3imag), umod: umod)
-=======
             for i in 0..<p {
               let mod2: UInt = umod &* umod
               let a0: UInt = a[i &+ offset].value
@@ -178,7 +164,6 @@ extension _Internal {
               a[i &+ offset &+ p] = mint(UInt: a0 &+ a2 &+ (2 * mod2 &- (a1 &+ a3)))
               a[i &+ offset &+ 2 &* p] = mint(UInt: a0 &+ na2 &+ a1na3imag)
               a[i &+ offset &+ 3 &* p] = mint(UInt: a0 &+ na2 &+ (mod2 &- a1na3imag))
->>>>>>> main
             }
             if s &+ 1 != 1 << len {
               rot *= info.rate3[min(32, (~s).trailingZeroBitCount)]
@@ -418,9 +403,9 @@ public func convolution_ll(
   let M1M2: UInt = MOD1 &* MOD2
   let M1M2M3: UInt = MOD1 &* MOD2 &* MOD3
 
-  let i1: UInt = UInt(_Internal.inv_gcd(UInt(MOD2) * UInt(MOD3), UInt(MOD1)).second)
-  let i2: UInt = UInt(_Internal.inv_gcd(UInt(MOD1) * UInt(MOD3), UInt(MOD2)).second)
-  let i3: UInt = UInt(_Internal.inv_gcd(UInt(MOD1) * UInt(MOD2), UInt(MOD3)).second)
+  let i1: UInt = UInt(_Internal.inv_gcd(Int(MOD2) * Int(MOD3), Int(MOD1)).second)
+  let i2: UInt = UInt(_Internal.inv_gcd(Int(MOD1) * Int(MOD3), Int(MOD2)).second)
+  let i3: UInt = UInt(_Internal.inv_gcd(Int(MOD1) * Int(MOD2), Int(MOD3)).second)
 
   let MAX_AB_BIT: UInt = 24
   assert(MOD1 % (1 << MAX_AB_BIT) == 1, "MOD1 isn't enough to support an array length of 2^24.")

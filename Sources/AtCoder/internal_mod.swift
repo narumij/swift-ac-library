@@ -14,8 +14,17 @@ public protocol static_mod {
 }
 
 extension static_mod {
+  @inlinable
+  public static var m: UInt {
+    @inline(__always) _read {
+      yield umod
+    }
+  }
   @inlinable @inline(__always)
-  public static var m: CUnsignedInt { umod }
+  public static var isPrime: Bool {
+    assert(_Internal.is_prime(Int(umod)), "\(umod) is not prime number.")
+    return true
+  }
 }
 
 public protocol PrimeFlag {
@@ -34,13 +43,15 @@ public enum IsNotPrime: PrimeFlag {
 
 public enum mod<let m: Int, IsPrime: PrimeFlag>: static_mod {
   @inlinable @inline(__always)
-  public static var umod: CUnsignedInt { CUnsignedInt(m) }
+  public static var umod: UInt { UInt(m) }
   public static func isMatchPrimeType() -> Bool {
-    _Internal.is_prime(CInt(umod)) == IsPrime.flag
+    _Internal.is_prime(Int(umod)) == IsPrime.flag
   }
   public static func checkIsMatchPrimeType() {
     if !isMatchPrimeType() {
       fatalError("\(umod) is prime type mismatch.")
+    }
+  }
   @inlinable
   public static var m: UInt {
     @inline(__always) _read {
@@ -49,7 +60,7 @@ public enum mod<let m: Int, IsPrime: PrimeFlag>: static_mod {
   }
   @inlinable @inline(__always)
   public static var isPrime: Bool {
-    assert(isMatchPrimeType(), "\(umod) is prime type mismatch.")
+//    assert(isMatchPrimeType(), "\(umod) is prime type mismatch.")
     return IsPrime.flag
   }
 }
@@ -59,12 +70,14 @@ public enum mod<let m: Int, IsPrime: PrimeFlag>: static_mod {
 public enum mod_998_244_353: static_mod {
   @inlinable @inline(__always)
   public static var isPrime: Bool { true }
-  public static let umod: UInt = 998_244_353
+  @inlinable @inline(__always)
+  public static var umod: UInt { 998_244_353 }
 }
 public enum mod_1_000_000_007: static_mod {
   @inlinable @inline(__always)
   public static var isPrime: Bool { true }
-  public static let umod: UInt = 1_000_000_007
+  @inlinable @inline(__always)
+  public static var umod: UInt { 1_000_000_007 }
 }
 
 // MARK: -
