@@ -443,7 +443,7 @@ extension LazySegTree.Buffer {
       if !g(op(sm, d[l])) {
         while l < size {
           push(l)
-          l = (2 * l)
+          l = l << 1
           if g(op(sm, d[l])) {
             sm = op(sm, d[l])
             l += 1
@@ -471,11 +471,11 @@ extension LazySegTree.Buffer {
     var sm: S = e()
     repeat {
       r -= 1
-      while r > 1 && (r & 1) != 0 { r >>= 1 }
+      while r > 1, r & 1 != 0 { r >>= 1 }
       if !g(op(d[r], sm)) {
         while r < size {
           push(r)
-          r = (r << 1 + 1)
+          r = r << 1 + 1
           if g(op(d[r], sm)) {
             sm = op(d[r], sm)
             r -= 1
@@ -492,7 +492,7 @@ extension LazySegTree.Buffer {
   @inlinable
   @inline(__always)
   public func update(_ k: Int) {
-    d[k] = op(d[k << 1], d[(k << 1) + 1])
+    d[k] = op(d[k << 1], d[k << 1 + 1])
   }
 
   @nonobjc
