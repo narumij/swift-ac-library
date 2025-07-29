@@ -321,7 +321,7 @@ extension SegTree.Buffer {
       while l & 1 == 0 { l >>= 1 }
       if !f(op(sm, d[l])) {
         while l < size {
-          l = (l << 1)
+          l = l << 1
           if f(op(sm, d[l])) {
             sm = op(sm, d[l])
             l += 1
@@ -347,10 +347,10 @@ extension SegTree.Buffer {
     var sm: S = e()
     repeat {
       r -= 1
-      while r > 1 && (r & 1) != 0 { r >>= 1 }
+      while r > 1, r & 1 != 0 { r >>= 1 }
       if !f(op(d[r], sm)) {
         while r < size {
-          r = (r << 1) + 1
+          r = r << 1 + 1
           if f(op(d[r], sm)) {
             sm = op(d[r], sm)
             r -= 1
@@ -367,6 +367,6 @@ extension SegTree.Buffer {
   @inlinable
   @inline(__always)
   func update(_ k: Int) {
-    d[k] = op(d[k << 1], d[(k << 1) + 1])
+    d[k] = op(d[k << 1], d[k << 1 + 1])
   }
 }
