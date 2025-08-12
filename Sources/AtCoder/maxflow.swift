@@ -115,6 +115,7 @@ extension MFGraph {
       }
     }
 
+#if false
     func dfs(_ v: Int, _ up: Cap) -> Cap {
       if v == s { return up }
       var res: Cap = 0
@@ -142,6 +143,59 @@ extension MFGraph {
       level[v] = _n
       return res
     }
+#else
+    // https://judge.yosupo.jp/problem/bipartitematching
+    // が通らないので、
+    // https://github.com/kzrnm/ac-library-csharp/blob/main/Source/ac-library-csharp/Graph/MaxFlow.cs
+    // からの部分移植に変更
+    func dfs(_ v: Int, _ up: Cap) -> Cap {
+      var lastRes: Cap = .zero
+      var stack: [(v: Int, up: Cap, res: Cap, childOk: Bool)] = []
+      stack.append((v, up, .zero, true))
+      DFS: while var (v, up, res, childOk) = stack.popLast() {
+        if (v == s)
+        {
+          lastRes = up
+          continue
+        }
+        var itrv: Int?
+        func next() -> Int? {
+          itrv = itrv.map { $0 + 1 } ?? iter[v]
+          iter[v] = itrv!
+          return itrv! < g[v].count ? itrv : nil
+        }
+        while let itrv = next() {
+          var to = g[v][itrv].to
+          var rev = g[v][itrv].rev
+          var cap = g[v][itrv].cap
+          if childOk {
+            if level[v] <= level[to] || g[to][rev].cap == .zero { continue }
+            let up1 = up - res
+            let up2 = g[to][rev].cap
+            stack.append((v, up, res, false))
+            stack.append((to, up1 < up2 ? up1 : up2, .zero, true))
+            continue DFS
+          }
+          else {
+            var d = lastRes
+            if d > .zero {
+                g[v][itrv].cap = cap + d
+                g[to][rev].cap = g[to][rev].cap - d
+                res = res + d
+                if res == up {
+                    lastRes = res;
+                    continue DFS
+                }
+            }
+            childOk = true;
+          }
+        }
+        level[v] = _n
+        lastRes = res
+      }
+      return lastRes
+    }
+#endif
 
     var flow: Cap = 0
     while flow < flow_limit {
