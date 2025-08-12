@@ -3,8 +3,7 @@ import Foundation
 
 @frozen
 public struct MFGraph<Cap>
-where Cap: ___numeric_limit & Comparable
-{
+where Cap: ___numeric_limit & Comparable {
   @usableFromInline
   let _n: Int
   @usableFromInline
@@ -120,20 +119,26 @@ extension MFGraph {
       if v == s { return up }
       var res: Cap = 0
       let level_v = level[v]
-      for i in iter[v]..<g[v].count {
-        let e = g[v][i]
-        if level_v <= level[e.to] || g[e.to][e.rev].cap == 0 { continue }
-        let d =
-          dfs(e.to, min(up - res, g[e.to][e.rev].cap))
+
+      var i: Int?
+      func next() -> Int? {
+        i = i.map { $0 + 1 } ?? iter[v]
+        iter[v] = i!
+        return i! < g[v].count ? i : nil
+      }
+
+      while let i = next() {
+        let to = g[v][i].to
+        let rev = g[v][i].rev
+        if level_v <= level[to] || g[to][rev].cap == 0 { continue }
+        let d = dfs(to, min(up - res, g[to][rev].cap))
         if d <= 0 { continue }
         g[v][i].cap += d
-        do {
-          let e = g[v][i]
-          g[e.to][e.rev].cap -= d
-        }
+        g[to][rev].cap -= d
         res += d
         if res == up { return res }
       }
+      
       level[v] = _n
       return res
     }
@@ -184,4 +189,3 @@ extension MFGraph {
     var cap: Cap
   }
 }
-
