@@ -148,6 +148,7 @@ extension MFGraph {
     // が通らないので、
     // https://github.com/kzrnm/ac-library-csharp/blob/main/Source/ac-library-csharp/Graph/MaxFlow.cs
     // からの部分移植に変更
+    // それでもなんだか迷子
     func dfs(_ v: Int, _ up: Cap) -> Cap {
       var lastRes: Cap = .zero
       var stack: [(v: Int, up: Cap, res: Cap, childOk: Bool)] = []
