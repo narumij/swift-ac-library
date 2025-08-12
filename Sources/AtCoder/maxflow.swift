@@ -165,9 +165,7 @@ extension MFGraph {
           return itrv! < g[v].count ? itrv : nil
         }
         while let itrv = next() {
-          var to = g[v][itrv].to
-          var rev = g[v][itrv].rev
-          var cap = g[v][itrv].cap
+          var (to,rev,cap) = g[v][itrv].properties
           if childOk {
             if level[v] <= level[to] || g[to][rev].cap == .zero { continue }
             let up1 = up - res
@@ -241,5 +239,9 @@ extension MFGraph {
     let to, rev: Int
     @usableFromInline
     var cap: Cap
+    @usableFromInline
+    var properties: (to: Int,rev: Int, cap: Cap) {
+      (to, rev, cap)
+    }
   }
 }
