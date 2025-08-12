@@ -78,11 +78,11 @@ extension MFGraph {
     assert(0 <= i && i < m)
     assert(0 <= new_flow && new_flow <= new_cap)
     var _e = g[pos[i].first][pos[i].second]
+    defer { g[pos[i].first][pos[i].second] = _e }
     var _re = g[_e.to][_e.rev]
+    defer { g[_e.to][_e.rev] = _re }
     _e.cap = new_cap - new_flow
     _re.cap = new_flow
-    g[pos[i].first][pos[i].second] = _e
-    g[_e.to][_e.rev] = _re
   }
 
   @inlinable
