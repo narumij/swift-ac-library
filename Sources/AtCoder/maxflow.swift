@@ -98,103 +98,109 @@ extension MFGraph {
 
     var level = [Int](repeating: 0, count: _n)
     var iter = [Int](repeating: 0, count: _n)
-    var que = Deque<Int>()
 
     func bfs() {
-      level.withUnsafeMutableBufferPointer { $0.update(repeating: -1) }
-      level[s] = 0
-      que.removeAll()
-      que.append(s)
-      while let v = que.popFirst() {
-        for e in g[v] {
-          if e.cap == 0 || level[e.to] >= 0 { continue }
-          level[e.to] = level[v] + 1
-          if e.to == t { return }
-          que.append(e.to)
-        }
-      }
-    }
-
-#if false
-    func dfs(_ v: Int, _ up: Cap) -> Cap {
-      if v == s { return up }
-      var res: Cap = 0
-      let level_v = level[v]
-
-      var i: Int?
-      func next() -> Int? {
-        i = i.map { $0 + 1 } ?? iter[v]
-        iter[v] = i!
-        return i! < g[v].count ? i : nil
-      }
-
-      while let i = next() {
-        let to = g[v][i].to
-        let rev = g[v][i].rev
-        if level_v <= level[to] || g[to][rev].cap == 0 { continue }
-        let d = dfs(to, min(up - res, g[to][rev].cap))
-        if d <= 0 { continue }
-        g[v][i].cap += d
-        g[to][rev].cap -= d
-        res += d
-        if res == up { return res }
-      }
-      
-      level[v] = _n
-      return res
-    }
-#else
-    // https://judge.yosupo.jp/problem/bipartitematching
-    // が通らないので、
-    // https://github.com/kzrnm/ac-library-csharp/blob/main/Source/ac-library-csharp/Graph/MaxFlow.cs
-    // からの部分移植に変更
-    // それでもなんだか迷子
-    func dfs(_ v: Int, _ up: Cap) -> Cap {
-      var lastRes: Cap = .zero
-      var stack: [(v: Int, up: Cap, res: Cap, childOk: Bool)] = []
-      stack.append((v, up, .zero, true))
-      DFS: while var (v, up, res, childOk) = stack.popLast() {
-        if (v == s)
-        {
-          lastRes = up
-          continue
-        }
-        var itrv: Int?
-        func next() -> Int? {
-          itrv = itrv.map { $0 + 1 } ?? iter[v]
-          iter[v] = itrv!
-          return itrv! < g[v].count ? itrv : nil
-        }
-        while let itrv = next() {
-          var (to,rev,cap) = g[v][itrv].properties
-          if childOk {
-            if level[v] <= level[to] || g[to][rev].cap == .zero { continue }
-            let up1 = up - res
-            let up2 = g[to][rev].cap
-            stack.append((v, up, res, false))
-            stack.append((to, up1 < up2 ? up1 : up2, .zero, true))
-            continue DFS
-          }
-          else {
-            var d = lastRes
-            if d > .zero {
-                g[v][itrv].cap = cap + d
-                g[to][rev].cap = g[to][rev].cap - d
-                res = res + d
-                if res == up {
-                    lastRes = res;
-                    continue DFS
-                }
+      g.withUnsafeMutableBufferPointer { g in
+        level.withUnsafeMutableBufferPointer { level in
+          level.update(repeating: -1)
+          level[s] = 0
+          var que = Deque<Int>()
+          que.append(s)
+          while let v = que.popFirst() {
+            for ei in 0..<g[v].count {
+              func e() -> _Edge { g[v][ei] }
+              if e().cap == 0 || level[e().to] >= 0 { continue }
+              level[e().to] = level[v] + 1
+              if e().to == t { return }
+              que.append(e().to)
             }
-            childOk = true;
           }
         }
-        level[v] = _n
-        lastRes = res
       }
-      return lastRes
     }
-#endif
+
+    #if false
+      func dfs(_ v: Int, _ up: Cap) -> Cap {
+        if v == s { return up }
+        var res: Cap = 0
+        let level_v = level[v]
+
+        var i: Int?
+        func next() -> Int? {
+          i = i.map { $0 + 1 } ?? iter[v]
+          iter[v] = i!
+          return i! < g[v].count ? i : nil
+        }
+
+        while let i = next() {
+          let to = g[v][i].to
+          let rev = g[v][i].rev
+          if level_v <= level[to] || g[to][rev].cap == 0 { continue }
+          let d = dfs(to, min(up - res, g[to][rev].cap))
+          if d <= 0 { continue }
+          g[v][i].cap += d
+          g[to][rev].cap -= d
+          res += d
+          if res == up { return res }
+        }
+
+        level[v] = _n
+        return res
+      }
+    #else
+      // https://judge.yosupo.jp/problem/bipartitematching
+      // が通らないので、
+      // https://github.com/kzrnm/ac-library-csharp/blob/main/Source/ac-library-csharp/Graph/MaxFlow.cs
+      // からの部分移植に変更
+      // それでもなんだか迷子
+      func dfs(_ v: Int, _ up: Cap) -> Cap {
+        g.withUnsafeMutableBufferPointer { g in
+
+          var lastRes: Cap = .zero
+          var stack: [(v: Int, up: Cap, res: Cap, childOk: Bool)] = []
+          stack.reserveCapacity(_n)
+          stack.append((v, up, .zero, true))
+          DFS: while var (v, up, res, childOk) = stack.popLast() {
+            if v == s {
+              lastRes = up
+              continue
+            }
+            var itrv: Int?
+            func next() -> Int? {
+              itrv = itrv.map { $0 + 1 } ?? iter[v]
+              iter[v] = itrv!
+              return itrv! < g[v].count ? itrv : nil
+            }
+            while let itrv = next() {
+              var (to, rev, cap) = g[v][itrv].properties
+              if childOk {
+                if level[v] <= level[to] || g[to][rev].cap == .zero { continue }
+                let up1 = up - res
+                let up2 = g[to][rev].cap
+                stack.append((v, up, res, false))
+                stack.append((to, up1 < up2 ? up1 : up2, .zero, true))
+                continue DFS
+              } else {
+                var d = lastRes
+                if d > .zero {
+                  g[v][itrv].cap = cap + d
+                  g[to][rev].cap = g[to][rev].cap - d
+                  res = res + d
+                  if res == up {
+                    lastRes = res
+                    continue DFS
+                  }
+                }
+                childOk = true
+              }
+            }
+            level[v] = _n
+            lastRes = res
+          }
+          return lastRes
+        }
+      }
+    #endif
 
     var flow: Cap = 0
     while flow < flow_limit {
@@ -241,7 +247,7 @@ extension MFGraph {
     @usableFromInline
     var cap: Cap
     @usableFromInline
-    var properties: (to: Int,rev: Int, cap: Cap) {
+    var properties: (to: Int, rev: Int, cap: Cap) {
       (to, rev, cap)
     }
   }
