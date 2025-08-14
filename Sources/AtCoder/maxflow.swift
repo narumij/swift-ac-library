@@ -9,7 +9,7 @@ where Cap: ___numeric_limit & Comparable {
   @usableFromInline
   var pos: [(first: Int, second: Int)] = []
   @usableFromInline
-  var g: [[_Edge]]
+  var g: [[_edge]]
 }
 
 extension MFGraph {
@@ -22,7 +22,7 @@ extension MFGraph {
   @inlinable
   public init(count n: Int) {
     _n = n
-    g = [[_Edge]].init(repeating: [], count: n)
+    g = [[_edge]].init(repeating: [], count: n)
   }
   @inlinable
   @discardableResult
@@ -35,8 +35,8 @@ extension MFGraph {
     let from_id = g[from].count
     var to_id = g[to].count
     if from == to { to_id += 1 }
-    g[from].append(_Edge(to: to, rev: to_id, cap: cap))
-    g[to].append(_Edge(to: from, rev: from_id, cap: 0))
+    g[from].append(_edge(to: to, rev: to_id, cap: cap))
+    g[to].append(_edge(to: from, rev: from_id, cap: 0))
     return m
   }
 
@@ -254,7 +254,7 @@ extension MFGraph {
 extension MFGraph {
   @frozen
   @usableFromInline
-  struct _Edge {
+  struct _edge {
     @inlinable
     init(to: Int, rev: Int, cap: Cap) {
       self.to = to
