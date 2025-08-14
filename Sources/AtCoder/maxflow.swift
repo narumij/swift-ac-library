@@ -120,6 +120,8 @@ extension MFGraph {
     }
 
     #if false
+      // https://judge.yosupo.jp/problem/bipartitematching
+      // が再帰の上限でクラッシュし、通らない
       func dfs(_ v: Int, _ up: Cap) -> Cap {
         if v == s { return up }
         var res: Cap = 0
@@ -147,7 +149,11 @@ extension MFGraph {
         level[v] = _n
         return res
       }
-    #elseif true
+    #else
+      // https://judge.yosupo.jp/problem/bipartitematching
+      // が再帰の上限でクラッシュし、通らないので、
+      // https://github.com/kzrnm/ac-library-csharp/blob/main/Source/ac-library-csharp/Graph/MaxFlow.cs
+      // を参考にstackによるDFSに変更
       func dfs(_ v: Int, _ up: Cap) -> Cap {
         g.withUnsafeMutableBufferPointer { g in
           level.withUnsafeMutableBufferPointer { level in
@@ -207,62 +213,8 @@ extension MFGraph {
               }
 
               level[v] = _n
+              // return res
               return returnValue!
-            }
-          }
-        }
-      }
-    #else
-      // https://judge.yosupo.jp/problem/bipartitematching
-      // が通らないので、
-      // https://github.com/kzrnm/ac-library-csharp/blob/main/Source/ac-library-csharp/Graph/MaxFlow.cs
-      // からの部分移植に変更
-      func dfs(_ v: Int, _ up: Cap) -> Cap {
-        g.withUnsafeMutableBufferPointer { g in
-          level.withUnsafeMutableBufferPointer { level in
-            iter.withUnsafeMutableBufferPointer { iter in
-
-              var lastRes: Cap = .zero
-              var stack: [(v: Int, up: Cap, res: Cap, childOk: Bool)] = []
-              stack.append((v, up, .zero, true))
-              DFS: while var (v, up, res, childOk) = stack.popLast() {
-                if v == s {
-                  lastRes = up
-                  continue
-                }
-                var itrv: Int?
-                func next() -> Int? {
-                  itrv = itrv.map { $0 + 1 } ?? iter[v]
-                  iter[v] = itrv!
-                  return itrv! < g[v].count ? itrv : nil
-                }
-                while let itrv = next() {
-                  var (to, rev, cap) = g[v][itrv].properties
-                  if childOk {
-                    if level[v] <= level[to] || g[to][rev].cap == .zero { continue }
-                    let up1 = up - res
-                    let up2 = g[to][rev].cap
-                    stack.append((v, up, res, false))
-                    stack.append((to, up1 < up2 ? up1 : up2, .zero, true))
-                    continue DFS
-                  } else {
-                    var d = lastRes
-                    if d > .zero {
-                      g[v][itrv].cap = cap + d
-                      g[to][rev].cap = g[to][rev].cap - d
-                      res = res + d
-                      if res == up {
-                        lastRes = res
-                        continue DFS
-                      }
-                    }
-                    childOk = true
-                  }
-                }
-                level[v] = _n
-                lastRes = res
-              }
-              return lastRes
             }
           }
         }
