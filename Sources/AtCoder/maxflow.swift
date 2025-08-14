@@ -267,9 +267,5 @@ extension MFGraph {
     let to, rev: Int
     @usableFromInline
     var cap: Cap
-    @usableFromInline
-    var properties: (to: Int, rev: Int, cap: Cap) {
-      (to, rev, cap)
-    }
   }
 }
