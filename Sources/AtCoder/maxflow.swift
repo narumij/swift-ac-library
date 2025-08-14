@@ -121,7 +121,7 @@ extension MFGraph {
 
     #if false
       // https://judge.yosupo.jp/problem/bipartitematching
-      // が再帰の上限でクラッシュし、通らない
+      // が再帰の上限でクラッシュする
       func dfs(_ v: Int, _ up: Cap) -> Cap {
         if v == s { return up }
         var res: Cap = 0
@@ -151,7 +151,7 @@ extension MFGraph {
       }
     #else
       // https://judge.yosupo.jp/problem/bipartitematching
-      // が再帰の上限でクラッシュし、通らないので、
+      // が再帰の上限でクラッシュするので、
       // https://github.com/kzrnm/ac-library-csharp/blob/main/Source/ac-library-csharp/Graph/MaxFlow.cs
       // を参考にstackによるDFSに変更
       func dfs(_ v: Int, _ up: Cap) -> Cap {
