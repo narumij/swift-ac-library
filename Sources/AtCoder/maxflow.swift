@@ -152,55 +152,60 @@ extension MFGraph {
         g.withUnsafeMutableBufferPointer { g in
           level.withUnsafeMutableBufferPointer { level in
             iter.withUnsafeMutableBufferPointer { iter in
-              
+
               var frame: [(v: Int, up: Cap, res: Cap)] = [(v, up, 0)]
               var returnValue: Cap?
-              
+
               DFS: while var (v, up, res) = frame.popLast() {
-                
+
                 if returnValue == nil, v == s {
+                  // return up
                   returnValue = up
                   continue DFS
                 }
-                
+
                 var i: Int?
                 func next() -> Int? {
                   i = i.map { $0 + 1 } ?? iter[v]
                   iter[v] = i!
                   return i! < g[v].count ? i : nil
                 }
-                
+
                 while let i = next() {
                   let to = g[v][i].to
                   let rev = g[v][i].rev
-                  
+
                   if returnValue == nil {
                     if level[v] <= level[to] || g[to][rev].cap == 0 { continue }
-                    
+
+                    // let d = dfs(to, min(up - res, g[to][rev].cap))
                     frame.append((v, up, res))
                     frame.append((to, min(up - res, g[to][rev].cap), 0))
                     continue DFS
                   }
-                  
+
+                  // let d = dfs(to, min(up - res, g[to][rev].cap))
                   let d = returnValue!
                   returnValue = nil
-                  
+
                   if d <= 0 { continue }
-                  
+
                   g[v][i].cap += d
                   g[to][rev].cap -= d
                   res += d
-                  
+
                   if res == up {
+                    // return res
                     returnValue = res
                     continue DFS
                   }
                 }
-                
+
+                // return res
                 returnValue = res
                 continue DFS
               }
-              
+
               level[v] = _n
               return returnValue!
             }
@@ -216,7 +221,7 @@ extension MFGraph {
         g.withUnsafeMutableBufferPointer { g in
           level.withUnsafeMutableBufferPointer { level in
             iter.withUnsafeMutableBufferPointer { iter in
-              
+
               var lastRes: Cap = .zero
               var stack: [(v: Int, up: Cap, res: Cap, childOk: Bool)] = []
               stack.append((v, up, .zero, true))
