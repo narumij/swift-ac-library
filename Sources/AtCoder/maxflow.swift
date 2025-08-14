@@ -236,14 +236,16 @@ extension MFGraph {
   @inlinable
   public func min_cut(_ s: Int) -> [Bool] {
     var visited = [Bool](repeating: false, count: _n)
-    var que = Deque<Int>()
-    que.append(s)
-    while let p = que.popFirst() {
-      visited[p] = true
-      for e in g[p] {
-        if e.cap != 0, !visited[e.to] {
-          visited[e.to] = true
-          que.append(e.to)
+    visited.withUnsafeMutableBufferPointer { visited in
+      var que = Deque<Int>()
+      que.append(s)
+      while let p = que.popFirst() {
+        visited[p] = true
+        for e in g[p] {
+          if e.cap != 0, !visited[e.to] {
+            visited[e.to] = true
+            que.append(e.to)
+          }
         }
       }
     }
