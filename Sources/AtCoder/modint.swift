@@ -135,6 +135,8 @@ extension static_modint {
   }
 }
 
+extension static_modint: Sendable { }
+
 @frozen
 public struct dynamic_modint<bt: dynamic_mod>: dynamic_modint_base & modint_raw {
 
@@ -249,6 +251,8 @@ extension dynamic_modint {
   @inlinable @inline(__always)
   public static var umod: UInt { return bt.umod }
 }
+
+extension dynamic_modint: Sendable { }
 
 public typealias modint998244353 = static_modint<mod_998_244_353>
 public typealias modint1000000007 = static_modint<mod_1_000_000_007>

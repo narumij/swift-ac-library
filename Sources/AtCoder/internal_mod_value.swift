@@ -25,11 +25,13 @@ public struct mod_value {
   let isPrime: Bool
 }
 
+extension mod_value: Sendable { }
+
 extension mod_value {
-  public nonisolated(unsafe) static let mod_998_244_353: mod_value = 998_244_353
-  public nonisolated(unsafe) static let mod_1_000_000_007: mod_value = 1_000_000_007
-  public nonisolated(unsafe) static let mod_INT32_MAX: mod_value = 2_147_483_647
-  public nonisolated(unsafe) static let mod_UINT32_MAX: mod_value = -1
+  public static let mod_998_244_353: mod_value = 998_244_353
+  public static let mod_1_000_000_007: mod_value = 1_000_000_007
+  public static let mod_INT32_MAX: mod_value = 2_147_483_647
+  public static let mod_UINT32_MAX: mod_value = -1
 }
 
 extension mod_value: ExpressibleByIntegerLiteral {
