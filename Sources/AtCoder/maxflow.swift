@@ -269,3 +269,5 @@ extension MFGraph {
     var cap: Cap
   }
 }
+
+extension MFGraph.Edge: Sendable where Cap: Sendable { }

@@ -332,6 +332,8 @@ extension MCFGraph {
   }
 }
 
+extension MCFGraph.Edge: Sendable where Cap: Sendable, Cost: Sendable { }
+
 extension Heap {
   @inlinable
   var startIndex: Int { 0 }
