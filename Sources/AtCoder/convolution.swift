@@ -3,7 +3,7 @@ import Foundation
 extension _Internal {
 
   @usableFromInline
-  struct fft_info<mod: static_mod>: Sendable {
+  struct fft_info<mod: static_mod> {
 
     @usableFromInline
     typealias mint = static_modint<mod>

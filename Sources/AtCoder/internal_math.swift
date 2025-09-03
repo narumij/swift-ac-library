@@ -70,8 +70,6 @@ public struct barrett {
   }
 }
 
-extension barrett: Sendable { }
-
 extension _Internal {
   
   /// @param n `0 <= n`
