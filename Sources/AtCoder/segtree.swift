@@ -8,7 +8,6 @@ public protocol SegTreeOperator {
   static var e: S { get }
 }
 
-
 public protocol ___OpOperation {
   associatedtype S
   static var op: (S, S) -> S { get }
@@ -368,5 +367,48 @@ extension SegTree.Buffer {
   @inline(__always)
   func update(_ k: Int) {
     d[k] = op(d[k << 1], d[k << 1 + 1])
+  }
+}
+
+// MARK: -
+
+extension SegTree {
+  
+  @inlinable
+  @inline(__always)
+  public init(_ N: Int, _ f: () -> S) {
+    self.buffer = .create(withCount: N)
+    buffer.initialize(f)
+  }
+  
+  @inlinable
+  @inline(__always)
+  public init(_ N: Int, _ f: (Int) -> S) {
+    self.buffer = .create(withCount: N)
+    buffer.initialize(f)
+  }
+}
+
+extension SegTree.Buffer {
+  
+  @nonobjc
+  @inlinable
+  @inline(__always)
+  func initialize(_ f: () -> S) {
+    initialize({ _ in f() })
+  }
+  
+  @nonobjc
+  @inlinable
+  @inline(__always)
+  func initialize(_ f: (Int) -> S) {
+    d.initialize(repeating: O.e, count: size)
+    for i in 0..<_n {
+      (d + size + i).initialize(to: f(i))
+    }
+    (d + size + _n).initialize(repeating: O.e, count: size - _n)
+    for i in stride(from: size - 1, through: 1, by: -1) {
+      update(i)
+    }
   }
 }

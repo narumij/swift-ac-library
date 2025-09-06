@@ -171,7 +171,7 @@ extension LazySegTree {
 }
 
 extension LazySegTree.Buffer {
-  
+
   @nonobjc
   @inlinable
   @inline(__always)
@@ -510,5 +510,49 @@ extension LazySegTree.Buffer {
     all_apply(k << 1, lz[k])
     all_apply(k << 1 + 1, lz[k])
     lz[k] = id()
+  }
+}
+
+// MARK: -
+
+extension LazySegTree {
+  
+  @inlinable
+  @inline(__always)
+  public init(_ N: Int, _ f: () -> S) {
+    self.buffer = .create(withCount: N)
+    buffer.initialize(f)
+  }
+  
+  @inlinable
+  @inline(__always)
+  public init(_ N: Int, _ f: (Int) -> S) {
+    self.buffer = .create(withCount: N)
+    buffer.initialize(f)
+  }
+}
+
+extension LazySegTree.Buffer {
+
+  @nonobjc
+  @inlinable
+  @inline(__always)
+  func initialize(_ f: () -> S) {
+    initialize({ _ in f() })
+  }
+  
+  @nonobjc
+  @inlinable
+  @inline(__always)
+  func initialize(_ f: (Int) -> S) {
+    d.initialize(repeating: O.e, count: size)
+    for i in 0..<_n {
+      (d + size + i).initialize(to: f(i))
+    }
+    (d + size + _n).initialize(repeating: O.e, count: size - _n)
+    lz.initialize(repeating: O.id, count: size)
+    for i in stride(from: size - 1, through: 1, by: -1) {
+      update(i)
+    }
   }
 }

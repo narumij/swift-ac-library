@@ -113,4 +113,51 @@ final class lazySegtreeTests: XCTestCase {
     XCTAssertEqual(-5, seg.prod(2, 3))
     XCTAssertEqual(0, seg.prod(2, 4))
   }
+  
+  func test0_0() throws {
+    do {
+      let s = starry_seg(0) { param.e }
+      XCTAssertEqual(-1_000_000_000, s.all_prod())
+    }
+    do {
+      let s = starry_seg()
+      XCTAssertEqual(-1_000_000_000, s.all_prod())
+    }
+    do {
+      let s = starry_seg(10) { param.e }
+      XCTAssertEqual(-1_000_000_000, s.all_prod())
+    }
+  }
+
+  func testNaiveProd_0() throws {
+    for n in 0...50 {
+      var seg = starry_seg(n) { param.e }
+      var p = [Int](repeating: 0, count: n)
+      for i in 0..<n {
+        p[i] = (i * i + 100) % 31
+        seg.set(i, p[i])
+      }
+      for l in 0 ..<= n {
+        for r in l ..<= n {
+          var e = -1_000_000_000
+          for i in l..<r {
+            e = max(e, p[i])
+          }
+          XCTAssertEqual(e, seg.prod(l, r))
+        }
+      }
+    }
+  }
+
+  func testUsage_0() throws {
+
+    var seg = starry_seg(10) { _ in 0 }
+
+    XCTAssertEqual(0, seg.all_prod())
+    seg.apply(0, 3, 5)
+    XCTAssertEqual(5, seg.all_prod())
+    seg.apply(2, -10)
+    XCTAssertEqual(-5, seg.prod(2, 3))
+    XCTAssertEqual(0, seg.prod(2, 4))
+  }
 }
