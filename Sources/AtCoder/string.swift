@@ -292,7 +292,7 @@ public func lcp_array(_ s: String, _ sa: [Int]) -> [Int] {
 /// D. Gusfield,
 /// Algorithms on Strings, Trees, and Sequences: Computer Science and
 /// Computational Biology
-@available(*, deprecated, message: "バグがあり性能がでません。ソースコード下部の代替コードを提出コードに貼ってご利用ください。")
+@available(*, deprecated, message: "バグがあり性能がでません。Jump To Definitionで飛んだ先のソースコード下部の代替コードを提出コードに貼ってご利用ください。")
 @inlinable
 func z_algorithm<Element>(pointer s: UnsafePointer<Element>, count n: Int) -> [Int]
 where Element: Comparable {
@@ -311,14 +311,14 @@ where Element: Comparable {
   return z
 }
 
-@available(*, deprecated, message: "バグがあり性能がでません。ソースコード下部の代替コードを提出コードに貼ってご利用ください。")
+@available(*, deprecated, message: "バグがあり性能がでません。Jump To Definitionで飛んだ先のソースコード下部の代替コードを提出コードに貼ってご利用ください。")
 @inlinable
 public func z_algorithm<C>(_ s: [C]) -> [Int]
 where C: Comparable {
   z_algorithm(pointer: s, count: s.count)
 }
 
-@available(*, deprecated, message: "バグがあり性能がでません。ソースコード下部の代替コードを提出コードに貼ってご利用ください。")
+@available(*, deprecated, message: "バグがあり性能がでません。Jump To Definitionで飛んだ先のソースコード下部の代替コードを提出コードに貼ってご利用ください。")
 @inlinable
 public func z_algorithm(_ s: String) -> [Int] {
   s.withCString(encodedAs: Unicode.ASCII.self) {
