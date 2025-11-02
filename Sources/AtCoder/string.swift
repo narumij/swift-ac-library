@@ -296,18 +296,21 @@ public func lcp_array(_ s: String, _ sa: [Int]) -> [Int] {
 func z_algorithm<Element>(pointer s: UnsafePointer<Element>, count n: Int) -> [Int]
 where Element: Comparable {
   if n == 0 { return [] }
-  var z = [Int](repeating: 0, count: n)
-  z[0] = 0
-  var j = 0
-  for i in 0..<n {
-    var k = z[i]
-    defer { z[i] = k }
-    k = j + z[j] <= i ? 0 : min(j + z[j] - i, z[i - j])
-    while i + k < n, s[k] == s[i + k] { k += 1 }
-    if j + z[j] < i + z[i] { j = i }
+  return [Int](unsafeUninitializedCapacity: n) { z, initializedCount in
+    let z = z.baseAddress!
+    z.initialize(repeating: 0, count: n)
+    initializedCount = n
+    z[0] = 0
+    var i = 1
+    var j = 0
+    while i < n {
+      defer { i += 1 }
+      z[i] = j + z[j] <= i ? 0 : min(j + z[j] - i, z[i - j])
+      while i + z[i] < n, s[z[i]] == s[i + z[i]] { z[i] += 1 }
+      if j + z[j] < i + z[i] { j = i }
+    }
+    z[0] = n
   }
-  z[0] = n
-  return z
 }
 
 @inlinable
