@@ -294,7 +294,7 @@ public func lcp_array(_ s: String, _ sa: [Int]) -> [Int] {
 /// Computational Biology
 @inlinable
 func z_algorithm<Element>(pointer s: UnsafePointer<Element>, count n: Int) -> [Int]
-where Element: Comparable {
+where Element: Equatable {
   if n == 0 { return [] }
   return [Int](unsafeUninitializedCapacity: n) { z, initializedCount in
     let z = z.baseAddress!
@@ -315,7 +315,7 @@ where Element: Comparable {
 
 @inlinable
 public func z_algorithm<C>(_ s: [C]) -> [Int]
-where C: Comparable {
+where C: Equatable {
   z_algorithm(pointer: s, count: s.count)
 }
 
