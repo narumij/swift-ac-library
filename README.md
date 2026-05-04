@@ -31,7 +31,7 @@ To use `swift-ac-library` with SwiftPM, add the following to your `Package.swift
 dependencies: [
   .package(
     url: "https://github.com/narumij/swift-ac-library",
-    branch: "release/AtCoder/2025"),
+    branch: "compatible/AtCoder/2025"),
 ],
 ```
 
