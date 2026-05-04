@@ -1,35 +1,33 @@
 # swift-ac-library
 
-[AtCoder][ac] の競技プログラミング向けライブラリである [AC(AtCoder) Library][ac-library] の Swift 移植版。
+English | [日本語](README.ja.md)
 
+A Swift port of the [AC (AtCoder) Library][ac-library], a library for competitive programming on [AtCoder][ac].
 
 [![Swift](https://github.com/narumij/swift-ac-library/actions/workflows/swift.yml/badge.svg?branch=main)](https://github.com/narumij/swift-ac-library/actions/workflows/swift.yml)
 [![License: CC0-1.0](https://img.shields.io/badge/License-CC0%201.0-lightgrey.svg)](http://creativecommons.org/publicdomain/zero/1.0/)
 
-## お知らせ
+## Notice
 
-[現在のAtCoderの提出に使う場合は、こちらをご利用ください。](https://github.com/narumij/swift-ac-library/tree/release/swift-5.8.1)
+[If you are using this for current AtCoder submissions, please use this branch.](https://github.com/narumij/swift-ac-library/tree/release/swift-5.8.1)
 
-- tagは0.0.13までがSwift 5.8.1対応です。
+- Tags up to `0.0.13` support Swift 5.8.1.
 
-## 公式情報
+## Official Information
 
 [AtCoder Library (ACL) - AtCoder][acl]
 
-## 関連
+## Related Projects
 
-[ac-library-csharp] - C#版
+- [ac-library-csharp] — C# version  
+- [ac-library-python] — Python version  
+- [ac-library-swift] — Original Swift version  
 
-[ac-library-python] - Python版
+## Usage
 
-[ac-library-swift] - 元祖Swift版
+To use `swift-ac-library` with SwiftPM, add the following to your `Package.swift`:
 
-## 利用の仕方
-
-SwiftPMで swift-ac-libraryを利用する場合は、
-
-以下をPackage.swift に追加してください。
-```
+```swift
 dependencies: [
   .package(
     url: "https://github.com/narumij/swift-ac-library",
@@ -37,45 +35,43 @@ dependencies: [
 ],
 ```
 
-ビルドターゲットに以下を追加します。
+Add it to your build target:
 
-```
-  dependencies: [
-    .product(name: "AtCoder", package: "swift-ac-library")
-    ]
+```swift
+dependencies: [
+  .product(name: "AtCoder", package: "swift-ac-library")
+]
 ```
 
-ソースコードに以下を追加します。
-```
+Import in your source code:
+
+```swift
 import AtCoder
 ```
 
-## アンダースコア付き宣言について
+## Declarations with Underscores
 
-「アンダースコア付き宣言」は、完全修飾名のどこかにアンダースコア (`_`) で始まる部分が含まれる宣言のことを指します。たとえば、以下のような名前は技術的に `public` として宣言されていても、パブリックAPIには含まれません：
+A “declaration with an underscore” refers to any declaration whose fully qualified name contains a component starting with an underscore (`_`).
 
-- `FooModule.Bar._someMember(value:)`（アンダースコア付きのメンバー）
-- `FooModule._Bar.someMember`（アンダースコア付きの型）
-- `_FooModule.Bar`（アンダースコア付きのモジュール）
-- `FooModule.Bar.init(_value:)`（アンダースコア付きの引数を持つイニシャライザ）
+For example, the following names are technically declared as `public`, but are not considered part of the public API:
 
-さらに、コードベース全般についても同様に、互換性が保証されることは期待しないでください。これらの宣言は必要に応じて変更される可能性があり、非互換な修正が加えられる場合があります。
+- `FooModule.Bar._someMember(value:)` — member with underscore  
+- `FooModule._Bar.someMember` — type with underscore  
+- `_FooModule.Bar` — module with underscore  
+- `FooModule.Bar.init(_value:)` — initializer with underscored parameter  
 
-## ライセンス
+More generally, compatibility is not guaranteed across the codebase.
+
+These declarations may change as needed, and breaking changes may be introduced.
+
+## License
 
 [CC0]
 
 [ac]: https://atcoder.jp/
-
 [acl]: https://atcoder.jp/posts/517
-
 [ac-library]: https://github.com/atcoder/ac-library
-
 [ac-library-swift]: https://github.com/kyomuei/ac-library-swift
-
 [ac-library-python]: https://github.com/not522/ac-library-python
-
 [ac-library-csharp]: https://github.com/kzrnm/ac-library-csharp
-
 [CC0]: https://creativecommons.org/public-domain/cc0/
-
