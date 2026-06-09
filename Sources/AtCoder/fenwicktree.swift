@@ -62,3 +62,5 @@
     }
   }
 #endif
+
+extension FenwickTree: @unchecked Sendable {}

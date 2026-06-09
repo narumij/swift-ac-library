@@ -342,3 +342,4 @@ extension Heap {
 }
 
 
+extension MCFGraph: @unchecked Sendable {}

@@ -50,3 +50,5 @@ import Foundation
     public func answer() -> [Bool] { return _answer }
   }
 #endif
+
+extension TwoSAT: @unchecked Sendable {}

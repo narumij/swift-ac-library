@@ -27,3 +27,5 @@ import Foundation
     var _internal: _Internal.scc_graph
   }
 #endif
+
+extension SCCGraph: @unchecked Sendable {}

@@ -293,6 +293,6 @@
       }
     }
   }
-
-  extension SegTree: @unchecked Sendable {}
 #endif
+
+extension SegTree: @unchecked Sendable {}
