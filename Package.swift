@@ -19,7 +19,6 @@ var _settings: [SwiftSetting] =
 
     .define("DEATH_TEST", .when(platforms: [.macOS])),
 
-    // 一応用意してあるが、あまり効果が無いどころか逆効果かもしれない
     .unsafeFlags(["-Ounchecked"], .when(configuration: .release, traits: ["_O_UNCHECKED"])),
   ] + defines.map { .define($0) }
 
