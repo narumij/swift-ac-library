@@ -8,15 +8,13 @@
 import XCTest
 import AtCoder
 
+fileprivate enum ExampleB: SegTreeOperation {
+  static let op: Op = (+)
+  static let e: Int = 0
+}
+
 final class SegTreeOperationTests: XCTestCase {
-
-  enum ExampleB: SegTreeOperation {
-    static let op: Op = (+)
-    static let e: Int = 0
-  }
   
-  typealias B = SegTree<ExampleB>
-
   override func setUpWithError() throws {
     // Put setup code here. This method is called before the invocation of each test method in the class.
   }
@@ -32,7 +30,7 @@ final class SegTreeOperationTests: XCTestCase {
     // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
     // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
     
-    var b = B([])
+    let b = SegTree<ExampleB>()
   }
 
   func testPerformanceExample() throws {
@@ -41,5 +39,4 @@ final class SegTreeOperationTests: XCTestCase {
       // Put the code you want to measure the time of here.
     }
   }
-
 }
