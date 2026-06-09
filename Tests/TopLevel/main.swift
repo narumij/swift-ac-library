@@ -59,3 +59,15 @@ enum ExampleF: LazySegTreeOperation & SegTreeOperation {
 
 var segtreeF0 = SegTree<ExampleF>()
 var segtreeF1 = LazySegTree<ExampleF>()
+
+// 可能な場合に以下のように書けるようにしたい
+enum ExampleG: LazySegTreeOperator & SegTreeOperation {
+  static let op: Op = (+)
+  static let e: Int = 0
+  static func mapping(_ x: F, _ y: S) -> S { x + y }
+  static func composition(_ x: F, _ y: F) -> F { x + y }
+  static let id: Int = 0
+}
+
+var segtreeG0 = SegTree<ExampleG>()
+var segtreeG1 = LazySegTree<ExampleG>()

@@ -28,18 +28,18 @@
     public typealias O = _S_op_e_
     public typealias S = O.S
 
-    @usableFromInline let payload: UnsafeMutablePointer<S>
+    @usableFromInline let _d_payload: UnsafeMutablePointer<S>
     @usableFromInline var capacity: Int
     @usableFromInline var _n, size, log: Int
 
     @inlinable
     var d: UnsafeMutableBufferPointer<S> {
-      .init(start: payload, count: capacity)
+      .init(start: _d_payload, count: capacity)
     }
 
     deinit {
-      payload.deinitialize(count: capacity)
-      payload.deallocate()
+      _d_payload.deinitialize(count: capacity)
+      _d_payload.deallocate()
     }
   }
 
@@ -180,7 +180,7 @@
     }
 
     @inlinable
-    public func update(_ k: Int) {
+    func update(_ k: Int) {
       d[k] = op(d[k << 1], d[k << 1 + 1])
     }
   }
@@ -191,7 +191,7 @@
 
     @inlinable
     func initialize() {
-      let d = payload
+      let d = _d_payload
       d.initialize(repeating: O.e, count: size)
       (d + size).initialize(repeating: O.e, count: _n)
       (d + size + _n).initialize(repeating: O.e, count: size - _n)
@@ -205,7 +205,7 @@
 
     @inlinable
     func initialize<C>(_ v: C) where C: Collection, C.Element == S {
-      let d = payload
+      let d = _d_payload
       d.initialize(repeating: O.e, count: size)
       for (offset, i) in v.indices.enumerated() {
         (d + size + offset).initialize(to: v[i])
@@ -221,7 +221,7 @@
 
     @inlinable
     func initialize(_ v: [S]) {
-      let d = payload
+      let d = _d_payload
       v.withUnsafeBufferPointer { v in
         d.initialize(repeating: O.e, count: size)
         (d + size).initialize(from: v.baseAddress!, count: _n)
@@ -241,7 +241,7 @@
       size = _Internal.bit_ceil(_n)
       log = size.trailingZeroBitCount
       capacity = 2 * size
-      payload = .allocate(capacity: capacity)
+      _d_payload = .allocate(capacity: capacity)
     }
   }
 
@@ -249,8 +249,8 @@
 
     @inlinable
     internal init(other: borrowing Self) {
-      payload = UnsafeMutablePointer<S>.allocate(capacity: other.capacity)
-      payload.initialize(from: other.payload, count: other.capacity)
+      _d_payload = UnsafeMutablePointer<S>.allocate(capacity: other.capacity)
+      _d_payload.initialize(from: other._d_payload, count: other.capacity)
       capacity = other.capacity
       _n = other._n
       size = other.size
@@ -262,14 +262,18 @@
     }
   }
 
+  // MARK: -
+
   extension SegTree {
 
+    /// ベンチマーク用
     @inlinable
     public init(_ N: Int, _ f: () -> S) {
       self.init(_count: N)
       initialize({ _ in f() })
     }
 
+    /// ベンチマーク用
     @inlinable
     public init(_ N: Int, _ f: (Int) -> S) {
       self.init(_count: N)
@@ -279,9 +283,10 @@
 
   extension SegTree {
 
+    /// ベンチマーク用
     @inlinable
     func initialize(_ f: (Int) -> S) {
-      let d = payload
+      let d = _d_payload
       d.initialize(repeating: O.e, count: size)
       for i in 0..<_n {
         (d + size + i).initialize(to: f(i))

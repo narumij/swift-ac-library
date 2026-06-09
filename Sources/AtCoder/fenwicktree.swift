@@ -21,6 +21,7 @@
     @inlinable
     @inline(__always)
     public init(_ n: Int) {
+      precondition(n >= 0)
       _n = n
       data = .allocate(capacity: n)
       data.initialize(repeating: -1, count: n)
@@ -35,7 +36,7 @@
   extension FenwickTree {
 
     @inlinable
-    func add(_ p: Int, _ x: T) {
+    public func add(_ p: Int, _ x: T) {
       assert(0 <= p && p < _n)
       var p = p + 1
       while p <= _n {
@@ -45,7 +46,7 @@
     }
 
     @inlinable
-    func sum(_ l: Int, _ r: Int) -> T {
+    public func sum(_ l: Int, _ r: Int) -> T {
       assert(0 <= l && l <= r && r <= _n)
       return T(bitPattern: sum(r) &- sum(l))
     }

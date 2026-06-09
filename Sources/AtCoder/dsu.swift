@@ -6,9 +6,6 @@
   @frozen
   public struct DSU: ~Copyable {
 
-    // CoW廃止でシンプルになった
-    // シンプルさで生じた本来の価値を損なわないように配慮する方針
-
     @usableFromInline let payload: UnsafeMutablePointer<Int>
     @usableFromInline let _n: Int
 
@@ -39,7 +36,7 @@
   extension DSU {
 
     @inlinable
-    func merge(_ a: Int, _ b: Int) -> Int {
+    public func merge(_ a: Int, _ b: Int) -> Int {
       assert(0 <= a && a < _n)
       assert(0 <= b && b < _n)
       var (x, y) = (leader(a), leader(b))
@@ -51,26 +48,28 @@
     }
 
     @inlinable
-    func same(_ a: Int, _ b: Int) -> Bool {
+    public func same(_ a: Int, _ b: Int) -> Bool {
       assert(0 <= a && a < _n)
       assert(0 <= b && b < _n)
       return leader(a) == leader(b)
     }
 
     @inlinable
-    func leader(_ a: Int) -> Int {
+    public func leader(_ a: Int) -> Int {
       assert(0 <= a && a < _n)
-      return _leader(a)
+      if parent_or_size[a] < 0 { return a }
+      parent_or_size[a] = leader(parent_or_size[a])
+      return parent_or_size[a]
     }
 
     @inlinable
-    func size(_ a: Int) -> Int {
+    public func size(_ a: Int) -> Int {
       assert(0 <= a && a < _n)
       return -parent_or_size[leader(a)]
     }
 
     @inlinable
-    func groups() -> [[Int]] {
+    public func groups() -> [[Int]] {
       var leader_buf = [Int](repeating: -1, count: _n)
       var group_size = [Int](repeating: -1, count: _n)
       for i in 0..<_n {
@@ -86,13 +85,6 @@
       }
       result.removeAll { $0.isEmpty }
       return result
-    }
-
-    @inlinable
-    func _leader(_ a: Int) -> Int {
-      if parent_or_size[a] < 0 { return a }
-      parent_or_size[a] = _leader(parent_or_size[a])
-      return parent_or_size[a]
     }
   }
 

@@ -117,7 +117,7 @@ import Foundation
   extension LazySegTree {
 
     @inlinable
-    func set(_ p: Int, _ x: S) {
+    public func set(_ p: Int, _ x: S) {
       var p = p
       assert(0 <= p && p < _n)
       p += size
@@ -129,7 +129,7 @@ import Foundation
     }
 
     @inlinable
-    func get(_ p: Int) -> S {
+    public func get(_ p: Int) -> S {
       var p = p
       assert(0 <= p && p < _n)
       p += size
@@ -139,7 +139,7 @@ import Foundation
     }
 
     @inlinable
-    func prod(_ l: Int, _ r: Int) -> S {
+    public func prod(_ l: Int, _ r: Int) -> S {
       var l = l
       var r = r
       assert(0 <= l && l <= r && r <= _n)
@@ -176,7 +176,7 @@ import Foundation
     public func all_prod() -> S { d[1] }
 
     @inlinable
-    func apply(_ p: Int, _ f: F) {
+    public func apply(_ p: Int, _ f: F) {
       var p = p
       assert(0 <= p && p < _n)
       p += size
@@ -188,7 +188,7 @@ import Foundation
     }
 
     @inlinable
-    func apply(_ l: Int, _ r: Int, _ f: F) {
+    public func apply(_ l: Int, _ r: Int, _ f: F) {
       var l = l
       var r = r
       assert(0 <= l && l <= r && r <= _n)
@@ -230,7 +230,7 @@ import Foundation
     }
 
     @inlinable
-    func max_right(_ l: Int, _ g: (S) -> Bool) -> Int {
+    public func max_right(_ l: Int, _ g: (S) -> Bool) -> Int {
       var l = l
       assert(0 <= l && l <= _n)
       assert(g(e()))
@@ -259,7 +259,7 @@ import Foundation
     }
 
     @inlinable
-    func min_left(_ r: Int, _ g: (S) -> Bool) -> Int {
+    public func min_left(_ r: Int, _ g: (S) -> Bool) -> Int {
       var r = r
       assert(0 <= r && r <= _n)
       assert(g(e()))
@@ -288,7 +288,7 @@ import Foundation
     }
 
     @inlinable
-    public func update(_ k: Int) {
+    func update(_ k: Int) {
       d[k] = op(d[k << 1], d[k << 1 + 1])
     }
 
@@ -394,14 +394,18 @@ import Foundation
     }
   }
 
+  // MARK: -
+
   extension LazySegTree {
 
+    /// ベンチマーク用
     @inlinable
     public init(_ N: Int, _ f: () -> S) {
       self.init(_count: N)
       initialize({ _ in f() })
     }
 
+    /// ベンチマーク用
     @inlinable
     public init(_ N: Int, _ f: (Int) -> S) {
       self.init(_count: N)
@@ -411,6 +415,7 @@ import Foundation
 
   extension LazySegTree {
 
+    /// ベンチマーク用
     @inlinable
     func initialize(_ f: (Int) -> S) {
       let d = _d_payload
