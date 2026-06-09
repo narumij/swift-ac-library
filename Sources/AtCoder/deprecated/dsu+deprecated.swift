@@ -1,4 +1,4 @@
-#if !USE_NON_COPYABLE
+#if COMPATIBLE_ATCODER_2025
   /// Implement (union by size) + (path compression)
   /// Reference:
   /// Zvi Galil and Giuseppe F. Italiano,

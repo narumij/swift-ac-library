@@ -1,6 +1,6 @@
 import Foundation
 
-#if !USE_NON_COPYABLE
+#if COMPATIBLE_ATCODER_2025
   /// Reference: https://en.wikipedia.org/wiki/Fenwick_tree
   @frozen
   public struct FenwickTree<T>

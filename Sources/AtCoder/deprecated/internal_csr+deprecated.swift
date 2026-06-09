@@ -1,6 +1,6 @@
 import Foundation
 
-#if !USE_NON_COPYABLE
+#if COMPATIBLE_ATCODER_2025
   extension _Internal {
 
     @frozen

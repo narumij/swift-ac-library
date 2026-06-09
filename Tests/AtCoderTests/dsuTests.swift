@@ -6,7 +6,7 @@ import XCTest
   import AtCoder
 #endif
 
-#if DEBUG && !USE_NON_COPYABLE
+#if DEBUG && COMPATIBLE_ATCODER_2025
   extension DSU {
     var parent_or_size: [Int] {
       .init(unsafeUninitializedCapacity: buffer._n) { parent_or_size, initializedCount in
@@ -65,7 +65,7 @@ final class dsuTests: XCTestCase {
       // Put the code you want to measure the time of here.
       var dsu = DSU(n)
       for (i, j) in pairs {
-        dsu.merge(i, j)
+        _ = dsu.merge(i, j)
       }
     }
   }
@@ -75,16 +75,16 @@ final class dsuTests: XCTestCase {
       throw XCTSkip("コピーオンライト不活性のため")
     #endif
     var seg0 = DSU(5)
-    #if USE_NON_COPYABLE
+    #if !COMPATIBLE_ATCODER_2025
       var seg00 = seg0.clone()
     #else
       var seg00 = seg0
     #endif
     XCTAssertEqual(seg00.leader(0), 0)
-    seg0.merge(1, 0)
+    _ = seg0.merge(1, 0)
     XCTAssertEqual(seg00.leader(0), 0)
     XCTAssertEqual(seg0.leader(0), 1)
-    seg00.merge(2, 0)
+    _ = seg00.merge(2, 0)
     XCTAssertEqual(seg00.leader(0), 2)
     XCTAssertEqual(seg0.leader(0), 1)
   }

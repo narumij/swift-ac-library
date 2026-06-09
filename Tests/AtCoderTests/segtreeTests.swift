@@ -113,7 +113,7 @@ final class segtreeTests: XCTestCase {
       throw XCTSkip("コピーオンライト不活性のため")
     #endif
     var seg0 = SegTree<Operator>(10)
-    #if USE_NON_COPYABLE
+    #if !COMPATIBLE_ATCODER_2025
       var seg00 = seg0.clone()
     #else
       var seg00 = seg0

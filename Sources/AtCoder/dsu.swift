@@ -1,4 +1,4 @@
-#if USE_NON_COPYABLE
+#if !COMPATIBLE_ATCODER_2025
   /// Implement (union by size) + (path compression)
   /// Reference:
   /// Zvi Galil and Giuseppe F. Italiano,
@@ -22,11 +22,11 @@
 
   extension DSU {
 
-    init() {
+    public init() {
       self.init(0)
     }
 
-    init(_ n: Int) {
+    public init(_ n: Int) {
       _n = n
       payload = .allocate(capacity: n)
       payload.initialize(repeating: -1, count: n)
@@ -101,7 +101,7 @@
   extension DSU {
 
     @inlinable
-    func clone() -> Self {
+    public func clone() -> Self {
       return .init(other: self)
     }
   }

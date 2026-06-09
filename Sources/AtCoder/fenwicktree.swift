@@ -1,4 +1,4 @@
-#if USE_NON_COPYABLE
+#if !COMPATIBLE_ATCODER_2025
   /// Reference: https://en.wikipedia.org/wiki/Fenwick_tree
   @frozen
   public struct FenwickTree<T>: ~Copyable
@@ -37,7 +37,7 @@
 
     @inlinable
     public mutating func add(_ p: Int, _ x: T) {
-      assert(0 <= p && p < _n)
+      precondition(0 <= p && p < _n)
       var p = p + 1
       while p <= _n {
         data[p - 1] &+= x.unsigned
@@ -47,7 +47,7 @@
 
     @inlinable
     public func sum(_ l: Int, _ r: Int) -> T {
-      assert(0 <= l && l <= r && r <= _n)
+      precondition(0 <= l && l <= r && r <= _n)
       return T(bitPattern: sum(r) &- sum(l))
     }
 

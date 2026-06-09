@@ -1,6 +1,6 @@
 import Foundation
 
-#if USE_NON_COPYABLE
+#if !COMPATIBLE_ATCODER_2025
   extension _Internal {
 
     @frozen
@@ -24,7 +24,7 @@ import Foundation
           for e in edges {
             start[e.first + 1] += 1
           }
-          for i in stride(from: 1, through: n, by: 1) {  // nが0の場合に落ちる
+          for i in stride(from: 1, through: n, by: 1) {
             start[i] += start[i - 1]
           }
           counter.initialize(from: start, count: n + 1)

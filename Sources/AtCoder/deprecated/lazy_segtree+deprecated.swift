@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Lazy Segment Tree
 
-#if !USE_NON_COPYABLE
+#if COMPATIBLE_ATCODER_2025
   public protocol LazySegTreeOperator {
     associatedtype S
     associatedtype F

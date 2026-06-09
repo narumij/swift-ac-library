@@ -8,14 +8,12 @@ var defines: [String] = [
   //  "AC_LIBRARY_INTERNAL_CHECKS",
   //  "DISABLE_COPY_ON_WRITE",
   "USE_NON_COPYABLE",
-  "USE_INT128"
+  "USE_INT128",
 ]
 
 var _settings: [SwiftSetting] =
   [
     // .define("COMPATIBLE_ATCODER_2025"),
-
-    //    .define("USE_NON_COPYABLE"),
 
     .define("BENCHMARK", .when(traits: ["BENCHMARK"])),
 

@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Segment Tree
 
-#if !USE_NON_COPYABLE
+#if COMPATIBLE_ATCODER_2025
   public protocol SegTreeOperator {
     associatedtype S
     static func op(_ x: S, _ y: S) -> S
