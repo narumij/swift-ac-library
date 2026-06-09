@@ -83,7 +83,7 @@
   extension SegTree {
 
     @inlinable
-    public func set(_ p: Int, _ x: S) {
+    public mutating func set(_ p: Int, _ x: S) {
       var p = p
       assert(0 <= p && p < _n)
       p += size
@@ -180,7 +180,7 @@
     }
 
     @inlinable
-    func update(_ k: Int) {
+    mutating func update(_ k: Int) {
       d[k] = op(d[k << 1], d[k << 1 + 1])
     }
   }
@@ -190,7 +190,7 @@
   extension SegTree {
 
     @inlinable
-    func initialize() {
+    mutating func initialize() {
       let d = _d_payload
       d.initialize(repeating: O.e, count: size)
       (d + size).initialize(repeating: O.e, count: _n)
@@ -204,7 +204,7 @@
   extension SegTree {
 
     @inlinable
-    func initialize<C>(_ v: C) where C: Collection, C.Element == S {
+    mutating func initialize<C>(_ v: C) where C: Collection, C.Element == S {
       let d = _d_payload
       d.initialize(repeating: O.e, count: size)
       for (offset, i) in v.indices.enumerated() {
@@ -220,7 +220,7 @@
   extension SegTree {
 
     @inlinable
-    func initialize(_ v: [S]) {
+    mutating func initialize(_ v: [S]) {
       let d = _d_payload
       v.withUnsafeBufferPointer { v in
         d.initialize(repeating: O.e, count: size)
@@ -285,7 +285,7 @@
 
     /// ベンチマーク用
     @inlinable
-    func initialize(_ f: (Int) -> S) {
+    mutating func initialize(_ f: (Int) -> S) {
       let d = _d_payload
       d.initialize(repeating: O.e, count: size)
       for i in 0..<_n {

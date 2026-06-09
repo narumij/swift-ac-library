@@ -120,7 +120,7 @@ final class fenwickTreeTests: XCTestCase {
 
   #if false
     func testInvalid() throws {
-      throw XCTSkip("Swift Packageでは実施不可")
+      throw XCTSkip("Swift Testingで実施")
       /*
         EXPECT_THROW(auto s = fenwick_tree<int>(-1), std::exception);
         fenwick_tree<int> s(10);
@@ -185,27 +185,26 @@ final class fenwickTreeTests: XCTestCase {
     }
   }
 
-  #if false
-    func testInt128() throws {
-      throw XCTSkip("__int128がSwiftにはない")
-      /*
-         fenwick_tree<__int128> fw(20);
-         for (int i = 0; i < 20; i++) {
-             fw.add(i, i);
-         }
+  func testInt128() throws {
+    #if !USE_INT128
+      throw XCTSkip("Int128が利用できない")
+    #else
+      var fw = FenwickTree<Int128>(20)
+      for i in 0..<20 {
+        fw.add(i, Int128(i))
+      }
 
-         for (int l = 0; l <= 20; l++) {
-             for (int r = l; r <= 20; r++) {
-                 ll sum = 0;
-                 for (int i = l; i < r; i++) {
-                     sum += i;
-                 }
-                 ASSERT_EQ(sum, fw.sum(l, r));
-             }
-         }
-         */
-    }
-  #endif
+      for l in 0..<20 {
+        for r in l...20 {
+          var sum: Int128 = 0
+          for i in l..<r {
+            sum += Int128(i)
+          }
+          XCTAssertEqual(sum, fw.sum(l, r))
+        }
+      }
+    #endif
+  }
 
   func testInt() throws {
     var fw = fenwick_tree<Int>(20)

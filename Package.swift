@@ -7,7 +7,8 @@ import PackageDescription
 var defines: [String] = [
   //  "AC_LIBRARY_INTERNAL_CHECKS",
   //  "DISABLE_COPY_ON_WRITE",
-  "USE_NON_COPYABLE"
+  "USE_NON_COPYABLE",
+  "USE_INT128"
 ]
 
 var _settings: [SwiftSetting] =
@@ -39,9 +40,14 @@ let Ounchecked: [SwiftSetting] =
     .unsafeFlags(["-Ounchecked"], .when(configuration: .release))
   ] : []
 
+let platforms: [SupportedPlatform]? =
+  defines.contains("USE_INT128")
+  ? [.macOS(.v15), .iOS(.v18), .tvOS(.v18), .watchOS(.v11), .macCatalyst(.v18)]
+  : nil
+
 let package = Package(
   name: "swift-ac-library",
-  //  platforms: [.macOS(.v14), .iOS(.v17), .tvOS(.v17), .watchOS(.v10), .macCatalyst(.v17)],
+  platforms: platforms,
   products: [
     // Products define the executables and libraries a package produces, making them visible to other packages.
     .library(
@@ -49,6 +55,9 @@ let package = Package(
       targets: ["AtCoder"])
   ],
   traits: [
+    .trait(
+      name: "USE_INT128"
+    ),
     .trait(
       name: "BENCHMARK"
     ),

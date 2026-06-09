@@ -117,7 +117,7 @@ import Foundation
   extension LazySegTree {
 
     @inlinable
-    public func set(_ p: Int, _ x: S) {
+    public mutating func set(_ p: Int, _ x: S) {
       var p = p
       assert(0 <= p && p < _n)
       p += size
@@ -129,7 +129,7 @@ import Foundation
     }
 
     @inlinable
-    public func get(_ p: Int) -> S {
+    public mutating func get(_ p: Int) -> S {
       var p = p
       assert(0 <= p && p < _n)
       p += size
@@ -139,7 +139,7 @@ import Foundation
     }
 
     @inlinable
-    public func prod(_ l: Int, _ r: Int) -> S {
+    public mutating func prod(_ l: Int, _ r: Int) -> S {
       var l = l
       var r = r
       assert(0 <= l && l <= r && r <= _n)
@@ -176,7 +176,7 @@ import Foundation
     public func all_prod() -> S { d[1] }
 
     @inlinable
-    public func apply(_ p: Int, _ f: F) {
+    public mutating func apply(_ p: Int, _ f: F) {
       var p = p
       assert(0 <= p && p < _n)
       p += size
@@ -188,7 +188,7 @@ import Foundation
     }
 
     @inlinable
-    public func apply(_ l: Int, _ r: Int, _ f: F) {
+    public mutating func apply(_ l: Int, _ r: Int, _ f: F) {
       var l = l
       var r = r
       assert(0 <= l && l <= r && r <= _n)
@@ -230,7 +230,7 @@ import Foundation
     }
 
     @inlinable
-    public func max_right(_ l: Int, _ g: (S) -> Bool) -> Int {
+    public mutating func max_right(_ l: Int, _ g: (S) -> Bool) -> Int {
       var l = l
       assert(0 <= l && l <= _n)
       assert(g(e()))
@@ -259,7 +259,7 @@ import Foundation
     }
 
     @inlinable
-    public func min_left(_ r: Int, _ g: (S) -> Bool) -> Int {
+    public mutating func min_left(_ r: Int, _ g: (S) -> Bool) -> Int {
       var r = r
       assert(0 <= r && r <= _n)
       assert(g(e()))
@@ -288,18 +288,18 @@ import Foundation
     }
 
     @inlinable
-    func update(_ k: Int) {
+    mutating func update(_ k: Int) {
       d[k] = op(d[k << 1], d[k << 1 + 1])
     }
 
     @inlinable
-    func all_apply(_ k: Int, _ f: F) {
+    mutating func all_apply(_ k: Int, _ f: F) {
       d[k] = mapping(f, d[k])
       if k < size { lz[k] = composition(f, lz[k]) }
     }
 
     @inlinable
-    func push(_ k: Int) {
+    mutating func push(_ k: Int) {
       all_apply(k << 1, lz[k])
       all_apply(k << 1 + 1, lz[k])
       lz[k] = id()
@@ -324,7 +324,7 @@ import Foundation
   extension LazySegTree {
 
     @inlinable
-    func initialize() {
+    mutating func initialize() {
       let d = _d_payload
       let lz = _lz_payload
 
@@ -341,7 +341,7 @@ import Foundation
   extension LazySegTree {
 
     @inlinable
-    func initialize<C>(_ v: C) where C: Collection, C.Element == S {
+    mutating func initialize<C>(_ v: C) where C: Collection, C.Element == S {
       let d = _d_payload
       let lz = _lz_payload
       d.initialize(repeating: O.e, count: size)
@@ -359,7 +359,7 @@ import Foundation
   extension LazySegTree {
 
     @inlinable
-    func initialize(_ v: [S]) {
+    mutating func initialize(_ v: [S]) {
       let d = _d_payload
       let lz = _lz_payload
 
@@ -417,7 +417,7 @@ import Foundation
 
     /// ベンチマーク用
     @inlinable
-    func initialize(_ f: (Int) -> S) {
+    mutating func initialize(_ f: (Int) -> S) {
       let d = _d_payload
       let lz = _lz_payload
 

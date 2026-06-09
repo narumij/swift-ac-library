@@ -36,7 +36,7 @@
   extension DSU {
 
     @inlinable
-    public func merge(_ a: Int, _ b: Int) -> Int {
+    public mutating func merge(_ a: Int, _ b: Int) -> Int {
       assert(0 <= a && a < _n)
       assert(0 <= b && b < _n)
       var (x, y) = (leader(a), leader(b))
@@ -48,14 +48,14 @@
     }
 
     @inlinable
-    public func same(_ a: Int, _ b: Int) -> Bool {
+    public mutating func same(_ a: Int, _ b: Int) -> Bool {
       assert(0 <= a && a < _n)
       assert(0 <= b && b < _n)
       return leader(a) == leader(b)
     }
 
     @inlinable
-    public func leader(_ a: Int) -> Int {
+    public mutating func leader(_ a: Int) -> Int {
       assert(0 <= a && a < _n)
       if parent_or_size[a] < 0 { return a }
       parent_or_size[a] = leader(parent_or_size[a])
@@ -63,13 +63,13 @@
     }
 
     @inlinable
-    public func size(_ a: Int) -> Int {
+    public mutating func size(_ a: Int) -> Int {
       assert(0 <= a && a < _n)
       return -parent_or_size[leader(a)]
     }
 
     @inlinable
-    public func groups() -> [[Int]] {
+    public mutating func groups() -> [[Int]] {
       var leader_buf = [Int](repeating: -1, count: _n)
       var group_size = [Int](repeating: -1, count: _n)
       for i in 0..<_n {

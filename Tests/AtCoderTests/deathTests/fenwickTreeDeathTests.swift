@@ -17,11 +17,11 @@
         _ = FenwickTree<Int>(-1)
       }
       await #expect(processExitsWith: .signal(SIGTRAP)) {
-        let s = FenwickTree<Int>(10)
+        var s = FenwickTree<Int>(10)
         s.add(-1, 0)
       }
       await #expect(processExitsWith: .signal(SIGTRAP)) {
-        let s = FenwickTree<Int>(10)
+        var s = FenwickTree<Int>(10)
         s.add(10, 0)
       }
       await #expect(processExitsWith: .signal(SIGTRAP)) {

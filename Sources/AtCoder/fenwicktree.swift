@@ -36,7 +36,7 @@
   extension FenwickTree {
 
     @inlinable
-    public func add(_ p: Int, _ x: T) {
+    public mutating func add(_ p: Int, _ x: T) {
       assert(0 <= p && p < _n)
       var p = p + 1
       while p <= _n {

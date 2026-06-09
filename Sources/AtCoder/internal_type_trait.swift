@@ -28,6 +28,14 @@ extension Int: ToUnsignedType {
   public var unsigned: UInt { _read { yield .init(bitPattern: self) } }
 }
 
+#if USE_INT128
+extension Int128: ToUnsignedType {
+  @inlinable
+  @inline(__always)
+  public var unsigned: UInt128 { _read { yield .init(bitPattern: self) } }
+}
+#endif
+
 extension UInt32: ToUnsignedType {
   @inlinable
   @inline(__always)
@@ -43,6 +51,14 @@ extension UInt: ToUnsignedType {
   @inline(__always)
   public var unsigned: Self { self }
 }
+
+#if USE_INT128
+extension UInt128: ToUnsignedType {
+  @inlinable
+  @inline(__always)
+  public var unsigned: Self { self }
+}
+#endif
 
 extension static_modint: ToUnsignedType {}
 extension dynamic_modint: ToUnsignedType {}
