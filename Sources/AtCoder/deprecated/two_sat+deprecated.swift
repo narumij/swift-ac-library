@@ -1,6 +1,6 @@
 import Foundation
 
-#if USE_NON_COPYABLE
+#if !USE_NON_COPYABLE
   /// Reference:
   /// B. Aspvall, M. Plass, and R. Tarjan,
   /// A Linear-Time Algorithm for Testing the Truth of Certain Quantified Boolean

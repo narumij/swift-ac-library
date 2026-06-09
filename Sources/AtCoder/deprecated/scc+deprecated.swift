@@ -1,6 +1,6 @@
 import Foundation
 
-#if USE_NON_COPYABLE
+#if !USE_NON_COPYABLE
   @frozen
   public struct SCCGraph {
 

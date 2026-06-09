@@ -1,4 +1,6 @@
-#if USE_NON_COPYABLE
+import Foundation
+
+#if !USE_NON_COPYABLE
   extension _Internal {
 
     @usableFromInline

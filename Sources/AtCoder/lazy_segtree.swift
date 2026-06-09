@@ -17,7 +17,7 @@ import Foundation
   public protocol LazySegTreeOperation: LazySegTreeOperator & SegTreeOperation {
     associatedtype Mapping where Mapping == @Sendable (F, S) -> S
     associatedtype Composition where Composition == @Sendable (F, F) -> F
-    
+
     static var op: (S, S) -> S { get }
     static var e: S { get }
     static var mapping: (F, S) -> S { get }
@@ -95,7 +95,8 @@ import Foundation
 
     @inlinable
     public init(_ n: Int) {
-      self.init([S](repeating: O.e, count: n))
+      self.init(_count: n)
+      initialize()
     }
 
     @inlinable
@@ -383,4 +384,6 @@ import Foundation
       }
     }
   }
+
+  extension LazySegTree: @unchecked Sendable {}
 #endif

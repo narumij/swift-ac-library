@@ -1,6 +1,6 @@
 import Foundation
 
-#if USE_NON_COPYABLE
+#if !USE_NON_COPYABLE
   extension _Internal {
 
     @frozen
