@@ -6,7 +6,7 @@ import XCTest
   import AtCoder
 #endif
 
-#if DEBUG
+#if DEBUG && !USE_NON_COPYABLE
   extension DSU {
     var parent_or_size: [Int] {
       .init(unsafeUninitializedCapacity: buffer._n) { parent_or_size, initializedCount in
@@ -23,7 +23,7 @@ final class dsuTests: XCTestCase {
 
   #if DEBUG
     func test0() {
-      XCTAssertEqual([], DSU().parent_or_size)
+      XCTAssertEqual([], DSU().parent_or_size + [])
     }
   #endif
 
@@ -75,7 +75,11 @@ final class dsuTests: XCTestCase {
       throw XCTSkip("コピーオンライト不活性のため")
     #endif
     var seg0 = DSU(5)
-    var seg00 = seg0
+    #if USE_NON_COPYABLE
+      var seg00 = seg0.clone()
+    #else
+      var seg00 = seg0
+    #endif
     XCTAssertEqual(seg00.leader(0), 0)
     seg0.merge(1, 0)
     XCTAssertEqual(seg00.leader(0), 0)

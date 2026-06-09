@@ -30,7 +30,7 @@ final class segtreeTests: XCTestCase {
     XCTAssertEqual("$", SegTree<Operator>(0).all_prod())
     XCTAssertEqual("$", SegTree<Operator>().all_prod())
   }
-  
+
   func testInvalid() throws {
     throw XCTSkip("Swift Packageでは実施不可")
     XCTAssertThrowsError(segtree_naive(-1))
@@ -113,7 +113,11 @@ final class segtreeTests: XCTestCase {
       throw XCTSkip("コピーオンライト不活性のため")
     #endif
     var seg0 = SegTree<Operator>(10)
-    var seg00 = seg0
+    #if USE_NON_COPYABLE
+      var seg00 = seg0.clone()
+    #else
+      var seg00 = seg0
+    #endif
     XCTAssertEqual(seg00.all_prod(), "$")
     seg0.set(0, "a")
     XCTAssertEqual(seg00.all_prod(), "$")
@@ -122,11 +126,11 @@ final class segtreeTests: XCTestCase {
     XCTAssertEqual(seg00.all_prod(), "b")
     XCTAssertEqual(seg0.all_prod(), "a")
   }
-  
+
   func test0_0() {
-    XCTAssertEqual("$", SegTree<Operator>(0){ Operator.e }.all_prod())
+    XCTAssertEqual("$", SegTree<Operator>(0) { Operator.e }.all_prod())
   }
-  
+
   func testOne_0() throws {
     var s = segtree(1) { Operator.e }
     XCTAssertEqual("$", s.all_prod())
@@ -138,7 +142,7 @@ final class segtreeTests: XCTestCase {
     XCTAssertEqual("dummy", s.prod(0, 1))
     XCTAssertEqual("$", s.prod(1, 1))
   }
-  
+
   func testCompareNaive_0() throws {
     var y: String = ""
     func leq_y(_ x: String) -> Bool { x.count <= y.count }

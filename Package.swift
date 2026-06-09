@@ -7,6 +7,7 @@ import Foundation
 var defines: [String] = [
 //  "AC_LIBRARY_INTERNAL_CHECKS",
 //  "DISABLE_COPY_ON_WRITE",
+  "USE_NON_COPYABLE"
 ]
 
 var _settings: [SwiftSetting] = defines.map { .define($0) }
