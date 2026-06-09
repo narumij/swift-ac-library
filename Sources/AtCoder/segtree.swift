@@ -65,12 +65,18 @@
       initialize()
     }
 
-    // TODO: Rangeで初期化できないことにイラッとしたので、追加すること
-
     @inlinable
     public init(_ v: [S]) {
       self.init(_count: v.count)
       initialize(v)
+    }
+
+    @inlinable
+    public init<R>(_ range: __owned R)
+    where R: RangeExpression, R: Collection, R.Element == S, S: Comparable {
+      precondition(range is Range<S> || range is ClosedRange<S>)
+      self.init(_count: range.count)
+      initialize(range)
     }
   }
 
@@ -184,6 +190,36 @@
   extension SegTree {
 
     @inlinable
+    func initialize() {
+      let d = payload
+      d.initialize(repeating: O.e, count: size)
+      (d + size).initialize(repeating: O.e, count: _n)
+      (d + size + _n).initialize(repeating: O.e, count: size - _n)
+      for i in stride(from: size - 1, through: 1, by: -1) {
+        update(i)
+      }
+    }
+  }
+
+  extension SegTree {
+
+    @inlinable
+    func initialize<C>(_ v: C) where C: Collection, C.Element == S {
+      let d = payload
+      d.initialize(repeating: O.e, count: size)
+      for (offset, i) in v.indices.enumerated() {
+        (d + size + offset).initialize(to: v[i])
+      }
+      (d + size + _n).initialize(repeating: O.e, count: size - _n)
+      for i in stride(from: size - 1, through: 1, by: -1) {
+        update(i)
+      }
+    }
+  }
+
+  extension SegTree {
+
+    @inlinable
     func initialize(_ v: [S]) {
       let d = payload
       v.withUnsafeBufferPointer { v in
@@ -196,38 +232,6 @@
       }
     }
   }
-
-  extension SegTree {
-
-    @inlinable
-    func initialize() {
-      let d = payload
-      d.initialize(repeating: O.e, count: size)
-      (d + size).initialize(repeating: O.e, count: _n)
-      (d + size + _n).initialize(repeating: O.e, count: size - _n)
-      for i in stride(from: size - 1, through: 1, by: -1) {
-        update(i)
-      }
-    }
-  }
-
-  #if false
-    extension SegTree {
-
-      @inlinable
-      func initialize<C>(_ v: C) where C: Collection, C.Element == S, C.Index == Int {
-        let d = payload
-        d.initialize(repeating: O.e, count: size)
-        for i in 0..<v.count {
-          (d + size + i).initialize(to: v[i])
-        }
-        (d + size + _n).initialize(repeating: O.e, count: size - _n)
-        for i in stride(from: size - 1, through: 1, by: -1) {
-          update(i)
-        }
-      }
-    }
-  #endif
 
   extension SegTree {
 
@@ -263,7 +267,7 @@
     @inlinable
     public init(_ N: Int, _ f: () -> S) {
       self.init(_count: N)
-      initialize(f)
+      initialize({ _ in f() })
     }
 
     @inlinable
@@ -274,11 +278,6 @@
   }
 
   extension SegTree {
-
-    @inlinable
-    func initialize(_ f: () -> S) {
-      initialize({ _ in f() })
-    }
 
     @inlinable
     func initialize(_ f: (Int) -> S) {

@@ -104,6 +104,14 @@ import Foundation
       self.init(_count: v.count)
       initialize(v)
     }
+
+    @inlinable
+    public init<R>(_ range: __owned R)
+    where R: RangeExpression, R: Collection, R.Element == S, S: Comparable {
+      precondition(range is Range<S> || range is ClosedRange<S>)
+      self.init(_count: range.count)
+      initialize(range)
+    }
   }
 
   extension LazySegTree {
@@ -316,22 +324,6 @@ import Foundation
   extension LazySegTree {
 
     @inlinable
-    func initialize(_ v: [S]) {
-      let d = _d_payload
-      let lz = _lz_payload
-
-      v.withUnsafeBufferPointer { v in
-        d.initialize(repeating: O.e, count: size)
-        (d + size).initialize(from: v.baseAddress!, count: _n)
-        (d + size + _n).initialize(repeating: O.e, count: size - _n)
-      }
-      lz.initialize(repeating: O.id, count: size)
-      for i in stride(from: size - 1, through: 1, by: -1) {
-        update(i)
-      }
-    }
-
-    @inlinable
     func initialize() {
       let d = _d_payload
       let lz = _lz_payload
@@ -349,9 +341,65 @@ import Foundation
   extension LazySegTree {
 
     @inlinable
+    func initialize<C>(_ v: C) where C: Collection, C.Element == S {
+      let d = _d_payload
+      let lz = _lz_payload
+      d.initialize(repeating: O.e, count: size)
+      for (offset, i) in v.indices.enumerated() {
+        (d + size + offset).initialize(to: v[i])
+      }
+      (d + size + _n).initialize(repeating: O.e, count: size - _n)
+      lz.initialize(repeating: O.id, count: size)
+      for i in stride(from: size - 1, through: 1, by: -1) {
+        update(i)
+      }
+    }
+  }
+
+  extension LazySegTree {
+
+    @inlinable
+    func initialize(_ v: [S]) {
+      let d = _d_payload
+      let lz = _lz_payload
+
+      v.withUnsafeBufferPointer { v in
+        d.initialize(repeating: O.e, count: size)
+        (d + size).initialize(from: v.baseAddress!, count: _n)
+        (d + size + _n).initialize(repeating: O.e, count: size - _n)
+      }
+      lz.initialize(repeating: O.id, count: size)
+      for i in stride(from: size - 1, through: 1, by: -1) {
+        update(i)
+      }
+    }
+  }
+
+  extension LazySegTree {
+
+    @inlinable
+    internal init(other: borrowing Self) {
+      _d_payload = UnsafeMutablePointer<S>.allocate(capacity: other.capacity)
+      _d_payload.initialize(from: other._d_payload, count: other.capacity)
+      _lz_payload = UnsafeMutablePointer<F>.allocate(capacity: other.size)
+      _lz_payload.initialize(from: other._lz_payload, count: other.size)
+      capacity = other.capacity
+      _n = other._n
+      size = other.size
+      log = other.log
+    }
+
+    public func clone() -> Self {
+      return .init(other: self)
+    }
+  }
+
+  extension LazySegTree {
+
+    @inlinable
     public init(_ N: Int, _ f: () -> S) {
       self.init(_count: N)
-      initialize(f)
+      initialize({ _ in f() })
     }
 
     @inlinable
@@ -362,11 +410,6 @@ import Foundation
   }
 
   extension LazySegTree {
-
-    @inlinable
-    func initialize(_ f: () -> S) {
-      initialize({ _ in f() })
-    }
 
     @inlinable
     func initialize(_ f: (Int) -> S) {
