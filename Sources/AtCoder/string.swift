@@ -267,7 +267,8 @@ where Element: Equatable {
     // for (; j + h < n && i + h < n; h++) {
     //  if s[j + h] != s[i + h] { break }
     while j + h < n, i + h < n,
-          s[j + h] == s[i + h] {
+      s[j + h] == s[i + h]
+    {
       h += 1
     }
     lcp[rnk[i] - 1] = h

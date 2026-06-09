@@ -61,7 +61,7 @@ extension MCFGraph {
     self.visitor = AnyNumericCastVisitor(visitor)
     _n = n
   }
-  
+
   @inlinable
   @inline(__always)
   public func _numericCast(_ value: Cap) -> Cost {
@@ -332,7 +332,7 @@ extension MCFGraph {
   }
 }
 
-extension MCFGraph.Edge: Sendable where Cap: Sendable, Cost: Sendable { }
+extension MCFGraph.Edge: Sendable where Cap: Sendable, Cost: Sendable {}
 
 extension Heap {
   @inlinable
@@ -340,6 +340,5 @@ extension Heap {
   @inlinable
   mutating func push_heap(_ start: Int, _ end: Int) { /* NOP */  }
 }
-
 
 extension MCFGraph: @unchecked Sendable {}
