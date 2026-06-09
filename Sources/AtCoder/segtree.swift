@@ -70,7 +70,7 @@
     @inlinable
     public init(_ n: Int) {
       self.init(_count: n)
-      initialize(count: n)
+      initialize()
     }
 
     // TODO: Rangeで初期化できないことにイラッとしたので、追加すること
@@ -208,10 +208,10 @@
   extension SegTree {
 
     @inlinable
-    func initialize(count: Int) {
+    func initialize() {
       let d = payload
       d.initialize(repeating: O.e, count: size)
-      (d + size).initialize(repeating: O.e, count: count)
+      (d + size).initialize(repeating: O.e, count: _n)
       (d + size + _n).initialize(repeating: O.e, count: size - _n)
       for i in stride(from: size - 1, through: 1, by: -1) {
         update(i)
