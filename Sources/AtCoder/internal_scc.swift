@@ -4,20 +4,20 @@
     @usableFromInline
     struct scc_graph {
 
-      @inlinable @inline(__always)
+      @inlinable
       public init(_ n: Int) {
         _n = n
         edges.reserveCapacity(_n)
       }
 
-      @inlinable @inline(__always)
+      @inlinable
       public func num_vertices() -> Int { return _n }
 
-      @inlinable @inline(__always)
+      @inlinable
       public mutating func add_edge(_ from: Int, _ to: Int) { edges.append((from, edge(to))) }
 
       // @return pair of (# of scc, scc id)
-      @inlinable @inline(never)
+      @inlinable
       public func scc_ids() -> (number_of_scc: Int, scc: [Int]) {
         let g = _Internal.csr<edge>(_n, edges)
         var now_ord = 0
@@ -27,48 +27,46 @@
           initializedCount = _n
           withUnsafeMutablePointer(to: &now_ord) { now_ord in
             withUnsafeMutablePointer(to: &group_num) { group_num in
-              g.start.withUnsafeBufferPointer { start in
-                g.elist.withUnsafeBufferPointer { elist in
-                  withUnsafeTemporaryAllocation(of: Int.self, capacity: _n) { low in
-                    withUnsafeTemporaryAllocation(of: Int.self, capacity: _n) { ord in
+              withUnsafeTemporaryAllocation(of: Int.self, capacity: _n * 2) { buffer in
 
-                      let g = (start: start.baseAddress!, elist: elist.baseAddress!)
-                      let (low, ord, ids) = (low.baseAddress!, ord.baseAddress!, ids.baseAddress!)
-                      low.initialize(repeating: 0, count: _n)
-                      ord.initialize(repeating: -1, count: _n)
-                      ids.initialize(repeating: 0, count: _n)
-                      func dfs(_ v: Int) {
-                        low[v] = now_ord.pointee
-                        ord[v] = now_ord.pointee
-                        now_ord.pointee += 1
-                        visited.append(v)
-                        for i in g.start[v]..<g.start[v + 1] {
-                          let to = g.elist[i].to
-                          if ord[to] == -1 {
-                            dfs(to)
-                            low[v] = min(low[v], low[to])
-                          } else {
-                            low[v] = min(low[v], ord[to])
-                          }
-                        }
-                        if low[v] == ord[v] {
-                          while true {
-                            let u = visited.removeLast()
-                            ord[u] = _n
-                            ids[u] = group_num.pointee
-                            if u == v { break }
-                          }
-                          group_num.pointee += 1
-                        }
-                      }
-                      for i in 0..<_n {
-                        if ord[i] == -1 { dfs(i) }
-                      }
-                      for i in 0..<_n {
-                        ids[i] = group_num.pointee - 1 - ids[i]
-                      }
+                let low = buffer.baseAddress!
+                let ord = buffer.baseAddress! + _n
+                let ids = ids.baseAddress!
+                
+                low.initialize(repeating: 0, count: _n)
+                ord.initialize(repeating: -1, count: _n)
+                ids.initialize(repeating: 0, count: _n)
+                
+                func dfs(_ v: Int) {
+                  low[v] = now_ord.pointee
+                  ord[v] = now_ord.pointee
+                  now_ord.pointee += 1
+                  visited.append(v)
+                  for i in g.start[v]..<g.start[v + 1] {
+                    let to = g.elist[i].to
+                    if ord[to] == -1 {
+                      dfs(to)
+                      low[v] = min(low[v], low[to])
+                    } else {
+                      low[v] = min(low[v], ord[to])
                     }
                   }
+                  if low[v] == ord[v] {
+                    while true {
+                      let u = visited.removeLast()
+                      ord[u] = _n
+                      ids[u] = group_num.pointee
+                      if u == v { break }
+                    }
+                    group_num.pointee += 1
+                  }
+                }
+                
+                for i in 0..<_n {
+                  if ord[i] == -1 { dfs(i) }
+                }
+                for i in 0..<_n {
+                  ids[i] = group_num.pointee - 1 - ids[i]
                 }
               }
             }
@@ -77,7 +75,7 @@
         return (group_num, ids)
       }
 
-      @inlinable @inline(__always)
+      @inlinable
       public func scc() -> [[Int]] {
         let ids = scc_ids()
         let group_num = ids.number_of_scc

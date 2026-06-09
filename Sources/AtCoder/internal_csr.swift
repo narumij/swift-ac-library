@@ -4,46 +4,46 @@ import Foundation
   extension _Internal {
 
     @frozen
-    public struct csr<E> {
+    public struct csr<E>: ~Copyable {
 
       @usableFromInline
-      var start: [Int]
+      let start: UnsafeMutableBufferPointer<Int>
 
       @usableFromInline
-      var elist: [E]
+      let elist: UnsafeMutableBufferPointer<E>
 
       @inlinable
-      @inline(never)
       init(_ n: Int, _ edges: [(first: Int, second: E)]) {
 
-        (start, elist) = edges.withUnsafeBufferPointer { edges in
-
-          let start = [Int](unsafeUninitializedCapacity: n + 1) { start, startCount in
-            start.baseAddress?.initialize(repeating: 0, count: n + 1)
-            for e in edges {
-              start[e.first + 1] += 1
-            }
-            for i in stride(from: 1, through: n, by: 1) {
-              start[i] += start[i - 1]
-            }
-            startCount = n + 1
+        let start = UnsafeMutablePointer<Int>.allocate(capacity: n + 1)
+        let elist = UnsafeMutablePointer<E>.allocate(capacity: edges.count)
+        
+        withUnsafeTemporaryAllocation(of: Int.self, capacity: n + 1) { counter in
+          let counter = counter.baseAddress!
+          
+          for e in edges {
+            start[e.first + 1] += 1
           }
-
-          let elist = [E](unsafeUninitializedCapacity: edges.count) { elist, elistCount in
-            withUnsafeTemporaryAllocation(of: Int.self, capacity: n + 1) { counter in
-              start.withUnsafeBufferPointer { start in
-                counter.baseAddress?.initialize(from: start.baseAddress!, count: n + 1)
-              }
-              for e in edges {
-                elist[counter[e.first]] = e.second
-                counter[e.first] += 1
-              }
-            }
-            elistCount = edges.count
+          for i in stride(from: 1, through: n, by: 1) {  // nが0の場合に落ちる
+            start[i] += start[i - 1]
           }
-
-          return (start, elist)
+          counter.initialize(from: start, count: n + 1)
+          for e in edges {
+            elist[counter[e.first]] = e.second
+            counter[e.first] += 1
+          }
+          counter.deinitialize(count: n + 1)
         }
+        
+        self.start = .init(start: start, count: n + 1)
+        self.elist = .init(start: elist, count: edges.count)
+      }
+      
+      deinit {
+        start.deinitialize()
+        start.deallocate()
+        elist.deinitialize()
+        elist.deallocate()
       }
     }
   }

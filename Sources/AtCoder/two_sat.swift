@@ -15,7 +15,6 @@ import Foundation
   extension TwoSAT {
 
     @inlinable
-    @inline(__always)
     public init() {
       _n = 0
       _answer = []
@@ -23,7 +22,6 @@ import Foundation
     }
 
     @inlinable
-    @inline(__always)
     public init(_ n: Int) {
       _n = n
       _answer = [Bool](repeating: false, count: n)
@@ -31,7 +29,6 @@ import Foundation
     }
 
     @inlinable
-    @inline(never)
     public mutating func add_clause(_ i: Int, _ f: Bool, _ j: Int, _ g: Bool) {
       assert(0 <= i && i < _n)
       assert(0 <= j && j < _n)
@@ -40,7 +37,6 @@ import Foundation
     }
 
     @inlinable
-    @inline(never)
     public mutating func satisfiable() -> Bool {
       let id = scc.scc_ids().scc
       for i in 0..<_n {
@@ -51,7 +47,6 @@ import Foundation
     }
 
     @inlinable
-    @inline(__always)
     public func answer() -> [Bool] { return _answer }
   }
 #endif

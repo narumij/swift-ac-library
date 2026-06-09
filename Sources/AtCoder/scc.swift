@@ -4,13 +4,13 @@ import Foundation
   @frozen
   public struct SCCGraph {
 
-    @inlinable @inline(__always)
+    @inlinable
     public init() { _internal = .init(0) }
 
-    @inlinable @inline(__always)
+    @inlinable
     public init(_ n: Int) { _internal = .init(n) }
 
-    @inlinable @inline(__always)
+    @inlinable
     public mutating func add_edge(_ from: Int, _ to: Int) {
       #if DEBUG
         let n = _internal.num_vertices()
@@ -20,7 +20,7 @@ import Foundation
       _internal.add_edge(from, to)
     }
 
-    @inlinable @inline(__always)
+    @inlinable
     public func scc() -> [[Int]] { return _internal.scc() }
 
     @usableFromInline
