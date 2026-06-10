@@ -32,7 +32,7 @@ final class segtreeTests: XCTestCase {
   }
 
   func testInvalid() throws {
-    throw XCTSkip("Swift Packageでは実施不可")
+    throw XCTSkip("Swift Testingで実施")
     XCTAssertThrowsError(segtree_naive(-1))
     var s = SegTree<Operator>(10)
     XCTAssertThrowsError(s.get(-1))
