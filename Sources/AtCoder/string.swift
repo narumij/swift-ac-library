@@ -29,6 +29,13 @@ extension _Internal {
     var tmp = UnsafeMutablePointer<Element>.allocate(capacity: n)
     rnk.initialize(from: s.baseAddress!, count: n)
     tmp.initialize(repeating: 0, count: n)
+    
+    defer {
+      rnk.deinitialize(count: n)
+      tmp.deinitialize(count: n)
+      rnk.deallocate()
+      tmp.deallocate()
+    }
 
     for k in sequence(first: 1, next: { $0 < n ? $0 * 2 : nil }) {
 
@@ -47,11 +54,6 @@ extension _Internal {
       }
       swap(&tmp, &rnk)
     }
-
-    rnk.deinitialize(count: n)
-    tmp.deinitialize(count: n)
-    rnk.deallocate()
-    tmp.deallocate()
 
     return sa
   }
@@ -91,8 +93,19 @@ extension _Internal {
     for i in stride(from: n - 2, through: 0, by: -1) {
       ls[i] = s[i] == s[i + 1] ? ls[i + 1] : s[i] < s[i + 1]
     }
-    var sum_l = [Int](repeating: 0, count: upper + 1)
-    var sum_s = [Int](repeating: 0, count: upper + 1)
+
+    let sum_l = UnsafeMutableBufferPointer<Int>(
+      start: .allocate(capacity: upper + 1), count: upper + 1)
+    let sum_s = UnsafeMutableBufferPointer<Int>(
+      start: .allocate(capacity: upper + 1), count: upper + 1)
+
+    defer {
+      sum_l.deinitialize()
+      sum_l.deallocate()
+      sum_s.deinitialize()
+      sum_s.deallocate()
+    }
+
     for i in 0..<n {
       if !ls[i] {
         sum_s[index(s[i])] += 1
@@ -100,40 +113,51 @@ extension _Internal {
         sum_l[index(s[i] + 1)] += 1
       }
     }
-    for i in stride(from: 0, through: upper, by: 1) {
+
+    for i in 0...upper {
       sum_s[i] += sum_l[i]
       if i < upper { sum_l[i + 1] += sum_s[i] }
     }
 
     func induce(_ lms: [Int]) {
-      sa.withUnsafeMutableBufferPointer { $0.update(repeating: -1) }
-      _ = [Int](unsafeUninitializedCapacity: upper + 1) { buf, _ in
-        // std::copy(sum_s.begin(), sum_s.end(), buf.begin());
-        _ = buf.initialize(from: sum_s)
-        for d in lms {
-          if d == n { continue }
-          sa[buf[index(s[d])]] = d
-          buf[index(s[d])] += 1
+      
+      sa.withUnsafeMutableBufferPointer { sa in
+        sa.update(repeating: -1)
+      }
+
+      let buf = UnsafeMutableBufferPointer<Int>(
+        start: .allocate(capacity: upper + 1), count: upper + 1)
+
+      defer {
+        buf.deinitialize()
+        buf.deallocate()
+      }
+
+      // std::copy(sum_s.begin(), sum_s.end(), buf.begin());
+      _ = buf.initialize(from: sum_s)
+      for d in lms {
+        if d == n { continue }
+        sa[buf[index(s[d])]] = d
+        buf[index(s[d])] += 1
+      }
+      // std::copy(sum_l.begin(), sum_l.end(), buf.begin());
+      _ = buf.update(from: sum_l)
+      sa[buf[index(s[n - 1])]] = n - 1
+      buf[index(s[n - 1])] += 1
+      for i in 0..<n {
+        let v = sa[i]
+        if v >= 1, !ls[v - 1] {
+          sa[buf[index(s[v - 1])]] = v - 1
+          buf[index(s[v - 1])] += 1
         }
-        // std::copy(sum_l.begin(), sum_l.end(), buf.begin());
-        _ = buf.update(from: sum_l)
-        sa[buf[index(s[n - 1])]] = n - 1
-        buf[index(s[n - 1])] += 1
-        for i in 0..<n {
-          let v = sa[i]
-          if v >= 1, !ls[v - 1] {
-            sa[buf[index(s[v - 1])]] = v - 1
-            buf[index(s[v - 1])] += 1
-          }
-        }
-        // std::copy(sum_l.begin(), sum_l.end(), buf.begin());
-        _ = buf.update(from: sum_l)
-        for i in stride(from: n - 1, through: 0, by: -1) {
-          let v = sa[i]
-          if v >= 1, ls[v - 1] {
-            buf[index(s[v - 1]) + 1] -= 1
-            sa[buf[index(s[v - 1]) + 1]] = v - 1
-          }
+      }
+      // std::copy(sum_l.begin(), sum_l.end(), buf.begin());
+      _ = buf.update(from: sum_l)
+      for i in stride(from: n - 1, through: 0, by: -1) {
+        let v = sa[i]
+        if v >= 1, ls[v - 1] {
+          buf[index(s[v - 1]) + 1] -= 1
+          sa[buf[index(s[v - 1]) + 1]] = v - 1
         }
       }
     }
