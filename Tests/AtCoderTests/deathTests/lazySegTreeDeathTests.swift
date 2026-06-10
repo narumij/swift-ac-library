@@ -5,7 +5,7 @@
 //  Created by narumij on 2026/06/10.
 //
 
-#if DEATH_TEST
+#if DEATH_TEST && DEBUG
   import Testing
   import AtCoder
   import Foundation

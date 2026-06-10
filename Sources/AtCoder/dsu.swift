@@ -37,8 +37,8 @@
 
     @inlinable
     public mutating func merge(_ a: Int, _ b: Int) -> Int {
-      precondition(0 <= a && a < _n)
-      precondition(0 <= b && b < _n)
+      assert(0 <= a && a < _n)
+      assert(0 <= b && b < _n)
       var (x, y) = (leader(a), leader(b))
       if x == y { return x }
       if -parent_or_size[x] < -parent_or_size[y] { swap(&x, &y) }
@@ -49,14 +49,14 @@
 
     @inlinable
     public mutating func same(_ a: Int, _ b: Int) -> Bool {
-      precondition(0 <= a && a < _n)
-      precondition(0 <= b && b < _n)
+      assert(0 <= a && a < _n)
+      assert(0 <= b && b < _n)
       return leader(a) == leader(b)
     }
 
     @inlinable
     public mutating func leader(_ a: Int) -> Int {
-      precondition(0 <= a && a < _n)
+      assert(0 <= a && a < _n)
       if parent_or_size[a] < 0 { return a }
       parent_or_size[a] = leader(parent_or_size[a])
       return parent_or_size[a]
@@ -64,7 +64,7 @@
 
     @inlinable
     public mutating func size(_ a: Int) -> Int {
-      precondition(0 <= a && a < _n)
+      assert(0 <= a && a < _n)
       return -parent_or_size[leader(a)]
     }
 

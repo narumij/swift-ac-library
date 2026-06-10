@@ -114,7 +114,7 @@ import Foundation
     @inlinable
     public init<R>(_ range: __owned R)
     where R: RangeExpression, R: Collection, R.Element == S, S: Comparable {
-      precondition(range is Range<S> || range is ClosedRange<S>)
+      assert(range is Range<S> || range is ClosedRange<S>)
       self.init(_count: range.count)
       initialize(range)
     }
@@ -125,7 +125,7 @@ import Foundation
     @inlinable
     public mutating func set(_ p: Int, _ x: S) {
       var p = p
-      precondition(0 <= p && p < _n)
+      assert(0 <= p && p < _n)
       p += size
       // for (int i = log; i >= 1; i--) push(p >> i);
       for i in stride(from: log, through: 1, by: -1) { push(p >> i) }
@@ -137,7 +137,7 @@ import Foundation
     @inlinable
     public mutating func get(_ p: Int) -> S {
       var p = p
-      precondition(0 <= p && p < _n)
+      assert(0 <= p && p < _n)
       p += size
       // for (int i = log; i >= 1; i--) push(p >> i);
       for i in stride(from: log, through: 1, by: -1) { push(p >> i) }
@@ -148,7 +148,7 @@ import Foundation
     public mutating func prod(_ l: Int, _ r: Int) -> S {
       var l = l
       var r = r
-      precondition(0 <= l && l <= r && r <= _n)
+      assert(0 <= l && l <= r && r <= _n)
       if l == r { return e() }
 
       l += size
@@ -184,7 +184,7 @@ import Foundation
     @inlinable
     public mutating func apply(_ p: Int, _ f: F) {
       var p = p
-      precondition(0 <= p && p < _n)
+      assert(0 <= p && p < _n)
       p += size
       // for (int i = log; i >= 1; i--) push(p >> i);
       for i in stride(from: log, through: 1, by: -1) { push(p >> i) }
@@ -197,7 +197,7 @@ import Foundation
     public mutating func apply(_ l: Int, _ r: Int, _ f: F) {
       var l = l
       var r = r
-      precondition(0 <= l && l <= r && r <= _n)
+      assert(0 <= l && l <= r && r <= _n)
       if l == r { return }
 
       l += size
@@ -238,8 +238,8 @@ import Foundation
     @inlinable
     public mutating func max_right(_ l: Int, _ g: (S) -> Bool) -> Int {
       var l = l
-      precondition(0 <= l && l <= _n)
-      precondition(g(e()))
+      assert(0 <= l && l <= _n)
+      assert(g(e()))
       if l == _n { return _n }
       l += size
       // for (int i = log; i >= 1; i--) push(l >> i);
@@ -267,8 +267,8 @@ import Foundation
     @inlinable
     public mutating func min_left(_ r: Int, _ g: (S) -> Bool) -> Int {
       var r = r
-      precondition(0 <= r && r <= _n)
-      precondition(g(e()))
+      assert(0 <= r && r <= _n)
+      assert(g(e()))
       if r == 0 { return 0 }
       r += size
       // for (int i = log; i >= 1; i--) push((r - 1) >> i);

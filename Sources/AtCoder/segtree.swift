@@ -80,7 +80,7 @@
     @inlinable
     public init<R>(_ range: __owned R)
     where R: RangeExpression, R: Collection, R.Element == S, S: Comparable {
-      precondition(range is Range<S> || range is ClosedRange<S>)
+      assert(range is Range<S> || range is ClosedRange<S>)
       self.init(_count: range.count)
       initialize(range)
     }
@@ -91,7 +91,7 @@
     @inlinable
     public mutating func set(_ p: Int, _ x: S) {
       var p = p
-      precondition(0 <= p && p < _n)
+      assert(0 <= p && p < _n)
       p += size
       d[p] = x
       // for (int i = 1; i <= log; i++) update(p >> i);
@@ -100,7 +100,7 @@
 
     @inlinable
     public func get(_ p: Int) -> S {
-      precondition(0 <= p && p < _n)
+      assert(0 <= p && p < _n)
       return d[p + size]
     }
 
@@ -108,7 +108,7 @@
     public func prod(_ l: Int, _ r: Int) -> S {
       var l = l
       var r = r
-      precondition(0 <= l && l <= r && r <= _n)
+      assert(0 <= l && l <= r && r <= _n)
       var sml: S = e()
       var smr: S = e()
       l += size
@@ -136,8 +136,8 @@
     @inlinable
     public func max_right(_ l: Int, _ f: (S) -> Bool) -> Int {
       var l = l
-      precondition(0 <= l && l <= _n)
-      precondition(f(e()))
+      assert(0 <= l && l <= _n)
+      assert(f(e()))
       if l == _n { return _n }
       l += size
       var sm: S = e()
@@ -162,8 +162,8 @@
     @inlinable
     public func min_left(_ r: Int, _ f: (S) -> Bool) -> Int {
       var r = r
-      precondition(0 <= r && r <= _n)
-      precondition(f(e()))
+      assert(0 <= r && r <= _n)
+      assert(f(e()))
       if r == 0 { return 0 }
       r += size
       var sm: S = e()
@@ -243,7 +243,7 @@
 
     @inlinable
     internal init(_count count: Int) {
-      precondition(count >= 0)
+      assert(count >= 0)
       _n = count
       size = _Internal.bit_ceil(_n)
       log = size.trailingZeroBitCount
