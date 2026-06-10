@@ -277,7 +277,7 @@ extension SegTree {
   @inlinable
   public init(_ N: Int, _ f: () -> S) {
     self.init(_count: N)
-    initialize({ _ in f() })
+    initialize { _ in f() }
   }
 
   /// ベンチマーク用
