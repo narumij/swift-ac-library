@@ -26,4 +26,6 @@ public struct SCCGraph {
   var _internal: _Internal.scc_graph
 }
 
-extension SCCGraph: @unchecked Sendable {}
+#if !COMPATIBLE_ATCODER_2025
+  extension SCCGraph: @unchecked Sendable {}
+#endif

@@ -77,6 +77,6 @@
       return .init(other: self)
     }
   }
-#endif
 
-extension FenwickTree: @unchecked Sendable {}
+  extension FenwickTree: @unchecked Sendable {}
+#endif

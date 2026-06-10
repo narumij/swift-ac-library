@@ -439,6 +439,6 @@ import Foundation
       }
     }
   }
-#endif
 
-extension LazySegTree: @unchecked Sendable {}
+  extension LazySegTree: @unchecked Sendable {}
+#endif

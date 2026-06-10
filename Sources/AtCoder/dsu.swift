@@ -102,6 +102,6 @@
       return .init(other: self)
     }
   }
-#endif
 
-extension DSU: @unchecked Sendable {}
+  extension DSU: @unchecked Sendable {}
+#endif
