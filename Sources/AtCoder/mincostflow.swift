@@ -200,7 +200,9 @@ extension MCFGraph {
     }
   }
 
-  @inlinable
+  // TODO: Dequeが直ったらinlinableに戻すこと
+//  @inlinable
+  @usableFromInline
   func slope(
     _ g: inout _Internal.csr<_Edge>,
     _ s: Int,
