@@ -11,9 +11,6 @@ private func op(a: String, b: String) -> String {
 private let e: String = "$"
 
 enum Operator: SegTreeOperation {
-  #if COMPATIBLE_ATCODER_2025
-    typealias S = String
-  #endif
   static let op: Op = AtCoderTests.op
   static let e: String = AtCoderTests.e
 }
@@ -110,16 +107,9 @@ final class segtreeTests: XCTestCase {
     }
   }
 
-  func testCopyOnWrite() throws {
-    #if DISABLE_COPY_ON_WRITE
-      throw XCTSkip("コピーオンライト不活性のため")
-    #endif
+  func testClone() throws {
     var seg0 = SegTree<Operator>(10)
-    #if !COMPATIBLE_ATCODER_2025
-      var seg00 = seg0.clone()
-    #else
-      var seg00 = seg0
-    #endif
+    var seg00 = seg0.clone()
     XCTAssertEqual(seg00.all_prod(), "$")
     seg0.set(0, "a")
     XCTAssertEqual(seg00.all_prod(), "$")

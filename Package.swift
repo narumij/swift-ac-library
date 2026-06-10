@@ -5,8 +5,6 @@ import Foundation
 import PackageDescription
 
 var defines: [String] = [
-  //  "AC_LIBRARY_INTERNAL_CHECKS",
-  //  "DISABLE_COPY_ON_WRITE",
   "USE_NON_COPYABLE",
   "USE_INT128",
 ]

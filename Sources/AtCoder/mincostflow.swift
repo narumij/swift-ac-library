@@ -333,9 +333,7 @@ extension MCFGraph {
 
 extension MCFGraph.Edge: Sendable where Cap: Sendable, Cost: Sendable {}
 
-#if !COMPATIBLE_ATCODER_2025
-  extension MCFGraph: @unchecked Sendable where Edge: Sendable {}
-#endif
+extension MCFGraph: @unchecked Sendable where Edge: Sendable {}
 
 extension Heap {
   @inlinable

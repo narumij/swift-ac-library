@@ -271,6 +271,4 @@ extension MFGraph {
 
 extension MFGraph.Edge: Sendable where Cap: Sendable {}
 
-#if !COMPATIBLE_ATCODER_2025
-  extension MFGraph: @unchecked Sendable where Edge: Sendable {}
-#endif
+extension MFGraph: @unchecked Sendable where Edge: Sendable {}

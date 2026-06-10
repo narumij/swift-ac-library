@@ -49,6 +49,4 @@ extension TwoSAT {
   public func answer() -> [Bool] { return _answer }
 }
 
-#if !COMPATIBLE_ATCODER_2025
-  extension TwoSAT: @unchecked Sendable {}
-#endif
+extension TwoSAT: @unchecked Sendable {}
