@@ -1,5 +1,4 @@
-import Collections
-import Foundation
+import DequeModule
 
 @frozen
 public struct MFGraph<Cap>
@@ -90,8 +89,7 @@ extension MFGraph {
     return flow(s, t, numeric_limit<Cap>.max)
   }
 
-  // TODO: Dequeが直ったらinlinableに戻すこと
-//  @inlinable
+  @inlinable
   public mutating func flow(_ s: Int, _ t: Int, _ flow_limit: Cap) -> Cap {
     assert(0 <= s && s < _n)
     assert(0 <= t && t < _n)
@@ -234,8 +232,7 @@ extension MFGraph {
     return flow
   }
 
-  // TODO: Dequeが直ったらinlinableに戻すこと
-//  @inlinable
+  @inlinable
   public func min_cut(_ s: Int) -> [Bool] {
     var visited = [Bool](repeating: false, count: _n)
     visited.withUnsafeMutableBufferPointer { visited in

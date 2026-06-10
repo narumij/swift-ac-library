@@ -1,5 +1,4 @@
-import Collections
-import Foundation
+import HeapModule
 
 @frozen
 public struct MCFGraph<Cap, Cost>
@@ -145,7 +144,7 @@ extension MCFGraph {
         elist.append((e.from, .init(to: e.to, rev: -1, cap: e.cap - e.flow, cost: e.cost)))
         elist.append((e.to, .init(to: e.from, rev: -1, cap: e.flow, cost: -e.cost)))
       }
-      var _g = _Internal.csr<_Edge>(_n, elist)
+      let _g = _Internal.csr<_Edge>(_n, elist)
       for i in 0..<m {
         let e = _edges[i]
         edge_idx[i] += _g.start[e.from]
@@ -200,9 +199,7 @@ extension MCFGraph {
     }
   }
 
-  // TODO: Dequeが直ったらinlinableに戻すこと
-//  @inlinable
-  @usableFromInline
+  @inlinable
   func slope(
     _ g: inout _Internal.csr<_Edge>,
     _ s: Int,
