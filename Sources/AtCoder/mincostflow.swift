@@ -1,4 +1,4 @@
-import Collections
+import HeapModule
 import Foundation
 
 @frozen

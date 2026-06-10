@@ -1,4 +1,4 @@
-import Collections
+import DequeModule
 import Foundation
 
 @frozen
