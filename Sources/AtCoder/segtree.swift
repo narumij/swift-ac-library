@@ -91,7 +91,7 @@
     @inlinable
     public mutating func set(_ p: Int, _ x: S) {
       var p = p
-      assert(0 <= p && p < _n)
+      precondition(0 <= p && p < _n)
       p += size
       d[p] = x
       // for (int i = 1; i <= log; i++) update(p >> i);

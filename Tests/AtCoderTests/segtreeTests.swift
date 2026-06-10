@@ -11,9 +11,11 @@ private func op(a: String, b: String) -> String {
 private let e: String = "$"
 
 enum Operator: SegTreeOperation {
-  typealias S = String
+  #if COMPATIBLE_ATCODER_2025
+    typealias S = String
+  #endif
   static let op: Op = AtCoderTests.op
-  static let e: S = AtCoderTests.e
+  static let e: String = AtCoderTests.e
 }
 
 private typealias segtree = SegTree<Operator>
