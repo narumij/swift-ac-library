@@ -106,6 +106,12 @@ import Foundation
     }
 
     @inlinable
+    public init<C>(_ v: C) where C: Collection, C.Element == S {
+      self.init(_count: v.count)
+      initialize(v)
+    }
+
+    @inlinable
     public init<R>(_ range: __owned R)
     where R: RangeExpression, R: Collection, R.Element == S, S: Comparable {
       precondition(range is Range<S> || range is ClosedRange<S>)
