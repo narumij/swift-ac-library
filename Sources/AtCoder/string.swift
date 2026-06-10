@@ -29,7 +29,7 @@ extension _Internal {
     var tmp = UnsafeMutablePointer<Element>.allocate(capacity: n)
     rnk.initialize(from: s.baseAddress!, count: n)
     tmp.initialize(repeating: 0, count: n)
-    
+
     defer {
       rnk.deinitialize(count: n)
       tmp.deinitialize(count: n)
@@ -41,9 +41,16 @@ extension _Internal {
 
       func cmp(_ x: Int, _ y: Int) -> Bool {
         if rnk[x] != rnk[y] { return rnk[x] < rnk[y] }
-        let rx = x + k < n ? rnk[x + k] : -1
-        let ry = y + k < n ? rnk[y + k] : -1
-        return rx < ry
+        let rx: Element? = x + k < n ? rnk[x + k] : nil
+        let ry: Element? = y + k < n ? rnk[y + k] : nil
+        switch (rx, ry) {
+        case (nil, nil): return false
+        case (nil, _): return true
+        case (_, nil): return false
+        case (.some(let rx), .some(let ry)):
+          return rx < ry
+        }
+        //        return rx < ry
       }
 
       sa.sort(by: cmp)
@@ -98,7 +105,7 @@ extension _Internal {
       start: .allocate(capacity: upper + 1), count: upper + 1)
     let sum_s = UnsafeMutableBufferPointer<Int>(
       start: .allocate(capacity: upper + 1), count: upper + 1)
-    
+
     sum_l.initialize(repeating: 0)
     sum_s.initialize(repeating: 0)
 
@@ -113,7 +120,7 @@ extension _Internal {
       if !ls[i] {
         sum_s[index(s[i])] += 1
       } else {
-        sum_l[index(s[i] + 1)] += 1
+        sum_l[index(s[i]) + 1] += 1
       }
     }
 
@@ -123,7 +130,7 @@ extension _Internal {
     }
 
     func induce(_ lms: [Int]) {
-      
+
       sa.withUnsafeMutableBufferPointer { sa in
         sa.update(repeating: -1)
       }
@@ -249,10 +256,10 @@ extension _Internal {
 // MARK: - Suffix Array
 
 @inlinable
-public func suffix_array<Element>(_ s: [Element], _ upper: Element) -> [Int]
+public func suffix_array<Element>(_ s: [Element], _ upper: Int) -> [Int]
 where Element: BinaryInteger {
   assert(0 <= upper)
-  assert(s.allSatisfy { d in (0...upper).contains(d) })
+  assert(s.allSatisfy { d in (0...upper).contains(Int(d)) })
   return s.withUnsafeBufferPointer { _Internal.sa_is($0, Int(upper)) }
 }
 
@@ -260,9 +267,7 @@ where Element: BinaryInteger {
 public func suffix_array<V>(_ s: V) -> [Int]
 where V: Collection, V.Element: Comparable, V.Index == Int {
   let n = s.count
-  var idx = [Int](repeating: 0, count: n)
-  idx = (0..<n).map { $0 }
-  idx.sort { l, r in return s[l] < s[r] }
+  let idx = (0..<n).sorted { l, r in return s[l] < s[r] }
   var s2 = [Int](repeating: 0, count: n)
   var now = 0
   for i in 0..<n {
@@ -274,7 +279,7 @@ where V: Collection, V.Element: Comparable, V.Index == Int {
 
 @inlinable
 public func suffix_array(_ s: [UInt8]) -> [Int] {
-  suffix_array(s, UInt8.max)
+  suffix_array(s, Int(UInt8.max))
 }
 
 /// Constructs a suffix array for a buffer of `Character`s.
@@ -497,8 +502,22 @@ where C: Equatable {
 
 @inlinable
 public func lcp_array(_ s: String, _ sa: [Int]) -> [Int] {
-  s.withCString(encodedAs: Unicode.ASCII.self) {
-    lcp_array(pointer: $0, count: s.count, sa)
+  if s.utf8.allSatisfy({ $0 < 0x80 }) {
+    let n = s.utf8.count
+
+    // ASCII only:
+    //   UTF-8 code unit offset == Character offset
+    //
+    // `suffix_array(_ s: String)` also uses the UTF-8 fast path for ASCII
+    // strings, so the given `sa` is compatible with this buffer.
+    return s.withCString(encodedAs: Unicode.UTF8.self) {
+      lcp_array(pointer: $0, count: n, sa)
+    }
+  } else {
+    // Non-ASCII:
+    // `suffix_array(_ s: String)` falls back to Character offsets.
+    // Therefore LCP must compare Characters, not UTF-8 bytes.
+    return lcp_array(Array(s), sa)
   }
 }
 
@@ -537,7 +556,17 @@ where C: Equatable {
 
 @inlinable
 public func z_algorithm(_ s: String) -> [Int] {
-  s.withCString(encodedAs: Unicode.ASCII.self) {
-    z_algorithm(pointer: $0, count: s.count)
+  if s.utf8.allSatisfy({ $0 < 0x80 }) {
+    let n = s.utf8.count
+
+    // ASCII only:
+    // UTF-8 code unit offsets and Character offsets are identical.
+    return s.withCString(encodedAs: Unicode.UTF8.self) {
+      z_algorithm(pointer: $0, count: n)
+    }
+  } else {
+    // Non-ASCII:
+    // Preserve Character-based semantics.
+    return z_algorithm(Array(s))
   }
 }
