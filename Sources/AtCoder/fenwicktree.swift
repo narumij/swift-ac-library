@@ -62,6 +62,21 @@
       return s
     }
   }
+
+  extension FenwickTree {
+
+    @inlinable
+    internal init(other: borrowing Self) {
+      data = UnsafeMutablePointer<U>.allocate(capacity: other._n)
+      data.initialize(from: other.data, count: other._n)
+      _n = other._n
+    }
+
+    @inlinable
+    public func clone() -> Self {
+      return .init(other: self)
+    }
+  }
 #endif
 
 extension FenwickTree: @unchecked Sendable {}

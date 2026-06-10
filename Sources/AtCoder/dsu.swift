@@ -96,9 +96,6 @@
       payload.initialize(from: other.payload, count: other._n)
       _n = other._n
     }
-  }
-
-  extension DSU {
 
     @inlinable
     public func clone() -> Self {
