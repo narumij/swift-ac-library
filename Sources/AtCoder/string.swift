@@ -3,9 +3,10 @@ import Foundation
 extension _Internal {
 
   @inlinable
-  static func sa_naive<Element>(pointer s: UnsafePointer<Element>, count n: Int) -> [Int]
-  where Element: Comparable {
-    (0..<n)
+  static func sa_naive<Element>(_ s: UnsafeBufferPointer<Element>) -> [Int]
+  where Element: BinaryInteger {
+    let n = s.count
+    return (0..<n)
       .sorted { l, r in
         if l == r { return false }
         var (l, r) = (l, r)
@@ -19,17 +20,15 @@ extension _Internal {
   }
 
   @inlinable
-  static func sa_naive(_ s: [Int]) -> [Int] {
-    sa_naive(pointer: s, count: s.count)
-  }
-
-  @inlinable
-  static func sa_doubling<Element>(_ s: [Element]) -> [Int]
-  where Element: Comparable & AdditiveArithmetic & ExpressibleByIntegerLiteral {
+  static func sa_doubling<Element>(_ s: UnsafeBufferPointer<Element>) -> [Int]
+  where Element: BinaryInteger {
     let n = s.count
     var sa = (0..<n) + []
-    var rnk = s
-    var tmp = [Element](repeating: 0, count: n)
+
+    var rnk = UnsafeMutablePointer<Element>.allocate(capacity: n)
+    var tmp = UnsafeMutablePointer<Element>.allocate(capacity: n)
+    rnk.initialize(from: s.baseAddress!, count: n)
+    tmp.initialize(repeating: 0, count: n)
 
     for k in sequence(first: 1, next: { $0 < n ? $0 * 2 : nil }) {
 
@@ -49,13 +48,12 @@ extension _Internal {
       swap(&tmp, &rnk)
     }
 
-    return sa
-  }
+    rnk.deinitialize(count: n)
+    tmp.deinitialize(count: n)
+    rnk.deallocate()
+    tmp.deallocate()
 
-  @inlinable
-  static func sa_doubling<Element>(pointer s: UnsafePointer<Element>, count n: Int) -> [Int]
-  where Element: Comparable & AdditiveArithmetic & ExpressibleByIntegerLiteral {
-    sa_doubling((0..<n).map { s[$0] })
+    return sa
   }
 
   /// SA-IS, linear-time suffix array construction
@@ -64,9 +62,10 @@ extension _Internal {
   /// Two Efficient Algorithms for Linear Time Suffix Array Construction
   @inlinable
   static func sa_is<Element>(
-    _ s: UnsafePointer<Element>, count n: Int, _ upper: Int, _ THRESHOLD_NAIVE: Int = 10,
+    _ s: UnsafeBufferPointer<Element>, _ upper: Int, _ THRESHOLD_NAIVE: Int = 10,
     _ THRESHOLD_DOUBLING: Int = 40
   ) -> [Int] where Element: BinaryInteger {
+    let n = s.count
     if n == 0 { return [] }
     if n == 1 { return [0] }
     if n == 2 {
@@ -77,10 +76,10 @@ extension _Internal {
       }
     }
     if n < THRESHOLD_NAIVE {
-      return sa_naive(pointer: s, count: n)
+      return sa_naive(s)
     }
     if n < THRESHOLD_DOUBLING {
-      return sa_doubling(pointer: s, count: n)
+      return sa_doubling(s)
     }
 
     func index(_ i: Element) -> Int {
@@ -190,7 +189,7 @@ extension _Internal {
 
       let rec_sa = rec_s.withUnsafeBufferPointer {
         sa_is(
-          $0.baseAddress!, count: rec_s.count, rec_upper, THRESHOLD_NAIVE,
+          $0, rec_upper, THRESHOLD_NAIVE,
           THRESHOLD_DOUBLING)
       }
 
@@ -203,11 +202,31 @@ extension _Internal {
   }
 }
 
+extension _Internal {
+
+  @inlinable
+  static func sa_naive<Element>(_ s: [Element]) -> [Int]
+  where Element: BinaryInteger {
+
+    s.withUnsafeBufferPointer { sa_naive($0) }
+  }
+
+  @inlinable
+  static func sa_doubling<Element>(_ s: [Element]) -> [Int]
+  where Element: BinaryInteger {
+
+    s.withUnsafeBufferPointer { sa_doubling($0) }
+  }
+}
+
+// MARK: - Suffix Array
+
 @inlinable
-public func suffix_array(_ s: [Int], _ upper: Int) -> [Int] {
+public func suffix_array<Element>(_ s: [Element], _ upper: Element) -> [Int]
+where Element: BinaryInteger {
   assert(0 <= upper)
   assert(s.allSatisfy { d in (0...upper).contains(d) })
-  return _Internal.sa_is(s, count: s.count, upper)
+  return s.withUnsafeBufferPointer { _Internal.sa_is($0, Int(upper)) }
 }
 
 @inlinable
@@ -223,25 +242,192 @@ where V: Collection, V.Element: Comparable, V.Index == Int {
     if i != 0, s[idx[i - 1]] != s[idx[i]] { now += 1 }
     s2[idx[i]] = now
   }
-  return _Internal.sa_is(s2, count: s2.count, now)
+  return s2.withUnsafeBufferPointer { _Internal.sa_is($0, now) }
 }
 
 @inlinable
 public func suffix_array(_ s: [UInt8]) -> [Int] {
-  _Internal.sa_is(s, count: s.count, 255)
+  suffix_array(s, UInt8.max)
 }
 
+/// Constructs a suffix array for a buffer of `Character`s.
+///
+/// This is the Unicode/`Character` fallback path used when the input cannot be
+/// handled as plain ASCII bytes.
+///
+/// Swift `Character` represents an extended grapheme cluster, not a fixed-width
+/// integer code point. Therefore it cannot be passed directly to the integer
+/// alphabet SA-IS implementation, which requires values in `0...upper`.
+///
+/// This function first compresses the distinct characters into integer ranks:
+///
+/// ```text
+/// ["b", "a", "n", "a", "n", "a"]
+///        ↓
+/// [ 1,   0,   2,   0,   2,   0 ]
+/// ```
+///
+/// The relative order of characters is determined by `Character`'s
+/// `Comparable` conformance. Equal characters receive the same rank, and
+/// different characters receive increasing ranks according to the sorted order.
+///
+/// After rank compression, the existing integer SA-IS implementation is used.
+///
+/// The returned indices are offsets in the original `Character` buffer.
+///
+/// - Complexity: O(n log n), where n is the number of characters.
+///   The SA-IS step itself is linear, but rank compression sorts the characters.
 @inlinable
-public func suffix_array(_ s: [Character]) -> [Int] {
-  _Internal.sa_is(s.map { $0.asciiValue! }, count: s.count, 255)
-}
+func suffix_array(_ s: UnsafeBufferPointer<Character>) -> [Int] {
+  let n = s.count
+  if n == 0 { return [] }
 
-@inlinable
-public func suffix_array(_ s: String) -> [Int] {
-  s.withCString(encodedAs: Unicode.ASCII.self) {
-    _Internal.sa_is($0, count: s.count, 255)
+  // Sort indices by the corresponding Character.
+  //
+  // We sort indices instead of the characters themselves so that we can write
+  // each computed rank back to the original position.
+  var order = Array(0..<n)
+  order.sort { s[$0] < s[$1] }
+
+  return withUnsafeTemporaryAllocation(of: Int.self, capacity: n) { ranked in
+
+    let rankedBase = ranked.baseAddress!
+
+    // `ranked` is a temporary integer alphabet buffer.
+    //
+    // Every position is assigned exactly once below because `order` is a
+    // permutation of `0..<n`. The initialization is kept explicit here to make
+    // the temporary buffer's initialized state obvious before it is exposed as
+    // an `UnsafeBufferPointer<Int>` to `sa_is`.
+    rankedBase.initialize(repeating: 0, count: n)
+    defer {
+      rankedBase.deinitialize(count: n)
+    }
+
+    var upper = 0
+    ranked[order[0]] = 0
+
+    // Assign the same rank to equal adjacent characters in sorted order, and
+    // advance the rank whenever the character value changes.
+    for i in 1..<n {
+      if s[order[i - 1]] != s[order[i]] {
+        upper += 1
+      }
+      ranked[order[i]] = upper
+    }
+
+    // Now `ranked` contains only values in `0...upper`, which is exactly the
+    // integer alphabet expected by SA-IS.
+    return _Internal.sa_is(
+      UnsafeBufferPointer(start: rankedBase, count: n),
+      upper
+    )
   }
 }
+
+/// Constructs a suffix array for a character array.
+///
+/// Fast path:
+/// If every `Character` has an ASCII representation, this overload converts the
+/// input to `[UInt8]` and uses the integer-alphabet SA-IS implementation.
+///
+/// Fallback:
+/// If any character is not ASCII, this overload falls back to the
+/// `UnsafeBufferPointer<Character>` implementation, which first compresses
+/// characters into integer ranks by sorting them.
+///
+/// Important:
+/// `Character.asciiValue` is non-nil only when the character is exactly one
+/// ASCII character. Swift `Character` represents an extended grapheme cluster,
+/// so many visible characters, such as Japanese characters, emoji, or combined
+/// characters, do not have an ASCII value.
+///
+/// - Complexity:
+///   - O(n) when all characters are ASCII.
+///   - O(n log n) otherwise, due to rank compression by sorting.
+@inlinable
+public func suffix_array(_ s: [Character]) -> [Int] {
+  let n = s.count
+  if n == 0 { return [] }
+
+  var ascii = [UInt8]()
+  ascii.reserveCapacity(n)
+
+  for c in s {
+    guard let v = c.asciiValue else {
+      // Non-ASCII `Character`.
+      //
+      // Fall back to the Character-based rank-compression path.
+      // The returned indices are still offsets in the original `[Character]`.
+      return s.withUnsafeBufferPointer {
+        suffix_array($0)
+      }
+    }
+    ascii.append(v)
+  }
+
+  // All characters are ASCII, so `[Character]` offsets and `[UInt8]` offsets
+  // are identical. Therefore the suffix array produced from `ascii` is also
+  // valid for the original `[Character]`.
+  return ascii.withUnsafeBufferPointer {
+    _Internal.sa_is($0, Int(UInt8.max))
+  }
+}
+
+/// Constructs a suffix array for a string.
+///
+/// This overload returns indices as `Character` offsets.
+///
+/// ASCII fast path:
+/// When the string contains only ASCII code units, UTF-8 code unit offsets and
+/// `Character` offsets are identical. In that case, this overload runs SA-IS
+/// directly on the UTF-8 code units.
+///
+/// Unicode fallback:
+/// When the string contains any non-ASCII code unit, byte offsets and
+/// `Character` offsets may differ. In that case, this overload converts the
+/// string to `[Character]` and uses the Character-based overload instead.
+///
+/// Important:
+/// `withCString(encodedAs: Unicode.UTF8.self)` provides a temporary,
+/// null-terminated UTF-8 buffer. The null terminator is not part of the Swift
+/// string, so `count` must be `s.utf8.count`, not the C-string length including
+/// the terminator.
+///
+/// - Complexity:
+///   - O(n) for ASCII strings, where n is the number of characters.
+///   - O(n log n) for non-ASCII strings, due to Character rank compression.
+@inlinable
+public func suffix_array(_ s: String) -> [Int] {
+  if s.isEmpty { return [] }
+
+  if s.utf8.allSatisfy({ $0 < 0x80 }) {
+    let n = s.utf8.count
+
+    // ASCII only:
+    //   UTF-8 code unit count == Character count
+    //   UTF-8 code unit offset == Character offset
+    //
+    // Therefore it is safe to compute the suffix array over the UTF-8 bytes
+    // while documenting the result as Character offsets.
+    return s.withCString(encodedAs: Unicode.UTF8.self) {
+      _Internal.sa_is(
+        UnsafeBufferPointer(start: $0, count: n),
+        Int(UInt8.max)
+      )
+    }
+  } else {
+    // Non-ASCII:
+    // UTF-8 byte offsets and Character offsets may differ, so the UTF-8 suffix
+    // array would not be a valid Character-offset suffix array.
+    //
+    // Convert to `[Character]` and use the Character overload, which preserves
+    // Character offset semantics.
+    return suffix_array(Array(s))
+  }
+}
+
+// MARK: - LCP Array
 
 /// Reference:
 /// T. Kasai, G. Lee, H. Arimura, S. Arikawa, and K. Park,
@@ -288,6 +474,8 @@ public func lcp_array(_ s: String, _ sa: [Int]) -> [Int] {
     lcp_array(pointer: $0, count: s.count, sa)
   }
 }
+
+// MARK: - Z algorithm
 
 /// Reference:
 /// D. Gusfield,

@@ -199,7 +199,7 @@ final class stringTests: XCTestCase {
             g /= 4
           }
 
-          let sa = _Internal.sa_is(s, count: s.count, max_c, -1, -1)
+          let sa = _Internal.sa_is(.init(start: s, count: s.count), max_c, -1, -1)
           XCTAssertEqual(sa_naive(s), sa)
         }
       }
@@ -216,7 +216,7 @@ final class stringTests: XCTestCase {
             g /= 2
           }
 
-          let sa = _Internal.sa_is(s, count: s.count, max_c, -1, -1)
+          let sa = _Internal.sa_is(.init(start: s, count: s.count), max_c, -1, -1)
           XCTAssertEqual(sa_naive(s), sa)
         }
       }

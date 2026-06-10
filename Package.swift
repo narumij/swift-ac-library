@@ -6,7 +6,7 @@ import PackageDescription
 
 var defines: [String] = [
   "USE_NON_COPYABLE",
-  "USE_INT128",
+//  "USE_INT128",
 ]
 
 var _settings: [SwiftSetting] =
