@@ -389,6 +389,7 @@ import Foundation
       log = other.log
     }
 
+    @inlinable
     public func clone() -> Self {
       return .init(other: self)
     }
