@@ -67,6 +67,8 @@ extension _Internal {
               for i in 0..<_n {
                 ids[i] = group_num.pointee - 1 - ids[i]
               }
+              
+              buffer.baseAddress!.deinitialize(count: _n * 2)
             }
           }
         }

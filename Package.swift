@@ -19,6 +19,8 @@ var _settings: [SwiftSetting] =
 
     .define("DEATH_TEST", .when(platforms: [.macOS])),
 
+    .define("USE_INT128", .when(traits: ["USE_INT128"])),
+
     .unsafeFlags(["-Ounchecked"], .when(configuration: .release, traits: ["_O_UNCHECKED"])),
   ] + defines.map { .define($0) }
 
@@ -65,13 +67,13 @@ let package = Package(
   dependencies: [
     .package(
       url: "https://github.com/apple/swift-algorithms",
-      from: "1.2.0"),
+      from: "1.2.1"),
     .package(
       url: "https://github.com/apple/swift-collections",
       from: "1.6.0"),
     .package(
       url: "https://github.com/apple/swift-numerics",
-      branch: "main"),
+      from: "1.1.1"),
     .package(
       url: "https://github.com/attaswift/BigInt",
       from: "5.6.0"),
