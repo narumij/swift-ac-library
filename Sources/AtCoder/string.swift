@@ -98,6 +98,9 @@ extension _Internal {
       start: .allocate(capacity: upper + 1), count: upper + 1)
     let sum_s = UnsafeMutableBufferPointer<Int>(
       start: .allocate(capacity: upper + 1), count: upper + 1)
+    
+    sum_l.initialize(repeating: 0)
+    sum_s.initialize(repeating: 0)
 
     defer {
       sum_l.deinitialize()
