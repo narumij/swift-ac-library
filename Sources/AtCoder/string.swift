@@ -318,8 +318,7 @@ func suffix_array(_ s: UnsafeBufferPointer<Character>) -> [Int] {
   //
   // We sort indices instead of the characters themselves so that we can write
   // each computed rank back to the original position.
-  var order = Array(0..<n)
-  order.sort { s[$0] < s[$1] }
+  let order = (0..<n).sorted { s[$0] < s[$1] }
 
   return withUnsafeTemporaryAllocation(of: Int.self, capacity: n) { ranked in
 
