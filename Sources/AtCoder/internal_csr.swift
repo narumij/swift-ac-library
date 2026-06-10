@@ -1,5 +1,3 @@
-import Foundation
-
 #if !COMPATIBLE_ATCODER_2025
   extension _Internal {
 
@@ -18,10 +16,10 @@ import Foundation
         let start = UnsafeMutablePointer<Int>.allocate(capacity: n + 1)
         let elist = UnsafeMutablePointer<E>.allocate(capacity: edges.count)
         start.initialize(repeating: 0, count: n + 1)
-        
+
         withUnsafeTemporaryAllocation(of: Int.self, capacity: n + 1) { counter in
           let counter = counter.baseAddress!
-          
+
           for e in edges {
             start[e.first + 1] += 1
           }
@@ -35,11 +33,11 @@ import Foundation
           }
           counter.deinitialize(count: n + 1)
         }
-        
+
         self.start = .init(start: start, count: n + 1)
         self.elist = .init(start: elist, count: edges.count)
       }
-      
+
       deinit {
         start.deinitialize()
         start.deallocate()
