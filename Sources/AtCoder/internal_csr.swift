@@ -1,6 +1,6 @@
 import Foundation
 
-#if !COMPATIBLE_ATCODER_2025
+#if !COMPATIBLE_ATCODER_2025 && false
   extension _Internal {
 
     @frozen
