@@ -333,11 +333,11 @@ extension MCFGraph {
 
 extension MCFGraph.Edge: Sendable where Cap: Sendable, Cost: Sendable {}
 
+extension MCFGraph: @unchecked Sendable where Edge: Sendable {}
+
 extension Heap {
   @inlinable
   var startIndex: Int { 0 }
   @inlinable
   mutating func push_heap(_ start: Int, _ end: Int) { /* NOP */  }
 }
-
-extension MCFGraph: @unchecked Sendable {}

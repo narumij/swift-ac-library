@@ -271,4 +271,4 @@ extension MFGraph {
 
 extension MFGraph.Edge: Sendable where Cap: Sendable {}
 
-extension MFGraph: @unchecked Sendable {}
+extension MFGraph: @unchecked Sendable where Edge: Sendable {}
