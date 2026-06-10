@@ -10,7 +10,7 @@ private func op(a: String, b: String) -> String {
 
 private let e: String = "$"
 
-private enum Operator: SegTreeOperation {
+enum Operator: SegTreeOperation {
   typealias S = String
   static let op: Op = AtCoderTests.op
   static let e: S = AtCoderTests.e
