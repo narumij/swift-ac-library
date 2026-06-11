@@ -199,7 +199,7 @@ final class stringTests: XCTestCase {
             g /= 4
           }
 
-          let sa = _Internal.sa_is(s, count: s.count, max_c, -1, -1)
+          let sa = _Internal.sa_is(.init(start: s, count: s.count), max_c, -1, -1)
           XCTAssertEqual(sa_naive(s), sa)
         }
       }
@@ -216,7 +216,7 @@ final class stringTests: XCTestCase {
             g /= 2
           }
 
-          let sa = _Internal.sa_is(s, count: s.count, max_c, -1, -1)
+          let sa = _Internal.sa_is(.init(start: s, count: s.count), max_c, -1, -1)
           XCTAssertEqual(sa_naive(s), sa)
         }
       }
@@ -263,6 +263,31 @@ final class stringTests: XCTestCase {
       "sippi",  // 5
       "sisippi",  // 3
       "ssisippi",  // 2
+    ]
+
+    XCTAssertEqual(answer.count, sa.count)
+
+    for i in 0..<sa.count {
+      XCTAssertEqual(answer[i], String(s.map { $0 }.suffix(from: sa[i])))
+    }
+  }
+
+  func testSAFullWidth() throws {
+    let s = "ｍｉｓｓｉｓｉｐｐｉ"
+
+    let sa = suffix_array(s)
+
+    let answer = [
+      "ｉ",  // 9
+      "ｉｐｐｉ",  // 6
+      "ｉｓｉｐｐｉ",  // 4
+      "ｉｓｓｉｓｉｐｐｉ",  // 1
+      "ｍｉｓｓｉｓｉｐｐｉ",  // 0
+      "ｐｉ",  // 8
+      "ｐｐｉ",  // 7
+      "ｓｉｐｐｉ",  // 5
+      "ｓｉｓｉｐｐｉ",  // 3
+      "ｓｓｉｓｉｐｐｉ",  // 2
     ]
 
     XCTAssertEqual(answer.count, sa.count)
@@ -356,6 +381,15 @@ final class stringTests: XCTestCase {
       lcp_array([UInt64.min, UInt64.min, UInt64.max], sa))
   }
 
+  func testLCPFullWidth() throws {
+    let s = "ａａｂ"
+    let sa = suffix_array(s)
+    XCTAssertEqual([0, 1, 2], sa)
+
+    let lcp = lcp_array(s, sa)
+    XCTAssertEqual([1, 0], lcp)
+  }
+
   func testLCPCharacter() throws {
     let s = "aab".map { $0 }
     let sa = suffix_array(s)
@@ -416,6 +450,12 @@ final class stringTests: XCTestCase {
       [4, 0, 2, 0],
       z_algorithm([1, 10, 1, 10]))
     XCTAssertEqual(z_naive([0, 0, 0, 0, 0, 0, 0]), z_algorithm([0, 0, 0, 0, 0, 0, 0]))
+  }
+
+  func testZAlgoFullWidth() throws {
+    let s = "ａｂａｂ"
+    let z = z_algorithm(s)
+    XCTAssertEqual([4, 0, 2, 0], z)
   }
 
   func testZAlgoCharacter() throws {

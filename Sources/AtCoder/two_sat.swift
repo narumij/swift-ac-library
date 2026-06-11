@@ -5,7 +5,7 @@ import Foundation
 /// A Linear-Time Algorithm for Testing the Truth of Certain Quantified Boolean
 /// Formulas
 @frozen
-public struct TwoSAT {
+public struct TwoSAT: ~Copyable {
   @usableFromInline let _n: Int
   @usableFromInline var _answer: [Bool]
   @usableFromInline var scc: _Internal.scc_graph
@@ -47,6 +47,21 @@ extension TwoSAT {
 
   @inlinable
   public func answer() -> [Bool] { return _answer }
+}
+
+extension TwoSAT {
+  
+  @inlinable
+  internal init(other: borrowing Self) {
+    self._n = other._n
+    self.scc = other.scc.clone()
+    self._answer = other._answer
+  }
+
+  @inlinable
+  func clone() -> Self {
+    return .init(other: self)
+  }
 }
 
 extension TwoSAT: @unchecked Sendable {}

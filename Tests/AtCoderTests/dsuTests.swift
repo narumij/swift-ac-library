@@ -6,17 +6,6 @@ import XCTest
   import AtCoder
 #endif
 
-#if DEBUG && COMPATIBLE_ATCODER_2025
-  extension DSU {
-    var parent_or_size: [Int] {
-      .init(unsafeUninitializedCapacity: buffer._n) { parent_or_size, initializedCount in
-        parent_or_size.baseAddress?.initialize(from: buffer.parent_or_size, count: buffer._n)
-        initializedCount = buffer._n
-      }
-    }
-  }
-#endif
-
 final class dsuTests: XCTestCase {
 
   typealias dsu = DSU
@@ -70,16 +59,9 @@ final class dsuTests: XCTestCase {
     }
   }
 
-  func testCopyOnWrite() throws {
-    #if DISABLE_COPY_ON_WRITE
-      throw XCTSkip("コピーオンライト不活性のため")
-    #endif
+  func testClone() throws {
     var seg0 = DSU(5)
-    #if !COMPATIBLE_ATCODER_2025
-      var seg00 = seg0.clone()
-    #else
-      var seg00 = seg0
-    #endif
+    var seg00 = seg0.clone()
     XCTAssertEqual(seg00.leader(0), 0)
     _ = seg0.merge(1, 0)
     XCTAssertEqual(seg00.leader(0), 0)

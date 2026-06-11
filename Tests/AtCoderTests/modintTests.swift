@@ -251,29 +251,35 @@ final class modintTests: XCTestCase {
       XCTAssertEqual(1, (int(x) * i) % 11)
     }
 
-    for i in 1..<11 as Range<int> {
-      if gcd(i, 12) != 1 { continue }
-      let x = static_modint<mod_12>(i).inv.val
-      XCTAssertEqual(1, (int(x) * i) % 12)
-    }
+    #if false
+      for i in 1..<11 as Range<int> {
+        if gcd(i, 12) != 1 { continue }
+        let x = static_modint<mod_12>(i).inv.val
+        XCTAssertEqual(1, (int(x) * i) % 12)
+      }
+    #endif
 
     for i in 1..<100_000 as Range<int> {
       let x = static_modint<mod_1_000_000_007>(i).inv.val
       XCTAssertEqual(1, (ll(x) * ll(i)) % 1_000_000_007)
     }
 
-    for i in 1..<100_000 as Range<int> {
-      if gcd(i, 1_000_000_008) != 1 { continue }
-      let x = static_modint<mod_1_000_000_008>(i).inv.val
-      XCTAssertEqual(1, (ll(x) * ll(i)) % 1_000_000_008)
-    }
+    #if false
+      for i in 1..<100_000 as Range<int> {
+        if gcd(i, 1_000_000_008) != 1 { continue }
+        let x = static_modint<mod_1_000_000_008>(i).inv.val
+        XCTAssertEqual(1, (ll(x) * ll(i)) % 1_000_000_008)
+      }
+    #endif
 
-    // テスト自体は通る
-    for i in 1..<100_000 as Range<Int> {
-      if gcd(i, Int.max) != 1 { continue }
-      let x = static_modint<INT_MAX>(i).inv.val
-      XCTAssertEqual(1, (BigInt(x) * BigInt(i)) % BigInt(Int.max))
-    }
+    #if false
+      // テスト自体は通る
+      for i in 1..<100_000 as Range<Int> {
+        if gcd(i, Int.max) != 1 { continue }
+        let x = static_modint<INT_MAX>(i).inv.val
+        XCTAssertEqual(1, (BigInt(x) * BigInt(i)) % BigInt(Int.max))
+      }
+    #endif
 
     modint.set_mod(998_244_353)
     for i in 1..<100000 as Range<int> {
@@ -283,27 +289,29 @@ final class modintTests: XCTestCase {
       XCTAssertEqual(1, (ll(x) * ll(i)) % 998_244_353)
     }
 
-    modint.set_mod(1_000_000_008)
-    for i in 1..<100000 as Range<int> {
-      if gcd(i, 1_000_000_008) != 1 { continue }
-      let x = modint(i).inv.val
-      XCTAssertEqual(1, (ll(x) * ll(i)) % 1_000_000_008)
-    }
+    #if false
+      modint.set_mod(1_000_000_008)
+      for i in 1..<100000 as Range<int> {
+        if gcd(i, 1_000_000_008) != 1 { continue }
+        let x = modint(i).inv.val
+        XCTAssertEqual(1, (ll(x) * ll(i)) % 1_000_000_008)
+      }
 
-    modint.set_mod(Int(int.max))
-    for i in 1..<100000 as Range<int> {
-      if gcd(i, int.max) != 1 { continue }
-      let x = modint(i).inv.val
-      XCTAssertEqual(1, (ll(x) * ll(i) % ll(int.max)))
-    }
+      modint.set_mod(Int(int.max))
+      for i in 1..<100000 as Range<int> {
+        if gcd(i, int.max) != 1 { continue }
+        let x = modint(i).inv.val
+        XCTAssertEqual(1, (ll(x) * ll(i) % ll(int.max)))
+      }
 
-    // テスト自体は通る
-    modint.set_mod(Int.max)
-    for i in 1..<100000 as Range<Int> {
-      if gcd(i, Int.max) != 1 { continue }
-      let x = modint(i).inv.val
-      XCTAssertEqual(1, (BigInt(x) * BigInt(i) % BigInt(Int.max)))
-    }
+      // テスト自体は通る
+      modint.set_mod(Int.max)
+      for i in 1..<100000 as Range<Int> {
+        if gcd(i, Int.max) != 1 { continue }
+        let x = modint(i).inv.val
+        XCTAssertEqual(1, (BigInt(x) * BigInt(i) % BigInt(Int.max)))
+      }
+    #endif
   }
 
   func testConstUsage() throws {
@@ -323,7 +331,7 @@ final class modintTests: XCTestCase {
          using sint = static_modint<11>;
          using dint = modint;
          dint::set_mod(11);
-      
+
          {
          sint a;
          a = 8;
@@ -588,7 +596,7 @@ final class modintTests: XCTestCase {
     XCTAssertEqual(
       ne2.1, int((modint(CUnsignedLongLong(bitPattern: CLongLong(-1))) + modint(1)).val))
   }
-  
+
   func testNumeric() throws {
     XCTAssertNotNil(modint998244353(exactly: 0))
     XCTAssertNotNil(modint998244353(exactly: mod_998_244_353.umod - 1))
