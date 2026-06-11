@@ -5,6 +5,54 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+### Added
+- `suffix_array`に`String`と`[Character]`向けのUnicode対応実装を追加
+- macOS向けのdeath testを追加
+- `SegTreeOperation`と`LazySegTreeOperation`による関数プロパティベースの演算定義を追加
+- `SegTree`と`LazySegTree`に`Collection`および範囲からの初期化を追加
+
+### Changed
+- Swift tools versionを6.2に更新
+- SwiftPM traitsを使って`BENCHMARK`と`_O_UNCHECKED`を切り替える構成に変更
+- 依存パッケージのバージョンを更新
+- `DSU`, `SegTree`, `LazySegTree`, `MFGraph`, `MCFGraph`, 内部CSRなどを非コピー型と直接メモリ管理中心の実装に変更
+- `Executable`ターゲットを`TopLevel`ターゲットへ変更
+- `maxflow`, `mincostflow`, `scc`, `two_sat`, `string`まわりの実装とテストを更新
+
+### Fixed
+- `z_algorithm`の不具合を修正
+- 内部CSRのクラッシュを修正
+- Sendable関連のコンパイル問題を修正
+
+## [0.1.29] - 2025-9-6
+### Added
+- `SegTree`と`LazySegTree`に要素生成クロージャを受け取る初期化を追加
+
+## [0.1.28] - 2025-9-4
+### Changed
+- Sendable対応を更新
+
+## [0.1.27] - 2025-9-3
+### Changed
+- READMEを更新
+
+## [0.1.26] - 2025-8-15
+### Fixed
+- maxflowの不具合を修正
+
+## [0.1.25] - 2025-7-30
+### Changed
+- segtreeとlazy_segtreeの実装とテストを更新
+
+## [0.1.24] - 2025-7-20
+### Changed
+- sccのLibrary Checker向け確認を反映
+
+## [0.1.23] - 2025-7-18
+### Changed
+- CHANGELOGを更新
+
 ## [0.1.22] - 2025-7-18
 ### Fix
 - macOSのswiftコマンドでreleaseビルドでクラッシュする不具合の迂回
