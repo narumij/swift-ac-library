@@ -5,7 +5,6 @@ import Foundation
 import PackageDescription
 
 var defines: [String] = [
-  "USE_NON_COPYABLE",
 //  "USE_INT128",
 ]
 
@@ -20,6 +19,7 @@ var _settings: [SwiftSetting] =
     .define("USE_INT128", .when(traits: ["USE_INT128"])),
 
     .unsafeFlags(["-Ounchecked"], .when(configuration: .release, traits: ["_O_UNCHECKED"])),
+    
   ] + defines.map { .define($0) }
 
 // 環境変数 "SWIFT_AC_LIBRARY_USES_O_UNCHECKED" が存在するか確認

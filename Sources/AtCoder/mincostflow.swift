@@ -1,7 +1,7 @@
 import HeapModule
 
 @frozen
-public struct MCFGraph<Cap, Cost>
+public struct MCFGraph<Cap, Cost>: ~Copyable
 where
   Cap: ___numeric_limit & Comparable,
   Cost: ___numeric_limit & Comparable & SignedNumeric
@@ -328,6 +328,22 @@ extension MCFGraph {
       prev_cost_per_flow = d
     }
     return result
+  }
+}
+
+
+extension MCFGraph {
+  
+  @inlinable
+  internal init(other: borrowing Self) {
+    self._n = other._n
+    self._edges = other._edges
+    self.visitor = other.visitor
+  }
+
+  @inlinable
+  func clone() -> Self {
+    return .init(other: self)
   }
 }
 

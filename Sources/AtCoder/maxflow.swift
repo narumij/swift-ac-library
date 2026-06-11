@@ -1,7 +1,7 @@
 import DequeModule
 
 @frozen
-public struct MFGraph<Cap>
+public struct MFGraph<Cap>: ~Copyable
 where Cap: ___numeric_limit & Comparable {
   @usableFromInline
   let _n: Int
@@ -266,6 +266,21 @@ extension MFGraph {
     let to, rev: Int
     @usableFromInline
     var cap: Cap
+  }
+}
+
+extension MFGraph {
+  
+  @inlinable
+  internal init(other: borrowing Self) {
+    self._n = other._n
+    self.pos = other.pos
+    self.g = other.g
+  }
+
+  @inlinable
+  func clone() -> Self {
+    return .init(other: self)
   }
 }
 
