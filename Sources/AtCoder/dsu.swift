@@ -8,14 +8,17 @@ public struct DSU: ~Copyable {
   @usableFromInline let payload: UnsafeMutablePointer<Int>
   @usableFromInline let _n: Int
 
-  @inlinable
-  var parent_or_size: UnsafeMutableBufferPointer<Int> {
-    .init(start: payload, count: _n)
-  }
-
   deinit {
     payload.deinitialize(count: _n)
     payload.deallocate()
+  }
+}
+
+extension DSU {
+  
+  @inlinable
+  var parent_or_size: UnsafeMutableBufferPointer<Int> {
+    .init(start: payload, count: _n)
   }
 }
 
@@ -83,6 +86,9 @@ extension DSU {
     result.removeAll { $0.isEmpty }
     return result
   }
+}
+
+extension DSU {
 
   @inlinable
   mutating func _leader(_ a: Int) -> Int {

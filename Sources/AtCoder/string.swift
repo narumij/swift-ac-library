@@ -44,13 +44,11 @@ extension _Internal {
         let rx: Element? = x + k < n ? rnk[x + k] : nil
         let ry: Element? = y + k < n ? rnk[y + k] : nil
         switch (rx, ry) {
-        case (nil, nil): return false
-        case (nil, _): return true
         case (_, nil): return false
+        case (nil, _): return true
         case (.some(let rx), .some(let ry)):
           return rx < ry
         }
-        //        return rx < ry
       }
 
       sa.sort(by: cmp)
