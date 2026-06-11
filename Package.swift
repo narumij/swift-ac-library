@@ -65,14 +65,6 @@ let package = Package(
       ],
       swiftSettings: _settings),
     .executableTarget(
-      name: "Executable",
-      dependencies: [
-        "AtCoder"
-      ],
-      path: "Tests/Executable",
-      swiftSettings: _settings
-    ),
-    .executableTarget(
       name: "TopLevel",
       dependencies: [
         "AtCoder"
