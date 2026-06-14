@@ -1,7 +1,7 @@
 import Foundation
 
 @frozen
-public struct SCCGraph {
+public struct SCCGraph: ~Copyable {
 
   @inlinable
   public init() { _internal = .init(0) }
@@ -24,6 +24,19 @@ public struct SCCGraph {
 
   @usableFromInline
   var _internal: _Internal.scc_graph
+}
+
+extension SCCGraph {
+  
+  @inlinable
+  internal init(other: borrowing Self) {
+    self._internal = other._internal.clone()
+  }
+
+  @inlinable
+  func clone() -> Self {
+    return .init(other: self)
+  }
 }
 
 extension SCCGraph: @unchecked Sendable {}

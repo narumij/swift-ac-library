@@ -6,7 +6,7 @@ import XCTest
   import AtCoder
 #endif
 
-private enum param: LazySegTreeOperation {
+enum lazySegtreeTests_param: LazySegTreeOperation {
   typealias S = Int
   typealias F = Int
   static let op: Op = max
@@ -36,7 +36,7 @@ enum DummyOperation: LazySegTreeOperation & SegTreeOperation {
   typealias S = Int
 }
 
-private typealias starry_seg = LazySegTree<param>
+typealias starry_seg = LazySegTree<lazySegtreeTests_param>
 
 final class lazySegtreeTests: XCTestCase {
 
@@ -66,7 +66,7 @@ final class lazySegtreeTests: XCTestCase {
   #if false
     func testInvalid() throws {
 
-      throw XCTSkip("Swift Packageでは実施不可")
+      throw XCTSkip("Swift Testingで実施")
       XCTAssertThrowsError(starry_seg(-1))
 
       var s = starry_seg(10)
@@ -116,7 +116,7 @@ final class lazySegtreeTests: XCTestCase {
   
   func test0_0() throws {
     do {
-      let s = starry_seg(0) { param.e }
+      let s = starry_seg(0) { lazySegtreeTests_param.e }
       XCTAssertEqual(-1_000_000_000, s.all_prod())
     }
     do {
@@ -124,14 +124,14 @@ final class lazySegtreeTests: XCTestCase {
       XCTAssertEqual(-1_000_000_000, s.all_prod())
     }
     do {
-      let s = starry_seg(10) { param.e }
+      let s = starry_seg(10) { lazySegtreeTests_param.e }
       XCTAssertEqual(-1_000_000_000, s.all_prod())
     }
   }
 
   func testNaiveProd_0() throws {
     for n in 0...50 {
-      var seg = starry_seg(n) { param.e }
+      var seg = starry_seg(n) { lazySegtreeTests_param.e }
       var p = [Int](repeating: 0, count: n)
       for i in 0..<n {
         p[i] = (i * i + 100) % 31

@@ -10,10 +10,9 @@ private func op(a: String, b: String) -> String {
 
 private let e: String = "$"
 
-private enum Operator: SegTreeOperation {
-  typealias S = String
+enum Operator: SegTreeOperation {
   static let op: Op = AtCoderTests.op
-  static let e: S = AtCoderTests.e
+  static let e: String = AtCoderTests.e
 }
 
 private typealias segtree = SegTree<Operator>
@@ -32,7 +31,7 @@ final class segtreeTests: XCTestCase {
   }
 
   func testInvalid() throws {
-    throw XCTSkip("Swift Packageでは実施不可")
+    throw XCTSkip("Swift Testingで実施")
     XCTAssertThrowsError(segtree_naive(-1))
     var s = SegTree<Operator>(10)
     XCTAssertThrowsError(s.get(-1))
@@ -108,16 +107,9 @@ final class segtreeTests: XCTestCase {
     }
   }
 
-  func testCopyOnWrite() throws {
-    #if DISABLE_COPY_ON_WRITE
-      throw XCTSkip("コピーオンライト不活性のため")
-    #endif
+  func testClone() throws {
     var seg0 = SegTree<Operator>(10)
-    #if !COMPATIBLE_ATCODER_2025
-      var seg00 = seg0.clone()
-    #else
-      var seg00 = seg0
-    #endif
+    var seg00 = seg0.clone()
     XCTAssertEqual(seg00.all_prod(), "$")
     seg0.set(0, "a")
     XCTAssertEqual(seg00.all_prod(), "$")

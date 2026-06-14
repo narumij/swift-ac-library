@@ -1,8 +1,7 @@
-import Collections
-import Foundation
+import DequeModule
 
 @frozen
-public struct MFGraph<Cap>
+public struct MFGraph<Cap>: ~Copyable
 where Cap: ___numeric_limit & Comparable {
   @usableFromInline
   let _n: Int
@@ -90,8 +89,7 @@ extension MFGraph {
     return flow(s, t, numeric_limit<Cap>.max)
   }
 
-  // TODO: Dequeが直ったらinlinableに戻すこと
-//  @inlinable
+  @inlinable
   public mutating func flow(_ s: Int, _ t: Int, _ flow_limit: Cap) -> Cap {
     assert(0 <= s && s < _n)
     assert(0 <= t && t < _n)
@@ -234,8 +232,7 @@ extension MFGraph {
     return flow
   }
 
-  // TODO: Dequeが直ったらinlinableに戻すこと
-//  @inlinable
+  @inlinable
   public func min_cut(_ s: Int) -> [Bool] {
     var visited = [Bool](repeating: false, count: _n)
     visited.withUnsafeMutableBufferPointer { visited in
@@ -272,6 +269,21 @@ extension MFGraph {
   }
 }
 
+extension MFGraph {
+  
+  @inlinable
+  internal init(other: borrowing Self) {
+    self._n = other._n
+    self.pos = other.pos
+    self.g = other.g
+  }
+
+  @inlinable
+  func clone() -> Self {
+    return .init(other: self)
+  }
+}
+
 extension MFGraph.Edge: Sendable where Cap: Sendable {}
 
-extension MFGraph: @unchecked Sendable {}
+extension MFGraph: @unchecked Sendable where Edge: Sendable {}

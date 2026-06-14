@@ -186,9 +186,7 @@ final class fenwickTreeTests: XCTestCase {
   }
 
   func testInt128() throws {
-    #if !USE_INT128
-      throw XCTSkip("Int128が利用できない")
-    #else
+    if #available(macOS 15.0, *) {
       var fw = FenwickTree<Int128>(20)
       for i in 0..<20 {
         fw.add(i, Int128(i))
@@ -203,7 +201,9 @@ final class fenwickTreeTests: XCTestCase {
           XCTAssertEqual(sum, fw.sum(l, r))
         }
       }
-    #endif
+    } else {
+      throw XCTSkip("Int128が利用できない")
+    }
   }
 
   func testInt() throws {

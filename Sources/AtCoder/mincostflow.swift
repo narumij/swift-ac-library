@@ -1,8 +1,7 @@
-import Collections
-import Foundation
+import HeapModule
 
 @frozen
-public struct MCFGraph<Cap, Cost>
+public struct MCFGraph<Cap, Cost>: ~Copyable
 where
   Cap: ___numeric_limit & Comparable,
   Cost: ___numeric_limit & Comparable & SignedNumeric
@@ -145,7 +144,7 @@ extension MCFGraph {
         elist.append((e.from, .init(to: e.to, rev: -1, cap: e.cap - e.flow, cost: e.cost)))
         elist.append((e.to, .init(to: e.from, rev: -1, cap: e.flow, cost: -e.cost)))
       }
-      var _g = _Internal.csr<_Edge>(_n, elist)
+      let _g = _Internal.csr<_Edge>(_n, elist)
       for i in 0..<m {
         let e = _edges[i]
         edge_idx[i] += _g.start[e.from]
@@ -200,9 +199,7 @@ extension MCFGraph {
     }
   }
 
-  // TODO: Dequeが直ったらinlinableに戻すこと
-//  @inlinable
-  @usableFromInline
+  @inlinable
   func slope(
     _ g: inout _Internal.csr<_Edge>,
     _ s: Int,
@@ -334,7 +331,25 @@ extension MCFGraph {
   }
 }
 
+
+extension MCFGraph {
+  
+  @inlinable
+  internal init(other: borrowing Self) {
+    self._n = other._n
+    self._edges = other._edges
+    self.visitor = other.visitor
+  }
+
+  @inlinable
+  func clone() -> Self {
+    return .init(other: self)
+  }
+}
+
 extension MCFGraph.Edge: Sendable where Cap: Sendable, Cost: Sendable {}
+
+extension MCFGraph: @unchecked Sendable where Edge: Sendable {}
 
 extension Heap {
   @inlinable
@@ -342,5 +357,3 @@ extension Heap {
   @inlinable
   mutating func push_heap(_ start: Int, _ end: Int) { /* NOP */  }
 }
-
-extension MCFGraph: @unchecked Sendable {}

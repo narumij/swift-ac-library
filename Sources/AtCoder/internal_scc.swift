@@ -1,7 +1,9 @@
+import Collections
+
 extension _Internal {
 
   @usableFromInline
-  struct scc_graph {
+  struct scc_graph: ~Copyable {
 
     @inlinable
     public init(_ n: Int) {
@@ -67,6 +69,8 @@ extension _Internal {
               for i in 0..<_n {
                 ids[i] = group_num.pointee - 1 - ids[i]
               }
+              
+              buffer.baseAddress!.deinitialize(count: _n * 2)
             }
           }
         }
@@ -100,6 +104,20 @@ extension _Internal {
     // }
     @usableFromInline
     var edges: [(Int, edge)] = []
+  }
+}
+
+extension _Internal.scc_graph {
+  
+  @inlinable
+  internal init(other: borrowing Self) {
+    self._n = other._n
+    self.edges = other.edges
+  }
+
+  @inlinable
+  func clone() -> Self {
+    return .init(other: self)
   }
 }
 
