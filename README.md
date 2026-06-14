@@ -19,7 +19,7 @@ SwiftPMで swift-ac-libraryを利用する場合は、
 dependencies: [
   .package(
     url: "https://github.com/narumij/swift-ac-library",
-    branch: "release/AtCoder/2025"),
+    branch: "compatible/AtCoder/2025"),
 ],
 ```
 
