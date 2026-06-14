@@ -15,7 +15,7 @@
 SwiftPMで swift-ac-libraryを利用する場合は、
 
 以下をPackage.swift に追加してください。
-```
+```swift
 dependencies: [
   .package(
     url: "https://github.com/narumij/swift-ac-library",
@@ -25,7 +25,7 @@ dependencies: [
 
 ビルドターゲットに以下を追加します。
 
-```
+```swift
   dependencies: [
     .product(name: "AtCoder", package: "swift-ac-library")
     ]
