@@ -66,10 +66,6 @@ import AtCoder
 
 さらに、コードベース全般についても同様に、互換性が保証されることは期待しないでください。これらの宣言は必要に応じて変更される可能性があり、非互換な修正が加えられる場合があります。
 
-## ライセンス
-
-[CC0]
-
 ## 関連
 
 [ac-library-csharp] - C#版
@@ -77,6 +73,11 @@ import AtCoder
 [ac-library-python] - Python版
 
 [ac-library-swift] - 元祖Swift版
+
+## ライセンス
+
+[CC0]
+
 
 
 [ac]: https://atcoder.jp/
