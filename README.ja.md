@@ -39,21 +39,22 @@ import AtCoder
 ```
 
 ## Branch Strategy
-| Branch | Recommended | Description |
-|----------|----------|----------|
-| `compatible/AtCoder/2025` | ⭐ | AtCoder 2025 互換の推奨版 |
-| `release/AtCoder/2025` | | AtCoder 2025 搭載版 |
-| `main` | | 開発版 |
+
+| Branch | Recommended | Status | Description |
+|----------|----------|----------|----------|
+| `compatible/AtCoder/2025` | ⭐ | Maintained | AtCoder 2025 互換の推奨版 |
+| `release/AtCoder/2025` | | Frozen | AtCoder 2025 搭載版 |
+| `main` | | Active Development | 次期リリース開発版 |
 
 ### Which branch should I use?
 
-通常は `compatible/AtCoder/2025` の利用をおすすめします。
+通常は `compatible/AtCoder/2025` を利用してください。
 
- `compatible/AtCoder/2025` ブランチでは AtCoder 2025 との互換性を維持したまま、ドキュメント補強、deprecated 指定、注意喚起の追加などの保守を行っています。
+`release/AtCoder/2025` は AtCoder に搭載されている状態をそのまま保存するためのブランチです。原則として変更されません。
 
-`release/AtCoder/2025` は AtCoder に搭載されている状態をそのまま保持するためのブランチです。
+`compatible/AtCoder/2025` は AtCoder 2025 との互換性を維持しながら、ドキュメント補強、deprecated 指定、注意喚起の追加などの保守を行うブランチです。
 
-`main` は開発中のブランチです。API や実装が変更される可能性があります。
+`main` は次期リリースに向けた開発ブランチです。
 
 ---
 

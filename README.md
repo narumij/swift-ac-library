@@ -39,21 +39,21 @@ import AtCoder
 
 ## Branch Strategy
 
-| Branch | Recommended | Description |
-|----------|----------|----------|
-| `compatible/AtCoder/2025` | ⭐ | Recommended branch compatible with AtCoder 2025 |
-| `release/AtCoder/2025` | | Branch matching the version installed on AtCoder 2025 |
-| `main` | | Development branch |
+| Branch | Recommended | Status | Description |
+|----------|----------|----------|----------|
+| `compatible/AtCoder/2025` | ⭐ | Maintained | Recommended branch compatible with AtCoder 2025 |
+| `release/AtCoder/2025` | | Frozen | Branch matching the version installed on AtCoder 2025 |
+| `main` | | Active Development | Development branch for the next release |
 
 ### Which branch should I use?
 
-In general, `compatible/AtCoder/2025` is recommended.
+In general, use `compatible/AtCoder/2025`.
+
+`release/AtCoder/2025` preserves the exact state installed on AtCoder. As a rule, it is not changed.
 
 The `compatible/AtCoder/2025` branch maintains compatibility with AtCoder 2025 while adding maintenance updates such as documentation improvements, deprecation annotations, and additional notices.
 
-`release/AtCoder/2025` preserves the exact state installed on AtCoder.
-
-`main` is the development branch. APIs and implementations may change.
+`main` is the development branch for the next release.
 
 ---
 
