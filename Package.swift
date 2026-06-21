@@ -64,6 +64,11 @@ let package = Package(
         .product(name: "BigInt", package: "BigInt"),
       ],
       swiftSettings: _settings),
+    .testTarget(
+      name: "ExtraTests",
+      dependencies: [
+      ],
+      swiftSettings: _settings),
     .executableTarget(
       name: "TopLevel",
       dependencies: [
