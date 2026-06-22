@@ -1,21 +1,21 @@
 # swift-ac-library
 
-[AtCoder][ac] の競技プログラミング向けライブラリである [AC(AtCoder) Library][ac-library] の Swift 移植版
+English | [日本語](README.ja.md)
 
+A Swift port of [AC(AtCoder) Library][ac-library], the competitive programming library for [AtCoder][ac].
 
 [![Swift](https://github.com/narumij/swift-ac-library/actions/workflows/swift.yml/badge.svg?branch=main)](https://github.com/narumij/swift-ac-library/actions/workflows/swift.yml)
 [![License: CC0-1.0](https://img.shields.io/badge/License-CC0%201.0-lightgrey.svg)](http://creativecommons.org/publicdomain/zero/1.0/)
 
-## 公式情報
+## Official Information
 
 [AtCoder Library (ACL) - AtCoder][acl]
 
-## 利用の仕方
+## Usage
 
-SwiftPMで swift-ac-libraryを利用する場合は、
+To use swift-ac-library with SwiftPM, add the following to your `Package.swift`:
 
-以下をPackage.swift に追加してください。
-```
+```swift
 dependencies: [
   .package(
     url: "https://github.com/narumij/swift-ac-library",
@@ -23,60 +23,63 @@ dependencies: [
 ],
 ```
 
-ビルドターゲットに以下を追加します。
+Then add the following dependency to your build target:
 
-```
+```swift
   dependencies: [
     .product(name: "AtCoder", package: "swift-ac-library")
     ]
 ```
 
-ソースコードに以下を追加します。
-```
+Add the following import to your source code:
+
+```swift
 import AtCoder
 ```
 
 ## Branch Strategy
-| Branch | Recommended | Description |
-|----------|----------|----------|
-| `compatible/AtCoder/2025` | ⭐ | AtCoder 2025 互換の推奨版 |
-| `release/AtCoder/2025` | | AtCoder 2025 搭載版 |
-| `main` | | 開発版 |
+
+| Branch | Recommended | Status | Description |
+|----------|----------|----------|----------|
+| `compatible/AtCoder/2025` | ⭐ | Maintained | Recommended branch compatible with AtCoder 2025 |
+| `release/AtCoder/2025` | | Frozen | Branch matching the version installed on AtCoder 2025 |
+| `main` | | Active Development | Development branch for the next release |
 
 ### Which branch should I use?
 
-通常は `compatible/AtCoder/2025` の利用をおすすめします。
+In general, use `compatible/AtCoder/2025`.
 
- `compatible/AtCoder/2025` ブランチでは AtCoder 2025 との互換性を維持したまま、ドキュメント補強、deprecated 指定、注意喚起の追加などの保守を行っています。
+`release/AtCoder/2025` preserves the exact state installed on AtCoder. As a rule, it is not changed.
 
-`release/AtCoder/2025` は AtCoder に搭載されている状態をそのまま保持するためのブランチです。
+The `compatible/AtCoder/2025` branch maintains compatibility with AtCoder 2025 while adding maintenance updates such as documentation improvements, deprecation annotations, and additional notices.
 
-`main` は開発中のブランチです。API や実装が変更される可能性があります。
+`main` is the development branch for the next release.
 
 ---
 
-## アンダースコア付き宣言について
+## Declarations with Underscores
 
-「アンダースコア付き宣言」は、完全修飾名のどこかにアンダースコア (`_`) で始まる部分が含まれる宣言のことを指します。たとえば、以下のような名前は技術的に `public` として宣言されていても、パブリックAPIには含まれません：
+A declaration with an underscore is any declaration whose fully qualified name contains a component that starts with an underscore (`_`). For example, the following names are technically declared as `public`, but they are not part of the public API:
 
-- `FooModule.Bar._someMember(value:)`（アンダースコア付きのメンバー）
-- `FooModule._Bar.someMember`（アンダースコア付きの型）
-- `_FooModule.Bar`（アンダースコア付きのモジュール）
-- `FooModule.Bar.init(_value:)`（アンダースコア付きの引数を持つイニシャライザ）
+- `FooModule.Bar._someMember(value:)` (member with an underscore)
+- `FooModule._Bar.someMember` (type with an underscore)
+- `_FooModule.Bar` (module with an underscore)
+- `FooModule.Bar.init(_value:)` (initializer with an underscored argument)
 
-さらに、コードベース全般についても同様に、互換性が保証されることは期待しないでください。これらの宣言は必要に応じて変更される可能性があり、非互換な修正が加えられる場合があります。
+Do not expect compatibility guarantees for the overall codebase around these declarations. They may be changed as needed, including incompatible changes.
 
-## ライセンス
+## Related Projects
+
+[ac-library-csharp] - C# version
+
+[ac-library-python] - Python version
+
+[ac-library-swift] - Original Swift version
+
+## License
 
 [CC0]
 
-## 関連
-
-[ac-library-csharp] - C#版
-
-[ac-library-python] - Python版
-
-[ac-library-swift] - 元祖Swift版
 
 
 [ac]: https://atcoder.jp/
@@ -92,4 +95,3 @@ import AtCoder
 [ac-library-csharp]: https://github.com/kzrnm/ac-library-csharp
 
 [CC0]: https://creativecommons.org/public-domain/cc0/
-

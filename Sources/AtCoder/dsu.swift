@@ -93,7 +93,7 @@ extension DSU {
   @inlinable
   mutating func _leader(_ a: Int) -> Int {
     if parent_or_size[a] < 0 { return a }
-    parent_or_size[a] = leader(parent_or_size[a])
+    parent_or_size[a] = _leader(parent_or_size[a])
     return parent_or_size[a]
   }
 }
