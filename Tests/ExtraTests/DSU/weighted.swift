@@ -1,4 +1,5 @@
 // 重み付き
+// https://atcoder.jp/contests/abc328/submissions/76866930
 
 @frozen
 public struct DSU: ~Copyable {
