@@ -1,5 +1,4 @@
-// MARK: - Segment Tree
-
+// 解放機構がない実装なため、利用者が解放管理を行う必要がある
 public protocol SegTreeOperator {
   associatedtype S
   static func op(_ x: S, _ y: S) -> S
@@ -246,11 +245,22 @@ extension SegTree {
   }
 }
 
+extension SegTree {
+
+  /// メモリ解放メソッド
+  ///
+  /// - Warning: 二回以上呼んではならない
+  func dispose() {
+    _d_payload.deinitialize(count: capacity)
+    _d_payload.deallocate()
+  }
+}
+
 extension SegTree: @unchecked Sendable {}
 
 // MARK: -
 
-@usableFromInline enum _Internal { }
+@usableFromInline enum _Internal {}
 
 extension _Internal {
 
