@@ -11,7 +11,7 @@ Codexはsession開始時に、まずこの文書のTask Registryだけを読む�
 
 ## Task Registry
 
-**現在の律速:** なし。現在の`ACTIVE` taskはなく、次の具体的な作業要求待ち。
+**現在の律速:** `DOC-003`で本家AC Libraryの公式ドキュメントを調査する。
 
 **一時運用:** なし
 
@@ -57,6 +57,8 @@ soft orderは、同時に着手可能なtask間の推奨順であり、Task prec
 | `OPS-001` | `DONE` | Codex | [EXECUTION] Task Registryのbootstrap | checklist、Registry、startup規則を実データ化し、既知の未完了作業を確認する | `Maintanance/PROGRESS_OVERVIEW.md#bootstrap-checklist` |
 | `DOC-001` | `FROZEN` | Codex | [DISCOVERY] GitHub Pagesによるユーザードキュメント公開方式を整理する | `DOC-002`完了後、ユーザーの明示的な再開指示を受け、必要な判断と後続taskを分離する | `Maintanance/PROGRESS_OVERVIEW.md#doc-001` |
 | `DOC-002` | `FROZEN` | Codex | [DISCOVERY] ユーザードキュメント方針の判断点を整理する | ユーザーの明示的な再開指示後、対象読者、範囲、構成、保守方法などの判断点を一判断ごとの後続taskへ分離する | `Maintanance/PROGRESS_OVERVIEW.md#doc-002` |
+| `DOC-003` | `ACTIVE` | Codex | [DISCOVERY] 本家AC Libraryの公式ドキュメントを調査する | 公式資料から構成、記載項目、APIとの対応、保守上の特徴を整理し、`DOC-002`へ渡せる状態にする | `Maintanance/PROGRESS_OVERVIEW.md#doc-003` |
+| `DOC-004` | `DONE` | Codex | [DECISION] ユーザードキュメントの使用言語を決める | 本文は英語、READMEは日英対応と決定し、未決事項と適用範囲を記録する | `Maintanance/PROGRESS_OVERVIEW.md#doc-004` |
 
 ## Task precedence
 
@@ -66,6 +68,7 @@ soft orderは、同時に着手可能なtask間の推奨順であり、Task prec
 | 後続task | 前提task | 制約 |
 | --- | --- | --- |
 | `DOC-001` | `DOC-002` | ユーザードキュメント方針の判断点を整理した後に、GitHub Pagesでの公開方式を調査する |
+| `DOC-002` | `DOC-003` | 本家AC Libraryの公式ドキュメント調査結果を、Swift版の方針判断点を整理する入力にする |
 
 > 必須依存がなければ、見出しとtable headerを残してデータ行を空にする。
 
@@ -94,6 +97,7 @@ soft orderは、同時に着手可能なtask間の推奨順であり、Task prec
 - Task Registryの確定更新は統合担当のCodexが行う。
 - 担当agentの完了報告だけで`DONE`にしない。diff、test、根拠、完了条件を照合する。
 - 新しい判断点、前提との衝突、scope逸脱を見つけたら実装を止め、task分割または状態更新へ戻る。
+- ユーザーが方針を決定した時点で対応する`DECISION` taskがなければ新設し、決定内容、理由・前提、適用範囲、未決事項、決定日、結論を使う後続taskを詳細正本へ記録する。
 - `EXCLUDED`は失敗の隠蔽ではない。前提誤りや方針変更の理由を保存する完了状態として扱う。
 - 完了taskがRegistryを読みにくくしたら、ID、結果、commit、元の詳細正本を
   `Maintanance/Archived/PROGRESS_OVERVIEW_HISTORY.md`へ記録し、Registryには`ARCHIVED`行と移動先anchorを残す。
@@ -117,9 +121,27 @@ Codexは新しいsessionで次の順に再開する。
 
 - `develop/after2025/1`は次期releaseへ向けた開発branchである。
 - Task Registryのbootstrap、新しいconversation用の挨拶task、履歴退避先の作成は完了済み。
-- ユーザードキュメント方針とGitHub Pages公開方式の調査は、明示的な再開指示まで凍結している。
+- 本家AC Libraryの公式ドキュメント調査を開始する。Swift版の方針整理とGitHub Pages公開方式の調査は後続taskとして凍結している。
 
 ## Task details
+
+### DOC-004
+
+- 判断事項: ユーザードキュメントで使用する言語。
+- 決定内容: APIリファレンスを含む本文は英語を基本とし、READMEは日本語と英語の両方を提供する。
+- 理由・前提: ユーザーが本文は英語、READMEは日英対応という方針を指定した。選定理由は未記録。
+- 適用範囲: 今後作成するユーザードキュメント本文、公開APIの用語、使用例、README。
+- 未決事項: READMEを単一file内で日英併記するか、言語別fileへ分割するか。
+- 決定日: 2026-10-08。
+- 後続task: `DOC-002`および将来のユーザードキュメント作成taskがこの結論を使用する。
+
+### DOC-003
+
+- 目的: Swift版ユーザードキュメント方針の入力として、本家AC Libraryの公式ドキュメントの事実を整理する。
+- 対象範囲: 公式サイトと公式repositoryにある英語ドキュメントの構成、各ページの記載項目、APIとの対応、例示、制約・計算量表記、更新・保守上の特徴。
+- 対象外: Swift版の文書構成や公開方式の決定、本文作成、非公式解説記事の評価。
+- 状態: `ACTIVE`。ユーザーが2026-10-08に本家ドキュメント調査を次の作業として指定した。
+- 完了条件: 公式資料に基づく調査結果と出典を記録し、Swift版へ引き継ぐ候補と追加判断が必要な点を区別して`DOC-002`へ渡せる。
 
 ### DOC-002
 
