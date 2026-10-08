@@ -67,6 +67,30 @@ goalは「何をするか」ではなく「何が判断・引き渡し可能に�
 Task precedenceには、後続taskの成立に不可欠なAND依存だけを書く。調査効率や優先度による順番は
 soft orderとして別に示す。順番が便利というだけで依存辺を足すと、不必要な待機が生じる。
 
+### 6. トポロジカル判定はready集合を求めるために使う
+
+Task precedenceは、有向非巡回graphとして扱う。トポロジカルな判定の目的は全taskへ一意の作業順を
+与えることではなく、必須依存を満たしていないtaskを除外し、現在着手可能なready集合を求めることに
+限定する。
+
+基本手順は次のとおり。
+
+1. 現行Registryに存在するtaskと必須依存辺を読む。
+2. 前提taskがすべて`DONE`であるtaskを依存上のready候補にする。
+3. `FROZEN`、`USER_ONLY`、`WAITING_USER`、`WAITING_EXTERNAL`をready候補から除く。
+4. task固有の再開条件、担当、ユーザーの最新指示を確認する。
+5. 残ったready集合から、中間goal、soft order、risk、受入可能量を使って次taskを選ぶ。
+
+`EXCLUDED`は自動的に前提達成とみなさない。前提taskが不要になった結果、後続taskも不要なら後続も
+`EXCLUDED`にする。別経路で後続taskが成立するなら、依存辺と完了条件を明示的に更新してからreadyを
+再判定する。
+
+graphにcycleがあれば、作業順の問題として適当に辺を無視しない。task分割、親子関係、相互判断の
+どこかが誤っている可能性があるため、実行を止めてRegistryを修正する。
+
+トポロジカル順序が複数あることは正常である。同じ層のtaskに順番を付けたい場合はsoft orderを使い、
+単なる優先順位を必須依存へ昇格させない。
+
 ## taskを作る手順
 
 1. ユーザーの言葉から、期待する到達状態と今回の許可範囲を抽出する。
@@ -155,6 +179,9 @@ agentの適性は固定的な人格評価ではなく、実績で更新する。
 ## 新projectへの導入
 
 最初から大きな管理体系を作らない。次の順で導入する。
+
+開始時は[`PROGRESS_OVERVIEW_TEMPLATE.md`](PROGRESS_OVERVIEW_TEMPLATE.md)をコピーし、placeholderと
+例示taskを実projectの内容へ置き換える。
 
 1. 一つのRegistryと状態語を作る。
 2. 現在のgoalと、明示的に凍結する範囲を書く。

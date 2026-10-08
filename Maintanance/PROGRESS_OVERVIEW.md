@@ -22,11 +22,11 @@ Codexはsession開始時に、まずこの文書のTask Registryだけを読む�
 
 **現在の中間ゴール:**
 
-- 新しいconversationで、会話履歴に依存せず挨拶taskを選択・完了できる状態にする。
+- 公開API、契約、test根拠、必要な判断点を整理し、ユーザードキュメント作業へ渡せる状態にする。
 
 **後続の中間ゴール:**
 
-- 未設定
+- ユーザードキュメント作業後、1.0品質ゲートを実施し、1.0として採用できるか判断可能な状態にする。
 
 ### taskの型
 
@@ -55,6 +55,8 @@ soft orderは、同時に着手可能なtask間の推奨順であり、Task prec
 | `OPS-002` | `DONE` | Codex | [EXECUTION] task履歴の退避先を作る | 退避先fileと保存規則を作成し、Registryから参照可能にする | `Maintanance/Archived/PROGRESS_OVERVIEW_HISTORY.md` |
 | `GREET-001` | `DONE` | Codex | [EXECUTION] 次の新しいconversationで挨拶する | 新しいconversationの最初の応答で簡潔に挨拶し、この行を`DONE`へ更新する | `Maintanance/PROGRESS_OVERVIEW.md#greet-001` |
 | `OPS-001` | `DONE` | Codex | [EXECUTION] Task Registryのbootstrap | checklist、Registry、startup規則を実データ化し、既知の未完了作業を確認する | `Maintanance/PROGRESS_OVERVIEW.md#bootstrap-checklist` |
+| `DOC-001` | `FROZEN` | Codex | [DISCOVERY] GitHub Pagesによるユーザードキュメント公開方式を整理する | `DOC-002`完了後、ユーザーの明示的な再開指示を受け、必要な判断と後続taskを分離する | `Maintanance/PROGRESS_OVERVIEW.md#doc-001` |
+| `DOC-002` | `FROZEN` | Codex | [DISCOVERY] ユーザードキュメント方針の判断点を整理する | ユーザーの明示的な再開指示後、対象読者、範囲、構成、保守方法などの判断点を一判断ごとの後続taskへ分離する | `Maintanance/PROGRESS_OVERVIEW.md#doc-002` |
 
 ## Task precedence
 
@@ -63,6 +65,7 @@ soft orderは、同時に着手可能なtask間の推奨順であり、Task prec
 
 | 後続task | 前提task | 制約 |
 | --- | --- | --- |
+| `DOC-001` | `DOC-002` | ユーザードキュメント方針の判断点を整理した後に、GitHub Pagesでの公開方式を調査する |
 
 > 必須依存がなければ、見出しとtable headerを残してデータ行を空にする。
 
@@ -114,9 +117,25 @@ Codexは新しいsessionで次の順に再開する。
 
 - `develop/after2025/1`は次期releaseへ向けた開発branchである。
 - Task Registryのbootstrap、新しいconversation用の挨拶task、履歴退避先の作成は完了済み。
-- blockerや凍結はない。
+- ユーザードキュメント方針とGitHub Pages公開方式の調査は、明示的な再開指示まで凍結している。
 
 ## Task details
+
+### DOC-002
+
+- 目的: ユーザードキュメント方針の策定に必要な事実と判断点を整理する。
+- 対象範囲: 対象読者、扱うAPI、文書の範囲と構成、既存コメントとの役割分担、保守方法の調査。個別方針の決定や本文作成は含めない。
+- 状態: `FROZEN`。ユーザーの明示的な再開指示なしに着手しない。
+- 停止条件: 方針上の選択が必要になった場合は、agentが決めず、一判断ごとの`DECISION`候補として分離する。
+- 完了条件: 方針策定に必要な判断を重複なく整理し、独立した`DECISION`と、その結論を使う`EXECUTION`を提案できる。
+
+### DOC-001
+
+- 目的: GitHub Pagesによるユーザードキュメント公開に必要な事実、選択肢、判断点、後続taskを整理する。
+- 対象範囲: 現状の文書資産、Package構成、生成・配置・更新方式の調査。公開方式の決定や公開作業は含めない。
+- 状態: `FROZEN`。`DOC-002`の完了とユーザーの明示的な再開指示が揃うまで着手しない。
+- 停止条件: 文書形式、公開元、更新方法などの判断が必要になった場合は、一判断ごとの`DECISION`候補として分離する。
+- 完了条件: 確認した事実と選択肢を記録し、必要な`DECISION`と`EXECUTION`を独立した後続taskとして提案できる。
 
 ### GREET-001
 
