@@ -1,10 +1,10 @@
 # Quality Model Provisional Trials — Cross-Cutting Summary
 
-> **文書状態:** SegTree、DSU、FenwickTree、SCCGraphへの暫定適用を横断してレビューするための要約。品質要求の正本、品質アセスメント、製品判断、個別moduleの適合判定ではない。
+> **文書状態:** SegTree、DSU、FenwickTree、SCCGraph、ModIntへの暫定適用を横断してレビューするための要約。品質要求の正本、品質アセスメント、製品判断、個別moduleの適合判定ではない。
 >
 > **作成日:** 2026-10-13
 >
-> **レビュー反映:** 2026-10-14（比例性とinternal scopeの軽微な明確化）
+> **レビュー反映:** 2026-10-14（比例性とinternal scopeの明確化、ModInt暫定適用の追加）
 
 ## 1. 目的
 
@@ -23,6 +23,7 @@
 - `DSU_PROVISIONAL_MODEL_TRIAL.md`
 - `FENWICK_TREE_PROVISIONAL_MODEL_TRIAL.md`
 - `SCC_PROVISIONAL_MODEL_TRIAL.md`
+- `MODINT_PROVISIONAL_MODEL_TRIAL.md`
 
 各記録のcommit、環境、選択test、artifact、対象外、証拠限界は個別文書を正本とする。この要約へ実行証拠を複製しない。
 
@@ -34,8 +35,9 @@
 | DSU | 小さなAPI、Int storage、追加API、類似する別実装 | 単純な対象へ過剰な証拠量・管理負荷を課さないか |
 | FenwickTree | 小さなAPI、generic数値変換、overflow、本家testとの広い対応 | test成功とSwift固有不変条件を分けられるか |
 | SCCGraph | 小さな公開wrapper、内部algorithm、CSR、再帰DFS | 公開面が単純な対象で内部実行経路を落とさないか |
+| ModInt | static／dynamic型、型ごとの可変modulus、値の`Sendable`適合 | 値の受渡しと共有状態への操作安全性を分離できるか |
 
-この4対象は製品全体の代表標本ではない。文字列algorithm、flow、modint、convolution、consumer導入、Linux、競技提出などは直接扱っていない。
+この5対象は製品全体の代表標本ではない。文字列algorithm、flow、convolution、consumer導入、Linux、競技提出などは直接扱っていない。
 
 ## 4. 複数対象で維持された区分
 
@@ -63,6 +65,7 @@
 - DSU: Int固定storageのため要素寿命論点を縮小できる。
 - FenwickTree: 数値表現とgenericなゼロ初期化が加わる。
 - SCCGraph: 公開wrapperではなく内部CSRと再帰実行経路を見る必要がある。
+- ModInt: 値自身にpointerがなくても、型に属する可変modulusとconcurrencyを分ける必要がある。
 
 QR-04を維持する根拠候補は増えたが、共通checklistを全件へ課す根拠は得られていない。
 
@@ -124,12 +127,13 @@ Xcodeの一覧には `#if false` のtestも現れたため、列挙だけを実�
 - SegTreeのoperator、generic要素寿命、用途限定public API
 - DSUの `unite`、`reset`、`clone` とweighted別実装
 - FenwickTreeのgeneric文脈における `-1` によるゼロ初期化、bitPattern、対応数値型
-- SCCGraphのcomponent返却順、internal CSR、deep recursion
+- SCCGraphのcomponent返却順、internal CSR、deep recursion。Swift 6.4／macOS arm64の100,000頂点chainでは隔離実行が`SIGBUS`となったが、原因と保証境界は未確定
+- ModIntのdynamic modulus、既存値との時間的関係、concurrency境界
 - Swift 5.8.1向け各別実装の手動解放と提供上の位置づけ
 
 ## 7. 上位モデル修正候補
 
-今回の4適用から、QR-01〜QR-07の追加、削除、統合を必須とする反証は得られなかった。
+今回の5適用から、QR-01〜QR-07の追加、削除、統合を必須とする反証は得られなかった。
 
 レビュー対象になり得る修正候補は、要求項目の追加より次の適用原則である。
 
@@ -148,6 +152,7 @@ Xcodeの一覧には `#if false` のtestも現れたため、列挙だけを実�
 - Swift固有追加APIの採否と契約
 - assert、precondition、Release、`-Ounchecked`の保証境界
 - `@unchecked Sendable` の採用方針と根拠の置き場所
+- dynamic ModIntの可変modulusと`Sendable`を含むconcurrency契約
 - performance比較対象、workload、受入水準
 - Swift 5.8.1向けsource、ExtraTests、互換系列の提供上の位置づけ
 - QR-07の運用能力を製品品質要求へ含めるか
@@ -157,11 +162,12 @@ Xcodeの一覧には `#if false` のtestも現れたため、列挙だけを実�
 ## 9. まとめレビューで確認したいこと
 
 1. 個別記録が品質判定へ逸脱せず、観測、推定、未確認、候補を分離できているか。
-2. 4対象から比例性を候補として挙げることが過度な一般化になっていないか。
+2. 5対象から比例性を候補として挙げることが過度な一般化になっていないか。
 3. scope固定、内部実行経路、test状態の区別を上位モデルへ明記すべきか、下位試験原則へ置くべきか。
 4. QR-01〜QR-07に、統合可能な重複または分類できない関心が残るか。
-5. FenwickTreeのゼロ初期化とSCCGraphの再帰・CSRを独立した技術調査へ進める場合、その目的、scope、優先順位をどう定めるか。
-6. 次に別対象へ広げる情報価値があるか、ここで上位モデルと下位要求構造のレビューへ移るべきか。
+5. FenwickTreeのゼロ初期化、SCCGraphの再帰・CSR、ModIntの可変modulusを、個別技術調査と製品判断へどう接続するか。
+6. SCCGraphで観測した`SIGBUS`の原因調査と保証規模の判断を、どの優先度で扱うか。
+7. 次に別対象へ広げる情報価値があるか、ここで上位モデルと下位要求構造のレビューへ移るべきか。
 
 ## 10. 現時点の境界
 

@@ -31,4 +31,35 @@ final class EtcTests: XCTestCase {
       XCTAssertEqual(value(UInt128.self), .zero)
     }
   }
+
+  /// SCCGraphが呼出しごとに構築するCSRと、呼出し後の再利用可否の棚卸し候補。
+  /// 返却順や再利用を公開契約に含めるかは、この観測とは別に判断する。
+  func testInventorySCCRepeatedEvaluationAndMutationAfterEvaluation() {
+    var graph = SCCGraph(4)
+    graph.add_edge(0, 1)
+    graph.add_edge(1, 0)
+    graph.add_edge(2, 3)
+
+    let first = graph.scc()
+    XCTAssertEqual(graph.scc(), first)
+
+    graph.add_edge(3, 2)
+    let afterMutation = graph.scc()
+    XCTAssertEqual(afterMutation.count, 2)
+    XCTAssertTrue(afterMutation.contains([0, 1]))
+    XCTAssertTrue(afterMutation.contains([2, 3]))
+  }
+
+  /// Dynamic ModIntのmodulus変更前に生成した値が、変更後の演算でどう扱われるかの棚卸し候補。
+  /// 現在の挙動を望ましい公開契約として採用するtestではない。
+  func testInventoryDynamicModIntValueAcrossModulusChange() {
+    defer { mod_dynamic.reset() }
+
+    modint.set_mod(7)
+    let value = modint(6)
+
+    modint.set_mod(5)
+    XCTAssertEqual(value.val, 6)
+    XCTAssertEqual((value + modint(0)).val, 1)
+  }
 }
