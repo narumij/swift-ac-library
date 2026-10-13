@@ -106,7 +106,7 @@
 
 - 通常テストは、空・単一要素、更新、区間積、境界探索、naive実装との比較、`clone()` 後の独立性、要素生成closureを確認する。
 - 通常テストの不正入力試験は `Swift Testingで実施` としてskipされる。
-- macOSのDebug構成では、Swift Testingのprocess exit確認によるdeath testが条件付きで有効になる。
+- macOSで `DEATH_TEST` と `DEBUG` のcompile条件が有効な場合、Swift Testingのprocess exit確認によるdeath testが有効になる。今回の実行では対象testの列挙・成功から両条件が真だったと確認したが、configuration名と最適化levelは独立には固定できなかった。
 - `TopLevel` ターゲットは、operator定義を含む利用コードがトップレベルでコンパイルできることを確認する。
 - `SegTreeOperationTests.testExample` は型の構築のみを行う。
 - `SegTreeOperationTests.testPerformanceExample` の測定closureは空であり、性能特性を観測していない。
@@ -168,7 +168,8 @@ SegTreeでは、直接メモリ管理、`~Copyable`、明示的な `clone()`、`
 ただし、コードレビューだけでは次を確認済みとできない。
 
 - すべての初期化経路で全capacityの要素寿命が正しく開始・終了すること
-- throwingまたは早期終了を含む初期化経路の安全性
+- 各initializerで、初期化済み要素数とdeinitialize対象が一致すること
+- 初期化途中で正常完了しない経路が存在する場合、その経路で初期化済み要素が適切に破棄されること
 - `clone()` が任意の `S` で正しい独立性を持つこと
 - `@unchecked Sendable` を正当化する不変条件
 - concurrency domain間で値を受け渡す条件
@@ -218,10 +219,10 @@ SegTreeでは、直接メモリ管理、`~Copyable`、明示的な `clone()`、`
 
 ### 現時点で維持できた区分
 
-- QR-01とQR-02は重複するが代替関係ではなく、本家との差異とSwift側の自己契約を分けるために両方必要だった。
+- QR-01とQR-02は、本家との差異とSwift側の自己契約という別々の問いを扱った。今回の適用では、一方を他方へ統合できる根拠は得られなかった。
 - QR-03は計算量上の対応だけでは代替できず、実測性能を別に扱う必要があった。
 - QR-04は、正しい出力だけでは扱えない所有権、寿命、並行性、および構成差を受け持った。
-- QR-05とQR-06は、API説明と実際の導入・build可能性を分けるために両方必要だった。
+- QR-05とQR-06は、APIと保証境界の理解可能性と、実際の導入・build可能性という別々の問いを扱った。今回の適用では、一方を他方へ統合できる根拠は得られなかった。
 - QR-07の製品保守可能性と運用能力の区別は、分散した品質資産を扱う際に有効だった。
 
 ### 不足または分解が必要な候補
