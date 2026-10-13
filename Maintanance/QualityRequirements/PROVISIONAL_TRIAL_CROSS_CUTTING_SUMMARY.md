@@ -127,7 +127,7 @@ Xcodeの一覧には `#if false` のtestも現れたため、列挙だけを実�
 - SegTreeのoperator、generic要素寿命、用途限定public API
 - DSUの `unite`、`reset`、`clone` とweighted別実装
 - FenwickTreeのgeneric文脈における `-1` によるゼロ初期化、bitPattern、対応数値型
-- SCCGraphのcomponent返却順、internal CSR、deep recursion。Swift 6.4／macOS arm64の100,000頂点chainでは隔離実行が`SIGBUS`となったが、原因と保証境界は未確定
+- SCCGraphのcomponent返却順、internal CSR、deep recursion。Swift 6.4／macOS arm64のprocess-isolated chainでは850頂点が成功し875頂点が`SIGBUS`となったが、通常processとの差、原因、保証境界は未確定
 - ModIntのdynamic modulus、既存値との時間的関係、concurrency境界
 - Swift 5.8.1向け各別実装の手動解放と提供上の位置づけ
 

@@ -13,19 +13,99 @@
     }
 
     /// 再帰深さを本体processから隔離して観測するSCCGraphの棚卸し候補。
-    /// この規模の成功を、対応上限やstack安全性の保証へ読み替えない。
-    @Test(.disabled("2026-10-14のmacOS/arm64観測でSIGBUS。棚卸し時に実行条件と期待結果を判断する"))
-    func `SCCGraphの100000頂点chainが正常終了することを観測する`() async throws {
-      await #expect(processExitsWith: .success) {
-        let count = 100_000
-        var graph = SCCGraph(count)
-        for vertex in 0..<(count - 1) {
-          graph.add_edge(vertex, vertex + 1)
-        }
-        guard graph.scc().count == count else {
-          fatalError("unexpected component count")
-        }
+    /// 成功・失敗した規模を、対応上限やstack安全性の保証へ読み替えない。
+    private static func runSCCChain(_ count: Int) {
+      var graph = SCCGraph(count)
+      for vertex in 0..<(count - 1) {
+        graph.add_edge(vertex, vertex + 1)
       }
+      guard graph.scc().count == count else {
+        fatalError("unexpected component count")
+      }
+    }
+
+    @Test(.disabled("850頂点の代表probeで包含。2026-10-14に成功観測済み"))
+    func `SCCGraphの100頂点chainが正常終了することを観測する`() async {
+      await #expect(processExitsWith: .success) { Self.runSCCChain(100) }
+    }
+
+    @Test(.disabled("850頂点の代表probeで包含。2026-10-14に成功観測済み"))
+    func `SCCGraphの500頂点chainが正常終了することを観測する`() async {
+      await #expect(processExitsWith: .success) { Self.runSCCChain(500) }
+    }
+
+    @Test(.disabled("850頂点の代表probeで包含。2026-10-14に成功観測済み"))
+    func `SCCGraphの600頂点chainが正常終了することを観測する`() async {
+      await #expect(processExitsWith: .success) { Self.runSCCChain(600) }
+    }
+
+    @Test(.disabled("850頂点の代表probeで包含。2026-10-14に成功観測済み"))
+    func `SCCGraphの700頂点chainが正常終了することを観測する`() async {
+      await #expect(processExitsWith: .success) { Self.runSCCChain(700) }
+    }
+
+    @Test(.disabled("850頂点の代表probeで包含。2026-10-14に成功観測済み"))
+    func `SCCGraphの800頂点chainが正常終了することを観測する`() async {
+      await #expect(processExitsWith: .success) { Self.runSCCChain(800) }
+    }
+
+    @Test(.disabled("850頂点の代表probeで包含。2026-10-14に成功観測済み"))
+    func `SCCGraphの825頂点chainが正常終了することを観測する`() async {
+      await #expect(processExitsWith: .success) { Self.runSCCChain(825) }
+    }
+
+    @Test func `SCCGraphの850頂点chainが正常終了することを観測する`() async {
+      await #expect(processExitsWith: .success) { Self.runSCCChain(850) }
+    }
+
+    @Test(.disabled("2026-10-14のmacOS/arm64観測でSIGBUS"))
+    func `SCCGraphの875頂点chainが正常終了することを観測する`() async {
+      await #expect(processExitsWith: .success) { Self.runSCCChain(875) }
+    }
+
+    @Test(.disabled("2026-10-14のmacOS/arm64観測でSIGBUS"))
+    func `SCCGraphの900頂点chainが正常終了することを観測する`() async {
+      await #expect(processExitsWith: .success) { Self.runSCCChain(900) }
+    }
+
+    @Test(.disabled("2026-10-14のmacOS/arm64観測でSIGBUS"))
+    func `SCCGraphの1000頂点chainが正常終了することを観測する`() async {
+      await #expect(processExitsWith: .success) { Self.runSCCChain(1_000) }
+    }
+
+    @Test(.disabled("2026-10-14のmacOS/arm64観測でSIGBUS"))
+    func `SCCGraphの2500頂点chainが正常終了することを観測する`() async {
+      await #expect(processExitsWith: .success) { Self.runSCCChain(2_500) }
+    }
+
+    @Test(.disabled("2026-10-14のmacOS/arm64観測でSIGBUS"))
+    func `SCCGraphの5000頂点chainが正常終了することを観測する`() async {
+      await #expect(processExitsWith: .success) { Self.runSCCChain(5_000) }
+    }
+
+    @Test(.disabled("2026-10-14のmacOS/arm64観測でSIGBUS"))
+    func `SCCGraphの10000頂点chainが正常終了することを観測する`() async {
+      await #expect(processExitsWith: .success) { Self.runSCCChain(10_000) }
+    }
+
+    @Test(.disabled("2026-10-14のmacOS/arm64観測でSIGBUS"))
+    func `SCCGraphの25000頂点chainが正常終了することを観測する`() async {
+      await #expect(processExitsWith: .success) { Self.runSCCChain(25_000) }
+    }
+
+    @Test(.disabled("2026-10-14のmacOS/arm64観測でSIGBUS"))
+    func `SCCGraphの50000頂点chainが正常終了することを観測する`() async {
+      await #expect(processExitsWith: .success) { Self.runSCCChain(50_000) }
+    }
+
+    @Test(.disabled("2026-10-14のmacOS/arm64観測でSIGBUS"))
+    func `SCCGraphの75000頂点chainが正常終了することを観測する`() async {
+      await #expect(processExitsWith: .success) { Self.runSCCChain(75_000) }
+    }
+
+    @Test(.disabled("2026-10-14のmacOS/arm64観測でSIGBUS。棚卸し時に実行条件と期待結果を判断する"))
+    func `SCCGraphの100000頂点chainが正常終了することを観測する`() async {
+      await #expect(processExitsWith: .success) { Self.runSCCChain(100_000) }
     }
   }
 #endif

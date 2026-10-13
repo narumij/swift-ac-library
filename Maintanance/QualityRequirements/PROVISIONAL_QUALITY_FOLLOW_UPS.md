@@ -20,7 +20,7 @@
 | 対象 | 現在の反証・問い | 状態 |
 |---|---|---|
 | FenwickTree | genericな`-1`によるunsigned storage初期化 | Swift 6.4の対応4型でゼロを観測。設計理由と他構成は未確認 |
-| SCCGraph | 100,000頂点chainの再帰DFS | 隔離実行で`SIGBUS`。原因、境界、他環境は未確認 |
+| SCCGraph | chain形状の再帰DFS | 隔離実行で850成功、875失敗。原因、通常processとの差、他構成・環境は未確認 |
 | SCCGraph／CSR | 複数回評価と評価後の変更 | 小規模caseで成功。メモリ安全性全体は未検証 |
 | ModInt | dynamic modulusとconcurrency | modulus変更をまたぐ逐次挙動を観測。並行実験と契約は未実施 |
 
@@ -40,7 +40,8 @@
 
 - Fenwick generic literal test: active、選択実行成功
 - SCC repeated evaluation／mutation test: active、選択実行成功
-- SCC 100,000-chain isolation test: disabled、過去の選択実行で`SIGBUS`
+- SCC 850-chain isolation test: active、選択実行成功
+- SCCの小規模成功probeと875以上の失敗probe: disabled、観測結果を技術調査記録へ保存
 - Dynamic ModInt modulus-change test: active、選択実行成功
 - Death Testひな形: file自体を維持するためactive
 

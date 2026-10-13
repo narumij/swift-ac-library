@@ -44,6 +44,8 @@ internal実装は、公開上の保証が実質的に依存し、対象とする
 
 成功数、CI全体成功、test名、由来だけで契約適合を主張しない。失敗やsignalも、原因確定前に隠さず反証として保持する。
 
+test harnessとisolation方式も実行条件に含める。process-exit型のDeath Test、通常のtest runner、consumer executableでは、stackやresource条件が異なる可能性がある。一つのharnessで観測した成功上限または失敗境界を、製品の保証上限へ直接読み替えない。
+
 ## 6. 棚卸し用test
 
 契約上の位置づけが未決でも再現価値のあるtestは、通常観測を`Tests/AtCoderTests/EtcTests.swift`、process isolationを要する観測を`Tests/AtCoderTests/DeathTest.swift`へ置ける。
