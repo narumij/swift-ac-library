@@ -15,7 +15,7 @@ public struct DSU: ~Copyable {
 }
 
 extension DSU {
-  
+
   @inlinable
   var parent_or_size: UnsafeMutableBufferPointer<Int> {
     .init(start: payload, count: _n)
@@ -47,6 +47,18 @@ extension DSU {
     parent_or_size[x] += parent_or_size[y]
     parent_or_size[y] = x
     return x
+  }
+
+  @inlinable
+  public mutating func unite(_ a: Int, _ b: Int) -> Bool {
+    assert(0 <= a && a < _n)
+    assert(0 <= b && b < _n)
+    var (x, y) = (leader(a), leader(b))
+    if x == y { return false }
+    if -parent_or_size[x] < -parent_or_size[y] { swap(&x, &y) }
+    parent_or_size[x] += parent_or_size[y]
+    parent_or_size[y] = x
+    return true
   }
 
   @inlinable
@@ -92,9 +104,15 @@ extension DSU {
 
   @inlinable
   mutating func _leader(_ a: Int) -> Int {
-    if parent_or_size[a] < 0 { return a }
-    parent_or_size[a] = _leader(parent_or_size[a])
-    return parent_or_size[a]
+    var current = a
+    while parent_or_size[current] >= 0 {
+      let parent = parent_or_size[current]
+      if parent_or_size[parent] >= 0 {
+        parent_or_size[current] = parent_or_size[parent]
+      }
+      current = parent
+    }
+    return current
   }
 }
 
@@ -110,6 +128,14 @@ extension DSU {
   @inlinable
   public func clone() -> Self {
     return .init(other: self)
+  }
+}
+
+extension DSU {
+
+  @inlinable
+  public mutating func reset() {
+    parent_or_size.update(repeating: -1)
   }
 }
 
