@@ -10,11 +10,12 @@
 - `Tests/AtCoderTests`、`Tests/ExtraTests`、`Tests/TopLevel`と関連するsource・既存品質記録を読む。
 - 原則としてfileまたは同一根拠を持つtest群単位で分類する。
 - 必要ならmaintenance内に棚卸しdraftを作成する。
+- 既存の観測では失われる移植差異を再現する場合、通常観測は`EtcTests.swift`、process isolationを要する観測は`DeathTest.swift`へ、棚卸し用と明示した小さなprobeを追加できる。
 - `Maintanance/User/`の変更は観測・編集・commit対象から除外する。
 
 ## Out of scope
 
-- test、製品source、Package manifestの移動・削除・意味変更
+- 既存test、製品source、Package manifestの移動・削除・意味変更
 - 歴史的由来を内容対応だけから断定すること
 - test成功を品質適合または公開契約へ昇格すること
 - 製品基準版、保証範囲、受入条件の決定

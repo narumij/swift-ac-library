@@ -40,14 +40,30 @@
 | `deathTests/sccDeathTests.swift` | 本家Invalidの一条件と対応 | 不正edgeの異常終了 | 他の不正条件とRelease境界 |
 | `modintTests.swift` | 多数の同名・同内容test候補を限定照合 | static／dynamic演算、境界、constructor、Numeric | Swift overload、無効化block、stress skip、global state reset |
 | `deathTests/modintDeathTests.swift` | negative exponent条件の対応候補 | 異常終了 | inverse等の他事前条件、assert境界 |
+| `bitTests.swift` | 本家`bit_test.cpp`の3群とほぼ行単位で対応 | internal bit helperの例と境界 | 本家の最終入力`unsigned int max`がSwiftでは`CInt.max`相当になっている |
+| `two_satTests.swift` | Empty、One、Assign、StressOKが本家`twosat_test.cpp`と内容対応 | 基本解、unsatisfiable、randomized satisfiable scenario | AssignはSwift差異として無効化。stressはDEBUGで回数縮小しXCTest `measure`内で実行 |
 
 各群の正確な範囲と証拠限界は、対応する暫定モデル試験を正本とする。
+
+Bitは同じ固定commitの`test/unittest/bit_test.cpp`と追加照合した。`BitCeil`の全入力と、`CountrZero`／`CountrZeroConstexpr`のうち最終入力以外は対応する。本家の最終入力は`std::numeric_limits<unsigned int>::max()`である一方、Swiftは`CInt.max`または`UInt32(CInt.max)`を使う。通常の32-bit C型対応では、本家が`UInt32.max`相当、Swift testが`Int32.max`相当となる。
+
+この差異を埋める棚卸しtest `EtcTests/testInventoryBitCountrZeroAtUInt32Maximum()` を追加し、`UInt32.max`に対する通常版とconstexpr版がともに0を返すことをSwift 6.4で選択実行し、1件成功した。対象wrapperはdeprecatedなので、意図した直接観測で通常buildへ新しい警告を残さないようtest自身もdeprecated contextに置いた。この状態でtest discoveryと再実行成功を確認し、build warningは0件だった。これは現行実装の観測であり、元testの由来説明や対応toolchain全体の保証を自動的に確定しない。
+
+- upstream comparison: `https://raw.githubusercontent.com/atcoder/ac-library/864245a00b00dd008d1abfdc239618fdb7d139da/test/unittest/bit_test.cpp`
+- selected summary: `/var/folders/x9/2p70phpx3_xdvwx9s6gp35rm0000gn/T/ActionArtifacts/5BD4E566-73C1-4995-97F0-E905432444B7/RunSomeTests/632A5E6B-9368-40EB-BB40-A9E6559831E8.txt`
+- xcresult: `/var/folders/x9/2p70phpx3_xdvwx9s6gp35rm0000gn/T/ActionArtifacts/5BD4E566-73C1-4995-97F0-E905432444B7/RunSomeTests/Test-swift-ac-library-Package-2026.10.14_20-19-26-+0900.xcresult`
+- warning-free build log: `/var/folders/x9/2p70phpx3_xdvwx9s6gp35rm0000gn/T/ActionArtifacts/5BD4E566-73C1-4995-97F0-E905432444B7/BuildProject/BuildProject-Log-20261014-201839.txt`
+
+TwoSATも固定commitの`test/unittest/twosat_test.cpp`と追加照合した。EmptyとOneは操作・assertが対応し、AssignはC++の再代入をコメント保持したままSwiftに同じ演算子がないとして`#if false`になっている。Stressは生成方法と検査が対応するが、SwiftはDEBUGでphaseを1,000へ縮小し、全体をXCTest `measure`で囲む。
+
+Stressはrandomized correctnessを観測できる一方、乱数入力生成とassertを測定区間に含み、環境・seed・受入水準も固定していない。したがって現状では外部比較可能な性能証拠とは分類しない。
+
+- upstream comparison: `https://raw.githubusercontent.com/atcoder/ac-library/864245a00b00dd008d1abfdc239618fdb7d139da/test/unittest/twosat_test.cpp`
 
 ### 本家対応候補だが、今回まだ固定commit照合していない群
 
 | Test群 | 現在観測できる役割 | 由来の状態 | 棚卸し上の次の扱い |
 |---|---|---|---|
-| `bitTests.swift` | bit helperの例と境界 | 名前・構造から候補、未照合 | 小規模なので本家testとの対応確認が容易 |
 | `convolutionTests.swift` | 型別演算、境界、issue再現、stress、measure | 本家issue linkを含むが群全体は未照合 | issue由来、型移植差、性能wrapperを分ける |
 | `internalMathTests.swift` | barrett、prime、safe mod、inv gcd、primitive root等のinternal invariant | 未照合 | 2,000行超のため機能群単位で扱う |
 | `mathTests.swift` | pow、inverse、CRT、floor sumの公開動作・境界 | 未照合 | C++整数型移植とSwift `Int`追加を分ける |
@@ -56,7 +72,6 @@
 | `lazySegtreeStressTests.swift` | naive、maxRight、minLeftのstress | 未照合 | correctness stressとXCTest measureを分ける |
 | `maxFlowTests.swift` | 基本、cut、複数回、境界、self-loop、stress | 未照合 | 無効化Invalidとdeath test、measureを分ける |
 | `mincostflowTests.swift` | 基本、usage、self-loop、same-cost、stress、misc | 本家issue linkを一部含むが未照合 | 無効化Outrange／Invalidとdeath testを接続する |
-| `two_satTests.swift` | empty、single、stress | 未照合 | 無効化Assign、measureの品質上の意味を分ける |
 | 各対応death test | invalid-inputのprocess観測 | 通常fileの無効化testと対応するものがある | 条件ごとに通常testから移管済みか確認する |
 
 これらを一括して「本家由来」と表示しない。固定比較点との内容照合または履歴根拠を得るまでは、対応候補として扱う。
@@ -72,7 +87,7 @@
 | `EtcTests.swift` | Fenwick literal、SCC再利用、dynamic ModInt時間的挙動 | 明示的な棚卸し資産。契約決定後に昇格・移動・削除を判断 |
 | `DeathTest.swift` | Death Test雛形とSCC再帰境界probe | 850代表probe以外は観測結果付きdisabled。製品上限ではない |
 | `etc/etcTests.swift` | bit表現の小観測とskipされた変換性能実験 | 興味・実験由来候補。性能証拠ではない |
-| `etc/math.deprecated.swift` | test target内のdeprecated互換helper | testではなくfixture／互換補助source。現行必要性を別調査する |
+| `etc/math.deprecated.swift` | test target内のdeprecated互換helper | testではなくfixture／互換補助source。少なくとも`mathTests.testPowMod()`のC++型別名経路が`CLongLong, CLongLong, CInt` overloadへ依存する。残るgeneric helperの呼出し依存は未確定 |
 | `etc/CPPRange.swift` | C++風inclusive range helper | 移植test記述の補助。製品APIではない |
 | `etc/segtree_naive.swift` | 本家test fileへの出典コメントを持つnaive oracle | test oracleとしての役割と歴史的由来を区別する |
 | `util/math.swift`、`util/random.swift` | testデータ生成・oracle補助 | 製品品質ではなくtest妥当性へ影響するsupport code |
@@ -167,7 +182,7 @@ DSU、SCC、LazySegTree stress、MaxFlow、MinCostFlow、TwoSAT、Convolution、
 1. 常時skipの性能雛形が、将来計画、参考実験、削除候補のどれか。
 2. `#if false`のInvalidがDeath Testへ完全移管済みか。
 3. `SegTreeOperationTests`の空measureとassertを持たないexampleの現在の役割。
-4. `math.deprecated.swift`が現行testのcompileに必要か。`mathTests.swift`には対応する関数呼出しが多数あるが、製品側overloadとの解決結果まで未確認。
+4. `math.deprecated.swift`のgeneric `inv_mod`／`crt`と`CLongLong`版`floor_sum`が現行testのcompileに必要か。`pow_mod(CLongLong, CLongLong, CInt)`は`mathTests.testPowMod()`の型から必要と判断できるが、他のhelperはclass内の`Int`別名と製品側の完全一致overloadがあり、解決結果の独立確認まではしていない。
 5. `Tests/5.8.1`を何として保守するか。
 6. ExtraTestsの機能を製品候補として扱うか、実験保存に留めるか。
 

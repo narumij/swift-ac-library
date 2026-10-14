@@ -18,6 +18,16 @@ final class EtcTests: XCTestCase {
     try super.tearDownWithError()
   }
 
+  #if DEBUG
+    /// 本家bit testのunsigned int最大値に対し、現行移植testがInt32最大値を使う差異の棚卸し候補。
+    /// deprecated wrapper自体の移植境界を観測するため、このtestもdeprecated contextに置く。
+    @available(*, deprecated, message: "Inventory probe for deprecated ACL-compatible wrappers")
+    func testInventoryBitCountrZeroAtUInt32Maximum() {
+      XCTAssertEqual(_Internal.countr_zero(UInt32.max), 0)
+      XCTAssertEqual(_Internal.countr_zero_constexpr(UInt32.max), 0)
+    }
+  #endif
+
   /// FenwickTreeのstorage初期化で使われる非自明なgeneric integer literalの棚卸し候補。
   /// 製品契約の確定後、この言語挙動を実装不変条件として残すか判断する。
   func testInventoryFenwickGenericNegativeOneInitializesUnsignedStorageToZero() {
