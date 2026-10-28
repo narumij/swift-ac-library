@@ -1,0 +1,22 @@
+Registry Studio 0.1.0-rc.11
+
+目的: swift-ac-libraryへのStudio配置（ユーザー依頼 2026-10-28）。
+専用DB。swift-ac-libraryの文書・タスクを登録済み。他プロジェクトのデータは取り込まない。
+
+起動: リポジトリ直下から Maintanance/Studio/start.sh
+URL: http://127.0.0.1:8089/
+停止: 起動ターミナルでCtrl+C
+DB: Maintanance/Studio/data/registry.sqlite3
+CLI: Maintanance/Studio/registry doc ls
+待機: Maintanance/Studio/registry waiting wait --port 8089 --conversation UUID --seconds 30
+HTTP接続するCLIでは --port 8089 を明示する。
+既存swift-ac-collectionsの8088とは別サーバー・別DB。
+この配置にメンバー削除等の未リリース変更は含まれない。
+
+作業再開: Maintanance/Studio/work-status
+手順: Maintanance/Studio/WORK_ENTRY.md
+
+Migration to rc.12 / schema 46
+Backup: /Users/narumij/Documents/GitHub/swift-ac-library/Maintanance/Studio/backups/migration-46-20261028-225347
+Waiting now requires round progress-start --conversation ID; end with round progress-end.
+Rollback: stop Studio; preserve the current DB; restore backup registry.sqlite3, registry wrapper and generated directory together. Old rc.11 cannot open schema 46.
