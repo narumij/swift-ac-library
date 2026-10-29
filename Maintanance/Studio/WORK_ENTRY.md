@@ -32,7 +32,7 @@ ACTIVEの恒久タスクは整理の入口。完了対象の個別作業とは�
 
 追記は `Maintanance/Studio/registry doc append TASK-ID --actor CONVERSATION-UUID --lang ja --file RESULT_FILE`。まずファイルを書き終えてから実行する。共同編集時には `doc state` と `--expected-state` を使う。必要な権限がなければ勝手に自分へ付与しない。
 
-状態更新は `task apply --help` の既存経路を使い、現在のgenerationと既存値を確認する。DBへの直接SQL更新、独自採番はしない。不明な操作はヘルプを確認し、成功した書込みの再送に注意する。
+状態更新は `task apply --help` の既存経路を使い、`Maintanance/Studio/registry task generation` で現在のgenerationを取得し、既存値を確認する。DBへの直接SQL更新、独自採番はしない。不明な操作はヘルプを確認し、成功した書込みの再送に注意する。
 
 ## 接続先
 
