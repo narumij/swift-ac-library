@@ -10,6 +10,7 @@ var _settings: [SwiftSetting] =
   [
     .define("BENCHMARK", .when(traits: ["BENCHMARK"])),
     .define("TSAN_TEST", .when(traits: ["TSAN_TEST"])),
+    .define("ASAN_TEST", .when(traits: ["ASAN_TEST"])),
 
     .define("DEATH_TEST", .when(platforms: [.macOS, .linux])),
 
@@ -26,6 +27,10 @@ let package = Package(
       targets: ["AtCoder"])
   ],
   traits: [
+    .trait(
+      name: "ASAN_TEST",
+      description: "Run performance-measurement bodies once under Address Sanitizer."
+    ),
     .trait(
       name: "TSAN_TEST",
       description: "Exclude tests blocked by known Thread Sanitizer compiler crashes."

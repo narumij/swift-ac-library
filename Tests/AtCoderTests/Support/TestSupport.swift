@@ -6,13 +6,20 @@ import Testing
 enum LibraryTests {}
 
 // XCTest measure used ten iterations without a stored performance baseline.
-// Retain that workload and report elapsed time; this is not a timing assertion.
+// Usually retain that workload; this is not a timing assertion.
+// ASan checks memory safety rather than performance: execute every body once,
+// preserving its input sizes, inner stress loops and assertions.
 func measureRepeated(_ body: () -> Void) {
+  #if ASAN_TEST
+    let iterations = 1
+  #else
+    let iterations = 10
+  #endif
   let clock = ContinuousClock()
   let duration = clock.measure {
-    for _ in 0..<10 { body() }
+    for _ in 0..<iterations { body() }
   }
-  print("Ten iterations: \(duration)")
+  print("\(iterations) measurement iteration(s): \(duration)")
 }
 
 // Origin is independent of execution policy and performance measurement.
