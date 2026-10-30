@@ -1,4 +1,4 @@
-import XCTest
+import Testing
 
 #if DEBUG
   @testable import AtCoder
@@ -6,56 +6,62 @@ import XCTest
   import AtCoder
 #endif
 
-final class bitTests: XCTestCase {
+extension LibraryTests {
+  final class bitTests {
 
-  #if DEBUG
-    func testBitCeil() throws {
-      XCTAssertEqual(1, _Internal.bit_ceil(0))
-      XCTAssertEqual(1, _Internal.bit_ceil(1))
-      XCTAssertEqual(2, _Internal.bit_ceil(2))
-      XCTAssertEqual(4, _Internal.bit_ceil(3))
-      XCTAssertEqual(4, _Internal.bit_ceil(4))
-      XCTAssertEqual(8, _Internal.bit_ceil(5))
-      XCTAssertEqual(8, _Internal.bit_ceil(6))
-      XCTAssertEqual(8, _Internal.bit_ceil(7))
-      XCTAssertEqual(8, _Internal.bit_ceil(8))
-      XCTAssertEqual(16, _Internal.bit_ceil(9))
-      XCTAssertEqual(1 << 30, _Internal.bit_ceil(1 << 30))
-      XCTAssertEqual(1 << 31, _Internal.bit_ceil((1 << 30) + 1))
-      XCTAssertEqual(1 << 31, _Internal.bit_ceil((1 << 31) - 1))
-      XCTAssertEqual(1 << 31, _Internal.bit_ceil(1 << 31))
-    }
+    #if DEBUG
+      @Test(.tags(.aclPort))
+      func testBitCeil() throws {
+        #expect(1 == _Internal.bit_ceil(0))
+        #expect(1 == _Internal.bit_ceil(1))
+        #expect(2 == _Internal.bit_ceil(2))
+        #expect(4 == _Internal.bit_ceil(3))
+        #expect(4 == _Internal.bit_ceil(4))
+        #expect(8 == _Internal.bit_ceil(5))
+        #expect(8 == _Internal.bit_ceil(6))
+        #expect(8 == _Internal.bit_ceil(7))
+        #expect(8 == _Internal.bit_ceil(8))
+        #expect(16 == _Internal.bit_ceil(9))
+        #expect(1 << 30 == _Internal.bit_ceil(1 << 30))
+        #expect(1 << 31 == _Internal.bit_ceil((1 << 30) + 1))
+        #expect(1 << 31 == _Internal.bit_ceil((1 << 31) - 1))
+        #expect(1 << 31 == _Internal.bit_ceil(1 << 31))
+      }
 
-    func testCountrZero() throws {
-      XCTAssertEqual(0, _Internal.countr_zero(1))
-      XCTAssertEqual(1, _Internal.countr_zero(2))
-      XCTAssertEqual(0, _Internal.countr_zero(3))
-      XCTAssertEqual(2, _Internal.countr_zero(4))
-      XCTAssertEqual(0, _Internal.countr_zero(5))
-      XCTAssertEqual(1, _Internal.countr_zero(6))
-      XCTAssertEqual(0, _Internal.countr_zero(7))
-      XCTAssertEqual(3, _Internal.countr_zero(8))
-      XCTAssertEqual(0, _Internal.countr_zero(9))
-      XCTAssertEqual(30, _Internal.countr_zero(1 << 30))
-      XCTAssertEqual(0, _Internal.countr_zero((1 << 31) - 1))
-      XCTAssertEqual(31, _Internal.countr_zero(1 << 31))
-      XCTAssertEqual(0, _Internal.countr_zero(CInt.max))
-    }
+      @Test(.tags(.aclPort))
+      func testCountrZero() throws {
+        #expect(0 == _Internal.countr_zero(1))
+        #expect(1 == _Internal.countr_zero(2))
+        #expect(0 == _Internal.countr_zero(3))
+        #expect(2 == _Internal.countr_zero(4))
+        #expect(0 == _Internal.countr_zero(5))
+        #expect(1 == _Internal.countr_zero(6))
+        #expect(0 == _Internal.countr_zero(7))
+        #expect(3 == _Internal.countr_zero(8))
+        #expect(0 == _Internal.countr_zero(9))
+        #expect(30 == _Internal.countr_zero(1 << 30))
+        #expect(0 == _Internal.countr_zero((1 << 31) - 1))
+        #expect(31 == _Internal.countr_zero(1 << 31))
+        #expect(0 == _Internal.countr_zero(CInt.max))
+      }
 
-    func testCountrZeroConstexpr() throws {
-      XCTAssertEqual(0, _Internal.countr_zero_constexpr(1))
-      XCTAssertEqual(1, _Internal.countr_zero_constexpr(2))
-      XCTAssertEqual(0, _Internal.countr_zero_constexpr(3))
-      XCTAssertEqual(2, _Internal.countr_zero_constexpr(4))
-      XCTAssertEqual(0, _Internal.countr_zero_constexpr(5))
-      XCTAssertEqual(1, _Internal.countr_zero_constexpr(6))
-      XCTAssertEqual(0, _Internal.countr_zero_constexpr(7))
-      XCTAssertEqual(3, _Internal.countr_zero_constexpr(8))
-      XCTAssertEqual(0, _Internal.countr_zero_constexpr(9))
-      XCTAssertEqual(30, _Internal.countr_zero_constexpr(1 << 30))
-      XCTAssertEqual(0, _Internal.countr_zero_constexpr((1 << 31) - 1))
-      XCTAssertEqual(31, _Internal.countr_zero_constexpr(1 << 31))
-      XCTAssertEqual(0, _Internal.countr_zero_constexpr(UInt32(CInt.max)))
-    }
-  #endif
+      @Test(.tags(.aclPort))
+      func testCountrZeroConstexpr() throws {
+        #expect(0 == _Internal.countr_zero_constexpr(1))
+        #expect(1 == _Internal.countr_zero_constexpr(2))
+        #expect(0 == _Internal.countr_zero_constexpr(3))
+        #expect(2 == _Internal.countr_zero_constexpr(4))
+        #expect(0 == _Internal.countr_zero_constexpr(5))
+        #expect(1 == _Internal.countr_zero_constexpr(6))
+        #expect(0 == _Internal.countr_zero_constexpr(7))
+        #expect(3 == _Internal.countr_zero_constexpr(8))
+        #expect(0 == _Internal.countr_zero_constexpr(9))
+        #expect(30 == _Internal.countr_zero_constexpr(1 << 30))
+        #expect(0 == _Internal.countr_zero_constexpr((1 << 31) - 1))
+        #expect(31 == _Internal.countr_zero_constexpr(1 << 31))
+        #expect(0 == _Internal.countr_zero_constexpr(UInt32(CInt.max)))
+      }
+    #endif
+  }
+
 }

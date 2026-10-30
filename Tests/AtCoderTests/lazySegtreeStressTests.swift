@@ -1,5 +1,5 @@
 import Algorithms
-import XCTest
+import Testing
 
 #if DEBUG
   @testable import AtCoder
@@ -74,49 +74,124 @@ private enum param: LazySegTreeOperation {
 
 private typealias seg = LazySegTree<param>
 
-final class lazySegtreeStressTests: XCTestCase {
+extension LibraryTests {
+  final class lazySegtreeStressTests {
 
-  #if DEBUG
-    let (naive, right, left) = (300, 100, 100)
-  #else
-    let (naive, right, left) = (3000, 1000, 1000)
-  #endif
+    #if DEBUG
+      let (naive, right, left) = (300, 100, 100)
+    #else
+      let (naive, right, left) = (3000, 1000, 1000)
+    #endif
 
-  func testStressNaive() throws {
-    self.measure {
-      for n in 1 ..<= 30 {
-        for _ in 0..<10 {
-          var seg0 = seg(n)
-          var tm = time_manager(n)
-          for i in 0..<n {
-            seg0.set(i, S(i, i + 1, -1))
+    @Test(.tags(.aclPort))
+    func testStressNaive() throws {
+      measureRepeated {
+        for n in 1 ..<= 30 {
+          for _ in 0..<10 {
+            var seg0 = seg(n)
+            var tm = time_manager(n)
+            for i in 0..<n {
+              seg0.set(i, S(i, i + 1, -1))
+            }
+            var now = 0
+            for _ in 0..<naive {
+              let ty = randint(0, 3)
+              var l: Int
+              var r: Int
+              (l, r) = randpair(0, n)
+              if ty == 0 {
+                let res = seg0.prod(l, r)
+                #expect(l == res.l, "test 0")
+                #expect(r == res.r, "test 1")
+                #expect(tm.prod(l, r) == res.time, "test 2")
+              } else if ty == 1 {
+                let res = seg0.get(l)
+                #expect(l == res.l, "test 3")
+                #expect(l + 1 == res.r, "test 4")
+                #expect(tm.prod(l, l + 1) == res.time, "test 5")
+              } else if ty == 2 {
+                now += 1
+                seg0.apply(l, r, T(now))
+                tm.action(l, r, now)
+              } else if ty == 3 {
+                now += 1
+                seg0.apply(l, T(now))
+                tm.action(l, l + 1, now)
+              } else {
+                assert(false)
+              }
+            }
           }
-          var now = 0
-          for _ in 0..<naive {
-            let ty = randint(0, 3)
-            var l: Int
-            var r: Int
-            (l, r) = randpair(0, n)
-            if ty == 0 {
-              let res = seg0.prod(l, r)
-              XCTAssertEqual(l, res.l, "test 0")
-              XCTAssertEqual(r, res.r, "test 1")
-              XCTAssertEqual(tm.prod(l, r), res.time, "test 2")
-            } else if ty == 1 {
-              let res = seg0.get(l)
-              XCTAssertEqual(l, res.l, "test 3")
-              XCTAssertEqual(l + 1, res.r, "test 4")
-              XCTAssertEqual(tm.prod(l, l + 1), res.time, "test 5")
-            } else if ty == 2 {
-              now += 1
-              seg0.apply(l, r, T(now))
-              tm.action(l, r, now)
-            } else if ty == 3 {
-              now += 1
-              seg0.apply(l, T(now))
-              tm.action(l, l + 1, now)
-            } else {
-              assert(false)
+        }
+      }
+    }
+
+    @Test(.tags(.aclPort))
+    func testStressMaxRight() throws {
+      measureRepeated {
+        for n in 1 ..<= 30 {
+          for _ in 0..<10 {
+            var seg0 = seg(n)
+            var tm = time_manager(n)
+            for i in 0..<n {
+              seg0.set(i, S(i, i + 1, -1))
+            }
+            var now = 0
+            for _ in 0..<right {
+              let ty = randint(0, 2)
+              var l: Int
+              var r: Int
+              (l, r) = randpair(0, n)
+              if ty == 0 {
+                #expect(
+                  r
+                    == seg0.max_right(l) { s in
+                      if s.l == -1 { return true }
+                      assert(s.l == l)
+                      assert(s.time == tm.prod(l, s.r))
+                      return s.r <= r
+                    })
+              } else {
+                now += 1
+                seg0.apply(l, r, T(now))
+                tm.action(l, r, now)
+              }
+            }
+          }
+        }
+      }
+    }
+
+    @Test(.tags(.aclPort))
+    func testStressMinLeft() throws {
+      measureRepeated {
+        for n in 1 ..<= 30 {
+          for _ in 0..<10 {
+            var seg0 = seg(n)
+            var tm = time_manager(n)
+            for i in 0..<n {
+              seg0.set(i, S(i, i + 1, -1))
+            }
+            var now = 0
+            for _ in 0..<left {
+              let ty = randint(0, 2)
+              var l: Int
+              var r: Int
+              (l, r) = randpair(0, n)
+              if ty == 0 {
+                #expect(
+                  l
+                    == seg0.min_left(r) { s in
+                      if s.l == -1 { return true }
+                      assert(s.r == r)
+                      assert(s.time == tm.prod(s.l, r))
+                      return l <= s.l
+                    })
+              } else {
+                now += 1
+                seg0.apply(l, r, T(now))
+                tm.action(l, r, now)
+              }
             }
           }
         }
@@ -124,73 +199,4 @@ final class lazySegtreeStressTests: XCTestCase {
     }
   }
 
-  func testStressMaxRight() throws {
-    self.measure {
-      for n in 1 ..<= 30 {
-        for _ in 0..<10 {
-          var seg0 = seg(n)
-          var tm = time_manager(n)
-          for i in 0..<n {
-            seg0.set(i, S(i, i + 1, -1))
-          }
-          var now = 0
-          for _ in 0..<right {
-            let ty = randint(0, 2)
-            var l: Int
-            var r: Int
-            (l, r) = randpair(0, n)
-            if ty == 0 {
-              XCTAssertEqual(
-                r,
-                seg0.max_right(l) { s in
-                  if s.l == -1 { return true }
-                  assert(s.l == l)
-                  assert(s.time == tm.prod(l, s.r))
-                  return s.r <= r
-                })
-            } else {
-              now += 1
-              seg0.apply(l, r, T(now))
-              tm.action(l, r, now)
-            }
-          }
-        }
-      }
-    }
-  }
-
-  func testStressMinLeft() throws {
-    self.measure {
-      for n in 1 ..<= 30 {
-        for _ in 0..<10 {
-          var seg0 = seg(n)
-          var tm = time_manager(n)
-          for i in 0..<n {
-            seg0.set(i, S(i, i + 1, -1))
-          }
-          var now = 0
-          for _ in 0..<left {
-            let ty = randint(0, 2)
-            var l: Int
-            var r: Int
-            (l, r) = randpair(0, n)
-            if ty == 0 {
-              XCTAssertEqual(
-                l,
-                seg0.min_left(r) { s in
-                  if s.l == -1 { return true }
-                  assert(s.r == r)
-                  assert(s.time == tm.prod(s.l, r))
-                  return l <= s.l
-                })
-            } else {
-              now += 1
-              seg0.apply(l, r, T(now))
-              tm.action(l, r, now)
-            }
-          }
-        }
-      }
-    }
-  }
 }

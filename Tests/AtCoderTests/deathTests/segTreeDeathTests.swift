@@ -14,7 +14,7 @@
 
     typealias seg = SegTree<Operator>
 
-    @Test func testInvalid() async {
+    @Test(.tags(.aclPort)) func testInvalid() async {
       //  EXPECT_THROW(auto s = seg(-1), std::exception);
       await #expect(processExitsWith: .failure) {
         _ = seg(-1)

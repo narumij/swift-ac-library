@@ -12,7 +12,7 @@
 
   struct fenwickTreeDeathTests {
 
-    @Test func testInvalid() async {
+    @Test(.tags(.aclPort)) func testInvalid() async {
       //  EXPECT_THROW(auto s = fenwick_tree<int>(-1), std::exception);
       await #expect(processExitsWith: .failure) {
         _ = FenwickTree<Int>(-1)

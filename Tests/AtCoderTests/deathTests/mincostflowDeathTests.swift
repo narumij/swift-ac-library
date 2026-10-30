@@ -12,7 +12,7 @@
 
   struct mincostflowDeathTests {
 
-    @Test func testInvalid() async {
+    @Test(.tags(.aclPort)) func testInvalid() async {
       //  EXPECT_DEATH(g.add_edge(0, 0, -1, 0), ".*");
       await #expect(processExitsWith: .failure) {
         var g = mcf_graph<Int, Int>(count: 2)
@@ -25,7 +25,7 @@
       }
     }
 
-    @Test func testOutOfRange() async {
+    @Test(.tags(.aclPort)) func testOutOfRange() async {
       //  EXPECT_DEATH(g.slope(-1, 3), ".*");
       await #expect(processExitsWith: .failure) {
         var g = mcf_graph<Int, Int>(count: 10)

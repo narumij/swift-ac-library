@@ -1,4 +1,4 @@
-import XCTest
+import Testing
 
 #if DEBUG
   @testable import AtCoder
@@ -9,99 +9,124 @@ import XCTest
 //private typealias ll = CLongLong
 //private typealias ull = CUnsignedLongLong
 
-final class two_satTests: XCTestCase {
+extension LibraryTests {
+  final class two_satTests {
 
-  typealias two_sat = TwoSAT
+    typealias two_sat = TwoSAT
 
-  func testEmpty() throws {
-    var ts0 = two_sat()
-    XCTAssertTrue(ts0.satisfiable())
-    XCTAssertEqual([], ts0.answer())
-    var ts1 = two_sat(0)
-    XCTAssertTrue(ts1.satisfiable())
-    XCTAssertEqual([], ts1.answer())
-  }
-
-  func testOne() throws {
-    do {
-      var ts = two_sat(1)
-      ts.add_clause(0, true, 0, true)
-      ts.add_clause(0, false, 0, false)
-      XCTAssertFalse(ts.satisfiable())
+    @Test(.tags(.aclPort))
+    func testEmpty() throws {
+      var ts0 = two_sat()
+      do {
+        let result = ts0.satisfiable()
+        #expect(result)
+      }
+      #expect([] == ts0.answer())
+      var ts1 = two_sat(0)
+      do {
+        let result = ts1.satisfiable()
+        #expect(result)
+      }
+      #expect([] == ts1.answer())
     }
-    do {
-      var ts = two_sat(1)
-      ts.add_clause(0, true, 0, true)
-      XCTAssertTrue(ts.satisfiable())
-      XCTAssertEqual([true], ts.answer())
-    }
-    do {
-      var ts = two_sat(1)
-      ts.add_clause(0, false, 0, false)
-      XCTAssertTrue(ts.satisfiable())
-      XCTAssertEqual([false], ts.answer())
-    }
-  }
 
-  #if false
-    func testAssign() throws {
-      throw XCTSkip("代入のオーバーロードはSwiftにはない。")
-      /*
-         two_sat ts;
-         ts = two_sat(10);
-         */
+    @Test(.tags(.aclPort))
+    func testOne() throws {
+      do {
+        var ts = two_sat(1)
+        ts.add_clause(0, true, 0, true)
+        ts.add_clause(0, false, 0, false)
+        do {
+          let result = !ts.satisfiable()
+          #expect(result)
+        }
+      }
+      do {
+        var ts = two_sat(1)
+        ts.add_clause(0, true, 0, true)
+        do {
+          let result = ts.satisfiable()
+          #expect(result)
+        }
+        #expect([true] == ts.answer())
+      }
+      do {
+        var ts = two_sat(1)
+        ts.add_clause(0, false, 0, false)
+        do {
+          let result = ts.satisfiable()
+          #expect(result)
+        }
+        #expect([false] == ts.answer())
+      }
     }
-  #endif
 
-  func testStress() throws {
-    // This is an example of a performance test case.
-    #if DEBUG
-      let phases = 1000
-    #else
-      let phases = 10000
+    #if false
+      @Test(.tags(.aclPort))
+      func testAssign() throws {
+        return  // Previously skipped: "代入のオーバーロードはSwiftにはない。"
+        /*
+           two_sat ts;
+           ts = two_sat(10);
+           */
+      }
     #endif
-    self.measure {
-      for _ /* phase */ in 0..<phases {
-        let n = randint(1, 20)
-        let m = randint(1, 100)
-        var expect = [Bool](repeating: false, count: n)
-        for i in 0..<n {
-          expect[i] = randbool()
-        }
-        var ts = two_sat(n)
-        var xs = [Int](repeating: 0, count: m)
-        var ys = [Int](repeating: 0, count: m)
-        var types = [Int](repeating: 0, count: m)
-        for i in 0..<m {
-          let x = randint(0, n - 1)
-          let y = randint(0, n - 1)
-          let type = randint(0, 2)
-          xs[i] = x
-          ys[i] = y
-          types[i] = type
-          if type == 0 {
-            ts.add_clause(x, expect[x], y, expect[y])
-          } else if type == 1 {
-            ts.add_clause(x, !expect[x], y, expect[y])
-          } else {
-            ts.add_clause(x, expect[x], y, !expect[y])
+
+    @Test(.tags(.aclPort))
+    func testStress() throws {
+      // This is an example of a performance test case.
+      #if DEBUG
+        let phases = 1000
+      #else
+        let phases = 10000
+      #endif
+      measureRepeated {
+        for _ /* phase */ in 0..<phases {
+          let n = randint(1, 20)
+          let m = randint(1, 100)
+          var expect = [Bool](repeating: false, count: n)
+          for i in 0..<n {
+            expect[i] = randbool()
           }
-        }
-        XCTAssertTrue(ts.satisfiable())
-        let actual = ts.answer()
-        for i in 0..<m {
-          let x = xs[i]
-          let y = ys[i]
-          let type = types[i]
-          if type == 0 {
-            XCTAssertTrue(actual[x] == expect[x] || actual[y] == expect[y])
-          } else if type == 1 {
-            XCTAssertTrue(actual[x] != expect[x] || actual[y] == expect[y])
-          } else {
-            XCTAssertTrue(actual[x] == expect[x] || actual[y] != expect[y])
+          var ts = two_sat(n)
+          var xs = [Int](repeating: 0, count: m)
+          var ys = [Int](repeating: 0, count: m)
+          var types = [Int](repeating: 0, count: m)
+          for i in 0..<m {
+            let x = randint(0, n - 1)
+            let y = randint(0, n - 1)
+            let type = randint(0, 2)
+            xs[i] = x
+            ys[i] = y
+            types[i] = type
+            if type == 0 {
+              ts.add_clause(x, expect[x], y, expect[y])
+            } else if type == 1 {
+              ts.add_clause(x, !expect[x], y, expect[y])
+            } else {
+              ts.add_clause(x, expect[x], y, !expect[y])
+            }
+          }
+          do {
+            let result = ts.satisfiable()
+            #expect(result)
+          }
+          let actual = ts.answer()
+          for i in 0..<m {
+            let x = xs[i]
+            let y = ys[i]
+            let type = types[i]
+            if type == 0 {
+              #expect(actual[x] == expect[x] || actual[y] == expect[y])
+            } else if type == 1 {
+              #expect(actual[x] != expect[x] || actual[y] == expect[y])
+            } else {
+              #expect(actual[x] == expect[x] || actual[y] != expect[y])
+            }
           }
         }
       }
     }
   }
+
 }

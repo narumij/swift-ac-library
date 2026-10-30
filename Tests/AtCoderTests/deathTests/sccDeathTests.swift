@@ -12,7 +12,7 @@
 
   struct sccDeathTests {
 
-    @Test func testInvalid() async {
+    @Test(.tags(.aclPort)) func testInvalid() async {
       // EXPECT_DEATH(graph.add_edge(0, 10), ".*");
       await #expect(processExitsWith: .failure) {
         var graph = SCCGraph(2)
