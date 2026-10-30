@@ -14,7 +14,6 @@
 
 - [英語APIドキュメント（DocC）](https://narumij.github.io/swift-ac-library/documentation/atcoder/)
 - [日本語ガイド](Documentation/ja/README.md)
-- [英語ガイドの原稿](Sources/AtCoder/AtCoder.docc/AtCoder.md)
 
 Swiftでの使い方・制約・計算量・使用例をまとめています。
 同梱ガイドは同じソースの版に対応し、公開サイトはmainに追従します。
@@ -66,19 +65,6 @@ import AtCoder
 `compatible/AtCoder/2025` は AtCoder 2025 との互換性を維持しながら、ドキュメント補強、deprecated 指定、注意喚起の追加などの保守を行うブランチです。
 
 `main` は次期リリースに向けた開発ブランチです。
-
----
-
-## アンダースコア付き宣言について
-
-「アンダースコア付き宣言」は、完全修飾名のどこかにアンダースコア (`_`) で始まる部分が含まれる宣言のことを指します。たとえば、以下のような名前は技術的に `public` として宣言されていても、パブリックAPIには含まれません：
-
-- `FooModule.Bar._someMember(value:)`（アンダースコア付きのメンバー）
-- `FooModule._Bar.someMember`（アンダースコア付きの型）
-- `_FooModule.Bar`（アンダースコア付きのモジュール）
-- `FooModule.Bar.init(_value:)`（アンダースコア付きの引数を持つイニシャライザ）
-
-さらに、コードベース全般についても同様に、互換性が保証されることは期待しないでください。これらの宣言は必要に応じて変更される可能性があり、非互換な修正が加えられる場合があります。
 
 ## 関連
 
