@@ -1,3 +1,8 @@
+// TODO: TSanのコンパイラ停止解消後にこの条件を外す。重み付きDSUの
+// noncopyable型とbuffer経由の更新でInvalid bitcastが発生する。
+// Linux Swift 6.4.2のCI、macOS Swift 6.4の単独コンパイルで観測。
+// 通常・ASanでは引き続き実装とテストを有効にする（OPS-011）。
+#if !TSAN_TEST
 // 重み付き
 // https://atcoder.jp/contests/abc328/submissions/76866930
 
@@ -128,3 +133,5 @@ extension DSU {
 }
 
 extension DSU: @unchecked Sendable {}
+
+#endif

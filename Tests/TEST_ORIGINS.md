@@ -258,7 +258,9 @@ AtCoder DocC build. Pull requests targeting `main` or `compatible/AtCoder/2025`,
 pushes to those branches, and manual dispatches run these checks.
 Sanitizer failures are not allowed to pass silently; logs are uploaded even on
 failure. ASan leak detection is disabled, matching the collections CI, so this is
-not a leak-checking job. No tests are excluded by the workflow. A successful
+not a leak-checking job. `TSAN_TEST` excludes the additional weighted DSU implementation and its tests
+from TSan builds because they trigger a compiler crash (Invalid bitcast).
+Normal and ASan builds retain them. The additional Fenwick tree remains enabled. A successful
 serial test run does not establish that shared library state is thread-safe.
 
 Documentation archives are available as workflow artifacts. Only a push to

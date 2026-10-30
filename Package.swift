@@ -9,6 +9,7 @@ var defines: [String] = []
 var _settings: [SwiftSetting] =
   [
     .define("BENCHMARK", .when(traits: ["BENCHMARK"])),
+    .define("TSAN_TEST", .when(traits: ["TSAN_TEST"])),
 
     .define("DEATH_TEST", .when(platforms: [.macOS, .linux])),
 
@@ -25,6 +26,10 @@ let package = Package(
       targets: ["AtCoder"])
   ],
   traits: [
+    .trait(
+      name: "TSAN_TEST",
+      description: "Exclude tests blocked by known Thread Sanitizer compiler crashes."
+    ),
     .trait(
       name: "BENCHMARK"
     ),

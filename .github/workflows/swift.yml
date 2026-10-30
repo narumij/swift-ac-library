@@ -52,7 +52,11 @@ jobs:
           swift --version | tee sanitizer-logs/environment.log
           uname -a | tee -a sanitizer-logs/environment.log
           set -o pipefail
-          swift test -c ${{ matrix.configuration }} \
+          extra_args=()
+          if [[ "${{ matrix.sanitizer }}" == "thread" ]]; then
+            extra_args+=(--traits TSAN_TEST)
+          fi
+          swift test -c ${{ matrix.configuration }} "${extra_args[@]}" \
             --sanitize ${{ matrix.sanitizer }} --build-system native \
             2>&1 | tee sanitizer-logs/full-console.log
       - name: Upload sanitizer diagnostics
