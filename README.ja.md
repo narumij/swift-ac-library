@@ -14,7 +14,6 @@
 
 - [英語APIドキュメント（DocC）](https://narumij.github.io/swift-ac-library/documentation/atcoder/)
 - [日本語ガイド](Documentation/ja/README.md)
-- [英語ガイドの原稿](Sources/AtCoder/AtCoder.docc/AtCoder.md)
 
 Swiftでの使い方・制約・計算量・使用例をまとめています。
 同梱ガイドは同じソースの版に対応し、公開サイトはmainに追従します。

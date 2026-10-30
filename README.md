@@ -12,7 +12,6 @@ A Swift port of [AC(AtCoder) Library][ac-library], the competitive programming l
 ## Documentation
 
 - [English API documentation (DocC)](https://narumij.github.io/swift-ac-library/documentation/atcoder/)
-- [English guide sources](Sources/AtCoder/AtCoder.docc/AtCoder.md)
 - [Japanese guide](Documentation/ja/README.md)
 
 These guides cover Swift usage, constraints, complexity and examples. The
