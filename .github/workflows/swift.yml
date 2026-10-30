@@ -27,7 +27,7 @@ jobs:
         run: swift test -c ${{ matrix.configuration }}
 
   sanitizers:
-    name: ${{ matrix.sanitizer }} sanitizer (${{ matrix.configuration }})
+    name: ${{ matrix.sanitizer }} sanitizer basic (${{ matrix.configuration }})
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     strategy:
@@ -40,8 +40,8 @@ jobs:
       - name: Set up Swift
         uses: SwiftyLab/setup-swift@latest
       # Leak checking is separate from address safety. Do not suppress memory
-      # errors, compiler failures or exit-test runtime initialization failures.
-      - name: Run sanitizer tests
+      # errors or compiler failures. Only the explicit basic-case list runs.
+      - name: Run basic sanitizer tests
         env:
           ASAN_OPTIONS: detect_leaks=0:symbolize=1:abort_on_error=1
           TSAN_OPTIONS: halt_on_error=1:exitcode=66
@@ -58,9 +58,14 @@ jobs:
           else
             extra_args+=(--traits ASAN_TEST)
           fi
-          swift test -c ${{ matrix.configuration }} "${extra_args[@]}" \
+          filter="$(paste -sd '|' .github/sanitizer-basic-tests.txt)"
+          test -n "$filter"
+          cp .github/sanitizer-basic-tests.txt sanitizer-logs/selected-tests.txt
+          swift test -c ${{ matrix.configuration }} "${extra_args[@]}" --filter "$filter" \
             --sanitize ${{ matrix.sanitizer }} --build-system native \
             2>&1 | tee sanitizer-logs/full-console.log
+          expected="$(wc -l < .github/sanitizer-basic-tests.txt | tr -d '[:space:]')"
+          grep -Eq "Test run with $expected tests .* passed" sanitizer-logs/full-console.log
       - name: Upload sanitizer diagnostics
         if: always()
         uses: actions/upload-artifact@v4

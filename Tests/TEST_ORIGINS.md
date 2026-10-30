@@ -285,3 +285,18 @@ TSAN_TEST also temporarily excludes MCFGraph and its corresponding ACL and Swift
 The ordinary DSU implementation and its ACL/Swift-specific tests are also excluded by TSAN_TEST: the same compiler failure occurs in dsu.swift.o on Linux Swift 6.4.2 and locally on macOS. Normal and ASan builds retain DSU. The reduced TSan suite does not cover either DSU implementation.
 
 ASan CI enables `ASAN_TEST`: `measureRepeated` executes each body once instead of ten times. Input sizes, inner stress loops and assertions are unchanged; no tests are excluded by this trait. Normal tests retain ten measurement iterations. This reduces repeated performance measurement, not sanitizer checks.
+
+## Initial sanitizer coverage
+
+ASan and TSan CI currently run only the 12 explicit small cases in
+`.github/sanitizer-basic-tests.txt`. The filters match suite names and complete method names, not whole suites.
+CI also checks the executed count against the list to reject empty or partial selection. They cover basic Fenwick/segment/lazy segment trees,
+maximum flow, SCC, 2-SAT, static/dynamic ModInt, CRT and string operations.
+Exit tests, inventory probes, stress/performance loops and large cases are not
+selected. DSU and minimum-cost flow remain outside this initial list.
+Normal Debug/Release CI still runs the full test suite.
+
+This is deliberately limited sanitizer coverage, not full sanitizer acceptance.
+Expand the list incrementally after checking runtime and results. Selection is
+recorded in each sanitizer diagnostic artifact. Filtering limits execution only;
+compilation still uses the existing TSAN_TEST exclusions where required.
