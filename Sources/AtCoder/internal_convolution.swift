@@ -21,6 +21,7 @@ extension _Internal {
   @usableFromInline
   enum __static_const_fft_info {
 
+    #if false
     @usableFromInline
     nonisolated(unsafe)
       static var cache: [UInt: __cached_fft_info] = [:]
@@ -52,6 +53,40 @@ extension _Internal {
       cache[MOD.umod] = info
       return info as! fft_info<MOD>
     }
+    #else
+    // 同じ法の値でもgeneric引数の型は別。既定値とキャッシュは型で識別する。
+    @usableFromInline
+    nonisolated(unsafe)
+      static var cache: [ObjectIdentifier: __cached_fft_info] = [:]
+
+    @inlinable
+    static func info<MOD: static_mod>(_ t: MOD.Type) -> fft_info<MOD> {
+
+      if MOD.self == mod_998_244_353.self {
+        return fft_info_998_244_353 as! fft_info<MOD>
+      }
+
+      if MOD.self == mod_754_974_721.self {
+        return fft_info_754_974_721 as! fft_info<MOD>
+      }
+
+      if MOD.self == mod_167_772_161.self {
+        return fft_info_167_772_161 as! fft_info<MOD>
+      }
+
+      if MOD.self == mod_469_762_049.self {
+        return fft_info_469_762_049 as! fft_info<MOD>
+      }
+
+      if let cached = cache[ObjectIdentifier(MOD.self)] {
+        return cached as! fft_info<MOD>
+      }
+
+      let info: __cached_fft_info = _Internal.fft_info<MOD>()
+      cache[ObjectIdentifier(MOD.self)] = info
+      return info as! fft_info<MOD>
+    }
+    #endif
   }
 }
 

@@ -9,3 +9,9 @@ DerivedData/
 .netrc
 Package.resolved
 .swift-version
+
+# Private maintenance workspace; versioned by its own local Git repository.
+/Maintanance/
+
+# Local CI artifacts and diagnostic downloads.
+/artifacts/

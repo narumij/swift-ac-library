@@ -9,8 +9,10 @@ var defines: [String] = []
 var _settings: [SwiftSetting] =
   [
     .define("BENCHMARK", .when(traits: ["BENCHMARK"])),
+    .define("TSAN_TEST", .when(traits: ["TSAN_TEST"])),
+    .define("ASAN_TEST", .when(traits: ["ASAN_TEST"])),
 
-    .define("DEATH_TEST", .when(platforms: [.macOS])),
+    .define("DEATH_TEST", .when(platforms: [.macOS, .linux])),
 
     .unsafeFlags(["-Ounchecked"], .when(configuration: .release, traits: ["_O_UNCHECKED"])),
 
@@ -26,6 +28,14 @@ let package = Package(
   ],
   traits: [
     .trait(
+      name: "ASAN_TEST",
+      description: "Run performance-measurement bodies once under Address Sanitizer."
+    ),
+    .trait(
+      name: "TSAN_TEST",
+      description: "Exclude tests blocked by known Thread Sanitizer compiler crashes."
+    ),
+    .trait(
       name: "BENCHMARK"
     ),
     .trait(
@@ -33,6 +43,9 @@ let package = Package(
     ),
   ],
   dependencies: [
+    .package(
+      url: "https://github.com/swiftlang/swift-docc-plugin",
+      from: "1.4.1"),
     .package(
       url: "https://github.com/apple/swift-algorithms",
       from: "1.2.1"),
@@ -62,6 +75,11 @@ let package = Package(
         .product(name: "Algorithms", package: "swift-algorithms"),
         .product(name: "Numerics", package: "swift-numerics"),
         .product(name: "BigInt", package: "BigInt"),
+      ],
+      swiftSettings: _settings),
+    .testTarget(
+      name: "ExtraTests",
+      dependencies: [
       ],
       swiftSettings: _settings),
     .executableTarget(

@@ -7,7 +7,6 @@ public protocol SegTreeOperator {
 }
 
 public protocol SegTreeOperation: SegTreeOperator {
-  associatedtype S
   associatedtype Op where Op == @Sendable (S, S) -> S
   static var op: Op { get }
   static var e: S { get }
