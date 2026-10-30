@@ -126,6 +126,14 @@ extension LibraryTests {
 
     typealias seg = SegTree<Operator>
 
+    // A sanitizer runtime startup failure must not count as an expected trap.
+    @Test(.tags(.swiftSpecific)) func testChildProcessStartup() async {
+      await #expect(processExitsWith: .success) {
+        let s = seg(10)
+        _ = s.get(0)
+      }
+    }
+
     @Test(.tags(.aclPort)) func testInvalid() async {
       //  EXPECT_THROW(auto s = seg(-1), std::exception);
       await #expect(processExitsWith: .failure) {

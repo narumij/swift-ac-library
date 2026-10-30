@@ -74,6 +74,61 @@ jobs:
           path: sanitizer-logs
           if-no-files-found: warn
 
+  sanitizer-exit-tests:
+    name: ${{ matrix.sanitizer }} exit tests (first half, debug)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        sanitizer: [address, thread]
+    env:
+      ASAN_OPTIONS: detect_leaks=0:symbolize=1:abort_on_error=1
+      TSAN_OPTIONS: halt_on_error=1:exitcode=66
+      SWIFT_BACKTRACE: enable=yes
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Swift
+        uses: SwiftyLab/setup-swift@latest
+      - name: Build exit tests
+        shell: bash
+        run: |
+          mkdir -p exit-test-logs
+          set -o pipefail
+          swift --version | tee exit-test-logs/environment.log
+          trait=ASAN_TEST
+          if [[ "${{ matrix.sanitizer }}" == "thread" ]]; then trait=TSAN_TEST; fi
+          echo "SANITIZER_TRAIT=$trait" >> "$GITHUB_ENV"
+          swift build --build-tests -c debug --build-system native \
+            --sanitize ${{ matrix.sanitizer }} --traits "$trait" \
+            2>&1 | tee exit-test-logs/build.log
+      - name: Check child process startup
+        shell: bash
+        run: |
+          set -o pipefail
+          timeout --kill-after=10s 120s swift test --skip-build -c debug --build-system native \
+            --sanitize ${{ matrix.sanitizer }} --traits "$SANITIZER_TRAIT" \
+            --filter 'segTreeDeathTests.*testChildProcessStartup' \
+            2>&1 | tee exit-test-logs/startup.log
+          grep -Eq 'Test run with 1 test .* passed' exit-test-logs/startup.log
+      - name: Run first half of exit-test suites
+        shell: bash
+        run: |
+          set -o pipefail
+          # Four of eight suites. Keep inventory, SCC, ModInt and minimum-cost flow out for now.
+          timeout --kill-after=10s 120s swift test --skip-build -c debug --build-system native \
+            --sanitize ${{ matrix.sanitizer }} --traits "$SANITIZER_TRAIT" \
+            --filter '(segTreeDeathTests|lazySegTreeDeathTests|fenwickTreeDeathTests|maxflowDeathTests).*testInvalid' \
+            2>&1 | tee exit-test-logs/first-half.log
+          grep -Eq 'Test run with 4 tests .* passed' exit-test-logs/first-half.log
+      - name: Upload exit-test diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.sanitizer }}-exit-first-half-diagnostics
+          path: exit-test-logs
+          if-no-files-found: warn
+
   documentation:
     name: Documentation build
     runs-on: ubuntu-24.04

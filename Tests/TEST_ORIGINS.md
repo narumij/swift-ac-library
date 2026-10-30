@@ -306,3 +306,13 @@ single-element inputs, segment-tree clone independence, 20-element Fenwick
 range sums, maximum-flow cut/repeated-flow/boundary/self-loop checks, SCC
 self-loops, unsigned ModInt conversion and a modulus-one inverse case.
 No exit tests, large inputs or stress/performance loops were restored.
+
+## Exit tests: first half
+
+A separate Debug sanitizer job restores four of the eight exit-test suites:
+SegTree, LazySegTree, FenwickTree and maximum flow. Inventory, SCC, ModInt and
+minimum-cost flow remain excluded. Release does not run these DEBUG-only tests.
+A successful child-process startup probe runs first; only then do the four
+invalid-input tests run. Both execution steps have a 120-second timeout plus
+a 10-second forced-stop grace period, separate from compilation. Logs are
+uploaded on failure. Split the failing half again if it hangs.
