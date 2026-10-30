@@ -288,17 +288,18 @@ ASan CI enables `ASAN_TEST`: `measureRepeated` executes each body once instead o
 
 ## Current sanitizer coverage
 
-TSan Debug and Release run all available in-process tests, including stress and
+ASan and TSan Debug and Release run all available in-process tests, including stress and
 performance cases, with `--skip 'DeathTests'`. All child-process tests, including
 the successful-startup probe and inventory probes, are in suites whose names
 contain `DeathTests`. Existing disabled tests and the TSAN_TEST compiler-crash
 exclusions (both DSU implementations and minimum-cost flow) remain unchanged.
 
-ASan remains limited to the 32 small cases in
-`.github/sanitizer-basic-tests.txt`. CI checks that all 32 ran successfully.
-TSan checks for a nonempty successful test run. Both jobs record their selection
-and full output in diagnostic artifacts. Restored TSan coverage is awaiting CI;
-local tests are not run at the user's request.
+Both sanitizers check for a nonempty successful test run and record their
+selection and full output in diagnostic artifacts. TSan Debug and Release
+completed successfully in CI according to the user's report. Expanded ASan
+coverage is awaiting CI; local tests are not run at the user's request.
+ASan includes both DSU implementations and minimum-cost flow, which remain
+excluded only from TSan. Its existing ASAN_TEST repetition reduction is retained.
 
 The first and second exit-test trials did not establish successful sanitizer
 coverage. Separate sanitizer exit jobs have been removed; normal Debug CI still

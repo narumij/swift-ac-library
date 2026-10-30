@@ -40,7 +40,7 @@ jobs:
       - name: Set up Swift
         uses: SwiftyLab/setup-swift@latest
       # Leak checking is separate from address safety. Do not suppress memory
-      # errors or compiler failures. TSan excludes child-process tests; ASan stays basic.
+      # errors or compiler failures. Both sanitizers exclude child-process tests.
       - name: Run sanitizer tests
         env:
           ASAN_OPTIONS: detect_leaks=0:symbolize=1:abort_on_error=1
@@ -52,25 +52,17 @@ jobs:
           swift --version | tee sanitizer-logs/environment.log
           uname -a | tee -a sanitizer-logs/environment.log
           set -o pipefail
-          extra_args=()
+          extra_args=(--skip 'DeathTests')
           if [[ "${{ matrix.sanitizer }}" == "thread" ]]; then
-            extra_args+=(--traits TSAN_TEST --skip 'DeathTests')
-            echo 'All available tests except DeathTests (child processes)' > sanitizer-logs/selected-tests.txt
+            extra_args+=(--traits TSAN_TEST)
           else
-            filter="$(paste -sd '|' .github/sanitizer-basic-tests.txt)"
-            test -n "$filter"
-            extra_args+=(--traits ASAN_TEST --filter "$filter")
-            cp .github/sanitizer-basic-tests.txt sanitizer-logs/selected-tests.txt
+            extra_args+=(--traits ASAN_TEST)
           fi
+          echo 'All available tests except DeathTests (child processes)' > sanitizer-logs/selected-tests.txt
           swift test -c ${{ matrix.configuration }} "${extra_args[@]}" \
             --sanitize ${{ matrix.sanitizer }} --build-system native \
             2>&1 | tee sanitizer-logs/full-console.log
-          if [[ "${{ matrix.sanitizer }}" == "address" ]]; then
-            expected="$(wc -l < .github/sanitizer-basic-tests.txt | tr -d '[:space:]')"
-            grep -Eq "Test run with $expected tests .* passed" sanitizer-logs/full-console.log
-          else
-            grep -Eq 'Test run with [1-9][0-9]* tests .* passed' sanitizer-logs/full-console.log
-          fi
+          grep -Eq 'Test run with [1-9][0-9]* tests .* passed' sanitizer-logs/full-console.log
       - name: Upload sanitizer diagnostics
         if: always()
         uses: actions/upload-artifact@v4
