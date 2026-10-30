@@ -65,10 +65,10 @@ private enum param: LazySegTreeOperation {
   typealias S = AtCoderTests.S
   typealias F = AtCoderTests.T
 
-  nonisolated(unsafe) static let op: Op = op_ss
+  static let op: Op = op_ss
   static let e: S = e_s()
-  nonisolated(unsafe) static let mapping: Mapping = op_ts
-  nonisolated(unsafe) static let composition: Composition = op_tt
+  static let mapping: Mapping = op_ts
+  static let composition: Composition = op_tt
   static let id: F = e_t()
 }
 

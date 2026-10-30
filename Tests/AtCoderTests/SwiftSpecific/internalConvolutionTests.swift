@@ -184,8 +184,8 @@ extension LibraryTests {
     @Test(.tags(.swiftSpecific))
     @available(macOS 15.0, *)
     func testSimpleInt128() throws {
-      if #available(macOS 15.0, *) {
-        enum MOD2: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 924_844_033 }
+      do {
+        enum MOD2: static_mod_value { static let mod: mod_value = 924_844_033 }
         let a: [Int128] = [924_844_023, 924_844_024]
         let b: [Int128] = [
           924_844_023, 924_844_024, 924_844_025, 924_844_026, 924_844_027, 924_844_028,
@@ -194,8 +194,6 @@ extension LibraryTests {
         let n = 2
         let m = 6
         #expect(conv_naive(MOD2.self, a, b) == c, "n:\(n), m:\(m)")
-      } else {
-
       }
     }
 

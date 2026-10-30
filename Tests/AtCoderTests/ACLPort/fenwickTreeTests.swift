@@ -18,10 +18,10 @@ extension LibraryTests {
 
     @Test(.tags(.aclPort))
     func testEmpty() throws {
-      var fw_ll = fenwick_tree<ll>()
+      let fw_ll = fenwick_tree<ll>()
       #expect(0 == fw_ll.sum(0, 0))
 
-      var fw_modint = fenwick_tree<modint>()
+      let fw_modint = fenwick_tree<modint>()
       #expect(0 == fw_modint.sum(0, 0))
     }
 
@@ -38,10 +38,10 @@ extension LibraryTests {
 
     @Test(.tags(.aclPort))
     func testZero() throws {
-      var fw_ll = fenwick_tree<ll>(0)
+      let fw_ll = fenwick_tree<ll>(0)
       #expect(0 == fw_ll.sum(0, 0))
 
-      var fw_modint = fenwick_tree<modint>(0)
+      let fw_modint = fenwick_tree<modint>(0)
       #expect(0 == fw_modint.sum(0, 0))
     }
 
@@ -85,7 +85,7 @@ extension LibraryTests {
 
     @Test(.tags(.aclPort))
     func testSMintTest() throws {
-      enum mod_11: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 11 }
+      enum mod_11: static_mod_value { static let mod: mod_value = 11 }
       typealias mint = static_modint<mod_11>
       for n in 0 ..<= 5 {
         var fw = fenwick_tree<mint>(n)
@@ -198,7 +198,7 @@ extension LibraryTests {
     @Test(.tags(.aclPort))
     @available(macOS 15.0, *)
     func testInt128() throws {
-      if #available(macOS 15.0, *) {
+      do {
         var fw = FenwickTree<Int128>(20)
         for i in 0..<20 {
           fw.add(i, Int128(i))
@@ -213,8 +213,6 @@ extension LibraryTests {
             #expect(sum == fw.sum(l, r))
           }
         }
-      } else {
-        return  // Previously skipped: "Int128が利用できない"
       }
     }
 

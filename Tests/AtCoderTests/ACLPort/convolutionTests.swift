@@ -71,12 +71,12 @@ extension LibraryTests {
 
     @Test(.tags(.aclPort))
     func testEmpty() throws {
-      #expect([int]() == convolution([int](), [int]()))
-      #expect([int]() == convolution([int](), [1, 2]))
-      #expect([int]() == convolution([1, 2], [int]()))
-      #expect([int]() == convolution([1], [int]()))
-      #expect([ll]() == convolution([ll](), [ll]()))
-      #expect([ll]() == convolution([ll](), [1, 2]))
+      #expect([int]() == convolution(mod_998_244_353.self, [int](), [int]()))
+      #expect([int]() == convolution(mod_998_244_353.self, [int](), [1, 2]))
+      #expect([int]() == convolution(mod_998_244_353.self, [1, 2], [int]()))
+      #expect([int]() == convolution(mod_998_244_353.self, [1], [int]()))
+      #expect([ll]() == convolution(mod_998_244_353.self, [ll](), [ll]()))
+      #expect([ll]() == convolution(mod_998_244_353.self, [ll](), [1, 2]))
       #expect([modint998244353]() == convolution([modint998244353](), [modint998244353]()))
       #expect([modint998244353]() == convolution([modint998244353](), [1, 2]))
     }
@@ -105,8 +105,8 @@ extension LibraryTests {
     @Test(.tags(.aclPort))
     func testSimpleSMod() throws {
 
-      enum MOD1: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 998_244_353 }
-      enum MOD2: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 924_844_033 }
+      enum MOD1: static_mod_value { static let mod: mod_value = 998_244_353 }
+      enum MOD2: static_mod_value { static let mod: mod_value = 924_844_033 }
 
       typealias s_mint1 = static_modint<MOD1>
       typealias s_mint2 = static_modint<MOD2>
@@ -145,8 +145,8 @@ extension LibraryTests {
 
     @Test(.tags(.aclPort))
     func testSimpleInt() throws {
-      enum MOD1: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 998_244_353 }
-      enum MOD2: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 924_844_033 }
+      enum MOD1: static_mod_value { static let mod: mod_value = 998_244_353 }
+      enum MOD2: static_mod_value { static let mod: mod_value = 924_844_033 }
 
       // std::mt19937 mt;
       let mt = { int.random(in: 0...int.max) }
@@ -161,7 +161,7 @@ extension LibraryTests {
           for i in 0..<m as Range<int> {
             b[Int(i)] = mt() % MOD1.value()
           }
-          #expect(conv_naive(MOD1.value(), a, b) == convolution(a, b))
+          #expect(conv_naive(MOD1.value(), a, b) == convolution(mod_998_244_353.self, a, b))
           // コンパイラのバグが治ったためコメントアウト
           // #expect(conv_naive(MOD1.value(), a, b) == convolution<MOD1>(a, b))
           #expect(conv_naive(MOD1.value(), a, b) == (convolution(MOD1.self, a, b)))
@@ -185,8 +185,8 @@ extension LibraryTests {
 
     @Test(.tags(.aclPort))
     func testSimpleUint() throws {
-      enum MOD1: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 998_244_353 }
-      enum MOD2: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 924_844_033 }
+      enum MOD1: static_mod_value { static let mod: mod_value = 998_244_353 }
+      enum MOD2: static_mod_value { static let mod: mod_value = 924_844_033 }
 
       // std::mt19937 mt;
       let mt = { uint.random(in: uint.min...uint.max) }
@@ -201,7 +201,7 @@ extension LibraryTests {
           for i in 0..<m {
             b[i] = mt() % MOD1.value()
           }
-          #expect(conv_naive(MOD1.self, a, b) == convolution(a, b))
+          #expect(conv_naive(MOD1.self, a, b) == convolution(mod_998_244_353.self, a, b))
           #expect(conv_naive(MOD1.self, a, b) == (convolution(MOD1.self, a, b)))
         }
       }
@@ -223,8 +223,8 @@ extension LibraryTests {
 
     @Test(.tags(.aclPort))
     func testSimpleULL() throws {
-      enum MOD1: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 998_244_353 }
-      enum MOD2: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 924_844_033 }
+      enum MOD1: static_mod_value { static let mod: mod_value = 998_244_353 }
+      enum MOD2: static_mod_value { static let mod: mod_value = 924_844_033 }
 
       // std::mt19937 mt;
       let mt = { ull.random(in: ull.min...ull.max) }
@@ -239,7 +239,7 @@ extension LibraryTests {
           for i in 0..<m {
             b[i] = mt() % MOD1.value()
           }
-          #expect(conv_naive(MOD1.self, a, b) == convolution(a, b))
+          #expect(conv_naive(MOD1.self, a, b) == convolution(mod_998_244_353.self, a, b))
           #expect(conv_naive(MOD1.self, a, b) == (convolution(MOD1.self, a, b)))
         }
       }
@@ -263,10 +263,10 @@ extension LibraryTests {
     @Test(.tags(.aclPort))
     @available(macOS 15.0, *)
     func testSimpleInt128() throws {
-      if #available(macOS 15.0, *) {
+      do {
 
-        enum MOD1: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 998_244_353 }
-        enum MOD2: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 924_844_033 }
+        enum MOD1: static_mod_value { static let mod: mod_value = 998_244_353 }
+        enum MOD2: static_mod_value { static let mod: mod_value = 924_844_033 }
 
         // std::mt19937 mt;
         let mt = { ull.random(in: ull.min...ull.max) }
@@ -281,7 +281,7 @@ extension LibraryTests {
             for i in 0..<m {
               b[i] = Int128(mt() % MOD1.value())
             }
-            #expect(conv_naive(MOD1.self, a, b) == convolution(a, b))
+            #expect(conv_naive(MOD1.self, a, b) == convolution(mod_998_244_353.self, a, b))
             // 間違った書き方でコンパイルが通ってしまう問題がある
             // expect "Cannot explicitly specialize a generic function" error.
             // #expect(conv_naive(MOD1.self, a, b) == convolution<MOD1>(a, b))
@@ -308,19 +308,16 @@ extension LibraryTests {
             #expect(conv_naive(MOD2.self, a, b) == convolution(MOD2.self, a, b))
           }
         }
-      } else {
-        // Fallback on earlier versions
-        return  // Previously skipped: "__int128がない"
       }
     }
 
     @Test(.tags(.aclPort))
     @available(macOS 15.0, *)
     func testSimpleUInt128() throws {
-      if #available(macOS 15.0, *) {
+      do {
 
-        enum MOD1: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 998_244_353 }
-        enum MOD2: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 924_844_033 }
+        enum MOD1: static_mod_value { static let mod: mod_value = 998_244_353 }
+        enum MOD2: static_mod_value { static let mod: mod_value = 924_844_033 }
 
         // std::mt19937 mt;
         let mt = { ull.random(in: ull.min...ull.max) }
@@ -335,7 +332,7 @@ extension LibraryTests {
             for i in 0..<m {
               b[i] = UInt128(mt() % MOD1.value())
             }
-            #expect(conv_naive(MOD1.self, a, b) == convolution(a, b))
+            #expect(conv_naive(MOD1.self, a, b) == convolution(mod_998_244_353.self, a, b))
             // 間違った書き方でコンパイルが通ってしまう問題がある
             // expect "Cannot explicitly specialize a generic function" error.
             // #expect(conv_naive(MOD1.self, a, b) == convolution<MOD1>(a, b))
@@ -362,9 +359,6 @@ extension LibraryTests {
             #expect(conv_naive(MOD2.self, a, b) == convolution(MOD2.self, a, b), "n:\(n), m:\(m)")
           }
         }
-      } else {
-        // Fallback on earlier versions
-        return  // Previously skipped: "__int128がない"
       }
     }
 
@@ -425,7 +419,7 @@ extension LibraryTests {
     @Test(.tags(.aclPort))
     func testConv641() throws {
       // 641 = 128 * 5 + 1
-      enum MOD: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 641 }
+      enum MOD: static_mod_value { static let mod: mod_value = 641 }
 
       var a = [ll](repeating: 0, count: 64)
       var b = [ll](repeating: 0, count: 65)
@@ -445,7 +439,7 @@ extension LibraryTests {
     func testConv18433() throws {
 
       // 18433 = 2048 * 9 + 1
-      enum MOD: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 18433 }
+      enum MOD: static_mod_value { static let mod: mod_value = 18433 }
 
       var a = [ll](repeating: 0, count: 1024)
       var b = [ll](repeating: 0, count: 1025)
@@ -462,14 +456,14 @@ extension LibraryTests {
 
     @Test(.tags(.aclPort))
     func testConv2() throws {
-      enum mod_2: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 2 }
+      enum mod_2: static_mod_value { static let mod: mod_value = 2 }
       let empty: [ll] = []
       #expect(empty == convolution(mod_2.self, empty, empty))
     }
 
     @Test(.tags(.aclPort))
     func testConv257() throws {
-      enum MOD: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 257 }
+      enum MOD: static_mod_value { static let mod: mod_value = 257 }
 
       var a = [ll](repeating: 0, count: 128)
       var b = [ll](repeating: 0, count: 129)
@@ -486,7 +480,7 @@ extension LibraryTests {
 
     @Test(.tags(.aclPort))
     func testConv2147483647() throws {
-      enum MOD: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 2_147_483_647 }
+      enum MOD: static_mod_value { static let mod: mod_value = 2_147_483_647 }
 
       var a = [ll](repeating: 0, count: 1)
       var b = [ll](repeating: 0, count: 2)
@@ -503,7 +497,7 @@ extension LibraryTests {
 
     @Test(.tags(.aclPort))
     func testConv2130706433() throws {
-      enum MOD: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 2_130_706_433 }
+      enum MOD: static_mod_value { static let mod: mod_value = 2_130_706_433 }
 
       var a = [ll](repeating: 0, count: 1024)
       var b = [ll](repeating: 0, count: 1024)

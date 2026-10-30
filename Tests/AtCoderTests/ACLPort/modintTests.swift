@@ -28,26 +28,26 @@ extension LibraryTests {
     deinit { mod_dynamic.reset() }
 
     @usableFromInline
-    enum mod_1: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 1 }
+    enum mod_1: static_mod_value { static let mod: mod_value = 1 }
     @usableFromInline
-    enum mod_11: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 11 }
+    enum mod_11: static_mod_value { static let mod: mod_value = 11 }
     @usableFromInline
-    enum mod_12: static_mod_value { nonisolated(unsafe) static let mod: mod_value = 12 }
+    enum mod_12: static_mod_value { static let mod: mod_value = 12 }
     @usableFromInline
     enum mod_1_000_000_007: static_mod_value {
-      nonisolated(unsafe) static let mod: mod_value = .mod_1_000_000_007
+      static let mod: mod_value = .mod_1_000_000_007
     }
     @usableFromInline
     enum mod_1_000_000_008: static_mod_value {
-      nonisolated(unsafe) static let mod: mod_value = 1_000_000_008
+      static let mod: mod_value = 1_000_000_008
     }
     @usableFromInline
     enum INT32_MAX: static_mod_value {
-      nonisolated(unsafe) static let mod: mod_value = .mod_INT32_MAX
+      static let mod: mod_value = .mod_INT32_MAX
     }
     @usableFromInline
     enum INT_MAX: static_mod_value {
-      nonisolated(unsafe) static let mod: mod_value = .init(Int.max)
+      static let mod: mod_value = .init(Int.max)
     }
 
     @Test(.tags(.aclPort))
@@ -156,7 +156,7 @@ extension LibraryTests {
     @available(macOS 15.0, *)
     func testInt128() throws {
 
-      if #available(macOS 15.0, *) {
+      do {
         modint.set_mod(998_244_353)
         #expect(12_345_678 == modint(Int128(12_345_678)).val)
         #expect(12_345_678 == modint(UInt128(12_345_678)).val)
