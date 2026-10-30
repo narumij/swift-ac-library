@@ -75,7 +75,7 @@ jobs:
           if-no-files-found: warn
 
   sanitizer-exit-tests:
-    name: ${{ matrix.sanitizer }} exit tests (first half, debug)
+    name: ${{ matrix.sanitizer }} exit tests (second half, debug)
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     strategy:
@@ -111,21 +111,27 @@ jobs:
             --filter 'segTreeDeathTests.*testChildProcessStartup' \
             2>&1 | tee exit-test-logs/startup.log
           grep -Eq 'Test run with 1 test .* passed' exit-test-logs/startup.log
-      - name: Run first half of exit-test suites
+      - name: Run second half of exit-test suites
         shell: bash
         run: |
           set -o pipefail
-          # Four of eight suites. Keep inventory, SCC, ModInt and minimum-cost flow out for now.
+          # Keep the first half excluded. Inventory selects only its two enabled probes.
+          filter='InventoryDeathTests.*(このメソッド|SCCGraphの850頂点)|(sccDeathTests|modintDeathTests).*test'
+          expected=5
+          if [[ "${{ matrix.sanitizer }}" == "address" ]]; then
+            filter="$filter|mincostflowDeathTests.*test"
+            expected=7
+          fi
           timeout --kill-after=10s 120s swift test --skip-build -c debug --build-system native \
             --sanitize ${{ matrix.sanitizer }} --traits "$SANITIZER_TRAIT" \
-            --filter '(segTreeDeathTests|lazySegTreeDeathTests|fenwickTreeDeathTests|maxflowDeathTests).*testInvalid' \
-            2>&1 | tee exit-test-logs/first-half.log
-          grep -Eq 'Test run with 4 tests .* passed' exit-test-logs/first-half.log
+            --filter "$filter" \
+            2>&1 | tee exit-test-logs/second-half.log
+          grep -Eq "Test run with $expected tests .* passed" exit-test-logs/second-half.log
       - name: Upload exit-test diagnostics
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.sanitizer }}-exit-first-half-diagnostics
+          name: ${{ matrix.sanitizer }}-exit-second-half-diagnostics
           path: exit-test-logs
           if-no-files-found: warn
 

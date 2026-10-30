@@ -307,12 +307,17 @@ range sums, maximum-flow cut/repeated-flow/boundary/self-loop checks, SCC
 self-loops, unsigned ModInt conversion and a modulus-one inverse case.
 No exit tests, large inputs or stress/performance loops were restored.
 
-## Exit tests: first half
+## Exit tests: second half
 
-A separate Debug sanitizer job restores four of the eight exit-test suites:
-SegTree, LazySegTree, FenwickTree and maximum flow. Inventory, SCC, ModInt and
-minimum-cost flow remain excluded. Release does not run these DEBUG-only tests.
-A successful child-process startup probe runs first; only then do the four
-invalid-input tests run. Both execution steps have a 120-second timeout plus
-a 10-second forced-stop grace period, separate from compilation. Logs are
-uploaded on failure. Split the failing half again if it hangs.
+The first-half CI trial failed; its SegTree, LazySegTree, FenwickTree and
+maximum-flow invalid-input tests are excluded again. A separate Debug sanitizer
+job now selects Inventory's two enabled probes, SCC and ModInt (five tests).
+ASan additionally selects minimum-cost flow (seven tests total); TSan cannot
+compile that API and keeps its existing exclusion. Disabled inventory probes
+remain disabled and are not selected.
+
+The shared successful-child startup probe remains a prerequisite; it performs
+only valid SegTree operations, not the excluded invalid-input tests. Execution
+steps retain the 120-second timeout and 10-second forced-stop grace period.
+The basic 32 cases are unchanged. Results of this second half are pending CI;
+local tests are not run at the user's request.
