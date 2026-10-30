@@ -85,10 +85,7 @@ jobs:
           mkdir -p documentation-diagnostics
           swift --version | tee documentation-diagnostics/environment.log
           set -o pipefail
-          swift package -c release --allow-writing-to-directory .build/documentation \
-            generate-documentation --target AtCoder \
-            --output-path .build/documentation \
-            --transform-for-static-hosting --hosting-base-path swift-ac-library \
+          bash Scripts/build-documentation.sh .build/documentation \
             2>&1 | tee documentation-diagnostics/full-console.log
       - name: Upload documentation diagnostics
         if: always()

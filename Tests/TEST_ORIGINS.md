@@ -271,13 +271,10 @@ Set the repository's **Settings → Pages → Build and deployment → Source** 
 `https://narumij.github.io/swift-ac-library/documentation/atcoder/`.
 PRs and manual runs never deploy documentation.
 
-To build the same static documentation locally:
+To build the same static documentation locally (requires Python 3 and the toolchain DocC executable):
 
 ```sh
-swift package -c release --allow-writing-to-directory .build/documentation \
-  generate-documentation --target AtCoder \
-  --output-path .build/documentation \
-  --transform-for-static-hosting --hosting-base-path swift-ac-library
+bash Scripts/build-documentation.sh
 ```
 
 TSAN_TEST also temporarily excludes MCFGraph and its corresponding ACL and Swift-specific tests: Linux Swift 6.4.2 Debug+TSan aborts while verifying mincostflow.swift.o (Invalid bitcast). This test-only trait removes that API from the build; normal and ASan builds retain it. Passing the reduced TSan suite does not cover minimum-cost flow.
@@ -305,3 +302,8 @@ The first and second exit-test trials did not establish successful sanitizer
 coverage. Separate sanitizer exit jobs have been removed; normal Debug CI still
 runs these tests. This exclusion does not establish the cause of each CI failure.
 Normal Debug/Release CI retains its full available suite.
+
+The documentation script uses a normal target build and explicit symbol extraction.
+The SwiftPM plugin symbol-graph path enables all traits on the observed toolchain,
+which accidentally removes DSU and MCFGraph through TSAN_TEST. The script checks
+that both types are present and treats DocC warnings as errors.

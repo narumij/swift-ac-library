@@ -9,6 +9,15 @@ A Swift port of [AC(AtCoder) Library][ac-library], the competitive programming l
 [![Swift](https://github.com/narumij/swift-ac-library/actions/workflows/swift.yml/badge.svg?branch=main)](https://github.com/narumij/swift-ac-library/actions/workflows/swift.yml)
 [![License: CC0-1.0](https://img.shields.io/badge/License-CC0%201.0-lightgrey.svg)](http://creativecommons.org/publicdomain/zero/1.0/)
 
+## Documentation
+
+- [English API documentation (DocC)](https://narumij.github.io/swift-ac-library/documentation/atcoder/)
+- [English guide sources](Sources/AtCoder/AtCoder.docc/AtCoder.md)
+- [Japanese guide](Documentation/ja/README.md)
+
+These guides cover Swift usage, constraints, complexity and examples. The
+checked-in guides describe this source revision; the published site follows main.
+
 ## Official Information
 
 [AtCoder Library (ACL) - AtCoder][acl]

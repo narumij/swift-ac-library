@@ -10,6 +10,15 @@
 [![Swift](https://github.com/narumij/swift-ac-library/actions/workflows/swift.yml/badge.svg?branch=main)](https://github.com/narumij/swift-ac-library/actions/workflows/swift.yml)
 [![License: CC0-1.0](https://img.shields.io/badge/License-CC0%201.0-lightgrey.svg)](http://creativecommons.org/publicdomain/zero/1.0/)
 
+## ドキュメント
+
+- [英語APIドキュメント（DocC）](https://narumij.github.io/swift-ac-library/documentation/atcoder/)
+- [日本語ガイド](Documentation/ja/README.md)
+- [英語ガイドの原稿](Sources/AtCoder/AtCoder.docc/AtCoder.md)
+
+Swiftでの使い方・制約・計算量・使用例をまとめています。
+同梱ガイドは同じソースの版に対応し、公開サイトはmainに追従します。
+
 ## 公式情報
 
 [AtCoder Library (ACL) - AtCoder][acl]
