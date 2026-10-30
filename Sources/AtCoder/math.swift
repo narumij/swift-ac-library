@@ -94,6 +94,7 @@ public func floor_sum(
   var (a, b) = (a, b)
   assert(0 <= n && n < (1 << 32))
   assert(1 <= m && m < (1 << 32))
+  #if false
   var ans = 0
   if a < 0 {
     let a2 = _Internal.safe_mod(a, m)
@@ -111,4 +112,21 @@ public func floor_sum(
                       UInt(bitPattern: m),
                       UInt(bitPattern: a),
                       UInt(bitPattern: b)))
+  #else
+  // ACLと同じく、中間値も2^64の剰余として扱う。最終結果がInt内でも
+  // 符号付きの乗算・除算では負の係数補正の意味が変わる。
+  let un = UInt(n), um = UInt(m)
+  var ans: UInt = 0
+  if a < 0 {
+    let a2 = _Internal.safe_mod(a, m)
+    ans &-= un &* (un &- 1) / 2 &* ((UInt(a2) &- UInt(bitPattern: a)) / um)
+    a = a2
+  }
+  if b < 0 {
+    let b2 = _Internal.safe_mod(b, m)
+    ans &-= un &* ((UInt(b2) &- UInt(bitPattern: b)) / um)
+    b = b2
+  }
+  return Int(bitPattern: ans &+ _Internal.floor_sum_unsigned(un, um, UInt(a), UInt(b)))
+  #endif
 }

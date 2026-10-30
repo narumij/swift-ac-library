@@ -39,9 +39,11 @@ The reference ACL revision was `864245a00b00dd008d1abfdc239618fdb7d139da`. Integ
 
 Internal evidence / 内部調査記録: OPS-010, `Maintanance/Investigations/OPS-010/boundaries/`.
 
-## floor_sum: negative coefficients at integer boundaries
+## floor_sum: negative coefficients at integer boundaries — fixed
 
-Confirmed on macOS arm64, Swift 6.4, Debug and Release. The Swift implementation can return a wrong value or trap for valid boundary inputs. Examples:
+**Status:** Fixed on 2026-10-30; not yet released. All 1,264 boundary executions passed after restoring ACL-compatible unsigned intermediate arithmetic. The following describes the previous implementation.
+
+Confirmed on macOS arm64, Swift 6.4, Debug and Release. The previous Swift implementation can return a wrong value or trap for valid boundary inputs. Examples:
 
 | Call | Expected (also observed in C++ ACL) | Swift |
 | --- | --- | --- |
@@ -49,11 +51,11 @@ Confirmed on macOS arm64, Swift 6.4, Debug and Release. The Swift implementation
 | `floor_sum(1, 1, 0, Int.min)` | `Int.min` | runtime trap |
 | `floor_sum(4294967295, 4294967295, -1, -1)` | `-4294967295` | `9223372032559808513` |
 
-The port uses signed intermediate arithmetic where ACL uses unsigned arithmetic. Wrapping a multiplication before signed division does not preserve ACL's result. A result fitting in `Int` is therefore not a sufficient workaround. Avoid these boundary combinations until corrected; no general safe range is established here.
+The port uses signed intermediate arithmetic where ACL uses unsigned arithmetic. Wrapping a multiplication before signed division does not preserve ACL's result. A result fitting in `Int` is therefore not a sufficient workaround. For versions without the fix, avoid these boundary combinations; no general safe range is established here.
 
 ### 日本語
 
-`floor_sum`は負の係数と整数境界の組合せで、誤答または実行時停止になります。上表は最終結果がIntに収まる再現例です。本家の符号なし中間計算を符号付きで処理しており、乗算のラップ後の除算などで意味が変わります。最終結果が収まるだけでは回避できません。現段階では修正せず制限として記録し、安全な入力範囲を一律には保証しません。
+`floor_sum`は負の係数と整数境界の組合せで、誤答または実行時停止になります。上表は最終結果がIntに収まる再現例です。本家の符号なし中間計算を符号付きで処理しており、乗算のラップ後の除算などで意味が変わります。最終結果が収まるだけでは回避できません。2026-10-30に本家と同じ符号なし中間演算へ修正しました（未リリース）。以下の不一致件数は修正前の記録で、修正後は1,264実行すべて成功。旧処理は#if falseに残しています。
 
 追加調査316ケース×4構成のうち、C++は全件一致、Swiftは各構成37件不一致（誤答22件・停止15件）。不一致はすべてfloor_sum。最大流15件、最小費用流48件は型に収まる容量・総費用かつ小さいグラフの範囲で一致しました。pow_mod・inv_mod・単一条件CRTも今回の範囲で一致。複数条件CRTの境界、フロー全型・複雑な経路の限界は未確認です。
 
