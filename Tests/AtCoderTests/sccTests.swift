@@ -17,6 +17,24 @@ final class sccTests: XCTestCase {
     XCTAssertEqual([], graph1.scc())
   }
 
+  func testLongChainAndCycle() {
+    let n = 100_000
+    var graph = SCCGraph(n)
+    for v in 0..<(n - 1) { graph.add_edge(v, v + 1) }
+    XCTAssertEqual(graph.scc(), (0..<n).map { [$0] })
+    graph.add_edge(n - 1, 0)
+    XCTAssertEqual(graph.scc(), [Array(0..<n)])
+  }
+
+  func testBranchReturnOrder() {
+    var graph = SCCGraph(6)
+    // 子からの復帰、探索中の祖先への辺、確定済み成分への辺を含む。
+    for (from, to) in [(0, 1), (1, 2), (2, 1), (0, 3), (3, 4), (4, 0), (3, 2)] {
+      graph.add_edge(from, to)
+    }
+    XCTAssertEqual(graph.scc(), [[5], [0, 3, 4], [1, 2]])
+  }
+
   #if false
     func testAssign() throws {
       throw XCTSkip("代入のオーバーロードはSwiftにはない。")

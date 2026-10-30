@@ -38,6 +38,8 @@ extension _Internal {
               ord.initialize(repeating: -1, count: _n)
               ids.initialize(repeating: 0, count: _n)
 
+              #if false
+              // 比較・再検討用の元の再帰実装。長い鎖ではスタックが溢れる。
               func dfs(_ v: Int) {
                 low[v] = now_ord.pointee
                 ord[v] = now_ord.pointee
@@ -66,6 +68,52 @@ extension _Internal {
               for i in 0..<_n {
                 if ord[i] == -1 { dfs(i) }
               }
+              #else
+              // DFSの復帰位置をヒープ上に保持する。長い鎖でも呼出しスタックを消費しない。
+              // visitedはSCC未確定の頂点、framesは探索中の呼出しに相当する別のスタック。
+              var frames: [(vertex: Int, nextEdge: Int)] = []
+              for root in 0..<_n {
+                if ord[root] != -1 { continue }
+                low[root] = now_ord.pointee
+                ord[root] = now_ord.pointee
+                now_ord.pointee += 1
+                visited.append(root)
+                frames.append((root, g.start[root]))
+
+                while let frame = frames.last {
+                  let v = frame.vertex
+                  if frame.nextEdge < g.start[v + 1] {
+                    let to = g.elist[frame.nextEdge].to
+                    frames[frames.count - 1].nextEdge += 1
+                    if ord[to] == -1 {
+                      low[to] = now_ord.pointee
+                      ord[to] = now_ord.pointee
+                      now_ord.pointee += 1
+                      visited.append(to)
+                      frames.append((to, g.start[to]))
+                    } else {
+                      low[v] = min(low[v], ord[to])
+                    }
+                    continue
+                  }
+
+                  if low[v] == ord[v] {
+                    while true {
+                      let u = visited.removeLast()
+                      ord[u] = _n
+                      ids[u] = group_num.pointee
+                      if u == v { break }
+                    }
+                    group_num.pointee += 1
+                  }
+                  frames.removeLast()
+                  // 再帰版と同じく、子の探索を終えてから親のlowを更新する。
+                  if let parent = frames.last {
+                    low[parent.vertex] = min(low[parent.vertex], low[v])
+                  }
+                }
+              }
+              #endif
               for i in 0..<_n {
                 ids[i] = group_num.pointee - 1 - ids[i]
               }
