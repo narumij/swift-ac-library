@@ -281,3 +281,5 @@ swift package -c release --allow-writing-to-directory .build/documentation \
 ```
 
 TSAN_TEST also temporarily excludes MCFGraph and its corresponding ACL and Swift-specific tests: Linux Swift 6.4.2 Debug+TSan aborts while verifying mincostflow.swift.o (Invalid bitcast). This test-only trait removes that API from the build; normal and ASan builds retain it. Passing the reduced TSan suite does not cover minimum-cost flow.
+
+The ordinary DSU implementation and its ACL/Swift-specific tests are also excluded by TSAN_TEST: the same compiler failure occurs in dsu.swift.o on Linux Swift 6.4.2 and locally on macOS. Normal and ASan builds retain DSU. The reduced TSan suite does not cover either DSU implementation.

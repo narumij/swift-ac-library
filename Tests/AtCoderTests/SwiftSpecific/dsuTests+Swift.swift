@@ -1,3 +1,8 @@
+// TODO: TSanのコンパイラ停止解消後に除外を解除する（OPS-011）。
+// Swift 6.4.2 Linux Debug+TSanでdsu.swift.oのLLVM verifyが
+// Invalid bitcastで停止（macOSでも再現）。実装と対応テストを一時除外。
+// 通常・ASanでは有効。TSAN_TESTではDSU API自体が存在しない。
+#if !TSAN_TEST
 import Testing
 
 #if DEBUG
@@ -33,3 +38,5 @@ extension LibraryTests.dsuTests {
     #expect(seg0.leader(0) == 1)
   }
 }
+
+#endif
