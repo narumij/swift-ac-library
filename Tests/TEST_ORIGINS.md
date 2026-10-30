@@ -279,3 +279,5 @@ swift package -c release --allow-writing-to-directory .build/documentation \
   --output-path .build/documentation \
   --transform-for-static-hosting --hosting-base-path swift-ac-library
 ```
+
+TSAN_TEST also temporarily excludes MCFGraph and its corresponding ACL and Swift-specific tests: Linux Swift 6.4.2 Debug+TSan aborts while verifying mincostflow.swift.o (Invalid bitcast). This test-only trait removes that API from the build; normal and ASan builds retain it. Passing the reduced TSan suite does not cover minimum-cost flow.

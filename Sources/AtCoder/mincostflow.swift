@@ -1,3 +1,8 @@
+// TODO: TSanのコンパイラ停止解消後に除外を解除する（OPS-011）。
+// Linux Swift 6.4.2 Debug+TSanでmincostflow.swift.oの検証が
+// Invalid bitcastにより停止するため、実装と対応テストを一時除外。
+// 通常・ASanでは有効。TSAN_TESTではMCFGraph API自体が存在しない。
+#if !TSAN_TEST
 import HeapModule
 
 @frozen
@@ -357,3 +362,5 @@ extension Heap {
   @inlinable
   mutating func push_heap(_ start: Int, _ end: Int) { /* NOP */  }
 }
+
+#endif
