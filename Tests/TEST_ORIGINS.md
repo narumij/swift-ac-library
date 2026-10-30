@@ -249,3 +249,31 @@ did not resolve this. Ordinary in-process suites pass under ASan, but the entire
 ASan run is not green. The successful-exit expectation remains unchanged; no report
 is suppressed. Failure-expecting exit tests alone cannot establish sanitizer health
 when the child loader itself aborts. This is separate from test framework migration.
+
+## Continuous integration
+
+`.github/workflows/swift.yml` runs independent Linux jobs for Debug and Release
+tests, Address Sanitizer and Thread Sanitizer (both configurations), and the
+AtCoder DocC build. Pull requests targeting `main` or `compatible/AtCoder/2025`,
+pushes to those branches, and manual dispatches run these checks.
+Sanitizer failures are not allowed to pass silently; logs are uploaded even on
+failure. ASan leak detection is disabled, matching the collections CI, so this is
+not a leak-checking job. No tests are excluded by the workflow. A successful
+serial test run does not establish that shared library state is thread-safe.
+
+Documentation archives are available as workflow artifacts. Only a push to
+`main` deploys the generated site to GitHub Pages, after the documentation build
+succeeds; test and sanitizer jobs are independent of that deployment.
+Set the repository's **Settings → Pages → Build and deployment → Source** to
+**GitHub Actions** before the first deployment. The generated module entry is
+`https://narumij.github.io/swift-ac-library/documentation/atcoder/`.
+PRs and manual runs never deploy documentation.
+
+To build the same static documentation locally:
+
+```sh
+swift package -c release --allow-writing-to-directory .build/documentation \
+  generate-documentation --target AtCoder \
+  --output-path .build/documentation \
+  --transform-for-static-hosting --hosting-base-path swift-ac-library
+```

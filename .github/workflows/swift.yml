@@ -1,35 +1,122 @@
-# This workflow will build a Swift project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
-
-name: Swift
+name: CI
 
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - main
-      - compatible/AtCoder/2025
+    branches: [main, compatible/AtCoder/2025]
   pull_request:
-    branches:
-      - main
-      - compatible/AtCoder/2025
+    branches: [main, compatible/AtCoder/2025]
+
+permissions:
+  contents: read
 
 jobs:
-  build:
-  
+  tests:
+    name: Tests (${{ matrix.configuration }})
     runs-on: ubuntu-24.04
-    
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        configuration: [debug, release]
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Swift
-      uses: SwiftyLab/setup-swift@latest
-    
-    - name: Debug Build
-      run: swift build -v -c debug
-    - name: Run tests
-      run: swift test -v -c debug
+      - uses: actions/checkout@v4
+      - name: Set up Swift
+        uses: SwiftyLab/setup-swift@latest
+      - name: Run tests
+        run: swift test -c ${{ matrix.configuration }}
 
-    - name: Release Build
-      run: swift build -v -c release
-    - name: Run tests
-      run: swift test -v -c release
+  sanitizers:
+    name: ${{ matrix.sanitizer }} sanitizer (${{ matrix.configuration }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        sanitizer: [address, thread]
+        configuration: [debug, release]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Swift
+        uses: SwiftyLab/setup-swift@latest
+      # Leak checking is separate from address safety. Do not suppress memory
+      # errors, compiler failures or exit-test runtime initialization failures.
+      - name: Run sanitizer tests
+        env:
+          ASAN_OPTIONS: detect_leaks=0:symbolize=1:abort_on_error=1
+          TSAN_OPTIONS: halt_on_error=1:exitcode=66
+          SWIFT_BACKTRACE: enable=yes
+        shell: bash
+        run: |
+          mkdir -p sanitizer-logs
+          swift --version | tee sanitizer-logs/environment.log
+          uname -a | tee -a sanitizer-logs/environment.log
+          set -o pipefail
+          swift test -c ${{ matrix.configuration }} \
+            --sanitize ${{ matrix.sanitizer }} --build-system native \
+            2>&1 | tee sanitizer-logs/full-console.log
+      - name: Upload sanitizer diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.sanitizer }}-${{ matrix.configuration }}-diagnostics
+          path: sanitizer-logs
+          if-no-files-found: warn
+
+  documentation:
+    name: Documentation build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Swift
+        uses: SwiftyLab/setup-swift@latest
+      - name: Build documentation
+        shell: bash
+        run: |
+          mkdir -p documentation-diagnostics
+          swift --version | tee documentation-diagnostics/environment.log
+          set -o pipefail
+          swift package -c release --allow-writing-to-directory .build/documentation \
+            generate-documentation --target AtCoder \
+            --output-path .build/documentation \
+            --transform-for-static-hosting --hosting-base-path swift-ac-library \
+            2>&1 | tee documentation-diagnostics/full-console.log
+      - name: Upload documentation diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation-diagnostics
+          path: documentation-diagnostics
+      - name: Upload documentation preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: AtCoder-documentation
+          path: .build/documentation
+          if-no-files-found: error
+      - name: Upload GitHub Pages artifact
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: .build/documentation
+
+  deploy-documentation:
+    name: Deploy main documentation
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: documentation
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
