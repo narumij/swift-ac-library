@@ -286,38 +286,21 @@ The ordinary DSU implementation and its ACL/Swift-specific tests are also exclud
 
 ASan CI enables `ASAN_TEST`: `measureRepeated` executes each body once instead of ten times. Input sizes, inner stress loops and assertions are unchanged; no tests are excluded by this trait. Normal tests retain ten measurement iterations. This reduces repeated performance measurement, not sanitizer checks.
 
-## Initial sanitizer coverage
+## Current sanitizer coverage
 
-ASan and TSan CI currently run only the 32 explicit small cases in
-`.github/sanitizer-basic-tests.txt`. The filters match suite names and complete method names, not whole suites.
-CI also checks the executed count against the list to reject empty or partial selection. They cover basic Fenwick/segment/lazy segment trees,
-maximum flow, SCC, 2-SAT, static/dynamic ModInt, CRT and string operations.
-Exit tests, inventory probes, stress/performance loops and large cases are not
-selected. DSU and minimum-cost flow remain outside this initial list.
-Normal Debug/Release CI still runs the full test suite.
+TSan Debug and Release run all available in-process tests, including stress and
+performance cases, with `--skip 'DeathTests'`. All child-process tests, including
+the successful-startup probe and inventory probes, are in suites whose names
+contain `DeathTests`. Existing disabled tests and the TSAN_TEST compiler-crash
+exclusions (both DSU implementations and minimum-cost flow) remain unchanged.
 
-This is deliberately limited sanitizer coverage, not full sanitizer acceptance.
-Expand the list incrementally after checking runtime and results. Selection is
-recorded in each sanitizer diagnostic artifact. Filtering limits execution only;
-compilation still uses the existing TSAN_TEST exclusions where required.
-
-After the initial 12 cases passed CI, 20 small cases were restored: empty and
-single-element inputs, segment-tree clone independence, 20-element Fenwick
-range sums, maximum-flow cut/repeated-flow/boundary/self-loop checks, SCC
-self-loops, unsigned ModInt conversion and a modulus-one inverse case.
-No exit tests, large inputs or stress/performance loops were restored.
-
-## Exit tests: second half
-
-The first-half CI trial failed; its SegTree, LazySegTree, FenwickTree and
-maximum-flow invalid-input tests are excluded again. A separate Debug sanitizer
-job now selects Inventory's two enabled probes, SCC and ModInt (five tests).
-ASan additionally selects minimum-cost flow (seven tests total); TSan cannot
-compile that API and keeps its existing exclusion. Disabled inventory probes
-remain disabled and are not selected.
-
-The shared successful-child startup probe remains a prerequisite; it performs
-only valid SegTree operations, not the excluded invalid-input tests. Execution
-steps retain the 120-second timeout and 10-second forced-stop grace period.
-The basic 32 cases are unchanged. Results of this second half are pending CI;
+ASan remains limited to the 32 small cases in
+`.github/sanitizer-basic-tests.txt`. CI checks that all 32 ran successfully.
+TSan checks for a nonempty successful test run. Both jobs record their selection
+and full output in diagnostic artifacts. Restored TSan coverage is awaiting CI;
 local tests are not run at the user's request.
+
+The first and second exit-test trials did not establish successful sanitizer
+coverage. Separate sanitizer exit jobs have been removed; normal Debug CI still
+runs these tests. This exclusion does not establish the cause of each CI failure.
+Normal Debug/Release CI retains its full available suite.
