@@ -55,6 +55,12 @@
       await #expect(processExitsWith: .success) { Self.runSCCChain(825) }
     }
 
+    // TODO(OPS-011): macOS 27.0.1 / Apple Swift 6.4 のRelease+ASanでは、子プロセスが
+    // "Interceptors are not working"（ASanの読み込みが遅い）でSIGABRTになる。
+    // 通常のDebug/Releaseは成功。ランタイムの先行ロードでも解消せず、起動経路は未解決。
+    // 製品のメモリ違反と断定せず、回避のために.successを.failureへ変更しない。
+    // 失敗期待のexit testもローダー異常で通り得るため、ASanの健全性の証拠にはしない。
+    // 詳細と検証範囲はTests/TEST_ORIGINS.mdおよびOPS-011の正本を参照。
     @Test func `SCCGraphの850頂点chainが正常終了することを観測する`() async {
       await #expect(processExitsWith: .success) { Self.runSCCChain(850) }
     }
