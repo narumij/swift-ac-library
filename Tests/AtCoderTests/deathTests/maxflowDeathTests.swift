@@ -14,12 +14,12 @@
 
     @Test func testInvalid() async {
       //  EXPECT_DEATH(g.flow(0, 0), ".*");
-      await #expect(processExitsWith: .signal(SIGTRAP)) {
+      await #expect(processExitsWith: .failure) {
         var g = mf_graph<Int>(count: 2);
         _ = g.flow(0,0)
       }
       //  EXPECT_DEATH(g.flow(0, 0, 0), ".*");
-      await #expect(processExitsWith: .signal(SIGTRAP)) {
+      await #expect(processExitsWith: .failure) {
         var g = mf_graph<Int>(count: 2);
         _ = g.flow(0,0,0)
       }

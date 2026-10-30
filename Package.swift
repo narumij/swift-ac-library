@@ -10,7 +10,7 @@ var _settings: [SwiftSetting] =
   [
     .define("BENCHMARK", .when(traits: ["BENCHMARK"])),
 
-    .define("DEATH_TEST", .when(platforms: [.macOS])),
+    .define("DEATH_TEST", .when(platforms: [.macOS, .linux])),
 
     .unsafeFlags(["-Ounchecked"], .when(configuration: .release, traits: ["_O_UNCHECKED"])),
 

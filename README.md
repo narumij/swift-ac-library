@@ -2,7 +2,6 @@
 
 English | [日本語](README.ja.md)
 [Known limitations](KNOWN_LIMITATIONS.md)
-[Swift compiler crash reproducer (TSan)](CompilerReproductions/TSanNoncopyableBuffer/README.md)
 
 
 A Swift port of [AC(AtCoder) Library][ac-library], the competitive programming library for [AtCoder][ac].

@@ -18,7 +18,7 @@
 
     @Test func testStaticUsage() async {
       //  EXPECT_DEATH(mint(3).pow(-1), ".*");
-      await #expect(processExitsWith: .signal(SIGTRAP)) {
+      await #expect(processExitsWith: .failure) {
         typealias mint = static_modint<mod_11>;
         _ = mint(3).pow(-1)
       }
@@ -26,7 +26,7 @@
 
     @Test func testDynamicUsage() async {
       // EXPECT_DEATH(mint(3).pow(-1), ".*");
-      await #expect(processExitsWith: .signal(SIGTRAP)) {
+      await #expect(processExitsWith: .failure) {
         typealias mint = modint
         _ = mint(3).pow(-1)
       }

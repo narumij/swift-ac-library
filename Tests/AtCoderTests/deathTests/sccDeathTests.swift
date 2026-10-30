@@ -14,7 +14,7 @@
 
     @Test func testInvalid() async {
       // EXPECT_DEATH(graph.add_edge(0, 10), ".*");
-      await #expect(processExitsWith: .signal(SIGTRAP)) {
+      await #expect(processExitsWith: .failure) {
         var graph = SCCGraph(2)
         _ = graph.add_edge(0, 10)
       }
