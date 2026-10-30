@@ -38,3 +38,23 @@ The reference ACL revision was `864245a00b00dd008d1abfdc239618fdb7d139da`. Integ
 比較対象は上記の固定リビジョンです。ModIntの各整数型のゼロ・最小値・最大値と、FenwickTreeの32〜128ビット型の境界での加算を確認しました。Fenwickは今回C++と一致していますが、型幅を超える和は数学的な整数和のまま保持されるわけではありません。
 
 Internal evidence / 内部調査記録: OPS-010, `Maintanance/Investigations/OPS-010/boundaries/`.
+
+## floor_sum: negative coefficients at integer boundaries
+
+Confirmed on macOS arm64, Swift 6.4, Debug and Release. The Swift implementation can return a wrong value or trap for valid boundary inputs. Examples:
+
+| Call | Expected (also observed in C++ ACL) | Swift |
+| --- | --- | --- |
+| `floor_sum(1, 2, 0, Int.min)` | `-4611686018427387904` | `4611686018427387904` |
+| `floor_sum(1, 1, 0, Int.min)` | `Int.min` | runtime trap |
+| `floor_sum(4294967295, 4294967295, -1, -1)` | `-4294967295` | `9223372032559808513` |
+
+The port uses signed intermediate arithmetic where ACL uses unsigned arithmetic. Wrapping a multiplication before signed division does not preserve ACL's result. A result fitting in `Int` is therefore not a sufficient workaround. Avoid these boundary combinations until corrected; no general safe range is established here.
+
+### 日本語
+
+`floor_sum`は負の係数と整数境界の組合せで、誤答または実行時停止になります。上表は最終結果がIntに収まる再現例です。本家の符号なし中間計算を符号付きで処理しており、乗算のラップ後の除算などで意味が変わります。最終結果が収まるだけでは回避できません。現段階では修正せず制限として記録し、安全な入力範囲を一律には保証しません。
+
+追加調査316ケース×4構成のうち、C++は全件一致、Swiftは各構成37件不一致（誤答22件・停止15件）。不一致はすべてfloor_sum。最大流15件、最小費用流48件は型に収まる容量・総費用かつ小さいグラフの範囲で一致しました。pow_mod・inv_mod・単一条件CRTも今回の範囲で一致。複数条件CRTの境界、フロー全型・複雑な経路の限界は未確認です。
+
+再実行：`bash Maintanance/Investigations/OPS-010/build.sh` の後に `python3 Maintanance/Investigations/OPS-010/extended-boundaries.py`。Pythonの任意精度整数で期待値を計算し、floor_sumは本家に合わせ64bit剰余として比較。入力・結果は同ディレクトリの `extended-boundary-summary.json` に保存。

@@ -1,0 +1,616 @@
+{
+  "cases": 316,
+  "runs": 1264,
+  "byBuild": {
+    "cpp-debug": {
+      "runs": 316,
+      "failures": 0
+    },
+    "cpp-release": {
+      "runs": 316,
+      "failures": 0
+    },
+    "swift-debug": {
+      "runs": 316,
+      "failures": 37
+    },
+    "swift-release": {
+      "runs": 316,
+      "failures": 37
+    }
+  },
+  "failures": [
+    {
+      "input": "math 2 1 1 -9223372036854775808 -9223372036854775808",
+      "expected": "-9223372036854775808",
+      "build": "swift-debug",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 1 1 -9223372036854775808 -9223372036854775808",
+      "expected": "-9223372036854775808",
+      "build": "swift-release",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 1 1 9223372036854775807 -9223372036854775808",
+      "expected": "-9223372036854775808",
+      "build": "swift-debug",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 1 1 9223372036854775807 -9223372036854775808",
+      "expected": "-9223372036854775808",
+      "build": "swift-release",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 1 1 0 -9223372036854775808",
+      "expected": "-9223372036854775808",
+      "build": "swift-debug",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 1 1 0 -9223372036854775808",
+      "expected": "-9223372036854775808",
+      "build": "swift-release",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 1 2 -9223372036854775808 -9223372036854775808",
+      "expected": "-4611686018427387904",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "4611686018427387904\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 1 2 -9223372036854775808 -9223372036854775808",
+      "expected": "-4611686018427387904",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "4611686018427387904\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 1 2 9223372036854775807 -9223372036854775808",
+      "expected": "-4611686018427387904",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "4611686018427387904\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 1 2 9223372036854775807 -9223372036854775808",
+      "expected": "-4611686018427387904",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "4611686018427387904\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 1 2 0 -9223372036854775808",
+      "expected": "-4611686018427387904",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "4611686018427387904\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 1 2 0 -9223372036854775808",
+      "expected": "-4611686018427387904",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "4611686018427387904\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 1 4294967295 -9223372036854775808 -9223372036854775808",
+      "expected": "-2147483649",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "2147483648\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 1 4294967295 -9223372036854775808 -9223372036854775808",
+      "expected": "-2147483649",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "2147483648\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 1 4294967295 9223372036854775807 -9223372036854775808",
+      "expected": "-2147483649",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "2147483648\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 1 4294967295 9223372036854775807 -9223372036854775808",
+      "expected": "-2147483649",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "2147483648\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 1 4294967295 0 -9223372036854775808",
+      "expected": "-2147483649",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "2147483648\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 1 4294967295 0 -9223372036854775808",
+      "expected": "-2147483649",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "2147483648\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 2 1 -9223372036854775808 -9223372036854775808",
+      "expected": "-9223372036854775808",
+      "build": "swift-debug",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 2 1 -9223372036854775808 -9223372036854775808",
+      "expected": "-9223372036854775808",
+      "build": "swift-release",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 2 1 -9223372036854775808 9223372036854775807",
+      "expected": "9223372036854775806",
+      "build": "swift-debug",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 2 1 -9223372036854775808 9223372036854775807",
+      "expected": "9223372036854775806",
+      "build": "swift-release",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 2 2 -9223372036854775808 -9223372036854775808",
+      "expected": "4611686018427387904",
+      "build": "swift-debug",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 2 2 -9223372036854775808 -9223372036854775808",
+      "expected": "4611686018427387904",
+      "build": "swift-release",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 2 2 -9223372036854775808 9223372036854775807",
+      "expected": "4611686018427387902",
+      "build": "swift-debug",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 2 2 -9223372036854775808 9223372036854775807",
+      "expected": "4611686018427387902",
+      "build": "swift-release",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 2 2 9223372036854775807 -9223372036854775808",
+      "expected": "-4611686018427387905",
+      "build": "swift-debug",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 2 2 9223372036854775807 -9223372036854775808",
+      "expected": "-4611686018427387905",
+      "build": "swift-release",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 2 2 0 -9223372036854775808",
+      "expected": "-9223372036854775808",
+      "build": "swift-debug",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 2 2 0 -9223372036854775808",
+      "expected": "-9223372036854775808",
+      "build": "swift-release",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 2 4294967295 -9223372036854775808 -9223372036854775808",
+      "expected": "-6442450947",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "6442450944\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 2 4294967295 -9223372036854775808 -9223372036854775808",
+      "expected": "-6442450947",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "6442450944\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 2 4294967295 -9223372036854775808 9223372036854775807",
+      "expected": "2147483647",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "6442450944\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 2 4294967295 -9223372036854775808 9223372036854775807",
+      "expected": "2147483647",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "6442450944\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 2 4294967295 9223372036854775807 -9223372036854775808",
+      "expected": "-2147483650",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "6442450944\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 2 4294967295 9223372036854775807 -9223372036854775808",
+      "expected": "-2147483650",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "6442450944\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 2 4294967295 0 -9223372036854775808",
+      "expected": "-4294967298",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "4294967296\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 2 4294967295 0 -9223372036854775808",
+      "expected": "-4294967298",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "4294967296\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 2147483648 4294967295 -9223372036854775808 -9223372036854775808",
+      "expected": "-3458764515968024576",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "3458764512746799104\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 2147483648 4294967295 -9223372036854775808 -9223372036854775808",
+      "expected": "-3458764515968024576",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "3458764512746799104\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 2147483648 4294967295 -9223372036854775808 9223372036854775807",
+      "expected": "5764607523034234880",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "3458764512746799104\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 2147483648 4294967295 -9223372036854775808 9223372036854775807",
+      "expected": "5764607523034234880",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "3458764512746799104\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 2147483648 4294967295 9223372036854775807 -9223372036854775808",
+      "expected": "-5764607526255460352",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "3458764512746799104\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 2147483648 4294967295 9223372036854775807 -9223372036854775808",
+      "expected": "-5764607526255460352",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "3458764512746799104\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 2147483648 4294967295 0 -9223372036854775808",
+      "expected": "-4611686020574871552",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "4611686018427387904\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 2147483648 4294967295 0 -9223372036854775808",
+      "expected": "-4611686020574871552",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "4611686018427387904\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 1 -9223372036854775808 -9223372036854775808",
+      "expected": "0",
+      "build": "swift-debug",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 1 -9223372036854775808 -9223372036854775808",
+      "expected": "0",
+      "build": "swift-release",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 1 -1 -1",
+      "expected": "-9223372034707292160",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "2147483648\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 1 -1 -1",
+      "expected": "-9223372034707292160",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "2147483648\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 1 -9223372036854775808 9223372036854775807",
+      "expected": "-4294967295",
+      "build": "swift-debug",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 1 -9223372036854775808 9223372036854775807",
+      "expected": "-4294967295",
+      "build": "swift-release",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 1 9223372036854775807 -9223372036854775808",
+      "expected": "-9223372030412324865",
+      "build": "swift-debug",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 1 9223372036854775807 -9223372036854775808",
+      "expected": "-9223372030412324865",
+      "build": "swift-release",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 1 0 -9223372036854775808",
+      "expected": "-9223372036854775808",
+      "build": "swift-debug",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 1 0 -9223372036854775808",
+      "expected": "-9223372036854775808",
+      "build": "swift-release",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 2 -1 -1",
+      "expected": "-4611686018427387904",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "4611686018427387904\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 2 -1 -1",
+      "expected": "-4611686018427387904",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "4611686018427387904\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 2 -9223372036854775808 9223372036854775807",
+      "expected": "9223372032559808513",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "-4294967295\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 2 -9223372036854775808 9223372036854775807",
+      "expected": "9223372032559808513",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "-4294967295\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 2 9223372036854775807 -9223372036854775808",
+      "expected": "4611686020574871552",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "-4611686016279904256\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 2 9223372036854775807 -9223372036854775808",
+      "expected": "4611686020574871552",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "-4611686016279904256\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 2 0 -9223372036854775808",
+      "expected": "4611686018427387904",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "-4611686018427387904\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 2 0 -9223372036854775808",
+      "expected": "4611686018427387904",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "-4611686018427387904\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 4294967295 -9223372036854775808 -9223372036854775808",
+      "expected": "-2147483647",
+      "build": "swift-debug",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 4294967295 -9223372036854775808 -9223372036854775808",
+      "expected": "-2147483647",
+      "build": "swift-release",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 4294967295 -1 -1",
+      "expected": "-4294967295",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "9223372032559808513\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 4294967295 -1 -1",
+      "expected": "-4294967295",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "9223372032559808513\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 4294967295 -9223372036854775808 9223372036854775807",
+      "expected": "-2147483648",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "-4294967295\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 4294967295 -9223372036854775808 9223372036854775807",
+      "expected": "-2147483648",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "-4294967295\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 4294967295 9223372036854775807 -9223372036854775808",
+      "expected": "-4294967294",
+      "build": "swift-debug",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 4294967295 9223372036854775807 -9223372036854775808",
+      "expected": "-4294967294",
+      "build": "swift-release",
+      "exit": -5,
+      "stdout": "",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 4294967295 0 -9223372036854775808",
+      "expected": "9223372034707292161",
+      "build": "swift-debug",
+      "exit": 0,
+      "stdout": "9223372034707292160\n",
+      "ok": false
+    },
+    {
+      "input": "math 2 4294967295 4294967295 0 -9223372036854775808",
+      "expected": "9223372034707292161",
+      "build": "swift-release",
+      "exit": 0,
+      "stdout": "9223372034707292160\n",
+      "ok": false
+    }
+  ]
+}
