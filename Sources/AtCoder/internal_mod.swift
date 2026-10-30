@@ -156,11 +156,23 @@ func __modint_v<T: UnsignedInteger>(unsigned v: T, umod: UInt) -> UInt {
 
 @inlinable @inline(__always)
 func __modint_v<T: FixedWidthInteger>(_ v: T, umod: UInt) -> UInt {
+  #if false
   let umod = T(umod)
   var x = v % umod
   if x < 0 { x += umod }
   let x0 = Int(x)
   return UInt(bitPattern: x0)
+  #else
+  // 小さい入力型へ法を縮めない。内部の64bit表現と既存の広い型の経路を保つ。
+  if T.bitWidth < Int.bitWidth {
+    return __modint_v(Int(v), umod: umod)
+  }
+  let umod = T(umod)
+  var x = v % umod
+  if x < 0 { x += umod }
+  let x0 = Int(x)
+  return UInt(bitPattern: x0)
+  #endif
 }
 
 @usableFromInline
