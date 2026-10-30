@@ -65,19 +65,6 @@ The `compatible/AtCoder/2025` branch maintains compatibility with AtCoder 2025 w
 
 `main` is the development branch for the next release.
 
----
-
-## Declarations with Underscores
-
-A declaration with an underscore is any declaration whose fully qualified name contains a component that starts with an underscore (`_`). For example, the following names are technically declared as `public`, but they are not part of the public API:
-
-- `FooModule.Bar._someMember(value:)` (member with an underscore)
-- `FooModule._Bar.someMember` (type with an underscore)
-- `_FooModule.Bar` (module with an underscore)
-- `FooModule.Bar.init(_value:)` (initializer with an underscored argument)
-
-Do not expect compatibility guarantees for the overall codebase around these declarations. They may be changed as needed, including incompatible changes.
-
 ## Related Projects
 
 [ac-library-csharp] - C# version
