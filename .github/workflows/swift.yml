@@ -88,11 +88,14 @@ jobs:
         with:
           name: documentation-diagnostics
           path: documentation-diagnostics
+      # DocC symbol filenames can contain colons, which upload-artifact rejects.
+      - name: Archive documentation preview
+        run: tar -czf .build/AtCoder-documentation.tar.gz -C .build/documentation .
       - name: Upload documentation preview
         uses: actions/upload-artifact@v4
         with:
           name: AtCoder-documentation
-          path: .build/documentation
+          path: .build/AtCoder-documentation.tar.gz
           if-no-files-found: error
       - name: Upload GitHub Pages artifact
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
