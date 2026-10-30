@@ -10,8 +10,5 @@ DerivedData/
 Package.resolved
 .swift-version
 
-# Studio: local database (including SQLite sidecars), generated pages, deployed releases.
-/Maintanance/Studio/data/
-/Maintanance/Studio/generated/
-/Maintanance/Studio/releases/
-/Maintanance/Studio/backups/
+# Private maintenance workspace; versioned by its own local Git repository.
+/Maintanance/
