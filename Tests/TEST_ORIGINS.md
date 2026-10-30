@@ -288,7 +288,7 @@ ASan CI enables `ASAN_TEST`: `measureRepeated` executes each body once instead o
 
 ## Initial sanitizer coverage
 
-ASan and TSan CI currently run only the 12 explicit small cases in
+ASan and TSan CI currently run only the 32 explicit small cases in
 `.github/sanitizer-basic-tests.txt`. The filters match suite names and complete method names, not whole suites.
 CI also checks the executed count against the list to reject empty or partial selection. They cover basic Fenwick/segment/lazy segment trees,
 maximum flow, SCC, 2-SAT, static/dynamic ModInt, CRT and string operations.
@@ -300,3 +300,9 @@ This is deliberately limited sanitizer coverage, not full sanitizer acceptance.
 Expand the list incrementally after checking runtime and results. Selection is
 recorded in each sanitizer diagnostic artifact. Filtering limits execution only;
 compilation still uses the existing TSAN_TEST exclusions where required.
+
+After the initial 12 cases passed CI, 20 small cases were restored: empty and
+single-element inputs, segment-tree clone independence, 20-element Fenwick
+range sums, maximum-flow cut/repeated-flow/boundary/self-loop checks, SCC
+self-loops, unsigned ModInt conversion and a modulus-one inverse case.
+No exit tests, large inputs or stress/performance loops were restored.
