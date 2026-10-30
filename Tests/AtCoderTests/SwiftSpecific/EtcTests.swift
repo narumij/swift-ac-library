@@ -17,8 +17,8 @@ extension LibraryTests {
       @available(*, deprecated, message: "Inventory probe for deprecated ACL-compatible wrappers")
       @Test(.tags(.swiftSpecific))
       func testInventoryBitCountrZeroAtUInt32Maximum() {
-        #expect(_Internal.countr_zero(UInt32.max) == 0)
-        #expect(_Internal.countr_zero_constexpr(UInt32.max) == 0)
+        #expect((UInt32.max).trailingZeroBitCount == 0)
+        #expect((UInt32.max).trailingZeroBitCount == 0)
       }
     #endif
 
