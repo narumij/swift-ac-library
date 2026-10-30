@@ -1,0 +1,22 @@
+[
+  {
+    "mode": "fixed-mod",
+    "exit": 0,
+    "race": false
+  },
+  {
+    "mode": "changing-mod",
+    "exit": -6,
+    "race": true
+  },
+  {
+    "mode": "fft-builtin",
+    "exit": 0,
+    "race": false
+  },
+  {
+    "mode": "fft-custom",
+    "exit": -6,
+    "race": true
+  }
+]

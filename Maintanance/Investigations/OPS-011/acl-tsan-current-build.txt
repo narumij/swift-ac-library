@@ -1,0 +1,44 @@
+[0/1] Planning build
+Building for production...
+[0/3] Write swift-version--58304C5D6DBC2206.txt
+[2/4] Compiling InternalCollectionsUtilities Debugging.swift
+[3/10] Compiling ContainersPreview OutputSpan+Extras.swift
+[4/11] Compiling HeapModule Heap+Descriptions.swift
+[5/11] Compiling BitCollections BinaryInteger extensions.swift
+[6/11] Compiling DequeModule Deque+Codable.swift
+[7/11] Compiling OrderedCollections _HashTable+Bucket.swift
+[8/11] Compiling HashTreeCollections _AncestorHashSlots.swift
+[9/11] Compiling _RopeModule BigString+Builder.swift
+[10/12] Compiling Collections BitCollections reexports.swift
+error: compile command failed due to signal 6 (use -v to see invocation)
+Invalid bitcast
+  %108 = bitcast i64 %107 to ptr, !dbg !273
+Invalid bitcast
+  %108 = bitcast i64 %107 to ptr, !dbg !434
+<unknown>:0: error: fatal error encountered during compilation; please submit a bug report (https://swift.org/contributing/#reporting-bugs)
+<unknown>:0: note: Broken module found, compilation aborted!
+Please submit a bug report (https://swift.org/contributing/#reporting-bugs) and include the crash backtrace.
+Stack dump:
+0.	Running pass "verify" on module "/Users/narumij/Documents/GitHub/swift-ac-library/Maintanance/Investigations/OPS-010/swift/.build/arm64-apple-macosx/release/AtCoder.build/convolution.swift.o"
+Rename failed: /Users/narumij/Documents/GitHub/swift-ac-library/Maintanance/Investigations/OPS-010/swift/.build/arm64-apple-macosx/release/AtCoder.build/internal_csr.swift-fef58475.o.tmp -> /Users/narumij/Documents/GitHub/swift-ac-library/Maintanance/Investigations/OPS-010/swift/.build/arm64-apple-macosx/release/AtCoder.build/internal_csr.swift.o (exists): No such file or directory
+<unknown>:0: error: error closing '/Users/narumij/Documents/GitHub/swift-ac-library/Maintanance/Investigations/OPS-010/swift/.build/arm64-apple-macosx/release/AtCoder.build/internal_csr.swift.o' for output: /Users/narumij/Documents/GitHub/swift-ac-library/Maintanance/Investigations/OPS-010/swift/.build/arm64-apple-macosx/release/AtCoder.build/internal_csr.swift-fef58475.o.tmp => /Users/narumij/Documents/GitHub/swift-ac-library/Maintanance/Investigations/OPS-010/swift/.build/arm64-apple-macosx/release/AtCoder.build/internal_csr.swift.o: No such file or directory
+Rename failed: /Users/narumij/Documents/GitHub/swift-ac-library/Maintanance/Investigations/OPS-010/swift/.build/arm64-apple-macosx/release/AtCoder.build/fenwicktree.swift-e33c12ac.o.tmp -> /Users/narumij/Documents/GitHub/swift-ac-library/Maintanance/Investigations/OPS-010/swift/.build/arm64-apple-macosx/release/AtCoder.build/fenwicktree.swift.o (exists): No such file or directory
+<unknown>:0: error: error closing '/Users/narumij/Documents/GitHub/swift-ac-library/Maintanance/Investigations/OPS-010/swift/.build/arm64-apple-macosx/release/AtCoder.build/fenwicktree.swift.o' for output: /Users/narumij/Documents/GitHub/swift-ac-library/Maintanance/Investigations/OPS-010/swift/.build/arm64-apple-macosx/release/AtCoder.build/fenwicktree.swift-e33c12ac.o.tmp => /Users/narumij/Documents/GitHub/swift-ac-library/Maintanance/Investigations/OPS-010/swift/.build/arm64-apple-macosx/release/AtCoder.build/fenwicktree.swift.o: No such file or directory
+ #0 0x00000001073e7bd0 llvm::sys::PrintStackTrace(llvm::raw_ostream&, int) (/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend+0x1068bbbd0)
+ #1 0x00000001073e5358 llvm::sys::RunSignalHandlers() (/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend+0x1068b9358)
+ #2 0x00000001073e81c8 SignalHandler(int, __siginfo*, void*) (/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend+0x1068bc1c8)
+ #3 0x0000000185a20144 (/usr/lib/system/libsystem_platform.dylib+0x180898144)
+ #4 0x0000000185a1597c (/usr/lib/system/libsystem_pthread.dylib+0x18088d97c)
+ #5 0x0000000185918458 (/usr/lib/system/libsystem_c.dylib+0x180790458)
+ #6 0x0000000101314ff8 swift::DiagnosticHelper::~DiagnosticHelper() (/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend+0x1007e8ff8)
+ #7 0x0000000107356460 llvm::report_fatal_error(llvm::Twine const&, bool) (/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend+0x10682a460)
+ #8 0x000000010735633c llvm::report_fatal_error(llvm::Twine const&, bool) (/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend+0x10682a33c)
+ #9 0x0000000101576a60 llvm::detail::PassModel<llvm::Module, llvm::VerifierPass, llvm::AnalysisManager<llvm::Module>>::printPipeline(llvm::raw_ostream&, llvm::function_ref<llvm::StringRef (llvm::StringRef)>) (/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend+0x100a4aa60)
+#10 0x000000010715a7b4 llvm::PassManager<llvm::Module, llvm::AnalysisManager<llvm::Module>>::run(llvm::Module&, llvm::AnalysisManager<llvm::Module>&) (/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend+0x10662e7b4)
+#11 0x0000000101569334 swift::performLLVMOptimizations(swift::IRGenOptions const&, swift::DiagnosticEngine&, llvm::sys::SmartMutex<false>*, llvm::Module*, llvm::TargetMachine*, llvm::IntrusiveRefCntPtr<llvm::vfs::FileSystem>, llvm::raw_pwrite_stream*) (/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend+0x100a3d334)
+#12 0x000000010156b28c swift::performLLVM(swift::IRGenOptions const&, swift::DiagnosticEngine&, llvm::sys::SmartMutex<false>*, llvm::GlobalVariable*, llvm::Module*, llvm::TargetMachine*, llvm::IntrusiveRefCntPtr<llvm::vfs::FileSystem>, llvm::StringRef, llvm::vfs::OutputBackend&, swift::UnifiedStatsReporter*) (/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend+0x100a3f28c)
+#13 0x00000001015746f8 (anonymous namespace)::LLVMCodeGenThreads::Thread::run() (/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend+0x100a486f8)
+#14 0x000000010157460c (anonymous namespace)::LLVMCodeGenThreads::runThread(void*) (/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend+0x100a4860c)
+#15 0x0000000185a15d00 (/usr/lib/system/libsystem_pthread.dylib+0x18088dd00)
+#16 0x0000000185a10cec (/usr/lib/system/libsystem_pthread.dylib+0x180888cec)
+warning: '--build-system native' has been deprecated and will be removed in a future release; please report an issue at https://github.com/swiftlang/swift-package-manager/issues if you are unable to adopt the default build system.
