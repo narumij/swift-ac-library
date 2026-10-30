@@ -19,4 +19,5 @@ func measureRepeated(_ body: () -> Void) {
 extension Tag {
   @Tag static var aclPort: Self
   @Tag static var swiftSpecific: Self
+  @Tag static var exitTest: Self
 }

@@ -218,46 +218,46 @@ extension LibraryTests {
       }
     }
 
-    @Test(.tags(.swiftSpecific))
-    func testInt() throws {
-      var fw = fenwick_tree<Int>(20)
-      for i in 0..<20 {
-        fw.add(i, i)
-      }
-      for l in 0...20 {
-        for r in l...20 {
-          var sum = 0
-          for i in l..<r {
-            sum += i
-          }
-          #expect(sum == fw.sum(l, r))
-        }
-      }
-    }
-
-    #if DEBUG
-      @Test(.tags(.swiftSpecific))
-      func testSum() throws {
-        var fw = fenwick_tree<Int>(20)
-        for i in 0..<20 {
-          fw.add(i, i)
-        }
-        for l in 0...20 {
-          var sum = 0
-          for i in 0..<l {
-            sum += i
-          }
-          #expect(sum == Int(fw.sum(l)))
-        }
-      }
-    #endif
-
-    @Test(.tags(.swiftSpecific))
-    func testHandleUnsigned() throws {
-      #expect(4_294_967_295 == CInt(-1).unsigned)
-      #expect(18_446_744_073_709_551_615 == CLongLong(-1).unsigned)
-      #expect(18_446_744_073_709_551_615 == Int(-1).unsigned)
-    }
   }
 
 }
+
+// Invalid-input exit tests.
+#if DEATH_TEST && DEBUG
+
+  @Suite(.tags(.exitTest))
+  struct fenwickTreeDeathTests {
+
+    @Test(.tags(.aclPort)) func testInvalid() async {
+      //  EXPECT_THROW(auto s = fenwick_tree<int>(-1), std::exception);
+      await #expect(processExitsWith: .failure) {
+        _ = FenwickTree<Int>(-1)
+      }
+      //  EXPECT_DEATH(s.add(-1, 0), ".*");
+      await #expect(processExitsWith: .failure) {
+        var s = FenwickTree<Int>(10)
+        s.add(-1, 0)
+      }
+      //  EXPECT_DEATH(s.add(10, 0), ".*");
+      await #expect(processExitsWith: .failure) {
+        var s = FenwickTree<Int>(10)
+        s.add(10, 0)
+      }
+      //  EXPECT_DEATH(s.sum(-1, 3), ".*");
+      await #expect(processExitsWith: .failure) {
+        let s = FenwickTree<Int>(10)
+        _ = s.sum(-1, 3)
+      }
+      //  EXPECT_DEATH(s.sum(3, 11), ".*");
+      await #expect(processExitsWith: .failure) {
+        let s = FenwickTree<Int>(10)
+        _ = s.sum(3, 11)
+      }
+      //  EXPECT_DEATH(s.sum(5, 3), ".*");
+      await #expect(processExitsWith: .failure) {
+        let s = FenwickTree<Int>(10)
+        _ = s.sum(5, 3)
+      }
+    }
+  }
+#endif

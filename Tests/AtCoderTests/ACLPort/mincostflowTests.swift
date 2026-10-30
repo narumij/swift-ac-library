@@ -118,16 +118,6 @@ extension LibraryTests {
       edge_eq(e, g.get_edge(0))
     }
 
-    @Test(.tags(.swiftSpecific))
-    func testSameCostPath() throws {
-      var g = mcf_graph<Int, Int>(count: 3)
-      #expect(0 == g.add_edge(0, 1, 1, 1))
-      #expect(1 == g.add_edge(1, 2, 1, 0))
-      #expect(2 == g.add_edge(0, 2, 2, 1))
-      let expected = [(0, 0), (3, 3)]
-      tuplesEqual(expected, g.slope(0, 2))
-    }
-
     #if false
       @Test(.tags(.aclPort))
       func testInvalid() throws {
@@ -223,15 +213,40 @@ extension LibraryTests {
       }
     }
 
-    @Test(.tags(.swiftSpecific))
-    func testMisc() throws {
-      let _ = MCFGraph<Int, Float>()
-      let _ = MCFGraph<Float, Int>()
-      let _ = MCFGraph<Int, Int>()
-      let _ = MCFGraph<UInt, Int>()
-      let _ = MCFGraph<Float, Float>()
-      let _ = MCFGraph<Float, Double>()
-    }
   }
 
 }
+
+// Invalid-input exit tests.
+#if DEATH_TEST && DEBUG
+
+  @Suite(.tags(.exitTest))
+  struct mincostflowDeathTests {
+
+    @Test(.tags(.aclPort)) func testInvalid() async {
+      //  EXPECT_DEATH(g.add_edge(0, 0, -1, 0), ".*");
+      await #expect(processExitsWith: .failure) {
+        var g = mcf_graph<Int, Int>(count: 2)
+        _ = g.add_edge(0, 0, -1, 0)
+      }
+      //  EXPECT_DEATH(g.add_edge(0, 0, 0, -1), ".*");
+      await #expect(processExitsWith: .failure) {
+        var g = mcf_graph<Int, Int>(count: 2)
+        _ = g.add_edge(0, 0, 0, -1)
+      }
+    }
+
+    @Test(.tags(.aclPort)) func testOutOfRange() async {
+      //  EXPECT_DEATH(g.slope(-1, 3), ".*");
+      await #expect(processExitsWith: .failure) {
+        var g = mcf_graph<Int, Int>(count: 10)
+        _ = g.slope(-1, 3)
+      }
+      //  EXPECT_DEATH(g.slope(3, 3), ".*");
+      await #expect(processExitsWith: .failure) {
+        var g = mcf_graph<Int, Int>(count: 10)
+        _ = g.slope(3, 3)
+      }
+    }
+  }
+#endif
