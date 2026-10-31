@@ -1,0 +1,176 @@
+diff --git a/Sources/AtCoder/string.swift b/Sources/AtCoder/string.swift
+index 9d8c528..19f6514 100644
+--- a/Sources/AtCoder/string.swift
++++ b/Sources/AtCoder/string.swift
+@@ -72,6 +72,7 @@ extension _Internal {
+     _ s: UnsafeBufferPointer<Element>, _ upper: Int, _ THRESHOLD_NAIVE: Int = 10,
+     _ THRESHOLD_DOUBLING: Int = 40
+   ) -> [Int] where Element: BinaryInteger {
++    // ACL同様、配列長・添字・集計値がIntの表現範囲に収まることを前提とする。
+     let n = s.count
+     if n == 0 { return [] }
+     if n == 1 { return [0] }
+@@ -95,14 +96,14 @@ extension _Internal {
+ 
+     var sa = [Int](repeating: 0, count: n)
+     var ls = [Bool](repeating: false, count: n)
+-    for i in stride(from: n - 2, through: 0, by: -1) {
+-      ls[i] = s[i] == s[i + 1] ? ls[i + 1] : s[i] < s[i + 1]
++    for i in stride(from: n &- 2, through: 0, by: -1) {
++      ls[i] = s[i] == s[i &+ 1] ? ls[i &+ 1] : s[i] < s[i &+ 1]
+     }
+ 
+     let sum_l = UnsafeMutableBufferPointer<Int>(
+-      start: .allocate(capacity: upper + 1), count: upper + 1)
++      start: .allocate(capacity: upper &+ 1), count: upper &+ 1)
+     let sum_s = UnsafeMutableBufferPointer<Int>(
+-      start: .allocate(capacity: upper + 1), count: upper + 1)
++      start: .allocate(capacity: upper &+ 1), count: upper &+ 1)
+ 
+     sum_l.initialize(repeating: 0)
+     sum_s.initialize(repeating: 0)
+@@ -116,72 +117,73 @@ extension _Internal {
+ 
+     for i in 0..<n {
+       if !ls[i] {
+-        sum_s[index(s[i])] += 1
++        sum_s[index(s[i])] &+= 1
+       } else {
+-        sum_l[index(s[i]) + 1] += 1
++        sum_l[index(s[i]) &+ 1] &+= 1
+       }
+     }
+ 
+     for i in 0...upper {
+-      sum_s[i] += sum_l[i]
+-      if i < upper { sum_l[i + 1] += sum_s[i] }
++      sum_s[i] &+= sum_l[i]
++      if i < upper { sum_l[i &+ 1] &+= sum_s[i] }
+     }
+ 
+     func induce(_ lms: [Int]) {
+ 
++      // 更新中のsaを一度だけ借用し、要素ごとのCoW一意性検査を避ける。
+       sa.withUnsafeMutableBufferPointer { sa in
+         sa.update(repeating: -1)
+-      }
+ 
+-      let buf = UnsafeMutableBufferPointer<Int>(
+-        start: .allocate(capacity: upper + 1), count: upper + 1)
++        let buf = UnsafeMutableBufferPointer<Int>(
++          start: .allocate(capacity: upper &+ 1), count: upper &+ 1)
+ 
+-      defer {
+-        buf.deinitialize()
+-        buf.deallocate()
+-      }
++        defer {
++          buf.deinitialize()
++          buf.deallocate()
++        }
+ 
+-      // std::copy(sum_s.begin(), sum_s.end(), buf.begin());
+-      _ = buf.initialize(from: sum_s)
+-      for d in lms {
+-        if d == n { continue }
+-        sa[buf[index(s[d])]] = d
+-        buf[index(s[d])] += 1
+-      }
+-      // std::copy(sum_l.begin(), sum_l.end(), buf.begin());
+-      _ = buf.update(from: sum_l)
+-      sa[buf[index(s[n - 1])]] = n - 1
+-      buf[index(s[n - 1])] += 1
+-      for i in 0..<n {
+-        let v = sa[i]
+-        if v >= 1, !ls[v - 1] {
+-          sa[buf[index(s[v - 1])]] = v - 1
+-          buf[index(s[v - 1])] += 1
++        // std::copy(sum_s.begin(), sum_s.end(), buf.begin());
++        _ = buf.initialize(from: sum_s)
++        for d in lms {
++          if d == n { continue }
++          sa[buf[index(s[d])]] = d
++          buf[index(s[d])] &+= 1
+         }
+-      }
+-      // std::copy(sum_l.begin(), sum_l.end(), buf.begin());
+-      _ = buf.update(from: sum_l)
+-      for i in stride(from: n - 1, through: 0, by: -1) {
+-        let v = sa[i]
+-        if v >= 1, ls[v - 1] {
+-          buf[index(s[v - 1]) + 1] -= 1
+-          sa[buf[index(s[v - 1]) + 1]] = v - 1
++        // std::copy(sum_l.begin(), sum_l.end(), buf.begin());
++        _ = buf.update(from: sum_l)
++        sa[buf[index(s[n &- 1])]] = n &- 1
++        buf[index(s[n &- 1])] &+= 1
++        for i in 0..<n {
++          let v = sa[i]
++          if v >= 1, !ls[v &- 1] {
++            sa[buf[index(s[v &- 1])]] = v &- 1
++            buf[index(s[v &- 1])] &+= 1
++          }
++        }
++        // std::copy(sum_l.begin(), sum_l.end(), buf.begin());
++        _ = buf.update(from: sum_l)
++        for i in stride(from: n &- 1, through: 0, by: -1) {
++          let v = sa[i]
++          if v >= 1, ls[v &- 1] {
++            buf[index(s[v &- 1]) &+ 1] &-= 1
++            sa[buf[index(s[v &- 1]) &+ 1]] = v &- 1
++          }
+         }
+       }
+     }
+ 
+-    var lms_map = [Int](repeating: -1, count: n + 1)
++    var lms_map = [Int](repeating: -1, count: n &+ 1)
+     var m: Int = 0
+     for i in 1..<n {
+-      if !ls[i - 1], ls[i] {
++      if !ls[i &- 1], ls[i] {
+         lms_map[i] = m
+-        m += 1
++        m &+= 1
+       }
+     }
+     var lms = [Int]()
+     lms.reserveCapacity(m)
+     for i in 1..<n {
+-      if !ls[i - 1], ls[i] {
++      if !ls[i &- 1], ls[i] {
+         lms.append(i)
+       }
+     }
+@@ -198,24 +200,24 @@ extension _Internal {
+       var rec_upper: Int = 0
+       rec_s[lms_map[sorted_lms[0]]] = 0
+       for i in 1..<m {
+-        var l = sorted_lms[i - 1]
++        var l = sorted_lms[i &- 1]
+         var r = sorted_lms[i]
+-        let end_l = lms_map[l] + 1 < m ? lms[lms_map[l] + 1] : n
+-        let end_r = lms_map[r] + 1 < m ? lms[lms_map[r] + 1] : n
++        let end_l = lms_map[l] &+ 1 < m ? lms[lms_map[l] &+ 1] : n
++        let end_r = lms_map[r] &+ 1 < m ? lms[lms_map[r] &+ 1] : n
+         var same = true
+-        if end_l - l != end_r - r {
++        if end_l &- l != end_r &- r {
+           same = false
+         } else {
+           while l < end_l {
+             if s[l] != s[r] {
+               break
+             }
+-            l += 1
+-            r += 1
++            l &+= 1
++            r &+= 1
+           }
+           if l == n || s[l] != s[r] { same = false }
+         }
+-        if !same { rec_upper += 1 }
++        if !same { rec_upper &+= 1 }
+         rec_s[lms_map[sorted_lms[i]]] = rec_upper
+       }
+ 
