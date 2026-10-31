@@ -1,0 +1,212 @@
+warning: 'bigint': /Users/narumij/Documents/GitHub/swift-ac-library/.build/checkouts/BigInt/Package.swift:18:19: warning: 'v4' is deprecated: watchOS 9.0 is the oldest supported version [#DeprecatedDeclaration]
+16 |         .iOS(.v12),
+17 |         .tvOS(.v12),
+18 |         .watchOS(.v4),
+   |                   `- warning: 'v4' is deprecated: watchOS 9.0 is the oldest supported version [#DeprecatedDeclaration]
+19 |         .macCatalyst(.v13),
+20 |         .visionOS(.v1),
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+Building for debugging...
+[Computing dependencies]
+[Provisioning 23 / 26]
+[Pre-planning 1 / 594]
+[Planning deferred tasks]
+[18 / 175]
+[23 / 178] _NumericsShims
+[29 / 201]
+[36 / 201] RealModule
+[37 / 225]
+[40 / 225] InternalCollectionsUtilities
+[50 / 225] RealModule
+[61 / 266]
+[69 / 266]
+[72 / 266]
+[76 / 266] _RopeModule
+[84 / 270]
+[90 / 277] _RopeModule
+[98 / 304] _RopeModule
+[101 / 304] HeapModule
+[109 / 304] _RopeModule
+[110 / 304] _RopeModule
+[112 / 304]
+[114 / 304]
+[115 / 304]
+[119 / 304]
+[122 / 304] _RopeModule
+[125 / 304] _RopeModule
+[138 / 304] OrderedCollections
+[139 / 304]
+[139 / 304] OrderedCollections
+[147 / 304] OrderedCollections
+[150 / 304]
+[152 / 304]
+[162 / 304] OrderedCollections
+[163 / 304]
+[163 / 304] OrderedCollections
+[169 / 304] HeapModule
+[174 / 304] HashTreeCollections
+[175 / 304] HashTreeCollections
+[179 / 304] OrderedCollections
+[184 / 304] ExtraTests-product
+[187 / 304] ExtraTests-product
+[189 / 304] BigInt
+[197 / 304] BigInt
+[199 / 304] BigInt
+[199 / 304] ExtraTests-product
+[200 / 304] BigInt
+[201 / 304] BigInt-product
+[204 / 304]
+[207 / 306] BitCollections
+[208 / 315] InternalCollectionsUtilities
+[211 / 324] ContainersPreview
+[213 / 324] ContainersPreview
+[222 / 324] ExtraTests-product
+[225 / 324] HashTreeCollections
+[229 / 324] HashTreeCollections
+[239 / 324] ExtraTests-product
+[242 / 324] BitCollections
+[244 / 324] BitCollections
+[244 / 324] _RopeModule
+[245 / 325] DequeModule
+[247 / 334] BitCollections
+[249 / 334] HashTreeCollections
+[253 / 334] DequeModule
+[255 / 334] DequeModule
+[256 / 334] ContainersPreview
+[260 / 334] DequeModule
+[264 / 336] ExtraTests-product
+[271 / 354] Algorithms
+[273 / 354] ComplexModule
+[276 / 354] Algorithms
+[277 / 354] ComplexModule
+[285 / 354] Numerics
+[287 / 354] Numerics
+[289 / 354] Algorithms
+[290 / 354]
+[292 / 355]
+[294 / 357] DequeModule
+[311 / 358] Collections
+[316 / 364] Collections
+[324 / 365] Collections
+[326 / 365] Algorithms
+[332 / 365] Algorithms
+[340 / 390]
+[342 / 390]
+[344 / 390]
+[347 / 390]
+[349 / 390]
+[350 / 390]
+[359 / 390] AtCoder
+[376 / 392] TopLevel-product
+warning: /Users/narumij/Documents/GitHub/swift-ac-library/Tests/AtCoderTests/ACLPort/convolutionTests.swift:262:14 FIX ME!!!
+[378 / 394] AtCoderTests-product
+[390 / 404] TopLevel-product
+[391 / 404] AtCoderTests-product
+[391 / 404] TopLevel-product
+[393 / 404] AtCoderTests-product
+/Users/narumij/Documents/GitHub/swift-ac-library/Tests/AtCoderTests/ACLPort/convolutionTests.swift:262:14: [1;33mwarning: [1;39mFIX ME!!![0;0m
+[0;36m260 |[0;0m     }
+[0;36m261 |[0;0m 
+[0;36m262 |[0;0m     #warning([4;39m"FIX ME!!!"[0;0m)
+    [0;36m|[0;0m              `- [1;33mwarning: [1;39mFIX ME!!![0;0m
+[0;36m263 |[0;0m     @Test(.tags(.aclPort))
+[0;36m264 |[0;0m     @available(macOS 15.0, *)
+/Users/narumij/Documents/GitHub/swift-ac-library/Tests/AtCoderTests/ACLPort/convolutionTests.swift:262:14: [1;33mwarning: [1;39mFIX ME!!![0;0m
+[0;36m260 |[0;0m     }
+[0;36m261 |[0;0m 
+[0;36m262 |[0;0m     #warning([4;39m"FIX ME!!!"[0;0m)
+    [0;36m|[0;0m              `- [1;33mwarning: [1;39mFIX ME!!![0;0m
+[0;36m263 |[0;0m     @Test(.tags(.aclPort))
+[0;36m264 |[0;0m     @available(macOS 15.0, *)
+/Users/narumij/Documents/GitHub/swift-ac-library/Tests/AtCoderTests/ACLPort/convolutionTests.swift:262:14: [1;33mwarning: [1;39mFIX ME!!![0;0m
+[0;36m260 |[0;0m     }
+[0;36m261 |[0;0m 
+[0;36m262 |[0;0m     #warning([4;39m"FIX ME!!!"[0;0m)
+    [0;36m|[0;0m              `- [1;33mwarning: [1;39mFIX ME!!![0;0m
+[0;36m263 |[0;0m     @Test(.tags(.aclPort))
+[0;36m264 |[0;0m     @available(macOS 15.0, *)
+macro expansion #expect:5:9: [1;33mwarning: [1;39musing '_' to ignore the result of a Void-returning function is redundant[0;0m
+`- /Users/narumij/Documents/GitHub/swift-ac-library/Tests/AtCoderTests/ACLPort/sccTests.swift:72:8: [1;39mnote: [1;39mexpanded code originates here[0;0m
+[0;36m67 |[0;0m     @Test(.tags(.aclPort)) func testInvalid() async {
+[0;36m68 |[0;0m       // EXPECT_DEATH(graph.add_edge(0, 10), ".*");
+[0;36m69 |[0;0m       await [4;39m#expect(processExitsWith: .failure) {[0;0m
+   [0;36m|[0;0m             `- [1;39mnote: [1;39min expansion of macro 'expect' here[0;0m
+[0;36m70 |[0;0m         var graph = SCCGraph(2)
+[0;36m71 |[0;0m         _ = graph.add_edge(0, 10)
+[0;36m72 |[0;0m       }
+[0;36m   +--- [0;0mmacro expansion #expect [0;36m----------------------------------------[0;0m
+[0;36m   |[0;0m [0;36m3 |[0;0m   _ = unsafe try await Testing.__requiringUnsafe(Testing.__requiringTry(Testing.__requiringAwait({
+[0;36m   |[0;0m [0;36m4 |[0;0m         var graph = SCCGraph(2)
+[0;36m   |[0;0m [0;36m5 |[0;0m         _ = graph.add_edge(0, 10)
+[0;36m   |[0;0m   [0;36m|[0;0m         `- [1;33mwarning: [1;39musing '_' to ignore the result of a Void-returning function is redundant[0;0m
+[0;36m   |[0;0m [0;36m6 |[0;0m       })))()
+[0;36m   |[0;0m [0;36m7 |[0;0m }
+[0;36m   +----------------------------[0;0m[0;36m----------------------------------------[0;0m
+[0;36m73 |[0;0m     }
+[0;36m74 |[0;0m   }
+
+/Users/narumij/Documents/GitHub/swift-ac-library/Tests/AtCoderTests/ACLPort/sccTests.swift:71:9: [1;33mwarning: [1;39musing '_' to ignore the result of a Void-returning function is redundant[0;0m
+[0;36m69 |[0;0m       await #expect(processExitsWith: .failure) {
+[0;36m70 |[0;0m         var graph = SCCGraph(2)
+[0;36m71 |[0;0m         _ = graph.add_edge(0, 10)
+   [0;36m|[0;0m         `- [1;33mwarning: [1;39musing '_' to ignore the result of a Void-returning function is redundant[0;0m
+[0;36m72 |[0;0m       }
+[0;36m73 |[0;0m     }
+
+/Users/narumij/Documents/GitHub/swift-ac-library/Tests/AtCoderTests/ACLPort/stringTests.swift:184:39: [1;33mwarning: [1;39minitialization of 'UnsafeBufferPointer<Int>' results in a dangling buffer pointer[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/temporary-pointers\TemporaryPointers]8;;\]
+[0;36m182 |[0;0m             }
+[0;36m183 |[0;0m 
+[0;36m184 |[0;0m             let sa = _Internal.sa_is([4;39m.init(start: s, count: s.count)[0;0m, max_c, -1, -1)
+    [0;36m|[0;0m                                       |           |- [1;39mnote: [1;39mimplicit argument conversion from '[Int]' to 'UnsafePointer<Int>?' produces a pointer valid only for the duration of the call to 'init(start:count:)'[0;0m
+    [0;36m|[0;0m                                       |           `- [1;39mnote: [1;39muse the 'withUnsafeBufferPointer' method on Array in order to explicitly convert argument to buffer pointer valid for a defined scope[0;0m
+    [0;36m|[0;0m                                       `- [1;33mwarning: [1;39minitialization of 'UnsafeBufferPointer<Int>' results in a dangling buffer pointer[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/temporary-pointers\TemporaryPointers]8;;\]
+[0;36m185 |[0;0m             #expect(sa_naive(s) == sa)
+[0;36m186 |[0;0m           }
+
+/Users/narumij/Documents/GitHub/swift-ac-library/Tests/AtCoderTests/ACLPort/stringTests.swift:201:39: [1;33mwarning: [1;39minitialization of 'UnsafeBufferPointer<Int>' results in a dangling buffer pointer[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/temporary-pointers\TemporaryPointers]8;;\]
+[0;36m199 |[0;0m             }
+[0;36m200 |[0;0m 
+[0;36m201 |[0;0m             let sa = _Internal.sa_is([4;39m.init(start: s, count: s.count)[0;0m, max_c, -1, -1)
+    [0;36m|[0;0m                                       |           |- [1;39mnote: [1;39mimplicit argument conversion from '[Int]' to 'UnsafePointer<Int>?' produces a pointer valid only for the duration of the call to 'init(start:count:)'[0;0m
+    [0;36m|[0;0m                                       |           `- [1;39mnote: [1;39muse the 'withUnsafeBufferPointer' method on Array in order to explicitly convert argument to buffer pointer valid for a defined scope[0;0m
+    [0;36m|[0;0m                                       `- [1;33mwarning: [1;39minitialization of 'UnsafeBufferPointer<Int>' results in a dangling buffer pointer[0;0m [#]8;;https://docs.swift.org/compiler/documentation/diagnostics/temporary-pointers\TemporaryPointers]8;;\]
+[0;36m202 |[0;0m             #expect(sa_naive(s) == sa)
+[0;36m203 |[0;0m           }
+
+[#TemporaryPointers]: <https://docs.swift.org/compiler/documentation/diagnostics/temporary-pointers>
+[398 / 404] AtCoderTests-product
+[400 / 404] AtCoderTests-product
+[402 / 404] AtCoderTests-product
+Build complete! (27.09秒)
+􀟈  Test run started.
+􀄵  Testing Library Version: 2084
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite maxflowDeathTests started.
+􀟈  Suite LibraryTests started.
+􀟈  Test testInvalid() started.
+􀟈  Suite maxFlowTests started.
+􀟈  Test testBoundUnit() started.
+􁁛  Test testBoundUnit() passed after 0.001 seconds.
+􀟈  Test test0() started.
+􁁛  Test test0() passed after 0.001 seconds.
+􀟈  Test testSimple() started.
+􁁛  Test testSimple() passed after 0.001 seconds.
+􀟈  Test testNotSimple() started.
+􁁛  Test testNotSimple() passed after 0.001 seconds.
+􀟈  Test testCut() started.
+􁁛  Test testCut() passed after 0.001 seconds.
+􀟈  Test testTwice() started.
+􁁛  Test testTwice() passed after 0.001 seconds.
+􀟈  Test testBound() started.
+􁁛  Test testBound() passed after 0.001 seconds.
+􀟈  Test testSelfLoop() started.
+􁁛  Test testSelfLoop() passed after 0.001 seconds.
+􀟈  Test testStress() started.
+􁁛  Test testInvalid() passed after 0.130 seconds.
+􁁛  Suite maxflowDeathTests passed after 0.130 seconds.
+10 measurement iteration(s): 0.185846584 seconds
+􁁛  Test testStress() passed after 0.185 seconds.
+􁁛  Suite maxFlowTests passed after 0.187 seconds.
+􁁛  Suite LibraryTests passed after 0.187 seconds.
+􁁛  Test run with 10 tests in 3 suites passed after 0.187 seconds.

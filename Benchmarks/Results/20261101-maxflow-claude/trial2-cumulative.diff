@@ -1,0 +1,60 @@
+diff --git a/Sources/AtCoder/maxflow.swift b/Sources/AtCoder/maxflow.swift
+index 58225a3..d342f91 100644
+--- a/Sources/AtCoder/maxflow.swift
++++ b/Sources/AtCoder/maxflow.swift
+@@ -36,6 +36,8 @@ extension MFGraph {
+       var to_id = g[to].count
+       if from == to { to_id &+= 1 }
+       pos.append((from, from_id))
++      if g[from].capacity == 0 { g[from].reserveCapacity(4) }
++      if g[to].capacity == 0 { g[to].reserveCapacity(4) }
+       g[from].append(_edge(to: to, rev: to_id, cap: cap))
+       g[to].append(_edge(to: from, rev: from_id, cap: 0))
+     }
+@@ -103,6 +105,8 @@ extension MFGraph {
+     var iter = [Int](repeating: 0, count: _n)
+     // 各頂点はBFSごとに一度だけ入るため、頂点数分の領域を繰り返し使える。
+     var queue = [Int](repeating: 0, count: _n)
++    // DFSはlevelが真に減る方向へだけ進むため、同時に積まれるフレームは頂点数以下。
++    var frame = [(v: Int, up: Cap, res: Cap)](repeating: (0, 0, 0), count: _n)
+ 
+     func bfs() {
+       g.withUnsafeMutableBufferPointer { g in
+@@ -169,11 +173,15 @@ extension MFGraph {
+         g.withUnsafeMutableBufferPointer { g in
+           level.withUnsafeMutableBufferPointer { level in
+             iter.withUnsafeMutableBufferPointer { iter in
++            frame.withUnsafeMutableBufferPointer { frame in
+ 
+-              var frame: [(v: Int, up: Cap, res: Cap)] = [(v, up, 0)]
++              frame[0] = (v, up, 0)
++              var sp = 1
+               var returnValue: Cap?
+ 
+-              DFS: while var (v, up, res) = frame.popLast() {
++              DFS: while sp > 0 {
++                sp &-= 1
++                var (v, up, res) = frame[sp]
+ 
+                 if returnValue == nil, v == s {
+                   // return up
+@@ -196,8 +204,9 @@ extension MFGraph {
+                     if level[v] <= level[to] || g[to][rev].cap == 0 { continue }
+ 
+                     // let d = dfs(to, min(up - res, g[to][rev].cap))
+-                    frame.append((v, up, res))
+-                    frame.append((to, min(Cap.__uncheckedSubtract(up, res), g[to][rev].cap), 0))
++                    frame[sp] = (v, up, res)
++                    frame[sp &+ 1] = (to, min(Cap.__uncheckedSubtract(up, res), g[to][rev].cap), 0)
++                    sp &+= 2
+                     continue DFS
+                   }
+ 
+@@ -228,6 +237,7 @@ extension MFGraph {
+               // return res
+               return returnValue!
+             }
++            }
+           }
+         }
+       }
