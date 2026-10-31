@@ -1,0 +1,14 @@
+Sat Oct 31 19:14:29 UTC 2026
+Darwin delight.local 27.0.0 Darwin Kernel Version 27.0.0: Tue Aug 11 21:05:27 PDT 2026; root:xnu-13432.1.9~1/RELEASE_ARM64_T8103 arm64
+Apple M1
+Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)
+Target: arm64-apple-macosx27.0.0
+Apple clang version 21.0.0 (clang-2100.3.34.2)
+Target: arm64-apple-darwin27.0.0
+Thread model: posix
+InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+Swift library revision: 29d225e4d66406d25832f6f4ca7079db4b897f37
+?? Benchmarks/
+C++ ACL revision: 864245a00b00dd008d1abfdc239618fdb7d139da
+MAX_SIZE=2M CYCLES=3
+Release: Swift -O; C++ explicit -O3 -DNDEBUG; sanitizers OFF

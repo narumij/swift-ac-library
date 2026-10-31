@@ -1,0 +1,31 @@
+{
+  "kind": "group",
+  "title": "swift-ac-library vs C++ ACL",
+  "directory": "charts",
+  "contents": [
+    {
+      "kind": "chart",
+      "title": "DSU merge and size",
+      "tasks": [
+        "C++ DSU merge and size",
+        "Swift DSU merge and size"
+      ]
+    },
+    {
+      "kind": "chart",
+      "title": "SegTree random updates",
+      "tasks": [
+        "C++ SegTree random updates",
+        "Swift SegTree random updates"
+      ]
+    },
+    {
+      "kind": "chart",
+      "title": "SegTree range sums",
+      "tasks": [
+        "C++ SegTree range sums",
+        "Swift SegTree range sums"
+      ]
+    }
+  ]
+}
