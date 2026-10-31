@@ -228,8 +228,10 @@ extension MCFGraph {
       }
       // std::fill(vis.begin(), vis.end(), false);
       vis.withUnsafeMutableBufferPointer { $0.update(repeating: false) }
-      que_min.removeAll()
-      que = []
+      // 次の最短路探索でもキューの確保済み容量を再利用する。
+      que_min.removeAll(keepingCapacity: true)
+      // HeapにはkeepingCapacity付きの全消去がないため、全要素を除去する。
+      que.removeAll(where: { _ in true })
 
       // que[0..heap_r) was heapified
       var heap_r = 0
