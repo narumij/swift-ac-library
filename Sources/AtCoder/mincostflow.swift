@@ -219,122 +219,129 @@ extension MCFGraph {
     var dual_dist = [(first: Cost, second: Cost)](repeating: (0, 0), count: _n)
     var prev_e = [Int](repeating: 0, count: _n)
     var vis = [Bool](repeating: false, count: _n)
-    var que_min = [Int]()
-    var que = Heap<Q>()
-    func dual_ref() -> Bool {
-      // for (int i = 0; i < _n; i++) {
-      for i in 0..<_n {
-        dual_dist[i].second = numeric_limit<Cost>.max
-      }
-      // std::fill(vis.begin(), vis.end(), false);
-      vis.withUnsafeMutableBufferPointer { $0.update(repeating: false) }
-      // 次の最短路探索でもキューの確保済み容量を再利用する。
-      que_min.removeAll(keepingCapacity: true)
-      // HeapにはkeepingCapacity付きの全消去がないため、全要素を除去する。
-      que.removeAll(where: { _ in true })
+    // 固定長の作業配列は入口で一意性を確保し、探索中の更新ではCoW検査を繰り返さない。
+    return dual_dist.withUnsafeMutableBufferPointer { dual_dist in
+      prev_e.withUnsafeMutableBufferPointer { prev_e in
+        vis.withUnsafeMutableBufferPointer { vis in
+          var que_min = [Int]()
+          var que = Heap<Q>()
+          func dual_ref() -> Bool {
+            // for (int i = 0; i < _n; i++) {
+            for i in 0..<_n {
+              dual_dist[i].second = numeric_limit<Cost>.max
+            }
+            // std::fill(vis.begin(), vis.end(), false);
+            vis.update(repeating: false)
+            // 次の最短路探索でもキューの確保済み容量を再利用する。
+            que_min.removeAll(keepingCapacity: true)
+            // HeapにはkeepingCapacity付きの全消去がないため、全要素を除去する。
+            que.removeAll(where: { _ in true })
 
-      // que[0..heap_r) was heapified
-      var heap_r = 0
+            // que[0..heap_r) was heapified
+            var heap_r = 0
 
-      dual_dist[s].second = 0
-      que_min.append(s)
-      while !que_min.isEmpty || !que.isEmpty {
-        var v: Int
-        if !que_min.isEmpty {
-          v = que_min.popLast()!
-        } else {
-          while heap_r < que.count {
-            heap_r += 1
-            que.push_heap(que.startIndex, que.startIndex + heap_r)
-          }
-          v = que.popMin()!.to
-          heap_r -= 1
-        }
-        if vis[v] { continue }
-        vis[v] = true
-        if v == t { break }
-        // dist[v] = shortest(s, v) + dual[s] - dual[v]
-        // dist[v] >= 0 (all reduced cost are positive)
-        // dist[v] <= (n-1)C
-        let dual_v = dual_dist[v].first
-        let dist_v = dual_dist[v].second
-        // for (int i = g.start[v]; i < g.start[v + 1]; i++) {
-        do {
-          var i = g.start[v]
-          while i < g.start[v + 1] {
-            defer { i += 1 }
-            let e = g.elist[i]
-            if e.cap == 0 { continue }
-            // |-dual[e.to] + dual[v]| <= (n-1)C
-            // cost <= C - -(n-1)C + 0 = nC
-            let cost = e.cost - dual_dist[e.to].first + dual_v
-            if dual_dist[e.to].second - dist_v > cost {
-              let dist_to = dist_v + cost
-              dual_dist[e.to].second = dist_to
-              prev_e[e.to] = e.rev
-              if dist_to == dist_v {
-                que_min.append(e.to)
+            dual_dist[s].second = 0
+            que_min.append(s)
+            while !que_min.isEmpty || !que.isEmpty {
+              var v: Int
+              if !que_min.isEmpty {
+                v = que_min.popLast()!
               } else {
-                que.insert(Q(key: dist_to, to: e.to))
+                while heap_r < que.count {
+                  heap_r += 1
+                  que.push_heap(que.startIndex, que.startIndex + heap_r)
+                }
+                v = que.popMin()!.to
+                heap_r -= 1
+              }
+              if vis[v] { continue }
+              vis[v] = true
+              if v == t { break }
+              // dist[v] = shortest(s, v) + dual[s] - dual[v]
+              // dist[v] >= 0 (all reduced cost are positive)
+              // dist[v] <= (n-1)C
+              let dual_v = dual_dist[v].first
+              let dist_v = dual_dist[v].second
+              // for (int i = g.start[v]; i < g.start[v + 1]; i++) {
+              do {
+                var i = g.start[v]
+                while i < g.start[v + 1] {
+                  defer { i += 1 }
+                  let e = g.elist[i]
+                  if e.cap == 0 { continue }
+                  // |-dual[e.to] + dual[v]| <= (n-1)C
+                  // cost <= C - -(n-1)C + 0 = nC
+                  let cost = e.cost - dual_dist[e.to].first + dual_v
+                  if dual_dist[e.to].second - dist_v > cost {
+                    let dist_to = dist_v + cost
+                    dual_dist[e.to].second = dist_to
+                    prev_e[e.to] = e.rev
+                    if dist_to == dist_v {
+                      que_min.append(e.to)
+                    } else {
+                      que.insert(Q(key: dist_to, to: e.to))
+                    }
+                  }
+                }
               }
             }
+            if !vis[t] {
+              return false
+            }
+
+            // for (int v = 0; v < _n; v++) {
+            for v in 0..<_n {
+              if !vis[v] { continue }
+              // dual[v] = dual[v] - dist[t] + dist[v]
+              //         = dual[v] - (shortest(s, t) + dual[s] - dual[t]) +
+              //         (shortest(s, v) + dual[s] - dual[v]) = - shortest(s,
+              //         t) + dual[t] + shortest(s, v) = shortest(s, v) -
+              //         shortest(s, t) >= 0 - (n-1)C
+              dual_dist[v].first -= dual_dist[t].second - dual_dist[v].second
+            }
+            return true
           }
-        }
-      }
-      if !vis[t] {
-        return false
-      }
 
-      // for (int v = 0; v < _n; v++) {
-      for v in 0..<_n {
-        if !vis[v] { continue }
-        // dual[v] = dual[v] - dist[t] + dist[v]
-        //         = dual[v] - (shortest(s, t) + dual[s] - dual[t]) +
-        //         (shortest(s, v) + dual[s] - dual[v]) = - shortest(s,
-        //         t) + dual[t] + shortest(s, v) = shortest(s, v) -
-        //         shortest(s, t) >= 0 - (n-1)C
-        dual_dist[v].first -= dual_dist[t].second - dual_dist[v].second
-      }
-      return true
-    }
-
-    var flow: Cap = 0
-    var cost: Cost = 0
-    var prev_cost_per_flow: Cost = -1
-    var result: [(Cap, Cost)] = [(0, 0)]
-    while flow < flow_limit {
-      if !dual_ref() { break }
-      var c = flow_limit - flow
-      // for (int v = t; v != s; v = g.elist[prev_e[v]].to) {
-      do {
-        var v = t
-        while v != s {
-          defer { v = g.elist[prev_e[v]].to }
-          c = min(c, g.elist[g.elist[prev_e[v]].rev].cap)
+          var flow: Cap = 0
+          var cost: Cost = 0
+          var prev_cost_per_flow: Cost = -1
+          var result: [(Cap, Cost)] = [(0, 0)]
+          while flow < flow_limit {
+            if !dual_ref() { break }
+            var c = flow_limit - flow
+            // for (int v = t; v != s; v = g.elist[prev_e[v]].to) {
+            do {
+              var v = t
+              while v != s {
+                defer { v = g.elist[prev_e[v]].to }
+                c = min(c, g.elist[g.elist[prev_e[v]].rev].cap)
+              }
+            }
+            // for (int v = t; v != s; v = g.elist[prev_e[v]].to) {
+            do {
+              var v = t
+              while v != s {
+                defer { v = g.elist[prev_e[v]].to }
+                // auto& e = g.elist[prev_e[v]];
+                var e = g.elist[prev_e[v]]
+                defer { g.elist[prev_e[v]] = e }
+                e.cap += c
+                g.elist[e.rev].cap -= c
+              }
+            }
+            let d = -dual_dist[s].first
+            flow += c
+            cost += _numericCast(c) * d
+            if prev_cost_per_flow == d {
+              result.removeLast()
+            }
+            result.append((flow, cost))
+            prev_cost_per_flow = d
+          }
+          return result
         }
       }
-      // for (int v = t; v != s; v = g.elist[prev_e[v]].to) {
-      do {
-        var v = t
-        while v != s {
-          defer { v = g.elist[prev_e[v]].to }
-          // auto& e = g.elist[prev_e[v]];
-          var e = g.elist[prev_e[v]]
-          defer { g.elist[prev_e[v]] = e }
-          e.cap += c
-          g.elist[e.rev].cap -= c
-        }
-      }
-      let d = -dual_dist[s].first
-      flow += c
-      cost += _numericCast(c) * d
-      if prev_cost_per_flow == d {
-        result.removeLast()
-      }
-      result.append((flow, cost))
-      prev_cost_per_flow = d
     }
-    return result
   }
 }
 
