@@ -23,6 +23,25 @@ extension MFGraph {
     _n = n
     g = [[_edge]].init(repeating: [], count: n)
   }
+  /// Reserves storage for the expected adjacency entries at each vertex.
+  /// Count both endpoints of every directed edge: `from` stores the forward edge,
+  /// and `to` stores its residual reverse edge. A self-loop contributes two entries
+  /// to the same vertex. Counts describe total desired capacity, not extra capacity.
+  /// This only reserves storage; edge indices, capacities, and flows are unchanged.
+  @inlinable
+  public mutating func reserveCapacity(edgeCounts: [Int]) {
+    precondition(edgeCounts.count == _n, "Expected one edge count per vertex")
+    var total = 0
+    g.withUnsafeMutableBufferPointer { adjacency in
+      for v in 0..<_n {
+        precondition(edgeCounts[v] >= 0, "Negative edge count")
+        total += edgeCounts[v]
+        adjacency[v].reserveCapacity(edgeCounts[v])
+      }
+    }
+    pos.reserveCapacity(total / 2)
+  }
+
   @inlinable
   @discardableResult
   public mutating func add_edge(_ from: Int, _ to: Int, _ cap: Cap) -> Int {

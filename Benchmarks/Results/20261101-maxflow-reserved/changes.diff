@@ -1,0 +1,64 @@
+diff --git a/Sources/AtCoder/maxflow.swift b/Sources/AtCoder/maxflow.swift
+index e9a1a07..882a268 100644
+--- a/Sources/AtCoder/maxflow.swift
++++ b/Sources/AtCoder/maxflow.swift
+@@ -23,6 +23,25 @@ extension MFGraph {
+     _n = n
+     g = [[_edge]].init(repeating: [], count: n)
+   }
++  /// Reserves storage for the expected adjacency entries at each vertex.
++  /// Count both endpoints of every directed edge: `from` stores the forward edge,
++  /// and `to` stores its residual reverse edge. A self-loop contributes two entries
++  /// to the same vertex. Counts describe total desired capacity, not extra capacity.
++  /// This only reserves storage; edge indices, capacities, and flows are unchanged.
++  @inlinable
++  public mutating func reserveCapacity(edgeCounts: [Int]) {
++    precondition(edgeCounts.count == _n, "Expected one edge count per vertex")
++    var total = 0
++    g.withUnsafeMutableBufferPointer { adjacency in
++      for v in 0..<_n {
++        precondition(edgeCounts[v] >= 0, "Negative edge count")
++        total += edgeCounts[v]
++        adjacency[v].reserveCapacity(edgeCounts[v])
++      }
++    }
++    pos.reserveCapacity(total / 2)
++  }
++
+   @inlinable
+   @discardableResult
+   public mutating func add_edge(_ from: Int, _ to: Int, _ cap: Cap) -> Int {
+diff --git a/Tests/AtCoderTests/SwiftSpecific/maxFlowTests+Swift.swift b/Tests/AtCoderTests/SwiftSpecific/maxFlowTests+Swift.swift
+index feab6cd..c9b430e 100644
+--- a/Tests/AtCoderTests/SwiftSpecific/maxFlowTests+Swift.swift
++++ b/Tests/AtCoderTests/SwiftSpecific/maxFlowTests+Swift.swift
+@@ -27,3 +27,29 @@ extension LibraryTests.maxFlowTests {
+     edge_eq(e, g.get_edge(2))
+   }
+ }
++
++extension LibraryTests.maxFlowTests {
++  @Test(.tags(.swiftSpecific))
++  func testReservationPreservesEdgesAndResidualFlow() {
++    var graph = MFGraph<Int>(count: 4)
++    // Self-loop counts twice; parallel edges retain their registration order.
++    graph.reserveCapacity(edgeCounts: [4, 4, 2, 0])
++    #expect(graph.add_edge(0, 0, 7) == 0)
++    #expect(graph.add_edge(0, 1, 3) == 1)
++    #expect(graph.add_edge(0, 1, 4) == 2)
++    #expect(graph.add_edge(1, 2, 5) == 3)
++    #expect(graph.flow(0, 2, 2) == 2)
++    let before = graph.edges()
++    graph.reserveCapacity(edgeCounts: [16, 16, 16, 0])
++    let after = graph.edges()
++    #expect(before.count == after.count)
++    for (a, b) in zip(before, after) {
++      #expect(a.from == b.from && a.to == b.to && a.cap == b.cap && a.flow == b.flow)
++    }
++    // Additional edges can still be registered after reservation and partial flow.
++    #expect(graph.add_edge(1, 2, 2) == 4)
++    #expect(graph.flow(0, 2) == 5)
++    graph.reserveCapacity(edgeCounts: [0, 0, 0, 0])
++    #expect(graph.flow(0, 2) == 0)
++  }
++}

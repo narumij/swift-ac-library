@@ -72,7 +72,9 @@ enum Scenario: String, CaseIterable {
   }
 }
 
-if CommandLine.arguments.dropFirst().first == "verify-extended" {
+if CommandLine.arguments.dropFirst().first == "verify-flow-phases" {
+  verifyFlowPhases()
+} else if CommandLine.arguments.dropFirst().first == "verify-extended" {
   verifyExtended()
 } else if CommandLine.arguments.dropFirst().first == "verify" {
   for n in [1, 2, 3, 17, 256, 4096, 65536] {
@@ -98,5 +100,6 @@ if CommandLine.arguments.dropFirst().first == "verify-extended" {
     }
   }
   benchmark.addExtended()
+  benchmark.addFlowPhases()
   benchmark.main()
 }

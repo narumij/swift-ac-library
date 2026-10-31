@@ -1,0 +1,66 @@
+warning: 'bigint': /Users/narumij/Documents/GitHub/swift-ac-library/.build/checkouts/BigInt/Package.swift:18:19: warning: 'v4' is deprecated: watchOS 9.0 is the oldest supported version [#DeprecatedDeclaration]
+16 |         .iOS(.v12),
+17 |         .tvOS(.v12),
+18 |         .watchOS(.v4),
+   |                   `- warning: 'v4' is deprecated: watchOS 9.0 is the oldest supported version [#DeprecatedDeclaration]
+19 |         .macCatalyst(.v13),
+20 |         .visionOS(.v1),
+
+[#DeprecatedDeclaration]: <https://docs.swift.org/compiler/documentation/diagnostics/deprecated-declaration>
+Building for debugging...
+[Computing dependencies]
+[Constructing description]
+[Pre-planning 1 / 594]
+[Planning deferred tasks]
+[20 / 79] RealModule
+[27 / 87]
+[35 / 105] BigInt
+[41 / 138]
+[44 / 138]
+[54 / 145] RealModule
+[59 / 146]
+[77 / 157]
+[82 / 157]
+[85 / 157]
+[90 / 152] BitCollections
+[96 / 153] DequeModule
+[101 / 153] Collections
+[105 / 154]
+[109 / 154]
+[112 / 154]
+[114 / 154]
+[123 / 172]
+[128 / 172]
+[134 / 170]
+[138 / 170]
+[139 / 170] ExtraTests-product
+[143 / 172]
+[145 / 172]
+[146 / 172]
+[147 / 172]
+[153 / 172] AtCoder
+[164 / 175] TopLevel-product
+warning: /Users/narumij/Documents/GitHub/swift-ac-library/Tests/AtCoderTests/ACLPort/convolutionTests.swift:262:14 FIX ME!!!
+[166 / 175] AtCoderTests-product
+[171 / 180] TopLevel-product
+[172 / 181] AtCoderTests-product
+/Users/narumij/Documents/GitHub/swift-ac-library/Tests/AtCoderTests/ACLPort/convolutionTests.swift:262:14: warning: FIX ME!!!
+260 |     }
+261 | 
+262 |     #warning("FIX ME!!!")
+    |              `- warning: FIX ME!!!
+263 |     @Test(.tags(.aclPort))
+264 |     @available(macOS 15.0, *)
+[178 / 180] AtCoderTests-product
+[181 / 181] TopLevel-product
+Build complete! (10.23秒)
+􀟈  Test run started.
+􀄵  Testing Library Version: 2084
+􀄵  Target Platform: arm64e-apple-macos14.0
+􀟈  Suite LibraryTests started.
+􀟈  Suite maxFlowTests started.
+􀟈  Test testReservationPreservesEdgesAndResidualFlow() started.
+􁁛  Test testReservationPreservesEdgesAndResidualFlow() passed after 0.001 seconds.
+􁁛  Suite maxFlowTests passed after 0.001 seconds.
+􁁛  Suite LibraryTests passed after 0.001 seconds.
+􁁛  Test run with 1 test in 2 suites passed after 0.001 seconds.
