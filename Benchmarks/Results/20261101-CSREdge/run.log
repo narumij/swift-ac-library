@@ -1,0 +1,15 @@
+Running 6 tasks on 80 sizes from 1 to 2M:
+  C++ DSU merge and size
+  Swift DSU merge and size
+  C++ SegTree random updates
+  Swift SegTree random updates
+  C++ SegTree range sums
+  Swift SegTree range sums
+Output file: /Users/narumij/Documents/GitHub/swift-ac-library/Benchmarks/Results/20261101-CSREdge/results.json
+Discarding all existing data.
+
+Collecting data:
+  1.2.4...8...16...32...64...128...256...512...1k...2k...4k...8k...16k...32k...64k...128k...256k...512k...1M...2M -- 20.6s
+  1.2.4...8...16...32...64...128...256...512...1k...2k...4k...8k...16k...32k...64k...128k...256k...512k...1M...2M -- 19.4s
+  1.2.4...8...16...32...64...128...256...512...1k...2k...4k...8k...16k...32k...64k...128k...256k...512k...1M...2M -- 19.4s
+Finished in 59.4s

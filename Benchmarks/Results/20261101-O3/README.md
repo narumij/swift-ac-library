@@ -29,4 +29,3 @@ privately under Maintanance/Investigations/OPS-013/initial-Os.
 ![02 SegTree random updates](<charts/02 SegTree random updates.png>)
 
 ![03 SegTree range sums](<charts/03 SegTree range sums.png>)
-

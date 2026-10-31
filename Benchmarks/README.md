@@ -60,6 +60,9 @@ flow, static ModInt, convolution, suffix arrays and the Z algorithm. Run
 
 ## Recorded results
 
+- [CSR edge struct: initial three workloads](Results/20261101-CSREdge/README.md)
+- [CSR edge struct: ten extended workloads](Results/20261101-CSREdge-extended/README.md)
+
 - [2026-11-01: ten additional workloads](Results/20261101-extended/README.md)
 
 - [2026-11-01: three workloads through 2M](Results/20261101-O3/README.md)
