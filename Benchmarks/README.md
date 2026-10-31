@@ -63,6 +63,8 @@ Older split result directories are retained as historical measurements.
 
 ## Recorded results
 
+- [Small convolution: direct conversion arrays](Results/20261101-convolution-small/README.md)
+
 - [Suffix array: buffer borrowing and unchecked arithmetic](Results/20261101-suffix/README.md)
 
 - [Latest: all thirteen charts after overflow-check removal](Results/20261101-overflow-updated/README.md)
