@@ -23,7 +23,7 @@ macOS renderer. Swift uses Release -O; C++ explicitly uses -O3 -DNDEBUG (overrid
 size-oriented default of the Xcode build system). No sanitizer is enabled.
 No unchecked Swift optimization is used. The default maximum size is 2M.
 
-## Initial coverage
+## Coverage
 
 | Chart | One batch at size N |
 | --- | --- |
@@ -55,10 +55,16 @@ Small-size results are particularly sensitive to allocation/bridge overhead.
 Do not infer general superiority or sanitizer safety from these charts.
 
 Ten additional workloads cover FenwickTree, LazySegTree, SCC/2-SAT, max/min-cost
-flow, static ModInt, convolution, suffix arrays and the Z algorithm. Run
-`./run-extended.sh`; see [definitions and remaining coverage](Extended.md).
+flow, static ModInt, convolution, suffix arrays and the Z algorithm. `./run.sh` runs all thirteen workloads together; see [definitions and remaining coverage](Extended.md).
+
+The unified runner uses powers-of-two sizes and each workload’s individual cap.
+It verifies both groups, writes one results file, and renders all thirteen charts.
+Older split result directories are retained as historical measurements.
 
 ## Recorded results
+
+- [Latest: all thirteen charts after overflow-check removal](Results/20261101-overflow-updated/README.md)
+- [Previous unified run](Results/20261101-unified/README.md)
 
 - [CSR edge struct: initial three workloads](Results/20261101-CSREdge/README.md)
 - [CSR edge struct: ten extended workloads](Results/20261101-CSREdge-extended/README.md)

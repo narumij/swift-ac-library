@@ -33,7 +33,7 @@ extension MFGraph {
     pos.append((from, g[from].count))
     let from_id = g[from].count
     var to_id = g[to].count
-    if from == to { to_id += 1 }
+    if from == to { to_id &+= 1 }
     g[from].append(_edge(to: to, rev: to_id, cap: cap))
     g[to].append(_edge(to: from, rev: from_id, cap: 0))
     return m
@@ -58,7 +58,8 @@ extension MFGraph {
     assert(0 <= i && i < m)
     let _e = g[pos[i].first][pos[i].second]
     let _re = g[_e.to][_e.rev]
-    return Edge(from: pos[i].first, to: _e.to, cap: _e.cap + _re.cap, flow: _re.cap)
+    return Edge(
+      from: pos[i].first, to: _e.to, cap: Cap.__uncheckedAdd(_e.cap, _re.cap), flow: _re.cap)
   }
 
   @inlinable
@@ -80,7 +81,7 @@ extension MFGraph {
     defer { g[pos[i].first][pos[i].second] = _e }
     var _re = g[_e.to][_e.rev]
     defer { g[_e.to][_e.rev] = _re }
-    _e.cap = new_cap - new_flow
+    _e.cap = Cap.__uncheckedSubtract(new_cap, new_flow)
     _re.cap = new_flow
   }
 
@@ -109,7 +110,7 @@ extension MFGraph {
             for ei in 0..<g[v].count {
               let e = g[v][ei]
               if e.cap == 0 || level[e.to] >= 0 { continue }
-              level[e.to] = level[v] + 1
+              level[e.to] = level[v] &+ 1
               if e.to == t { return }
               que.append(e.to)
             }
@@ -128,7 +129,7 @@ extension MFGraph {
 
         var i: Int?
         func next() -> Int? {
-          i = i.map { $0 + 1 } ?? iter[v]
+          i = i.map { $0 &+ 1 } ?? iter[v]
           iter[v] = i!
           return i! < g[v].count ? i : nil
         }
@@ -137,11 +138,11 @@ extension MFGraph {
           let to = g[v][i].to
           let rev = g[v][i].rev
           if level_v <= level[to] || g[to][rev].cap == 0 { continue }
-          let d = dfs(to, min(up - res, g[to][rev].cap))
+          let d = dfs(to, min(Cap.__uncheckedSubtract(up, res), g[to][rev].cap))
           if d <= 0 { continue }
-          g[v][i].cap += d
-          g[to][rev].cap -= d
-          res += d
+          g[v][i].cap = Cap.__uncheckedAdd(g[v][i].cap, d)
+          g[to][rev].cap = Cap.__uncheckedSubtract(g[to][rev].cap, d)
+          res = Cap.__uncheckedAdd(res, d)
           if res == up { return res }
         }
 
@@ -171,7 +172,7 @@ extension MFGraph {
 
                 var i: Int?
                 func next() -> Int? {
-                  i = i.map { $0 + 1 } ?? iter[v]
+                  i = i.map { $0 &+ 1 } ?? iter[v]
                   iter[v] = i!
                   return i! < g[v].count ? i : nil
                 }
@@ -185,7 +186,7 @@ extension MFGraph {
 
                     // let d = dfs(to, min(up - res, g[to][rev].cap))
                     frame.append((v, up, res))
-                    frame.append((to, min(up - res, g[to][rev].cap), 0))
+                    frame.append((to, min(Cap.__uncheckedSubtract(up, res), g[to][rev].cap), 0))
                     continue DFS
                   }
 
@@ -195,9 +196,9 @@ extension MFGraph {
 
                   if d <= 0 { continue }
 
-                  g[v][i].cap += d
-                  g[to][rev].cap -= d
-                  res += d
+                  g[v][i].cap = Cap.__uncheckedAdd(g[v][i].cap, d)
+                  g[to][rev].cap = Cap.__uncheckedSubtract(g[to][rev].cap, d)
+                  res = Cap.__uncheckedAdd(res, d)
 
                   if res == up {
                     // return res
@@ -225,9 +226,9 @@ extension MFGraph {
       bfs()
       if level[t] == -1 { break }
       iter.withUnsafeMutableBufferPointer { $0.update(repeating: 0) }
-      let f = dfs(t, flow_limit - flow)
+      let f = dfs(t, Cap.__uncheckedSubtract(flow_limit, flow))
       if f == 0 { break }
-      flow += f
+      flow = Cap.__uncheckedAdd(flow, f)
     }
     return flow
   }
@@ -270,7 +271,7 @@ extension MFGraph {
 }
 
 extension MFGraph {
-  
+
   @inlinable
   internal init(other: borrowing Self) {
     self._n = other._n

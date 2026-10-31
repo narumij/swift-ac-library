@@ -1,6 +1,6 @@
 # Extended workloads
 
-Run `./run-extended.sh` from `Benchmarks`. Swift Release, C++ -O3 -DNDEBUG,
+Run `./run.sh` (all thirteen workloads) from `Benchmarks`. Swift Release, C++ -O3 -DNDEBUG,
 three cycles, powers-of-two sizes. Graph workloads have lower explicit caps;
 2M is not an appropriate default for every algorithm. The per-element chart
 reports batch time divided by N, **not** time per API call.

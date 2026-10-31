@@ -7,9 +7,9 @@ struct Cell { var sum: Int; var count: Int }
 enum RangeAdd: LazySegTreeOperator {
   static var e: Cell { Cell(sum: 0, count: 0) }
   static var id: Int { 0 }
-  static func op(_ a: Cell, _ b: Cell) -> Cell { Cell(sum: a.sum+b.sum, count: a.count+b.count) }
-  static func mapping(_ f: Int, _ x: Cell) -> Cell { Cell(sum: x.sum+f*x.count, count: x.count) }
-  static func composition(_ f: Int, _ g: Int) -> Int { f+g }
+  static func op(_ a: Cell, _ b: Cell) -> Cell { Cell(sum: a.sum &+ b.sum, count: a.count &+ b.count) }
+  static func mapping(_ f: Int, _ x: Cell) -> Cell { Cell(sum: x.sum &+ (f &* x.count), count: x.count) }
+  static func composition(_ f: Int, _ g: Int) -> Int { f &+ g }
 }
 
 enum Extended: Int32, CaseIterable {
