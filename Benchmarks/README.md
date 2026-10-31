@@ -63,11 +63,18 @@ Older split result directories are retained as historical measurements.
 
 ## Recorded results
 
+- [MaxFlow: edge insertion borrowing](Results/20261101-maxflow-add/README.md)
+
+- [MaxFlow: reusable BFS queue](Results/20261101-maxflow-queue/README.md)
+
+- [MaxFlow: exhausted-vertex pruning](Results/20261101-maxflow-pruning/README.md)
+
 - [Small convolution: direct conversion arrays](Results/20261101-convolution-small/README.md)
 
 - [Suffix array: buffer borrowing and unchecked arithmetic](Results/20261101-suffix/README.md)
 
-- [Latest: all thirteen charts after overflow-check removal](Results/20261101-overflow-updated/README.md)
+- [Latest: all thirteen charts after queue, suffix array and convolution improvements](Results/20261101-latest/README.md)
+- [Previous: overflow-check removal](Results/20261101-overflow-updated/README.md)
 - [Previous unified run](Results/20261101-unified/README.md)
 
 - [CSR edge struct: initial three workloads](Results/20261101-CSREdge/README.md)

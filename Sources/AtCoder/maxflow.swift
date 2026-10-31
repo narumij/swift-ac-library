@@ -30,12 +30,15 @@ extension MFGraph {
     assert(0 <= to && to < _n)
     assert(0 <= cap)
     let m = pos.count
-    pos.append((from, g[from].count))
-    let from_id = g[from].count
-    var to_id = g[to].count
-    if from == to { to_id &+= 1 }
-    g[from].append(_edge(to: to, rev: to_id, cap: cap))
-    g[to].append(_edge(to: from, rev: from_id, cap: 0))
+    // 外側の隣接配列を一度だけ借用して、順方向・逆方向の辺を追加する。
+    g.withUnsafeMutableBufferPointer { g in
+      let from_id = g[from].count
+      var to_id = g[to].count
+      if from == to { to_id &+= 1 }
+      pos.append((from, from_id))
+      g[from].append(_edge(to: to, rev: to_id, cap: cap))
+      g[to].append(_edge(to: from, rev: from_id, cap: 0))
+    }
     return m
   }
 
@@ -98,21 +101,29 @@ extension MFGraph {
 
     var level = [Int](repeating: 0, count: _n)
     var iter = [Int](repeating: 0, count: _n)
+    // 各頂点はBFSごとに一度だけ入るため、頂点数分の領域を繰り返し使える。
+    var queue = [Int](repeating: 0, count: _n)
 
     func bfs() {
       g.withUnsafeMutableBufferPointer { g in
         level.withUnsafeMutableBufferPointer { level in
-          level.update(repeating: -1)
-          level[s] = 0
-          var que = Deque<Int>()
-          que.append(s)
-          while let v = que.popFirst() {
-            for ei in 0..<g[v].count {
-              let e = g[v][ei]
-              if e.cap == 0 || level[e.to] >= 0 { continue }
-              level[e.to] = level[v] &+ 1
-              if e.to == t { return }
-              que.append(e.to)
+          queue.withUnsafeMutableBufferPointer { queue in
+            level.update(repeating: -1)
+            level[s] = 0
+            var head = 0
+            var tail = 1
+            queue[0] = s
+            while head < tail {
+              let v = queue[head]
+              head &+= 1
+              for ei in 0..<g[v].count {
+                let e = g[v][ei]
+                if e.cap == 0 || level[e.to] >= 0 { continue }
+                level[e.to] = level[v] &+ 1
+                if e.to == t { return }
+                queue[tail] = e.to
+                tail &+= 1
+              }
             }
           }
         }
@@ -207,12 +218,13 @@ extension MFGraph {
                   }
                 }
 
+                // 再帰版と同様、探索し尽くした各フレームの頂点を枝刈りする。
+                level[v] = _n
                 // return res
                 returnValue = res
                 continue DFS
               }
 
-              level[v] = _n
               // return res
               return returnValue!
             }

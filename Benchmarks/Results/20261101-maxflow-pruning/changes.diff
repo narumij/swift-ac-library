@@ -1,0 +1,19 @@
+diff --git a/Sources/AtCoder/maxflow.swift b/Sources/AtCoder/maxflow.swift
+index fc6370e..c806a7e 100644
+--- a/Sources/AtCoder/maxflow.swift
++++ b/Sources/AtCoder/maxflow.swift
+@@ -207,12 +207,13 @@ extension MFGraph {
+                   }
+                 }
+ 
++                // 再帰版と同様、探索し尽くした各フレームの頂点を枝刈りする。
++                level[v] = _n
+                 // return res
+                 returnValue = res
+                 continue DFS
+               }
+ 
+-              level[v] = _n
+               // return res
+               return returnValue!
+             }
