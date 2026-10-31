@@ -1,5 +1,16 @@
 extension _Internal {
 
+  // CSRへ渡す辺の共通型。タプルのラベル差による配列全体の動的キャストを避ける。
+  @usableFromInline
+  struct CSREdge<E> {
+    @usableFromInline var first: Int
+    @usableFromInline var second: E
+    @inlinable init(_ first: Int, _ second: E) {
+      self.first = first
+      self.second = second
+    }
+  }
+
   @frozen
   public struct csr<E>: ~Copyable {
 
@@ -10,7 +21,7 @@ extension _Internal {
     let elist: UnsafeMutableBufferPointer<E>
 
     @inlinable
-    init(_ n: Int, _ edges: [(first: Int, second: E)]) {
+    init(_ n: Int, _ edges: [CSREdge<E>]) {
 
       let start = UnsafeMutablePointer<Int>.allocate(capacity: n + 1)
       let elist = UnsafeMutablePointer<E>.allocate(capacity: edges.count)

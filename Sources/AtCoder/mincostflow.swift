@@ -138,7 +138,7 @@ extension MCFGraph {
     var g = {
       var degree = [Int](repeating: 0, count: _n)
       var redge_idx = [Int](repeating: 0, count: m)
-      var elist: [(Int, _Edge)] = []
+      var elist: [_Internal.CSREdge<_Edge>] = []
       elist.reserveCapacity(2 * m)
       for i in 0..<m {
         let e = _edges[i]
@@ -146,8 +146,8 @@ extension MCFGraph {
         degree[e.from] += 1
         redge_idx[i] = degree[e.to]
         degree[e.to] += 1
-        elist.append((e.from, .init(to: e.to, rev: -1, cap: e.cap - e.flow, cost: e.cost)))
-        elist.append((e.to, .init(to: e.from, rev: -1, cap: e.flow, cost: -e.cost)))
+        elist.append(.init(e.from, .init(to: e.to, rev: -1, cap: e.cap - e.flow, cost: e.cost)))
+        elist.append(.init(e.to, .init(to: e.from, rev: -1, cap: e.flow, cost: -e.cost)))
       }
       let _g = _Internal.csr<_Edge>(_n, elist)
       for i in 0..<m {
