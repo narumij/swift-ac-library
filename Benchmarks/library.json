@@ -64,7 +64,8 @@
       "title": "MaxFlow sparse network",
       "tasks": [
         "C++ MaxFlow sparse network",
-        "Swift MaxFlow sparse network"
+        "Swift MaxFlow unreserved total",
+        "Swift MaxFlow reserved total"
       ]
     },
     {

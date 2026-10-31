@@ -1,0 +1,30 @@
+Running 27 tasks on 22 sizes from 1 to 2M:
+  C++ DSU merge and size
+  Swift DSU merge and size
+  C++ SegTree random updates
+  Swift SegTree random updates
+  C++ SegTree range sums
+  Swift SegTree range sums
+  C++ Fenwick add and prefix sum
+  Swift Fenwick add and prefix sum
+  C++ LazySegTree range add and sum
+  Swift LazySegTree range add and sum
+  C++ SCC grouped cycles
+  Swift SCC grouped cycles
+  C++ TwoSAT planted clauses
+  Swift TwoSAT planted clauses
+  C++ MaxFlow sparse network
+  Swift MaxFlow unreserved total
+  Swift MaxFlow reserved total
+  C++ MinCostFlow sparse network
+  Swift MinCostFlow sparse network
+  C++ Convolution modulo 998244353
+  (7 more)
+Output file: /Users/narumij/Documents/GitHub/swift-ac-library/Benchmarks/Results/20261101-current/results.json
+Discarding all existing data.
+
+Collecting data:
+  1.2.4.8.16.32.64.128.256.512.1k.2k.4k.8k.16k.32k.64k.128k.256k.512k.1M.2M -- 14s
+  1.2.4.8.16.32.64.128.256.512.1k.2k.4k.8k.16k.32k.64k.128k.256k.512k.1M.2M -- 12.3s
+  1.2.4.8.16.32.64.128.256.512.1k.2k.4k.8k.16k.32k.64k.128k.256k.512k.1M.2M -- 12.2s
+Finished in 38.5s

@@ -59,30 +59,14 @@ flow, static ModInt, convolution, suffix arrays and the Z algorithm. `./run.sh` 
 
 The unified runner uses powers-of-two sizes and each workload’s individual cap.
 It verifies both groups, writes one results file, and renders all thirteen charts.
-Older split result directories are retained as historical measurements.
+The MaxFlow chart includes both unreserved and explicitly reserved Swift construction.
+Reservation counts both endpoints of each edge; the counting and reservation time
+are included. C++ uses its original unreserved construction. See [current results](Results/20261101-current/README.md).
 
 ## Recorded results
 
-- [MaxFlow: edge insertion borrowing](Results/20261101-maxflow-add/README.md)
+- [Current: all thirteen charts](Results/20261101-current/README.md)
 
-- [MaxFlow: reusable BFS queue](Results/20261101-maxflow-queue/README.md)
-
-- [MaxFlow: exhausted-vertex pruning](Results/20261101-maxflow-pruning/README.md)
-
-- [Small convolution: direct conversion arrays](Results/20261101-convolution-small/README.md)
-
-- [Suffix array: buffer borrowing and unchecked arithmetic](Results/20261101-suffix/README.md)
-
-- [Latest: all thirteen charts after queue, suffix array and convolution improvements](Results/20261101-latest/README.md)
-- [Previous: overflow-check removal](Results/20261101-overflow-updated/README.md)
-- [Previous unified run](Results/20261101-unified/README.md)
-
-- [CSR edge struct: initial three workloads](Results/20261101-CSREdge/README.md)
-- [CSR edge struct: ten extended workloads](Results/20261101-CSREdge-extended/README.md)
-
-- [2026-11-01: ten additional workloads](Results/20261101-extended/README.md)
-
-- [2026-11-01: three workloads through 2M](Results/20261101-O3/README.md)
-
-To use the exact dependency versions of this run, copy
-`Results/20261101-O3/Package.resolved.json` to `Package.resolved` before building.
+Superseded charts and experimental records were removed from this results tree.
+Their committed versions remain available in Git history.
+Each result directory includes the dependency resolution used for that run.

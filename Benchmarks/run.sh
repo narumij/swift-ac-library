@@ -24,6 +24,7 @@ mkdir -p "$output"
 cp Package.resolved "$output/Package.resolved.json"
 "$binary" verify > "$output/verification.txt"
 "$binary" verify-extended >> "$output/verification.txt"
+"$binary" verify-flow-phases >> "$output/verification.txt"
 cp library.json "$output/library.json"
 "$binary" library run --library library.json "$output/results.json" \
   --max-size "$max_size" --smoothness 1 --disable-cutoff true --cycles "$cycles" --mode replace-all > "$output/run.log" 2>&1

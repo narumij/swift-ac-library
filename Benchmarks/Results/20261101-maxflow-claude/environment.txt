@@ -1,8 +1,0 @@
-Sat Oct 31 20:47:16 UTC 2026
-Darwin delight.local 27.0.0 Darwin Kernel Version 27.0.0: Tue Aug 11 21:05:27 PDT 2026; root:xnu-13432.1.9~1/RELEASE_ARM64_T8103 arm64
-Apple M1
-swift-driver version: 1.168.6 Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)
-Target: arm64-apple-macosx27.0.0
-e447f67c4981cc922a17e8e51c569048366c615f
- M Sources/AtCoder/maxflow.swift
-?? Benchmarks/Results/20261101-maxflow-claude/

@@ -41,5 +41,11 @@ worst-case performance or behavior on arbitrary graphs.
 
 Not covered yet: unsatisfiable 2-SAT, dense/adversarial graphs, alternate lazy
 operators, dynamic ModInt, convolution_ll, standalone number-theory routines,
-Unicode strings, and other input distributions. No product implementation was
-changed to improve these results.
+Unicode strings, and other input distributions. The current run measures the current product implementation; see its recorded revision.
+
+The MaxFlow chart additionally includes explicitly reserved Swift construction.
+The builder counts the adjacency entries (including reverse edges), reserves storage,
+then inserts the same edges and computes the same flow. Counting and reservation
+are timed. Both Swift variants use identical output handling. This optional API
+requires endpoint information in advance; C++ remains unreserved. The runner also
+verifies these builders at six sizes before timing.
