@@ -12,7 +12,6 @@ A Swift port of [AC(AtCoder) Library][ac-library], the competitive programming l
 ## Documentation
 
 - [English API documentation (DocC)](https://narumij.github.io/swift-ac-library/documentation/atcoder/)
-- [English guide sources](Sources/AtCoder/AtCoder.docc/AtCoder.md)
 - [Japanese guide](Documentation/ja/README.md)
 
 These guides cover Swift usage, constraints, complexity and examples. The
@@ -65,19 +64,6 @@ In general, use `compatible/AtCoder/2025`.
 The `compatible/AtCoder/2025` branch maintains compatibility with AtCoder 2025 while adding maintenance updates such as documentation improvements, deprecation annotations, and additional notices.
 
 `main` is the development branch for the next release.
-
----
-
-## Declarations with Underscores
-
-A declaration with an underscore is any declaration whose fully qualified name contains a component that starts with an underscore (`_`). For example, the following names are technically declared as `public`, but they are not part of the public API:
-
-- `FooModule.Bar._someMember(value:)` (member with an underscore)
-- `FooModule._Bar.someMember` (type with an underscore)
-- `_FooModule.Bar` (module with an underscore)
-- `FooModule.Bar.init(_value:)` (initializer with an underscored argument)
-
-Do not expect compatibility guarantees for the overall codebase around these declarations. They may be changed as needed, including incompatible changes.
 
 ## Related Projects
 

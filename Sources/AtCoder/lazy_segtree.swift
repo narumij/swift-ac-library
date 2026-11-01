@@ -2,6 +2,10 @@ import Foundation
 
 // MARK: - Lazy Segment Tree
 
+// 添字・サイズ計算はACL原版と同じく、有効な範囲と表現可能な木のサイズを前提とする。
+// その範囲で不要なオーバーフロー検査を避ける。範囲外入力の結果は保証しない。
+// 利用者が提供するop/mapping/compositionの算術方針は、それぞれの実装が決める。
+
 public protocol LazySegTreeOperator {
   associatedtype S
   associatedtype F
@@ -125,21 +129,21 @@ extension LazySegTree {
   public mutating func set(_ p: Int, _ x: S) {
     var p = p
     assert(0 <= p && p < _n)
-    p += size
+    p &+= size
     // for (int i = log; i >= 1; i--) push(p >> i);
-    for i in stride(from: log, through: 1, by: -1) { push(p >> i) }
+    for i in stride(from: log, through: 1, by: -1) { push(p &>> i) }
     d[p] = x
     // for (int i = 1; i <= log; i++) update(p >> i);
-    for i in stride(from: 1, through: log, by: 1) { update(p >> i) }
+    for i in stride(from: 1, through: log, by: 1) { update(p &>> i) }
   }
 
   @inlinable
   public mutating func get(_ p: Int) -> S {
     var p = p
     assert(0 <= p && p < _n)
-    p += size
+    p &+= size
     // for (int i = log; i >= 1; i--) push(p >> i);
-    for i in stride(from: log, through: 1, by: -1) { push(p >> i) }
+    for i in stride(from: log, through: 1, by: -1) { push(p &>> i) }
     return d[p]
   }
 
@@ -150,13 +154,13 @@ extension LazySegTree {
     assert(0 <= l && l <= r && r <= _n)
     if l == r { return e() }
 
-    l += size
-    r += size
+    l &+= size
+    r &+= size
 
     // for (int i = log; i >= 1; i--) {
     for i in stride(from: log, through: 1, by: -1) {
-      if (l >> i) << i != l { push(l >> i) }
-      if (r >> i) << i != r { push((r - 1) >> i) }
+      if (l &>> i) &<< i != l { push(l &>> i) }
+      if (r &>> i) &<< i != r { push((r &- 1) &>> i) }
     }
 
     var sml = e()
@@ -164,14 +168,14 @@ extension LazySegTree {
     while l < r {
       if l & 1 != 0 {
         sml = op(sml, d[l])
-        l += 1
+        l &+= 1
       }
       if r & 1 != 0 {
-        r -= 1
+        r &-= 1
         smr = op(d[r], smr)
       }
-      l >>= 1
-      r >>= 1
+      l &>>= 1
+      r &>>= 1
     }
 
     return op(sml, smr)
@@ -184,12 +188,12 @@ extension LazySegTree {
   public mutating func apply(_ p: Int, _ f: F) {
     var p = p
     assert(0 <= p && p < _n)
-    p += size
+    p &+= size
     // for (int i = log; i >= 1; i--) push(p >> i);
-    for i in stride(from: log, through: 1, by: -1) { push(p >> i) }
+    for i in stride(from: log, through: 1, by: -1) { push(p &>> i) }
     d[p] = mapping(f, d[p])
     // for (int i = 1; i <= log; i++) update(p >> i);
-    for i in stride(from: 1, through: log, by: 1) { update(p >> i) }
+    for i in stride(from: 1, through: log, by: 1) { update(p &>> i) }
   }
 
   @inlinable
@@ -199,13 +203,13 @@ extension LazySegTree {
     assert(0 <= l && l <= r && r <= _n)
     if l == r { return }
 
-    l += size
-    r += size
+    l &+= size
+    r &+= size
 
     // for (int i = log; i >= 1; i--) {
     for i in stride(from: log, through: 1, by: -1) {
-      if (l >> i) << i != l { push(l >> i) }
-      if (r >> i) << i != r { push((r - 1) >> i) }
+      if (l &>> i) &<< i != l { push(l &>> i) }
+      if (r &>> i) &<< i != r { push((r &- 1) &>> i) }
     }
 
     do {
@@ -214,14 +218,14 @@ extension LazySegTree {
       while l < r {
         if l & 1 != 0 {
           all_apply(l, f)
-          l += 1
+          l &+= 1
         }
         if r & 1 != 0 {
-          r -= 1
+          r &-= 1
           all_apply(r, f)
         }
-        l >>= 1
-        r >>= 1
+        l &>>= 1
+        r &>>= 1
       }
       l = l2
       r = r2
@@ -229,8 +233,8 @@ extension LazySegTree {
 
     // for (int i = 1; i <= log; i++) {
     for i in stride(from: 1, through: log, by: 1) {
-      if (l >> i) << i != l { update(l >> i) }
-      if (r >> i) << i != r { update((r - 1) >> i) }
+      if (l &>> i) &<< i != l { update(l &>> i) }
+      if (r &>> i) &<< i != r { update((r &- 1) &>> i) }
     }
   }
 
@@ -240,26 +244,26 @@ extension LazySegTree {
     assert(0 <= l && l <= _n)
     assert(g(e()))
     if l == _n { return _n }
-    l += size
+    l &+= size
     // for (int i = log; i >= 1; i--) push(l >> i);
-    for i in stride(from: log, through: 1, by: -1) { push(l >> i) }
+    for i in stride(from: log, through: 1, by: -1) { push(l &>> i) }
     var sm: S = e()
     repeat {
-      while (l & 1) == 0 { l >>= 1 }
+      while (l & 1) == 0 { l &>>= 1 }
       if !g(op(sm, d[l])) {
         while l < size {
           push(l)
-          l = l << 1
+          l = l &<< 1
           if g(op(sm, d[l])) {
             sm = op(sm, d[l])
-            l += 1
+            l &+= 1
           }
         }
-        return l - size
+        return l &- size
       }
       sm = op(sm, d[l])
-      l += 1
-    } while l & -l != l
+      l &+= 1
+    } while l & (0 &- l) != l
     return _n
   }
 
@@ -269,32 +273,32 @@ extension LazySegTree {
     assert(0 <= r && r <= _n)
     assert(g(e()))
     if r == 0 { return 0 }
-    r += size
+    r &+= size
     // for (int i = log; i >= 1; i--) push((r - 1) >> i);
-    for i in stride(from: log, through: 1, by: -1) { push((r - 1) >> i) }
+    for i in stride(from: log, through: 1, by: -1) { push((r &- 1) &>> i) }
     var sm: S = e()
     repeat {
-      r -= 1
-      while r > 1, r & 1 != 0 { r >>= 1 }
+      r &-= 1
+      while r > 1, r & 1 != 0 { r &>>= 1 }
       if !g(op(d[r], sm)) {
         while r < size {
           push(r)
-          r = r << 1 + 1
+          r = (r &<< 1) &+ 1
           if g(op(d[r], sm)) {
             sm = op(d[r], sm)
-            r -= 1
+            r &-= 1
           }
         }
-        return r + 1 - size
+        return r &+ 1 &- size
       }
       sm = op(d[r], sm)
-    } while r & -r != r
+    } while r & (0 &- r) != r
     return 0
   }
 
   @inlinable
   mutating func update(_ k: Int) {
-    d[k] = op(d[k << 1], d[k << 1 + 1])
+    d[k] = op(d[k &<< 1], d[(k &<< 1) &+ 1])
   }
 
   @inlinable
@@ -305,8 +309,8 @@ extension LazySegTree {
 
   @inlinable
   mutating func push(_ k: Int) {
-    all_apply(k << 1, lz[k])
-    all_apply(k << 1 + 1, lz[k])
+    all_apply(k &<< 1, lz[k])
+    all_apply((k &<< 1) &+ 1, lz[k])
     lz[k] = id()
   }
 }
@@ -320,7 +324,7 @@ extension LazySegTree {
     _n = count
     size = _Internal.bit_ceil(_n)
     log = size.trailingZeroBitCount
-    capacity = 2 * size
+    capacity = 2 &* size
     _d_payload = .allocate(capacity: capacity)
     _lz_payload = .allocate(capacity: size)
   }
@@ -335,9 +339,9 @@ extension LazySegTree {
 
     d.initialize(repeating: O.e, count: size)
     (d + size).initialize(repeating: O.e, count: _n)
-    (d + size + _n).initialize(repeating: O.e, count: size - _n)
+    (d + size + _n).initialize(repeating: O.e, count: size &- _n)
     lz.initialize(repeating: O.id, count: size)
-    for i in stride(from: size - 1, through: 1, by: -1) {
+    for i in stride(from: size &- 1, through: 1, by: -1) {
       update(i)
     }
   }
@@ -353,9 +357,9 @@ extension LazySegTree {
     for (offset, i) in v.indices.enumerated() {
       (d + size + offset).initialize(to: v[i])
     }
-    (d + size + _n).initialize(repeating: O.e, count: size - _n)
+    (d + size + _n).initialize(repeating: O.e, count: size &- _n)
     lz.initialize(repeating: O.id, count: size)
-    for i in stride(from: size - 1, through: 1, by: -1) {
+    for i in stride(from: size &- 1, through: 1, by: -1) {
       update(i)
     }
   }
@@ -371,10 +375,10 @@ extension LazySegTree {
     v.withUnsafeBufferPointer { v in
       d.initialize(repeating: O.e, count: size)
       (d + size).initialize(from: v.baseAddress!, count: _n)
-      (d + size + _n).initialize(repeating: O.e, count: size - _n)
+      (d + size + _n).initialize(repeating: O.e, count: size &- _n)
     }
     lz.initialize(repeating: O.id, count: size)
-    for i in stride(from: size - 1, through: 1, by: -1) {
+    for i in stride(from: size &- 1, through: 1, by: -1) {
       update(i)
     }
   }
@@ -431,9 +435,9 @@ extension LazySegTree {
     for i in 0..<_n {
       (d + size + i).initialize(to: f(i))
     }
-    (d + size + _n).initialize(repeating: O.e, count: size - _n)
+    (d + size + _n).initialize(repeating: O.e, count: size &- _n)
     lz.initialize(repeating: O.id, count: size)
-    for i in stride(from: size - 1, through: 1, by: -1) {
+    for i in stride(from: size &- 1, through: 1, by: -1) {
       update(i)
     }
   }

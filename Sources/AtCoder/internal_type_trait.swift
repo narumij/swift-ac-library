@@ -15,24 +15,24 @@ extension UnsignedInteger {
 extension Int32: ToUnsignedType {
   @inlinable
   @inline(__always)
-  public var unsigned: UInt32 { _read { yield .init(bitPattern: self) } }
+  public var unsigned: UInt32 { _read { yield.init(bitPattern: self) } }
 }
 extension Int64: ToUnsignedType {
   @inlinable
   @inline(__always)
-  public var unsigned: UInt64 { _read { yield .init(bitPattern: self) } }
+  public var unsigned: UInt64 { _read { yield.init(bitPattern: self) } }
 }
 extension Int: ToUnsignedType {
   @inlinable
   @inline(__always)
-  public var unsigned: UInt { _read { yield .init(bitPattern: self) } }
+  public var unsigned: UInt { _read { yield.init(bitPattern: self) } }
 }
 
 @available(macOS 15.0, *)
 extension Int128: ToUnsignedType {
   @inlinable
   @inline(__always)
-  public var unsigned: UInt128 { _read { yield .init(bitPattern: self) } }
+  public var unsigned: UInt128 { _read { yield.init(bitPattern: self) } }
 }
 
 extension UInt32: ToUnsignedType {
@@ -72,15 +72,32 @@ public
   protocol ___numeric_limit: Numeric
 {
   static var __max: Self { get }
+  static func __uncheckedAdd(_ lhs: Self, _ rhs: Self) -> Self
+  static func __uncheckedSubtract(_ lhs: Self, _ rhs: Self) -> Self
+  static func __uncheckedMultiply(_ lhs: Self, _ rhs: Self) -> Self
+}
+
+// Flowの演算はACL同様、結果が型の表現範囲内に収まる入力を前提とする。
+// 浮動小数点・独自Numericの既存動作を保ち、固定幅整数では溢れ検査を省く。
+extension ___numeric_limit {
+  @inlinable public static func __uncheckedAdd(_ lhs: Self, _ rhs: Self) -> Self { lhs + rhs }
+  @inlinable public static func __uncheckedSubtract(_ lhs: Self, _ rhs: Self) -> Self { lhs - rhs }
+  @inlinable public static func __uncheckedMultiply(_ lhs: Self, _ rhs: Self) -> Self { lhs * rhs }
+}
+
+extension ___numeric_limit where Self: FixedWidthInteger {
+  @inlinable public static func __uncheckedAdd(_ lhs: Self, _ rhs: Self) -> Self { lhs &+ rhs }
+  @inlinable public static func __uncheckedSubtract(_ lhs: Self, _ rhs: Self) -> Self { lhs &- rhs }
+  @inlinable public static func __uncheckedMultiply(_ lhs: Self, _ rhs: Self) -> Self { lhs &* rhs }
 }
 
 extension FixedWidthInteger {
-  @inlinable @inline(__always) public static var __max: Self { _read { yield .max } }
+  @inlinable @inline(__always) public static var __max: Self { _read { yield.max } }
 }
 
 extension BinaryFloatingPoint {
   @inlinable @inline(__always) public static var __max: Self {
-    _read { yield .greatestFiniteMagnitude }
+    _read { yield.greatestFiniteMagnitude }
   }
 }
 

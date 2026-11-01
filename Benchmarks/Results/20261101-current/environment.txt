@@ -1,0 +1,249 @@
+Sat Oct 31 21:28:52 UTC 2026
+Darwin delight.local 27.0.0 Darwin Kernel Version 27.0.0: Tue Aug 11 21:05:27 PDT 2026; root:xnu-13432.1.9~1/RELEASE_ARM64_T8103 arm64
+Apple M1
+Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)
+Target: arm64-apple-macosx27.0.0
+Apple clang version 21.0.0 (clang-2100.3.34.2)
+Target: arm64-apple-darwin27.0.0
+Thread model: posix
+InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+Swift library revision: 0166ab4c4431c3fa8c0022f3b95eba71da008321
+ M Benchmarks/Extended.md
+ M Benchmarks/README.md
+ D Benchmarks/Results/20261101-CSREdge-extended/Package.resolved.json
+ D Benchmarks/Results/20261101-CSREdge-extended/README.md
+ D Benchmarks/Results/20261101-CSREdge-extended/Results.md
+ D "Benchmarks/Results/20261101-CSREdge-extended/charts/01 Fenwick add and prefix sum.png"
+ D "Benchmarks/Results/20261101-CSREdge-extended/charts/02 LazySegTree range add and sum.png"
+ D "Benchmarks/Results/20261101-CSREdge-extended/charts/03 SCC grouped cycles.png"
+ D "Benchmarks/Results/20261101-CSREdge-extended/charts/04 TwoSAT planted clauses.png"
+ D "Benchmarks/Results/20261101-CSREdge-extended/charts/05 MaxFlow sparse network.png"
+ D "Benchmarks/Results/20261101-CSREdge-extended/charts/06 MinCostFlow sparse network.png"
+ D "Benchmarks/Results/20261101-CSREdge-extended/charts/07 Convolution modulo 998244353.png"
+ D "Benchmarks/Results/20261101-CSREdge-extended/charts/08 Suffix array alphabet 26.png"
+ D "Benchmarks/Results/20261101-CSREdge-extended/charts/09 Z algorithm alphabet 26.png"
+ D "Benchmarks/Results/20261101-CSREdge-extended/charts/10 ModInt multiply and add.png"
+ D Benchmarks/Results/20261101-CSREdge-extended/environment.txt
+ D Benchmarks/Results/20261101-CSREdge-extended/render.log
+ D Benchmarks/Results/20261101-CSREdge-extended/results.json
+ D Benchmarks/Results/20261101-CSREdge-extended/run.log
+ D Benchmarks/Results/20261101-CSREdge-extended/verification.txt
+ D Benchmarks/Results/20261101-CSREdge/Package.resolved.json
+ D Benchmarks/Results/20261101-CSREdge/README.md
+ D Benchmarks/Results/20261101-CSREdge/Results.md
+ D "Benchmarks/Results/20261101-CSREdge/charts/01 DSU merge and size.png"
+ D "Benchmarks/Results/20261101-CSREdge/charts/02 SegTree random updates.png"
+ D "Benchmarks/Results/20261101-CSREdge/charts/03 SegTree range sums.png"
+ D Benchmarks/Results/20261101-CSREdge/environment.txt
+ D Benchmarks/Results/20261101-CSREdge/render.log
+ D Benchmarks/Results/20261101-CSREdge/results.json
+ D Benchmarks/Results/20261101-CSREdge/run.log
+ D Benchmarks/Results/20261101-CSREdge/verification.txt
+ D Benchmarks/Results/20261101-O3/Package.resolved.json
+ D Benchmarks/Results/20261101-O3/README.md
+ D Benchmarks/Results/20261101-O3/Results.md
+ D Benchmarks/Results/20261101-O3/build-and-run.log
+ D "Benchmarks/Results/20261101-O3/charts/01 DSU merge and size.png"
+ D "Benchmarks/Results/20261101-O3/charts/02 SegTree random updates.png"
+ D "Benchmarks/Results/20261101-O3/charts/03 SegTree range sums.png"
+ D Benchmarks/Results/20261101-O3/cpp-build-flags.txt
+ D Benchmarks/Results/20261101-O3/environment.txt
+ D Benchmarks/Results/20261101-O3/render.log
+ D Benchmarks/Results/20261101-O3/results.json
+ D Benchmarks/Results/20261101-O3/run.log
+ D Benchmarks/Results/20261101-O3/source-sha256.txt
+ D Benchmarks/Results/20261101-O3/verification.txt
+ D Benchmarks/Results/20261101-convolution-small/README.md
+ D Benchmarks/Results/20261101-convolution-small/after.json
+ D Benchmarks/Results/20261101-convolution-small/before.json
+ D Benchmarks/Results/20261101-convolution-small/changes.diff
+ D Benchmarks/Results/20261101-convolution-small/comparison.json
+ D Benchmarks/Results/20261101-convolution-small/full.png
+ D Benchmarks/Results/20261101-convolution-small/small.png
+ D Benchmarks/Results/20261101-convolution-small/verification.txt
+ D Benchmarks/Results/20261101-extended/Package.resolved.json
+ D Benchmarks/Results/20261101-extended/README.md
+ D Benchmarks/Results/20261101-extended/Results.md
+ D "Benchmarks/Results/20261101-extended/charts/01 Fenwick add and prefix sum.png"
+ D "Benchmarks/Results/20261101-extended/charts/02 LazySegTree range add and sum.png"
+ D "Benchmarks/Results/20261101-extended/charts/03 SCC grouped cycles.png"
+ D "Benchmarks/Results/20261101-extended/charts/04 TwoSAT planted clauses.png"
+ D "Benchmarks/Results/20261101-extended/charts/05 MaxFlow sparse network.png"
+ D "Benchmarks/Results/20261101-extended/charts/06 MinCostFlow sparse network.png"
+ D "Benchmarks/Results/20261101-extended/charts/07 Convolution modulo 998244353.png"
+ D "Benchmarks/Results/20261101-extended/charts/08 Suffix array alphabet 26.png"
+ D "Benchmarks/Results/20261101-extended/charts/09 Z algorithm alphabet 26.png"
+ D "Benchmarks/Results/20261101-extended/charts/10 ModInt multiply and add.png"
+ D Benchmarks/Results/20261101-extended/environment.txt
+ D Benchmarks/Results/20261101-extended/render.log
+ D Benchmarks/Results/20261101-extended/results.json
+ D Benchmarks/Results/20261101-extended/run.log
+ D Benchmarks/Results/20261101-extended/source-sha256.txt
+ D Benchmarks/Results/20261101-extended/verification-max.txt
+ D Benchmarks/Results/20261101-extended/verification.txt
+ D Benchmarks/Results/20261101-latest/Package.resolved.json
+ D Benchmarks/Results/20261101-latest/README.md
+ D Benchmarks/Results/20261101-latest/Results.md
+ D Benchmarks/Results/20261101-latest/changes.diff
+ D "Benchmarks/Results/20261101-latest/charts/01 DSU merge and size.png"
+ D "Benchmarks/Results/20261101-latest/charts/02 SegTree random updates.png"
+ D "Benchmarks/Results/20261101-latest/charts/03 SegTree range sums.png"
+ D "Benchmarks/Results/20261101-latest/charts/04 Fenwick add and prefix sum.png"
+ D "Benchmarks/Results/20261101-latest/charts/05 LazySegTree range add and sum.png"
+ D "Benchmarks/Results/20261101-latest/charts/06 SCC grouped cycles.png"
+ D "Benchmarks/Results/20261101-latest/charts/07 TwoSAT planted clauses.png"
+ D "Benchmarks/Results/20261101-latest/charts/08 MaxFlow sparse network.png"
+ D "Benchmarks/Results/20261101-latest/charts/09 MinCostFlow sparse network.png"
+ D "Benchmarks/Results/20261101-latest/charts/10 Convolution modulo 998244353.png"
+ D "Benchmarks/Results/20261101-latest/charts/11 Suffix array alphabet 26.png"
+ D "Benchmarks/Results/20261101-latest/charts/12 Z algorithm alphabet 26.png"
+ D "Benchmarks/Results/20261101-latest/charts/13 ModInt multiply and add.png"
+ D Benchmarks/Results/20261101-latest/environment.txt
+ D Benchmarks/Results/20261101-latest/library.json
+ D Benchmarks/Results/20261101-latest/render.log
+ D Benchmarks/Results/20261101-latest/results.json
+ D Benchmarks/Results/20261101-latest/run.log
+ D Benchmarks/Results/20261101-latest/verification.txt
+ D Benchmarks/Results/20261101-maxflow-add/README.md
+ D Benchmarks/Results/20261101-maxflow-add/after.json
+ D Benchmarks/Results/20261101-maxflow-add/before.json
+ D Benchmarks/Results/20261101-maxflow-add/changes.diff
+ D Benchmarks/Results/20261101-maxflow-add/comparison.json
+ D Benchmarks/Results/20261101-maxflow-add/comparison.png
+ D Benchmarks/Results/20261101-maxflow-add/dfs-trial-after.json
+ D Benchmarks/Results/20261101-maxflow-add/dfs-trial-before.json
+ D Benchmarks/Results/20261101-maxflow-add/verification.txt
+ D Benchmarks/Results/20261101-maxflow-claude/README.md
+ D Benchmarks/Results/20261101-maxflow-claude/changes.diff
+ D Benchmarks/Results/20261101-maxflow-claude/comparison.json
+ D Benchmarks/Results/20261101-maxflow-claude/comparison.png
+ D Benchmarks/Results/20261101-maxflow-claude/cumulative/after.json
+ D Benchmarks/Results/20261101-maxflow-claude/cumulative/before.json
+ D Benchmarks/Results/20261101-maxflow-claude/cumulative/summary.md
+ D Benchmarks/Results/20261101-maxflow-claude/environment.txt
+ D Benchmarks/Results/20261101-maxflow-claude/measure.sh
+ D Benchmarks/Results/20261101-maxflow-claude/summarize.py
+ D Benchmarks/Results/20261101-maxflow-claude/trial1-r2/after.json
+ D Benchmarks/Results/20261101-maxflow-claude/trial1-r2/before.json
+ D Benchmarks/Results/20261101-maxflow-claude/trial1-r2/summary.md
+ D Benchmarks/Results/20261101-maxflow-claude/trial1.diff
+ D Benchmarks/Results/20261101-maxflow-claude/trial1/after.json
+ D Benchmarks/Results/20261101-maxflow-claude/trial1/before.json
+ D Benchmarks/Results/20261101-maxflow-claude/trial1/summary.md
+ D Benchmarks/Results/20261101-maxflow-claude/trial2-cumulative.diff
+ D Benchmarks/Results/20261101-maxflow-claude/trial2/after.json
+ D Benchmarks/Results/20261101-maxflow-claude/trial2/before.json
+ D Benchmarks/Results/20261101-maxflow-claude/trial2/summary.md
+ D Benchmarks/Results/20261101-maxflow-claude/trial3/after.json
+ D Benchmarks/Results/20261101-maxflow-claude/trial3/before.json
+ D Benchmarks/Results/20261101-maxflow-claude/trial3/summary.md
+ D Benchmarks/Results/20261101-maxflow-claude/trial4-cumulative.diff
+ D Benchmarks/Results/20261101-maxflow-claude/trial4/after.json
+ D Benchmarks/Results/20261101-maxflow-claude/trial4/before.json
+ D Benchmarks/Results/20261101-maxflow-claude/trial4/summary.md
+ D Benchmarks/Results/20261101-maxflow-claude/unit-debug.txt
+ D Benchmarks/Results/20261101-maxflow-claude/unit-release.txt
+ D Benchmarks/Results/20261101-maxflow-claude/verification.txt
+ D Benchmarks/Results/20261101-maxflow-phases/README.md
+ D Benchmarks/Results/20261101-maxflow-phases/comparison.png
+ D Benchmarks/Results/20261101-maxflow-phases/construction.json
+ D Benchmarks/Results/20261101-maxflow-phases/construction.png
+ D Benchmarks/Results/20261101-maxflow-phases/destruction.json
+ D Benchmarks/Results/20261101-maxflow-phases/destruction.png
+ D Benchmarks/Results/20261101-maxflow-phases/environment.txt
+ D Benchmarks/Results/20261101-maxflow-phases/results.json
+ D Benchmarks/Results/20261101-maxflow-phases/search.json
+ D Benchmarks/Results/20261101-maxflow-phases/search.png
+ D Benchmarks/Results/20261101-maxflow-phases/verification.txt
+ D Benchmarks/Results/20261101-maxflow-pruning/README.md
+ D Benchmarks/Results/20261101-maxflow-pruning/after.json
+ D Benchmarks/Results/20261101-maxflow-pruning/before.json
+ D Benchmarks/Results/20261101-maxflow-pruning/changes.diff
+ D Benchmarks/Results/20261101-maxflow-pruning/comparison.json
+ D Benchmarks/Results/20261101-maxflow-pruning/comparison.png
+ D Benchmarks/Results/20261101-maxflow-pruning/verification.txt
+ D Benchmarks/Results/20261101-maxflow-queue/README.md
+ D Benchmarks/Results/20261101-maxflow-queue/after.json
+ D Benchmarks/Results/20261101-maxflow-queue/before.json
+ D Benchmarks/Results/20261101-maxflow-queue/changes.diff
+ D Benchmarks/Results/20261101-maxflow-queue/comparison.json
+ D Benchmarks/Results/20261101-maxflow-queue/comparison.png
+ D Benchmarks/Results/20261101-maxflow-queue/verification.txt
+ D Benchmarks/Results/20261101-maxflow-reserved/README.md
+ D Benchmarks/Results/20261101-maxflow-reserved/changes.diff
+ D Benchmarks/Results/20261101-maxflow-reserved/construction.json
+ D Benchmarks/Results/20261101-maxflow-reserved/construction.png
+ D Benchmarks/Results/20261101-maxflow-reserved/environment.txt
+ D Benchmarks/Results/20261101-maxflow-reserved/results.json
+ D Benchmarks/Results/20261101-maxflow-reserved/test.txt
+ D Benchmarks/Results/20261101-maxflow-reserved/total.json
+ D Benchmarks/Results/20261101-maxflow-reserved/total.png
+ D Benchmarks/Results/20261101-maxflow-reserved/verification.txt
+ D Benchmarks/Results/20261101-maxflow-restored/README.md
+ D Benchmarks/Results/20261101-maxflow-restored/changes.diff
+ D Benchmarks/Results/20261101-maxflow-restored/results.json
+ D Benchmarks/Results/20261101-maxflow-restored/total.json
+ D Benchmarks/Results/20261101-maxflow-restored/total.png
+ D Benchmarks/Results/20261101-maxflow-storage/README.md
+ D Benchmarks/Results/20261101-maxflow-storage/changes.diff
+ D Benchmarks/Results/20261101-maxflow-storage/results.json
+ D Benchmarks/Results/20261101-maxflow-storage/total.json
+ D Benchmarks/Results/20261101-maxflow-storage/total.png
+ D Benchmarks/Results/20261101-overflow-updated/Package.resolved.json
+ D Benchmarks/Results/20261101-overflow-updated/README.md
+ D Benchmarks/Results/20261101-overflow-updated/Results.md
+ D Benchmarks/Results/20261101-overflow-updated/changes.diff
+ D "Benchmarks/Results/20261101-overflow-updated/charts/01 DSU merge and size.png"
+ D "Benchmarks/Results/20261101-overflow-updated/charts/02 SegTree random updates.png"
+ D "Benchmarks/Results/20261101-overflow-updated/charts/03 SegTree range sums.png"
+ D "Benchmarks/Results/20261101-overflow-updated/charts/04 Fenwick add and prefix sum.png"
+ D "Benchmarks/Results/20261101-overflow-updated/charts/05 LazySegTree range add and sum.png"
+ D "Benchmarks/Results/20261101-overflow-updated/charts/06 SCC grouped cycles.png"
+ D "Benchmarks/Results/20261101-overflow-updated/charts/07 TwoSAT planted clauses.png"
+ D "Benchmarks/Results/20261101-overflow-updated/charts/08 MaxFlow sparse network.png"
+ D "Benchmarks/Results/20261101-overflow-updated/charts/09 MinCostFlow sparse network.png"
+ D "Benchmarks/Results/20261101-overflow-updated/charts/10 Convolution modulo 998244353.png"
+ D "Benchmarks/Results/20261101-overflow-updated/charts/11 Suffix array alphabet 26.png"
+ D "Benchmarks/Results/20261101-overflow-updated/charts/12 Z algorithm alphabet 26.png"
+ D "Benchmarks/Results/20261101-overflow-updated/charts/13 ModInt multiply and add.png"
+ D Benchmarks/Results/20261101-overflow-updated/environment.txt
+ D Benchmarks/Results/20261101-overflow-updated/library.json
+ D Benchmarks/Results/20261101-overflow-updated/render.log
+ D Benchmarks/Results/20261101-overflow-updated/results.json
+ D Benchmarks/Results/20261101-overflow-updated/run.log
+ D Benchmarks/Results/20261101-overflow-updated/verification.txt
+ D Benchmarks/Results/20261101-suffix/README.md
+ D Benchmarks/Results/20261101-suffix/after.json
+ D Benchmarks/Results/20261101-suffix/before.json
+ D Benchmarks/Results/20261101-suffix/changes.diff
+ D Benchmarks/Results/20261101-suffix/comparison.json
+ D Benchmarks/Results/20261101-suffix/comparison.png
+ D Benchmarks/Results/20261101-suffix/verification.txt
+ D Benchmarks/Results/20261101-unified/Package.resolved.json
+ D Benchmarks/Results/20261101-unified/README.md
+ D Benchmarks/Results/20261101-unified/Results.md
+ D "Benchmarks/Results/20261101-unified/charts/01 DSU merge and size.png"
+ D "Benchmarks/Results/20261101-unified/charts/02 SegTree random updates.png"
+ D "Benchmarks/Results/20261101-unified/charts/03 SegTree range sums.png"
+ D "Benchmarks/Results/20261101-unified/charts/04 Fenwick add and prefix sum.png"
+ D "Benchmarks/Results/20261101-unified/charts/05 LazySegTree range add and sum.png"
+ D "Benchmarks/Results/20261101-unified/charts/06 SCC grouped cycles.png"
+ D "Benchmarks/Results/20261101-unified/charts/07 TwoSAT planted clauses.png"
+ D "Benchmarks/Results/20261101-unified/charts/08 MaxFlow sparse network.png"
+ D "Benchmarks/Results/20261101-unified/charts/09 MinCostFlow sparse network.png"
+ D "Benchmarks/Results/20261101-unified/charts/10 Convolution modulo 998244353.png"
+ D "Benchmarks/Results/20261101-unified/charts/11 Suffix array alphabet 26.png"
+ D "Benchmarks/Results/20261101-unified/charts/12 Z algorithm alphabet 26.png"
+ D "Benchmarks/Results/20261101-unified/charts/13 ModInt multiply and add.png"
+ D Benchmarks/Results/20261101-unified/environment.txt
+ D Benchmarks/Results/20261101-unified/library.json
+ D Benchmarks/Results/20261101-unified/render.log
+ D Benchmarks/Results/20261101-unified/results.json
+ D Benchmarks/Results/20261101-unified/run.log
+ D Benchmarks/Results/20261101-unified/verification.txt
+ M Benchmarks/library.json
+ M Benchmarks/run.sh
+?? Benchmarks/Results/20261101-current/
+C++ ACL revision: 864245a00b00dd008d1abfdc239618fdb7d139da
+MAX_SIZE=2M CYCLES=3
+Release: Swift -O; C++ explicit -O3 -DNDEBUG; sanitizers OFF

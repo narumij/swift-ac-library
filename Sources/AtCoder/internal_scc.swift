@@ -15,7 +15,7 @@ extension _Internal {
     public func num_vertices() -> Int { return _n }
 
     @inlinable
-    public mutating func add_edge(_ from: Int, _ to: Int) { edges.append((from, edge(to))) }
+    public mutating func add_edge(_ from: Int, _ to: Int) { edges.append(.init(from, edge(to))) }
 
     // @return pair of (# of scc, scc id)
     @inlinable
@@ -151,7 +151,7 @@ extension _Internal {
     //   @usableFromInline let to: Int
     // }
     @usableFromInline
-    var edges: [(Int, edge)] = []
+    var edges: [CSREdge<edge>] = []
   }
 }
 

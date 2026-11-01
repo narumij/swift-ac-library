@@ -248,7 +248,8 @@ extension _Internal {
   ) -> [static_modint<mod>] {
     let n = a.count
     let m = b.count
-    return .init(unsafeUninitializedCapacity: n + m - 1) {
+    // 有効な入力では結果の長さがIntに収まる。
+    return .init(unsafeUninitializedCapacity: n &+ m &- 1) {
       ans, initializedCount in
       ans.initialize(repeating: .init())
       if n < m {
@@ -358,23 +359,13 @@ public func convolution<mod: static_mod, T: FixedWidthInteger>(_ t: mod.Type, _ 
 
   typealias mint = static_modint<mod>
 
-  let z: Int = _Internal.bit_ceil(n + m - 1)
+  let z: Int = _Internal.bit_ceil(n &+ m &- 1)
   assert((Int(mint.mod) - 1) % z == 0)
 
-  var a2 = [mint](repeating: 0, count: n)
-  var b2 = [mint](repeating: 0, count: m)
-  for i in 0..<n {
-    a2[i] = mint(a[i])
-  }
-  for i in 0..<m {
-    b2[i] = mint(b[i])
-  }
-  let c2 = convolution(a2, b2)
-  var c = [T](repeating: 0, count: n + m - 1)
-  for i in 0..<(n + m - 1) {
-    c[i] = T(c2[i].val)
-  }
-  return c
+  // ゼロ埋めしてから上書きせず、変換した要素で直接配列を構築する。
+  let a2 = a.map { mint($0) }
+  let b2 = b.map { mint($0) }
+  return convolution(a2, b2).map { T($0.val) }
 }
 
 @available(*, deprecated, message: "mod_998_244_353を意図してない場合、convolution<,>(_:,_:,_:)を使うこと")

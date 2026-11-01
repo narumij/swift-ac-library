@@ -23,6 +23,25 @@ extension MFGraph {
     _n = n
     g = [[_edge]].init(repeating: [], count: n)
   }
+  /// Reserves storage for the expected adjacency entries at each vertex.
+  /// Count both endpoints of every directed edge: `from` stores the forward edge,
+  /// and `to` stores its residual reverse edge. A self-loop contributes two entries
+  /// to the same vertex. Counts describe total desired capacity, not extra capacity.
+  /// This only reserves storage; edge indices, capacities, and flows are unchanged.
+  @inlinable
+  public mutating func reserveCapacity(edgeCounts: [Int]) {
+    precondition(edgeCounts.count == _n, "Expected one edge count per vertex")
+    var total = 0
+    g.withUnsafeMutableBufferPointer { adjacency in
+      for v in 0..<_n {
+        precondition(edgeCounts[v] >= 0, "Negative edge count")
+        total += edgeCounts[v]
+        adjacency[v].reserveCapacity(edgeCounts[v])
+      }
+    }
+    pos.reserveCapacity(total / 2)
+  }
+
   @inlinable
   @discardableResult
   public mutating func add_edge(_ from: Int, _ to: Int, _ cap: Cap) -> Int {
@@ -30,12 +49,15 @@ extension MFGraph {
     assert(0 <= to && to < _n)
     assert(0 <= cap)
     let m = pos.count
-    pos.append((from, g[from].count))
-    let from_id = g[from].count
-    var to_id = g[to].count
-    if from == to { to_id += 1 }
-    g[from].append(_edge(to: to, rev: to_id, cap: cap))
-    g[to].append(_edge(to: from, rev: from_id, cap: 0))
+    // 外側の隣接配列を一度だけ借用して、順方向・逆方向の辺を追加する。
+    g.withUnsafeMutableBufferPointer { g in
+      let from_id = g[from].count
+      var to_id = g[to].count
+      if from == to { to_id += 1 }
+      pos.append((from, from_id))
+      g[from].append(_edge(to: to, rev: to_id, cap: cap))
+      g[to].append(_edge(to: from, rev: from_id, cap: 0))
+    }
     return m
   }
 
@@ -98,20 +120,35 @@ extension MFGraph {
     var level = [Int](repeating: 0, count: _n)
     var iter = [Int](repeating: 0, count: _n)
 
+    // BFS marks vertices before enqueueing; each vertex enters at most once.
+    // FIFO order and early exit are unchanged. Only the storage is reused.
+    var queue = [Int](repeating: 0, count: _n)
+
     func bfs() {
       g.withUnsafeMutableBufferPointer { g in
         level.withUnsafeMutableBufferPointer { level in
-          level.update(repeating: -1)
-          level[s] = 0
-          var que = Deque<Int>()
-          que.append(s)
-          while let v = que.popFirst() {
-            for ei in 0..<g[v].count {
-              let e = g[v][ei]
-              if e.cap == 0 || level[e.to] >= 0 { continue }
-              level[e.to] = level[v] + 1
-              if e.to == t { return }
-              que.append(e.to)
+          queue.withUnsafeMutableBufferPointer { queue in
+            level.update(repeating: -1)
+            level[s] = 0
+            var head = 0
+            var tail = 1
+            queue[0] = s
+            while head < tail {
+              let v = queue[head]
+              head += 1
+              let next_level = level[v] + 1
+              // 辺ごとに外側配列から内側配列を読み直さないよう、頂点ごとに一度借用する。
+              let reached = g[v].withUnsafeBufferPointer { adj in
+                for e in adj {
+                  if e.cap == 0 || level[e.to] >= 0 { continue }
+                  level[e.to] = next_level
+                  if e.to == t { return true }
+                  queue[tail] = e.to
+                  tail += 1
+                }
+                return false
+              }
+              if reached { return }
             }
           }
         }
@@ -206,12 +243,13 @@ extension MFGraph {
                   }
                 }
 
+                // Match the original recursive DFS: prune each exhausted vertex.
+                level[v] = _n
                 // return res
                 returnValue = res
                 continue DFS
               }
 
-              level[v] = _n
               // return res
               return returnValue!
             }
@@ -270,7 +308,7 @@ extension MFGraph {
 }
 
 extension MFGraph {
-  
+
   @inlinable
   internal init(other: borrowing Self) {
     self._n = other._n
