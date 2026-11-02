@@ -65,6 +65,68 @@ The `compatible/AtCoder/2025` branch maintains compatibility with AtCoder 2025 w
 
 `main` is the development branch for the next release.
 
+## Benchmarks
+
+Swift / C++ AtCoder Library comparison measured from product revision `0166ab4`
+on Apple M1, Swift 6.4 Release -O, C++ -O3 -DNDEBUG, no sanitizers.
+Values are end-to-end batch measurements, including construction, execution and
+destruction. These specific inputs do not establish general performance rankings.
+Bands are not confidence intervals.
+See [the result summary](Benchmarks/Results/20261101-current/README.md),
+[methodology](Benchmarks/README.md) and [workload definitions](Benchmarks/Extended.md).
+
+### DSU merge and size
+
+![DSU merge and size](Benchmarks/Results/20261101-current/charts/01%20DSU%20merge%20and%20size.png)
+
+### SegTree random updates
+
+![SegTree random updates](Benchmarks/Results/20261101-current/charts/02%20SegTree%20random%20updates.png)
+
+### SegTree range sums
+
+![SegTree range sums](Benchmarks/Results/20261101-current/charts/03%20SegTree%20range%20sums.png)
+
+### Fenwick add and prefix sum
+
+![Fenwick add and prefix sum](Benchmarks/Results/20261101-current/charts/04%20Fenwick%20add%20and%20prefix%20sum.png)
+
+### LazySegTree range add and sum
+
+![LazySegTree range add and sum](Benchmarks/Results/20261101-current/charts/05%20LazySegTree%20range%20add%20and%20sum.png)
+
+### SCC grouped cycles
+
+![SCC grouped cycles](Benchmarks/Results/20261101-current/charts/06%20SCC%20grouped%20cycles.png)
+
+### TwoSAT planted clauses
+
+![TwoSAT planted clauses](Benchmarks/Results/20261101-current/charts/07%20TwoSAT%20planted%20clauses.png)
+
+### MaxFlow sparse network
+
+![MaxFlow sparse network](Benchmarks/Results/20261101-current/charts/08%20MaxFlow%20sparse%20network.png)
+
+### MinCostFlow sparse network
+
+![MinCostFlow sparse network](Benchmarks/Results/20261101-current/charts/09%20MinCostFlow%20sparse%20network.png)
+
+### Convolution modulo 998244353
+
+![Convolution modulo 998244353](Benchmarks/Results/20261101-current/charts/10%20Convolution%20modulo%20998244353.png)
+
+### Suffix array alphabet 26
+
+![Suffix array alphabet 26](Benchmarks/Results/20261101-current/charts/11%20Suffix%20array%20alphabet%2026.png)
+
+### Z algorithm alphabet 26
+
+![Z algorithm alphabet 26](Benchmarks/Results/20261101-current/charts/12%20Z%20algorithm%20alphabet%2026.png)
+
+### ModInt multiply and add
+
+![ModInt multiply and add](Benchmarks/Results/20261101-current/charts/13%20ModInt%20multiply%20and%20add.png)
+
 ## Related Projects
 
 [ac-library-csharp] - C# version
