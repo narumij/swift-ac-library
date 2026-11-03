@@ -18,43 +18,6 @@ extension _Internal {
     @inline(__always)
     public mutating func add_edge(_ from: Int, _ to: Int) { edges.append(.init(from, edge(to))) }
 
-    @usableFromInline
-    struct _Array<Element>: ~Copyable {
-      @usableFromInline let capacity: Int
-      @usableFromInline let buffer: UnsafeMutablePointer<Element>
-      @usableFromInline var size: Int
-      @inlinable
-      init(_ n: Int) {
-        capacity = n
-        buffer = .allocate(capacity: n)
-        size = 0
-      }
-      @inlinable
-      mutating func append(_ e: Element) {
-        (buffer + size).initialize(to: e)
-        size += 1
-      }
-      @discardableResult
-      @inlinable
-      mutating func removeLast() -> Element {
-        defer { size -= 1 }
-        return (buffer + size - 1).move()
-      }
-      @inlinable
-      var last: Element? { size == 0 ? nil : buffer[size &- 1] }
-      @inlinable
-      var count: Int { size }
-      @inlinable
-      subscript(position: Int) -> Element {
-        unsafeAddress { UnsafePointer(buffer + position) }
-        unsafeMutableAddress { buffer + position }
-      }
-      deinit {
-        buffer.deinitialize(count: size)
-        buffer.deallocate()
-      }
-    }
-
     // @return pair of (# of scc, scc id)
     @inlinable
     public func scc_ids() -> (number_of_scc: Int, scc: [Int]) {
@@ -110,7 +73,7 @@ extension _Internal {
               // DFSの復帰位置をヒープ上に保持する。長い鎖でも呼出しスタックを消費しない。
               // visitedはSCC未確定の頂点、framesは探索中の呼出しに相当する別のスタック。
 //              var frames: [(vertex: Int, nextEdge: Int)] = []
-              var frames: _Array<(vertex: Int, nextEdge: Int)> = .init(_n)
+              var frames: _RawArray<(vertex: Int, nextEdge: Int)> = .init(_n)
               for root in 0..<_n {
                 if ord[root] != -1 { continue }
                 low[root] = now_ord.pointee
@@ -247,3 +210,4 @@ extension _Internal.scc_graph {
 extension Int {
   @inlinable @inline(__always) var to: Int { self }
 }
+
