@@ -4,7 +4,7 @@ extension _Internal {
   struct simple_queue<T>: ~Copyable {
     @inlinable
     init(_ n: Int) {
-      self.payload = .init(start: .allocate(capacity: n), count: n)
+      self.payload = _Internal.create_buffer(T.self, n)
     }
     @usableFromInline var payload: UnsafeMutableBufferPointer<T>
     @usableFromInline var pos = 0
@@ -138,16 +138,36 @@ extension _Internal {
 }
 
 extension _Internal {
-  
+
   @inlinable
-  static func create_buffer(_ n: Int) -> UnsafeMutableBufferPointer<Int> {
-    let buffer = UnsafeMutableBufferPointer<Int>(start: .allocate(capacity: n), count: n)
-    buffer.initialize(repeating: 0)
+  static func create_buffer(repeating: Int = 0, _ n: Int)
+    -> UnsafeMutableBufferPointer<Int>
+  {
+    let buffer = create_buffer(Int.self, n)
+    buffer.initialize(repeating: repeating)
     return buffer
   }
 
   @inlinable
-  static func delete_buffer(_ b: UnsafeMutableBufferPointer<Int>) {
+  static func create_buffer<T>(_ t: T.Type, _ n: Int)
+    -> UnsafeMutableBufferPointer<T>
+  {
+    UnsafeMutableBufferPointer<T>(
+      start: .allocate(capacity: n), count: n)
+  }
+  
+  @inlinable
+  static func copy_buffer<T>(_ other: UnsafeMutableBufferPointer<T>)
+    -> UnsafeMutableBufferPointer<T>
+  {
+    let b = create_buffer(T.self, other.count)
+    _ = b.initialize(from: other)
+    return b
+  }
+
+
+  @inlinable
+  static func delete_buffer<T>(_ b: UnsafeMutableBufferPointer<T>) {
     b.deinitialize()
     b.deallocate()
   }
