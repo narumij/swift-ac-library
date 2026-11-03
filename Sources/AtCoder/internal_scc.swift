@@ -8,7 +8,7 @@ extension _Internal {
     @inlinable
     public init(_ n: Int) {
       _n = n
-      edges.reserveCapacity(_n)
+      edges.reserve(_n)
     }
 
     @inlinable
@@ -16,12 +16,12 @@ extension _Internal {
 
     @inlinable
     @inline(__always)
-    public mutating func add_edge(_ from: Int, _ to: Int) { edges.append(.init(from, edge(to))) }
+    public mutating func add_edge(_ from: Int, _ to: Int) { edges.push_back(.init(from, edge(to))) }
 
     // @return pair of (# of scc, scc id)
     @inlinable
     public func scc_ids() -> (number_of_scc: Int, scc: [Int]) {
-      let g = _Internal.csr<edge>(_n, edges.withUnsafeBufferPointer { $0 })
+      let g = _Internal.csr<edge>(_n, edges.unsafeBufferPointer())
       var now_ord = 0
       var group_num = 0
       var visited: _Array<Int> = .init(_n)
@@ -189,7 +189,7 @@ extension _Internal {
     //   @usableFromInline let to: Int
     // }
     @usableFromInline
-    var edges: [CSREdge<edge>] = []
+    var edges: _Internal._Vector<CSREdge<edge>> = .init()
   }
 }
 
@@ -198,7 +198,7 @@ extension _Internal.scc_graph {
   @inlinable
   internal init(other: borrowing Self) {
     self._n = other._n
-    self.edges = other.edges
+    self.edges = .init(copying: other.edges)
   }
 
   @inlinable

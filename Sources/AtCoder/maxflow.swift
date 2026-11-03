@@ -8,7 +8,7 @@ where Cap: ___numeric_limit & Comparable {
   @usableFromInline
   var pos: [(first: Int, second: Int)] = []
   @usableFromInline
-  var g: [[_edge]]
+  var g: _Internal._Vector<_Internal._Vector<_edge>>
 }
 
 extension MFGraph {
@@ -16,12 +16,13 @@ extension MFGraph {
   @inlinable
   public init() {
     _n = 0
-    g = []
+    g = .init()
   }
   @inlinable
   public init(count n: Int) {
     _n = n
-    g = [[_edge]].init(repeating: [], count: n)
+    g = .init(capacity: n)
+    for _ in 0..<n { g.push_back(.init()) }
   }
   /// Reserves storage for the expected adjacency entries at each vertex.
   /// Count both endpoints of every directed edge: `from` stores the forward edge,
@@ -29,15 +30,14 @@ extension MFGraph {
   /// to the same vertex. Counts describe total desired capacity, not extra capacity.
   /// This only reserves storage; edge indices, capacities, and flows are unchanged.
   @inlinable
+  @available(*, deprecated)
   public mutating func reserveCapacity(edgeCounts: [Int]) {
     precondition(edgeCounts.count == _n, "Expected one edge count per vertex")
     var total = 0
-    g.withUnsafeMutableBufferPointer { adjacency in
-      for v in 0..<_n {
-        precondition(edgeCounts[v] >= 0, "Negative edge count")
-        total += edgeCounts[v]
-        adjacency[v].reserveCapacity(edgeCounts[v])
-      }
+    for v in 0..<_n {
+      precondition(edgeCounts[v] >= 0, "Negative edge count")
+      total += edgeCounts[v]
+      g[v].reserve(edgeCounts[v])
     }
     pos.reserveCapacity(total / 2)
   }
@@ -50,15 +50,12 @@ extension MFGraph {
     assert(0 <= to && to < _n)
     assert(0 <= cap)
     let m = pos.count
-    // 外側の隣接配列を一度だけ借用して、順方向・逆方向の辺を追加する。
-    g.withUnsafeMutableBufferPointer { g in
-      let from_id = g[from].count
-      var to_id = g[to].count
-      if from == to { to_id += 1 }
-      pos.append((from, from_id))
-      g[from].append(_edge(to: to, rev: to_id, cap: cap))
-      g[to].append(_edge(to: from, rev: from_id, cap: 0))
-    }
+    pos.append((from, g[from].size()))
+    let from_id = g[from].size()
+    var to_id = g[to].size()
+    if from == to { to_id += 1 }
+    g[from].push_back(_edge(to: to, rev: to_id, cap: cap))
+    g[to].push_back(_edge(to: from, rev: from_id, cap: 0))
     return m
   }
 
@@ -125,9 +122,12 @@ extension MFGraph {
     // FIFO order and early exit are unchanged. Only the storage is reused.
     var que = _Internal.simple_queue<Int>(_n)
 
-    var _g = _Internal._Array<UnsafeMutableBufferPointer<_edge>>(g.count)
-    for i in 0..<g.count {
-      _g.append(g[i].withUnsafeMutableBufferPointer { $0 })
+    // DFSのframeはflow()の間で使い回す。DFSを呼ぶたびの確保・解放を避ける。
+    var frame = _Internal._RawArray<(v: Int, up: Cap, res: Cap)>(_n)
+
+    let _g = _Internal.create_buffer(UnsafeMutableBufferPointer<_edge>.self, g.size())
+    for i in 0..<g.size() {
+      _g.initializeElement(at: i, to: g[i].unsafeMutableBufferPointer())
     }
     let g = _g
 
@@ -188,7 +188,7 @@ extension MFGraph {
         let level = level.baseAddress!
 
         // var frame: [(v: Int, up: Cap, res: Cap)] = [(v, up, 0)]
-        var frame = _Internal._RawArray<(v: Int, up: Cap, res: Cap)>(_n)
+        frame.size = 0
         frame.append((v, up, 0))
         var returnValue: Cap?
 
@@ -261,6 +261,7 @@ extension MFGraph {
     
     _Internal.delete_buffer(level)
     _Internal.delete_buffer(iter)
+    _Internal.delete_buffer(g)
     
     return flow
   }
@@ -273,7 +274,7 @@ extension MFGraph {
       que.append(s)
       while let p = que.popFirst() {
         visited[p] = true
-        for e in g[p] {
+        for e in g[p].unsafeMutableBufferPointer() {
           if e.cap != 0, !visited[e.to] {
             visited[e.to] = true
             que.append(e.to)
@@ -308,7 +309,8 @@ extension MFGraph {
   internal init(other: borrowing Self) {
     self._n = other._n
     self.pos = other.pos
-    self.g = other.g
+    self.g = .init(capacity: other._n)
+    for v in 0..<other._n { self.g.push_back(.init(copying: other.g[v])) }
   }
 
   @inlinable
