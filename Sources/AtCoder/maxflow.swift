@@ -310,7 +310,7 @@ extension MFGraph {
     self._n = other._n
     self.pos = other.pos
     self.g = .init(capacity: other._n)
-    for v in 0..<other._n { self.g.push_back(.init(copying: other.g[v])) }
+    for v in 0..<other._n { self.g.push_back(other.g[v].clone()) }
   }
 
   @inlinable

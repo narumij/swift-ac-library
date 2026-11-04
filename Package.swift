@@ -18,6 +18,11 @@ var _settings: [SwiftSetting] =
 
   ] + defines.map { .define($0) }
 
+#if compiler(>=6.4)
+  // _Vectorの借用イテレーション（Iterable）で@_lifetimeを使うため。
+  _settings.append(.enableExperimentalFeature("Lifetimes"))
+#endif
+
 let package = Package(
   name: "swift-ac-library",
   products: [

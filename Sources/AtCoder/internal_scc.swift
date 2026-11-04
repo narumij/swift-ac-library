@@ -198,7 +198,7 @@ extension _Internal.scc_graph {
   @inlinable
   internal init(other: borrowing Self) {
     self._n = other._n
-    self.edges = .init(copying: other.edges)
+    self.edges = other.edges.clone()
   }
 
   @inlinable
