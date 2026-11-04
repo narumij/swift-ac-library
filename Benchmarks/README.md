@@ -61,12 +61,13 @@ The unified runner uses powers-of-two sizes and each workload’s individual cap
 It verifies both groups, writes one results file, and renders all thirteen charts.
 The MaxFlow chart includes both unreserved and explicitly reserved Swift construction.
 Reservation counts both endpoints of each edge; the counting and reservation time
-are included. C++ uses its original unreserved construction. See [current results](Results/20261101-current/README.md).
+are included. C++ uses its original unreserved construction. See [current results](Results/20261104-current/README.md).
 
 ## Recorded results
 
-- [Current: all thirteen charts](Results/20261101-current/README.md)
+- [Current: all thirteen charts](Results/20261104-current/README.md)
 
-Superseded charts and experimental records were removed from this results tree.
+The previous 2026-11-01 measurements remain available for reference.
+Older superseded charts and experimental records were removed from this results tree.
 Their committed versions remain available in Git history.
 Each result directory includes the dependency resolution used for that run.
