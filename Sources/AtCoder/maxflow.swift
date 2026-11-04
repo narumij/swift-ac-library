@@ -30,7 +30,6 @@ extension MFGraph {
   /// to the same vertex. Counts describe total desired capacity, not extra capacity.
   /// This only reserves storage; edge indices, capacities, and flows are unchanged.
   @inlinable
-  @available(*, deprecated)
   public mutating func reserveCapacity(edgeCounts: [Int]) {
     precondition(edgeCounts.count == _n, "Expected one edge count per vertex")
     var total = 0
