@@ -126,7 +126,7 @@ extension MFGraph {
     var frame = _Internal._RawArray<(v: Int, up: Cap, res: Cap)>(_n)
 
     let _g = _Internal.create_buffer(UnsafeMutableBufferPointer<_edge>.self, g.size())
-    for i in 0..<g.size() {
+    for i in g.indices {
       _g.initializeElement(at: i, to: g[i].unsafeMutableBufferPointer())
     }
     let g = _g

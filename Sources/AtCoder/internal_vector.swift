@@ -101,6 +101,11 @@ extension _Internal {
   }
 }
 
+extension _Internal._Vector where Element: ~Copyable {
+  @inlinable
+  var indices: Range<Int> { 0..<size() }
+}
+
 extension _Internal._Vector where Element: Copyable {
 
   // std::vectorのコピーコンストラクタ相当。要素ごと新しい領域へ複製する。
