@@ -8,7 +8,7 @@ where Cap: ___numeric_limit & Comparable {
   @usableFromInline
   var pos: [(first: Int, second: Int)] = []
   @usableFromInline
-  var g: [[_edge]]
+  var g: _Internal._Vector<_Internal._Vector<_edge>>
 }
 
 extension MFGraph {
@@ -16,12 +16,13 @@ extension MFGraph {
   @inlinable
   public init() {
     _n = 0
-    g = []
+    g = .init()
   }
   @inlinable
   public init(count n: Int) {
     _n = n
-    g = [[_edge]].init(repeating: [], count: n)
+    g = .init(capacity: n)
+    for _ in 0..<n { g.push_back(.init()) }
   }
   /// Reserves storage for the expected adjacency entries at each vertex.
   /// Count both endpoints of every directed edge: `from` stores the forward edge,
@@ -32,32 +33,28 @@ extension MFGraph {
   public mutating func reserveCapacity(edgeCounts: [Int]) {
     precondition(edgeCounts.count == _n, "Expected one edge count per vertex")
     var total = 0
-    g.withUnsafeMutableBufferPointer { adjacency in
-      for v in 0..<_n {
-        precondition(edgeCounts[v] >= 0, "Negative edge count")
-        total += edgeCounts[v]
-        adjacency[v].reserveCapacity(edgeCounts[v])
-      }
+    for v in 0..<_n {
+      precondition(edgeCounts[v] >= 0, "Negative edge count")
+      total += edgeCounts[v]
+      g[v].reserve(edgeCounts[v])
     }
     pos.reserveCapacity(total / 2)
   }
 
   @inlinable
+  @inline(__always)
   @discardableResult
   public mutating func add_edge(_ from: Int, _ to: Int, _ cap: Cap) -> Int {
     assert(0 <= from && from < _n)
     assert(0 <= to && to < _n)
     assert(0 <= cap)
     let m = pos.count
-    // 外側の隣接配列を一度だけ借用して、順方向・逆方向の辺を追加する。
-    g.withUnsafeMutableBufferPointer { g in
-      let from_id = g[from].count
-      var to_id = g[to].count
-      if from == to { to_id += 1 }
-      pos.append((from, from_id))
-      g[from].append(_edge(to: to, rev: to_id, cap: cap))
-      g[to].append(_edge(to: from, rev: from_id, cap: 0))
-    }
+    pos.append((from, g[from].size()))
+    let from_id = g[from].size()
+    var to_id = g[to].size()
+    if from == to { to_id += 1 }
+    g[from].push_back(_edge(to: to, rev: to_id, cap: cap))
+    g[to].push_back(_edge(to: from, rev: from_id, cap: 0))
     return m
   }
 
@@ -110,47 +107,42 @@ extension MFGraph {
   public mutating func flow(_ s: Int, _ t: Int) -> Cap {
     return flow(s, t, numeric_limit<Cap>.max)
   }
-
+  
   @inlinable
   public mutating func flow(_ s: Int, _ t: Int, _ flow_limit: Cap) -> Cap {
     assert(0 <= s && s < _n)
     assert(0 <= t && t < _n)
     assert(s != t)
 
-    var level = [Int](repeating: 0, count: _n)
-    var iter = [Int](repeating: 0, count: _n)
+    let level = _Internal.create_buffer(_n)
+    let iter = _Internal.create_buffer(_n)
 
     // BFS marks vertices before enqueueing; each vertex enters at most once.
     // FIFO order and early exit are unchanged. Only the storage is reused.
-    var queue = [Int](repeating: 0, count: _n)
+    var que = _Internal.simple_queue<Int>(_n)
+
+    // DFSのframeはflow()の間で使い回す。DFSを呼ぶたびの確保・解放を避ける。
+    var frame = _Internal._RawArray<(v: Int, up: Cap, res: Cap)>(_n)
+
+    let _g = _Internal.create_buffer(UnsafeMutableBufferPointer<_edge>.self, g.size())
+    for i in g.indices {
+      _g.initializeElement(at: i, to: g[i].unsafeMutableBufferPointer())
+    }
+    let g = _g
 
     func bfs() {
-      g.withUnsafeMutableBufferPointer { g in
-        level.withUnsafeMutableBufferPointer { level in
-          queue.withUnsafeMutableBufferPointer { queue in
-            level.update(repeating: -1)
-            level[s] = 0
-            var head = 0
-            var tail = 1
-            queue[0] = s
-            while head < tail {
-              let v = queue[head]
-              head += 1
-              let next_level = level[v] + 1
-              // 辺ごとに外側配列から内側配列を読み直さないよう、頂点ごとに一度借用する。
-              let reached = g[v].withUnsafeBufferPointer { adj in
-                for e in adj {
-                  if e.cap == 0 || level[e.to] >= 0 { continue }
-                  level[e.to] = next_level
-                  if e.to == t { return true }
-                  queue[tail] = e.to
-                  tail += 1
-                }
-                return false
-              }
-              if reached { return }
-            }
-          }
+      level.update(repeating: -1)
+      level[s] = 0
+      que.clear();
+      que.push(s);
+      while !que.empty() {
+        let v = que.front()
+        que.pop()
+        for e in g[v] {
+          if e.cap == 0 || level[e.to] >= 0 { continue }
+          level[e.to] = level[v] &+ 1
+          if e.to == t { return }
+          que.push(e.to)
         }
       }
     }
@@ -191,70 +183,68 @@ extension MFGraph {
       // https://github.com/kzrnm/ac-library-csharp/blob/main/Source/ac-library-csharp/Graph/MaxFlow.cs
       // を参考にstackによるDFSに変更
       func dfs(_ v: Int, _ up: Cap) -> Cap {
-        g.withUnsafeMutableBufferPointer { g in
-          level.withUnsafeMutableBufferPointer { level in
-            iter.withUnsafeMutableBufferPointer { iter in
+        let iter = iter.baseAddress!
+        let level = level.baseAddress!
 
-              var frame: [(v: Int, up: Cap, res: Cap)] = [(v, up, 0)]
-              var returnValue: Cap?
+        // var frame: [(v: Int, up: Cap, res: Cap)] = [(v, up, 0)]
+        frame.size = 0
+        frame.append((v, up, 0))
+        var returnValue: Cap?
 
-              DFS: while var (v, up, res) = frame.popLast() {
+        DFS: while var (v, up, res) = frame.popLast() {
 
-                if returnValue == nil, v == s {
-                  // return up
-                  returnValue = up
-                  continue DFS
-                }
+          if returnValue == nil, v == s {
+            // return up
+            returnValue = up
+            continue DFS
+          }
 
-                var i: Int?
-                func next() -> Int? {
-                  i = i.map { $0 + 1 } ?? iter[v]
-                  iter[v] = i!
-                  return i! < g[v].count ? i : nil
-                }
+          var i: Int?
+          func next() -> Int? {
+            i = i.map { $0 &+ 1 } ?? iter[v]
+            iter[v] = i!
+            return i! < g[v].count ? i : nil
+          }
 
-                while let i = next() {
-                  let to = g[v][i].to
-                  let rev = g[v][i].rev
+          while let i = next() {
+            let to = g[v][i].to
+            let rev = g[v][i].rev
 
-                  if returnValue == nil {
-                    if level[v] <= level[to] || g[to][rev].cap == 0 { continue }
+            if returnValue == nil {
+              if level[v] <= level[to] || g[to][rev].cap == 0 { continue }
 
-                    // let d = dfs(to, min(up - res, g[to][rev].cap))
-                    frame.append((v, up, res))
-                    frame.append((to, min(up - res, g[to][rev].cap), 0))
-                    continue DFS
-                  }
+              // let d = dfs(to, min(up - res, g[to][rev].cap))
+              frame.append((v, up, res))
+              frame.append((to, min(up - res, g[to][rev].cap), 0))
+              continue DFS
+            }
 
-                  // let d = dfs(to, min(up - res, g[to][rev].cap))
-                  let d = returnValue!
-                  returnValue = nil
+            // let d = dfs(to, min(up - res, g[to][rev].cap))
+            let d = returnValue!
+            returnValue = nil
 
-                  if d <= 0 { continue }
+            if d <= 0 { continue }
 
-                  g[v][i].cap += d
-                  g[to][rev].cap -= d
-                  res += d
+            g[v][i].cap += d
+            g[to][rev].cap -= d
+            res += d
 
-                  if res == up {
-                    // return res
-                    returnValue = res
-                    continue DFS
-                  }
-                }
-
-                // Match the original recursive DFS: prune each exhausted vertex.
-                level[v] = _n
-                // return res
-                returnValue = res
-                continue DFS
-              }
-
+            if res == up {
               // return res
-              return returnValue!
+              returnValue = res
+              continue DFS
             }
           }
+
+          // Match the original recursive DFS: prune each exhausted vertex.
+          level[v] = _n
+          // return res
+          returnValue = res
+          continue DFS
         }
+
+        // return res
+        return returnValue!
       }
     #endif
 
@@ -262,11 +252,16 @@ extension MFGraph {
     while flow < flow_limit {
       bfs()
       if level[t] == -1 { break }
-      iter.withUnsafeMutableBufferPointer { $0.update(repeating: 0) }
+      iter.update(repeating: 0)
       let f = dfs(t, flow_limit - flow)
       if f == 0 { break }
       flow += f
     }
+    
+    _Internal.delete_buffer(level)
+    _Internal.delete_buffer(iter)
+    _Internal.delete_buffer(g)
+    
     return flow
   }
 
@@ -278,7 +273,7 @@ extension MFGraph {
       que.append(s)
       while let p = que.popFirst() {
         visited[p] = true
-        for e in g[p] {
+        for e in g[p].unsafeMutableBufferPointer() {
           if e.cap != 0, !visited[e.to] {
             visited[e.to] = true
             que.append(e.to)
@@ -313,7 +308,8 @@ extension MFGraph {
   internal init(other: borrowing Self) {
     self._n = other._n
     self.pos = other.pos
-    self.g = other.g
+    self.g = .init(capacity: other._n)
+    for v in 0..<other._n { self.g.push_back(other.g[v].clone()) }
   }
 
   @inlinable

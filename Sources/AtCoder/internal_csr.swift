@@ -21,38 +21,43 @@ extension _Internal {
     let elist: UnsafeMutableBufferPointer<E>
 
     @inlinable
-    init(_ n: Int, _ edges: [CSREdge<E>]) {
+    @inline(__always)
+    init<C>(_ n: Int, _ edges: C) where C: Collection, C.Element == CSREdge<E> {
 
-      let start = UnsafeMutablePointer<Int>.allocate(capacity: n + 1)
-      let elist = UnsafeMutablePointer<E>.allocate(capacity: edges.count)
-      start.initialize(repeating: 0, count: n + 1)
+      let start = _Internal.create_buffer(n &+ 1)
+      let elist = _Internal.create_buffer(E.self, edges.count)
 
-      withUnsafeTemporaryAllocation(of: Int.self, capacity: n + 1) { counter in
-        let counter = counter.baseAddress!
-
-        for e in edges {
-          start[e.first + 1] += 1
-        }
-        for i in stride(from: 1, through: n, by: 1) {
-          start[i] += start[i - 1]
-        }
-        counter.initialize(from: start, count: n + 1)
-        for e in edges {
-          (elist + counter[e.first]).initialize(to: e.second)
-          counter[e.first] += 1
-        }
-        counter.deinitialize(count: n + 1)
+      for e in edges {
+        start[e.first &+ 1] &+= 1
       }
 
-      self.start = .init(start: start, count: n + 1)
-      self.elist = .init(start: elist, count: edges.count)
+      do {
+        var i = 1
+        while i <= n {
+          defer { i &+= 1 }
+          start[i] &+= start[i &- 1]
+        }
+      }
+
+      let counter = _Internal.copy_buffer(start)
+
+      do {
+        let counter = counter.baseAddress!
+        for e in edges {
+          elist.initializeElement(at: counter[e.first], to: e.second)
+          counter[e.first] &+= 1
+        }
+      }
+
+      _Internal.delete_buffer(counter)
+
+      self.start = start
+      self.elist = elist
     }
 
     deinit {
-      start.deinitialize()
-      start.deallocate()
-      elist.deinitialize()
-      elist.deallocate()
+      _Internal.delete_buffer(start)
+      _Internal.delete_buffer(elist)
     }
   }
 }

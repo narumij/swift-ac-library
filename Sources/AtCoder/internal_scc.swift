@@ -8,22 +8,23 @@ extension _Internal {
     @inlinable
     public init(_ n: Int) {
       _n = n
-      edges.reserveCapacity(_n)
+      edges.reserve(_n)
     }
 
     @inlinable
     public func num_vertices() -> Int { return _n }
 
     @inlinable
-    public mutating func add_edge(_ from: Int, _ to: Int) { edges.append(.init(from, edge(to))) }
+    @inline(__always)
+    public mutating func add_edge(_ from: Int, _ to: Int) { edges.push_back(.init(from, edge(to))) }
 
     // @return pair of (# of scc, scc id)
     @inlinable
     public func scc_ids() -> (number_of_scc: Int, scc: [Int]) {
-      let g = _Internal.csr<edge>(_n, edges)
+      let g = _Internal.csr<edge>(_n, edges.unsafeBufferPointer())
       var now_ord = 0
       var group_num = 0
-      var visited: [Int] = []
+      var visited: _Array<Int> = .init(_n)
       let ids = [Int](unsafeUninitializedCapacity: _n) { ids, initializedCount in
         initializedCount = _n
         withUnsafeMutablePointer(to: &now_ord) { now_ord in
@@ -71,7 +72,8 @@ extension _Internal {
               #else
               // DFSの復帰位置をヒープ上に保持する。長い鎖でも呼出しスタックを消費しない。
               // visitedはSCC未確定の頂点、framesは探索中の呼出しに相当する別のスタック。
-              var frames: [(vertex: Int, nextEdge: Int)] = []
+//              var frames: [(vertex: Int, nextEdge: Int)] = []
+              var frames: _RawArray<(vertex: Int, nextEdge: Int)> = .init(_n)
               for root in 0..<_n {
                 if ord[root] != -1 { continue }
                 low[root] = now_ord.pointee
@@ -126,6 +128,7 @@ extension _Internal {
       return (group_num, ids)
     }
 
+    #if false
     @inlinable
     public func scc() -> [[Int]] {
       let ids = scc_ids()
@@ -141,6 +144,41 @@ extension _Internal {
       }
       return groups
     }
+    #else
+    // 計数ソートで頂点を成分順に一列へ並べ、成分ごとに一度だけ配列を作る。
+    // 要素ごとのappendによる一意性・容量の確認を避ける。成分内の頂点は元の実装と同じく昇順。
+    @inlinable
+    public func scc() -> [[Int]] {
+      let (group_num, ids) = scc_ids()
+      return ids.withUnsafeBufferPointer { ids in
+        withUnsafeTemporaryAllocation(of: Int.self, capacity: group_num + 1 + _n) { buffer in
+          // start[g]: 成分gの開始位置。配置後は成分gの終了位置になる。
+          let start = buffer.baseAddress!
+          let order = start + (group_num + 1)
+          start.initialize(repeating: 0, count: group_num + 1)
+          for x in ids { start[x + 1] &+= 1 }
+          for g in stride(from: 1, through: group_num, by: 1) { start[g] &+= start[g - 1] }
+          for i in 0..<_n {
+            let g = ids[i]
+            (order + start[g]).initialize(to: i)
+            start[g] &+= 1
+          }
+          let groups = [[Int]](unsafeUninitializedCapacity: group_num) { groups, initializedCount in
+            var begin = 0
+            for g in 0..<group_num {
+              let end = start[g]
+              (groups.baseAddress! + g).initialize(
+                to: Array(UnsafeBufferPointer(start: order + begin, count: end &- begin)))
+              begin = end
+            }
+            initializedCount = group_num
+          }
+          buffer.baseAddress!.deinitialize(count: group_num + 1 + _n)
+          return groups
+        }
+      }
+    }
+    #endif
 
     @usableFromInline
     var _n: Int
@@ -151,16 +189,16 @@ extension _Internal {
     //   @usableFromInline let to: Int
     // }
     @usableFromInline
-    var edges: [CSREdge<edge>] = []
+    var edges: _Internal._Vector<CSREdge<edge>> = .init()
   }
 }
 
 extension _Internal.scc_graph {
-  
+
   @inlinable
   internal init(other: borrowing Self) {
     self._n = other._n
-    self.edges = other.edges
+    self.edges = other.edges.clone()
   }
 
   @inlinable
@@ -172,3 +210,4 @@ extension _Internal.scc_graph {
 extension Int {
   @inlinable @inline(__always) var to: Int { self }
 }
+

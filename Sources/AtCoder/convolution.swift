@@ -30,16 +30,16 @@ extension _Internal {
     public init() {
 
       let g: Int = _Internal.primitive_root(mint.mod)
-      let rank2: Int = (mint.mod - 1).trailingZeroBitCount
+      let rank2: Int = (mint.mod &- 1).trailingZeroBitCount
 
-      root = [mint](repeating: 0, count: rank2 + 1)  // root[i]^(2^i) == 1
-      iroot = [mint](repeating: 0, count: rank2 + 1)  // root[i] * iroot[i] == 1
+      root = [mint](repeating: 0, count: rank2 &+ 1)  // root[i]^(2^i) == 1
+      iroot = [mint](repeating: 0, count: rank2 &+ 1)  // root[i] * iroot[i] == 1
 
-      rate2 = [mint](repeating: 0, count: max(0, rank2 - 2 + 1))
-      irate2 = [mint](repeating: 0, count: max(0, rank2 - 2 + 1))
+      rate2 = [mint](repeating: 0, count: max(0, rank2 &- 2 &+ 1))
+      irate2 = [mint](repeating: 0, count: max(0, rank2 &- 2 &+ 1))
 
-      rate3 = [mint](repeating: 0, count: max(0, rank2 - 3 + 1))
-      irate3 = [mint](repeating: 0, count: max(0, rank2 - 3 + 1))
+      rate3 = [mint](repeating: 0, count: max(0, rank2 &- 3 &+ 1))
+      irate3 = [mint](repeating: 0, count: max(0, rank2 &- 3 &+ 1))
 
       root[rank2] = mint(g).pow(CLongLong((mint.mod - 1) >> rank2))
       iroot[rank2] = root[rank2].inv
@@ -48,9 +48,9 @@ extension _Internal {
         iroot.withUnsafeMutableBufferPointer { iroot in
 
           // for (int i = rank2 - 1; i >= 0; i--) {
-          for i in stride(from: Int(rank2 - 1), through: 0, by: -1) {
-            root[i] = root[i + 1] * root[i + 1]
-            iroot[i] = iroot[i + 1] * iroot[i + 1]
+          for i in stride(from: Int(rank2 &- 1), through: 0, by: -1) {
+            root[i] = root[i &+ 1] * root[i &+ 1]
+            iroot[i] = iroot[i &+ 1] * iroot[i &+ 1]
           }
 
           do {
@@ -58,10 +58,10 @@ extension _Internal {
             var iprod: mint = 1
             // for (int i = 0; i <= rank2 - 2; i++) {
             for i in stride(from: 0, through: rank2 - 2, by: 1) {
-              rate2[i] = root[i + 2] * prod
-              irate2[i] = iroot[i + 2] * iprod
-              prod *= iroot[i + 2]
-              iprod *= root[i + 2]
+              rate2[i] = root[i &+ 2] * prod
+              irate2[i] = iroot[i &+ 2] * iprod
+              prod *= iroot[i &+ 2]
+              iprod *= root[i &+ 2]
             }
           }
 
@@ -69,11 +69,11 @@ extension _Internal {
             var prod: mint = 1
             var iprod: mint = 1
             // for (int i = 0; i <= rank2 - 3; i++) {
-            for i in stride(from: 0, through: rank2 - 3, by: 1) {
-              rate3[i] = root[i + 3] * prod
-              irate3[i] = iroot[i + 3] * iprod
-              prod *= iroot[i + 3]
-              iprod *= root[i + 3]
+            for i in stride(from: 0, through: rank2 &- 3, by: 1) {
+              rate3[i] = root[i &+ 3] * prod
+              irate3[i] = iroot[i &+ 3] * iprod
+              prod *= iroot[i &+ 3]
+              iprod *= root[i &+ 3]
             }
           }
         }
@@ -277,7 +277,7 @@ extension _Internal {
   ) -> [static_modint<mod>] {
 
     let (n, m) = (_a.count, _b.count)
-    let z: Int = _Internal.bit_ceil(n + m - 1)
+    let z: Int = _Internal.bit_ceil(n &+ m &- 1)
     let size = n &+ m &- 1
 
     return .init(unsafeUninitializedCapacity: max(z, size)) { a, initializedCount in
@@ -287,10 +287,10 @@ extension _Internal {
         _ = b.initialize(from: _b)
 
         if z > n {
-          (a.baseAddress! + n).initialize(repeating: .zero, count: max(z, size) - n)
+          (a.baseAddress! + n).initialize(repeating: .zero, count: max(z, size) &- n)
         }
         if z > m {
-          (b.baseAddress! + m).initialize(repeating: .zero, count: z - m)
+          (b.baseAddress! + m).initialize(repeating: .zero, count: z &- m)
         }
 
         butterfly(a.baseAddress!, z)
@@ -317,7 +317,7 @@ public func convolution<mod: static_mod>(
   let (n, m) = (a.count, b.count)
   if n == 0 || m == 0 { return [] }
   //  let z: CInt = _Internal.bit_ceil(n + m - 1)
-  assert((static_modint<mod>.mod - 1) % _Internal.bit_ceil(n + m - 1) == 0)
+  assert((static_modint<mod>.mod &- 1) % _Internal.bit_ceil(n &+ m &- 1) == 0)
   if min(n, m) <= 60 {
     return _Internal.convolution_naive(a, b)
   }
@@ -360,7 +360,7 @@ public func convolution<mod: static_mod, T: FixedWidthInteger>(_ t: mod.Type, _ 
   typealias mint = static_modint<mod>
 
   let z: Int = _Internal.bit_ceil(n &+ m &- 1)
-  assert((Int(mint.mod) - 1) % z == 0)
+  assert((Int(mint.mod) &- 1) % z == 0)
 
   // ゼロ埋めしてから上書きせず、変換した要素で直接配列を構築する。
   let a2 = a.map { mint($0) }
@@ -433,12 +433,12 @@ public func convolution_ll(
   let c2 = convolution(mod2.self, a, b)
   let c3 = convolution(mod3.self, a, b)
 
-  var c = [Int](repeating: 0, count: n + m - 1)
-  for i in 0..<(n + m - 1) {
+  var c = [Int](repeating: 0, count: n &+ m &- 1)
+  for i in 0..<(n &+ m &- 1) {
     var x: UInt = 0
-    x &+= (UInt(bitPattern: c1[i]) * i1) % MOD1 &* M2M3
-    x &+= (UInt(bitPattern: c2[i]) * i2) % MOD2 &* M1M3
-    x &+= (UInt(bitPattern: c3[i]) * i3) % MOD3 &* M1M2
+    x &+= (UInt(bitPattern: c1[i]) &* i1) % MOD1 &* M2M3
+    x &+= (UInt(bitPattern: c2[i]) &* i2) % MOD2 &* M1M3
+    x &+= (UInt(bitPattern: c3[i]) &* i3) % MOD3 &* M1M2
     // B = 2^63, -B <= x, r(real value) < B
     // (x, x - M, x - 2M, or x - 3M) = r (mod 2B)
     // r = c1[i] (mod MOD1)
@@ -458,9 +458,9 @@ public func convolution_ll(
     //   ((3) mod MOD1) mod 5 = 4
     var diff: Int =
       c1[i] - _Internal.safe_mod(Int(bitPattern: x), Int(bitPattern: MOD1))
-    if diff < 0 { diff += Int(bitPattern: MOD1) }
+    if diff < 0 { diff &+= Int(bitPattern: MOD1) }
     let offset: [UInt] = [
-      0, 0, M1M2M3, 2 * M1M2M3, 3 * M1M2M3,
+      0, 0, M1M2M3, 2 &* M1M2M3, 3 &* M1M2M3,
     ]
     x &-= offset[diff % 5]
     c[i] = Int(bitPattern: x)

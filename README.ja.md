@@ -68,63 +68,65 @@ import AtCoder
 
 ## ベンチマーク
 
-製品リビジョン `0166ab4` で計測した、Swift版とC++版AtCoder Libraryの比較です。
+製品リビジョン `9d8e73e` で計測した、Swift版とC++版AtCoder Libraryの比較です。
 Apple M1、Swift 6.4 Release -O、C++ -O3 -DNDEBUG、サニタイザーなし。
 値は構築・実行・破棄を含むバッチ全体の計測です。これらの入力での結果であり、一般的な性能の優劣を示すものではありません。
 帯は信頼区間ではありません。
-[結果の要約](Benchmarks/Results/20261101-current/README.md)、[計測方法](Benchmarks/README.md)、[ワークロードの定義](Benchmarks/Extended.md)（いずれも英語）も参照してください。
+[結果の要約](Benchmarks/Results/20261104-current/README.md)、[計測方法](Benchmarks/README.md)、[ワークロードの定義](Benchmarks/Extended.md)（いずれも英語）も参照してください。
 
 ### DSU merge and size
 
-![DSU merge and size](Benchmarks/Results/20261101-current/charts/01%20DSU%20merge%20and%20size.png)
+![DSU merge and size](Benchmarks/Results/20261104-current/charts/01%20DSU%20merge%20and%20size.png)
 
 ### SegTree random updates
 
-![SegTree random updates](Benchmarks/Results/20261101-current/charts/02%20SegTree%20random%20updates.png)
+![SegTree random updates](Benchmarks/Results/20261104-current/charts/02%20SegTree%20random%20updates.png)
 
 ### SegTree range sums
 
-![SegTree range sums](Benchmarks/Results/20261101-current/charts/03%20SegTree%20range%20sums.png)
+![SegTree range sums](Benchmarks/Results/20261104-current/charts/03%20SegTree%20range%20sums.png)
 
 ### Fenwick add and prefix sum
 
-![Fenwick add and prefix sum](Benchmarks/Results/20261101-current/charts/04%20Fenwick%20add%20and%20prefix%20sum.png)
+![Fenwick add and prefix sum](Benchmarks/Results/20261104-current/charts/04%20Fenwick%20add%20and%20prefix%20sum.png)
 
 ### LazySegTree range add and sum
 
-![LazySegTree range add and sum](Benchmarks/Results/20261101-current/charts/05%20LazySegTree%20range%20add%20and%20sum.png)
+![LazySegTree range add and sum](Benchmarks/Results/20261104-current/charts/05%20LazySegTree%20range%20add%20and%20sum.png)
 
 ### SCC grouped cycles
 
-![SCC grouped cycles](Benchmarks/Results/20261101-current/charts/06%20SCC%20grouped%20cycles.png)
+![SCC grouped cycles](Benchmarks/Results/20261104-current/charts/06%20SCC%20grouped%20cycles.png)
 
 ### TwoSAT planted clauses
 
-![TwoSAT planted clauses](Benchmarks/Results/20261101-current/charts/07%20TwoSAT%20planted%20clauses.png)
+![TwoSAT planted clauses](Benchmarks/Results/20261104-current/charts/07%20TwoSAT%20planted%20clauses.png)
 
 ### MaxFlow sparse network
 
-![MaxFlow sparse network](Benchmarks/Results/20261101-current/charts/08%20MaxFlow%20sparse%20network.png)
+![MaxFlow sparse network](Benchmarks/Results/20261104-current/charts/08%20MaxFlow%20sparse%20network.png)
 
 ### MinCostFlow sparse network
 
-![MinCostFlow sparse network](Benchmarks/Results/20261101-current/charts/09%20MinCostFlow%20sparse%20network.png)
+![MinCostFlow sparse network](Benchmarks/Results/20261104-current/charts/09%20MinCostFlow%20sparse%20network.png)
 
 ### Convolution modulo 998244353
 
-![Convolution modulo 998244353](Benchmarks/Results/20261101-current/charts/10%20Convolution%20modulo%20998244353.png)
+![Convolution modulo 998244353](Benchmarks/Results/20261104-current/charts/10%20Convolution%20modulo%20998244353.png)
 
 ### Suffix array alphabet 26
 
-![Suffix array alphabet 26](Benchmarks/Results/20261101-current/charts/11%20Suffix%20array%20alphabet%2026.png)
+![Suffix array alphabet 26](Benchmarks/Results/20261104-current/charts/11%20Suffix%20array%20alphabet%2026.png)
 
 ### Z algorithm alphabet 26
 
-![Z algorithm alphabet 26](Benchmarks/Results/20261101-current/charts/12%20Z%20algorithm%20alphabet%2026.png)
+この図は製品リビジョン `0958d35` でZのベンチだけを関数へ分離して再測定したものです。製品コードは変更していません。[測定条件と残る制限](Benchmarks/Results/20261104-z-isolated/README.md)も参照してください。赤がC++、青がSwiftです。
+
+![Z algorithm alphabet 26](Benchmarks/Results/20261104-z-isolated/charts/01%20Z%20algorithm%20alphabet%2026.png)
 
 ### ModInt multiply and add
 
-![ModInt multiply and add](Benchmarks/Results/20261101-current/charts/13%20ModInt%20multiply%20and%20add.png)
+![ModInt multiply and add](Benchmarks/Results/20261104-current/charts/13%20ModInt%20multiply%20and%20add.png)
 
 ## 関連
 

@@ -92,7 +92,7 @@ enum Extended: Int32, CaseIterable {
     case .suffix:
       out = suffix_array(a.map { $0%26 },25)
     case .z:
-      out = z_algorithm(a.map { $0%26 })
+      out = zAlgorithmAlphabet26(a)
     case .modint:
       var x = modint998244353(1)
       for i in 0..<n { x = x * modint998244353(a[i]) + modint998244353(b[i]); out[i] = x.val }
@@ -100,6 +100,10 @@ enum Extended: Int32, CaseIterable {
     return out
   }
 }
+
+// 他シナリオのインライン化でswitch全体の最適化が変わり、Zの前処理mapが遅くなるのを防ぐため独立させる。
+@inline(never)
+func zAlgorithmAlphabet26(_ a: [Int]) -> [Int] { z_algorithm(a.map { $0%26 }) }
 
 func verifyExtended() {
   var failures: [String] = []
