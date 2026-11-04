@@ -1,0 +1,15 @@
+{
+  "kind": "group",
+  "title": "Z benchmark after harness isolation",
+  "directory": "charts",
+  "contents": [
+    {
+      "kind": "chart",
+      "title": "Z algorithm alphabet 26",
+      "tasks": [
+        "C++ Z algorithm alphabet 26",
+        "Swift Z algorithm alphabet 26"
+      ]
+    }
+  ]
+}

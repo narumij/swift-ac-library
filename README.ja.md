@@ -68,7 +68,7 @@ import AtCoder
 
 ## ベンチマーク
 
-製品リビジョン `0166ab4` で計測した、Swift版とC++版AtCoder Libraryの比較です。
+製品リビジョン `9d8e73e` で計測した、Swift版とC++版AtCoder Libraryの比較です。
 Apple M1、Swift 6.4 Release -O、C++ -O3 -DNDEBUG、サニタイザーなし。
 値は構築・実行・破棄を含むバッチ全体の計測です。これらの入力での結果であり、一般的な性能の優劣を示すものではありません。
 帯は信頼区間ではありません。
@@ -120,7 +120,9 @@ Apple M1、Swift 6.4 Release -O、C++ -O3 -DNDEBUG、サニタイザーなし。
 
 ### Z algorithm alphabet 26
 
-![Z algorithm alphabet 26](Benchmarks/Results/20261104-current/charts/12%20Z%20algorithm%20alphabet%2026.png)
+この図は製品リビジョン `0958d35` でZのベンチだけを関数へ分離して再測定したものです。製品コードは変更していません。[測定条件と残る制限](Benchmarks/Results/20261104-z-isolated/README.md)も参照してください。赤がC++、青がSwiftです。
+
+![Z algorithm alphabet 26](Benchmarks/Results/20261104-z-isolated/charts/01%20Z%20algorithm%20alphabet%2026.png)
 
 ### ModInt multiply and add
 

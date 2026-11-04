@@ -67,7 +67,7 @@ The `compatible/AtCoder/2025` branch maintains compatibility with AtCoder 2025 w
 
 ## Benchmarks
 
-Swift / C++ AtCoder Library comparison measured from product revision `0166ab4`
+Swift / C++ AtCoder Library comparison measured from product revision `9d8e73e`
 on Apple M1, Swift 6.4 Release -O, C++ -O3 -DNDEBUG, no sanitizers.
 Values are end-to-end batch measurements, including construction, execution and
 destruction. These specific inputs do not establish general performance rankings.
@@ -121,7 +121,9 @@ See [the result summary](Benchmarks/Results/20261104-current/README.md),
 
 ### Z algorithm alphabet 26
 
-![Z algorithm alphabet 26](Benchmarks/Results/20261104-current/charts/12%20Z%20algorithm%20alphabet%2026.png)
+This chart uses the isolated Z benchmark at product revision `0958d35`; product code is unchanged. See [measurement details and limitations](Benchmarks/Results/20261104-z-isolated/README.md). C++ is red; Swift is blue.
+
+![Z algorithm alphabet 26](Benchmarks/Results/20261104-z-isolated/charts/01%20Z%20algorithm%20alphabet%2026.png)
 
 ### ModInt multiply and add
 
