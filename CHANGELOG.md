@@ -17,11 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - C++版ACLとの比較ベンチマークとチャートを追加
 - C++版とのランダム比較・整数境界のテストを追加。確認範囲と残る制限事項を`KNOWN_LIMITATIONS.md`に記載
 - ASan・TSan用のCIと`ASAN_TEST`・`TSAN_TEST` traitsを追加（異常終了テストなど、一部は対象外）
+- `Int128`を用いた剰余の境界値試験と、逆元・最大公約数の合同式チェックを有効化
 
 ### Changed
 - Swift tools versionを6.2に更新
 - SwiftPM traitsを使って`BENCHMARK`と`_O_UNCHECKED`を切り替える構成に変更
 - 依存パッケージのバージョンを更新
+- 未使用の`swift-docc-plugin`依存と、無効化されていたBigInt使用の検証コード・依存を削除
 - `DSU`, `SegTree`, `LazySegTree`, `MFGraph`, `MCFGraph`, 内部CSRなどを非コピー型と直接メモリ管理中心の実装に変更
 - `Executable`ターゲットを`TopLevel`ターゲットへ変更
 - `maxflow`, `mincostflow`, `scc`, `two_sat`, `string`まわりの実装とテストを更新
