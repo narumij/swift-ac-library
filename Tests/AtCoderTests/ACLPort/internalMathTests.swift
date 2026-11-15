@@ -1,5 +1,3 @@
-import BigInt
-import Numerics
 import Testing
 
 #if DEBUG
@@ -216,32 +214,26 @@ extension LibraryTests {
         }
       }
 
-      #if false
-        @Test(.tags(.aclPort))
-        func testSafeMod() throws {
-
-          return  // Previously skipped: "__int128はSwiftでは利用できないため"
-
-          /*
-           std::vector<ll> preds;
-           for (int i = 0; i <= 100; i++) {
-               preds.push_back(i);
-               preds.push_back(-i);
-               preds.push_back(i);
-               preds.push_back(std::numeric_limits<ll>::min() + i);
-               preds.push_back(std::numeric_limits<ll>::max() - i);
-           }
-
-           for (auto a : preds) {
-               for (auto b : preds) {
-                   if (b <= 0) continue;
-                   ll ans = (ll)((__int128(a) % b + b) % b);
-                   ASSERT_EQ(ans, internal::safe_mod(a, b));
-               }
-           }
-           */
+      @Test(.tags(.aclPort))
+      @available(macOS 15.0, *)
+      func testSafeMod() throws {
+        var pred = [Int]()
+        for i in 0...100 {
+          pred.append(i)
+          pred.append(-i)
+          pred.append(Int.min + i)
+          pred.append(Int.max - i)
         }
-      #endif
+
+        for a in pred {
+          for b in pred where b > 0 {
+            // Intの境界値でも、剰余にbを加える期待値計算がオーバーフローしない。
+            let modulus = Int128(b)
+            let expected = Int((Int128(a) % modulus + modulus) % modulus)
+            #expect(expected == _Internal.safe_mod(a, b))
+          }
+        }
+      }
 
       @Test(.tags(.aclPort))
       func testInvGcdBound() throws {
@@ -280,15 +272,19 @@ extension LibraryTests {
             if b <= 0 { continue }
             let a2 = _Internal.safe_mod(a, b)
             let eg = _Internal.inv_gcd(a, b)
-            #if false
-              let g = gcd(a2, b)
-              #expect(g == eg.first)
-            #endif
+            // 拡張ユークリッド互除法とは独立に、通常の互除法でGCDを求める。
+            var g = a2
+            var remainder = b
+            while remainder != 0 {
+              (g, remainder) = (remainder, g % remainder)
+            }
+            #expect(g == eg.first)
             #expect(0 <= eg.second, "a - \(a), b - \(b)")
             #expect(eg.second <= b / eg.first, "a - \(a), b - \(b)")
-            #if false
-              #expect(BigInt(g) % BigInt(b) == BigInt(eg.second) * BigInt(a2) % BigInt(b))
-            #endif
+            if #available(macOS 15.0, *) {
+              // 非負のInt同士の積はInt128に収まる。
+              #expect(Int128(g) % Int128(b) == Int128(eg.second) * Int128(a2) % Int128(b))
+            }
           }
         }
       }

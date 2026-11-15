@@ -1,4 +1,3 @@
-import BigInt
 import Numerics
 import Testing
 
@@ -545,9 +544,6 @@ extension LibraryTests.internalMathTests {
           #endif
           #expect(0 <= eg.second, "a - \(a), b - \(b)")
           #expect(eg.second <= b / eg.first, "a - \(a), b - \(b)")
-          #if false
-            #expect(BigInt(g) % BigInt(b) == BigInt(eg.second) * BigInt(a2) % BigInt(b))
-          #endif
         }
       }
     }
