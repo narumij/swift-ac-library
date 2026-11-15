@@ -49,9 +49,6 @@ let package = Package(
   ],
   dependencies: [
     .package(
-      url: "https://github.com/swiftlang/swift-docc-plugin",
-      from: "1.4.1"),
-    .package(
       url: "https://github.com/apple/swift-algorithms",
       from: "1.2.1"),
     .package(
@@ -60,9 +57,6 @@ let package = Package(
     .package(
       url: "https://github.com/apple/swift-numerics",
       from: "1.1.1"),
-    .package(
-      url: "https://github.com/attaswift/BigInt",
-      from: "5.6.0"),
   ],
   targets: [
     // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -79,7 +73,6 @@ let package = Package(
         "AtCoder",
         .product(name: "Algorithms", package: "swift-algorithms"),
         .product(name: "Numerics", package: "swift-numerics"),
-        .product(name: "BigInt", package: "BigInt"),
       ],
       swiftSettings: _settings),
     .testTarget(

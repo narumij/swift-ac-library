@@ -1,4 +1,3 @@
-import BigInt
 import Numerics
 import Testing
 
@@ -203,14 +202,6 @@ extension LibraryTests {
         }
       #endif
 
-      #if false
-        // テスト自体は通る
-        for i in 1..<100_000 as Range<Int> {
-          if gcd(i, Int.max) != 1 { continue }
-          let x = static_modint<INT_MAX>(i).inv.val
-          #expect(1 == (BigInt(x) * BigInt(i)) % BigInt(Int.max))
-        }
-      #endif
 
       modint.set_mod(998_244_353)
       for i in 1..<100000 as Range<int> {
@@ -235,13 +226,6 @@ extension LibraryTests {
           #expect(1 == (ll(x) * ll(i) % ll(int.max)))
         }
 
-        // テスト自体は通る
-        modint.set_mod(Int.max)
-        for i in 1..<100000 as Range<Int> {
-          if gcd(i, Int.max) != 1 { continue }
-          let x = modint(i).inv.val
-          #expect(1 == (BigInt(x) * BigInt(i) % BigInt(Int.max)))
-        }
       #endif
     }
 
