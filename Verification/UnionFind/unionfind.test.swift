@@ -9,8 +9,6 @@ struct UnionFind {
     let n = input.int()
     let q = input.int()
     var dsu = DSU(n)
-    var output = String()
-    output.reserveCapacity(q * 2)
     for _ in 0..<q {
       let t = input.int()
       let u = input.int()
@@ -18,9 +16,8 @@ struct UnionFind {
       if t == 0 {
         _ = dsu.merge(u, v)
       } else {
-        output += dsu.same(u, v) ? "1\n" : "0\n"
+        print(dsu.same(u, v) ? 1 : 0)
       }
     }
-    writeOutput(output)
   }
 }

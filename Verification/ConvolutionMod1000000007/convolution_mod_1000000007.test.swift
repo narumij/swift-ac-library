@@ -29,13 +29,11 @@ struct Solution {
     let combined = convolution_ll(zip(al, ah).map(+), zip(bl, bh).map(+))
     let modulus = 1_000_000_007
     let baseSquared = base * base % modulus
-    var answer = [Int]()
-    answer.reserveCapacity(n + m - 1)
     for i in 0..<(n + m - 1) {
       let low = crt([low1[i], low2[i]], [Int(Prime1.umod), Int(Prime2.umod)]).rem
       let cross = combined[i] - low - high[i]
-      answer.append((low % modulus + (cross % modulus) * base + (high[i] % modulus) * baseSquared) % modulus)
+      let answer = (low % modulus + (cross % modulus) * base + (high[i] % modulus) * baseSquared) % modulus
+      print(answer, terminator: i == n + m - 2 ? "\n" : " ")
     }
-    writeOutput(answer.map(String.init).joined(separator: " ") + "\n")
   }
 }

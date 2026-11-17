@@ -13,10 +13,10 @@ struct StronglyConnectedComponents {
       graph.add_edge(from, to)
     }
     let groups = graph.scc()
-    var output = "\(groups.count)\n"
+    print(groups.count)
     for group in groups {
-      output += "\(group.count) " + group.map(String.init).joined(separator: " ") + "\n"
+      print(group.count, terminator: " ")
+      printValues(group)
     }
-    writeOutput(output)
   }
 }

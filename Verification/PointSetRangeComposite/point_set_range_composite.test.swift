@@ -20,7 +20,6 @@ struct Solution {
     let n = input.int(), q = input.int()
     let values = (0..<n).map { _ in Composition.S(a: Mint(input.int()), b: Mint(input.int())) }
     var tree = SegTree<Composition>(values)
-    var output = ""
     for _ in 0..<q {
       let t = input.int()
       if t == 0 {
@@ -29,9 +28,8 @@ struct Solution {
       } else {
         let l = input.int(), r = input.int(), x = input.int()
         let f = tree.prod(l, r)
-        output += "\((f.a * Mint(x) + f.b).val)\n"
+        print((f.a * Mint(x) + f.b).val)
       }
     }
-    writeOutput(output)
   }
 }

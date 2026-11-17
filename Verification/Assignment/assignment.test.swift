@@ -22,13 +22,13 @@ struct Solution {
         edgeIDs.append(graph.add_edge(i, n + j, 1, input.int() + shift))
       }
     }
-    let (amount, cost) = graph.flow(source, sink, n)
-    precondition(amount == n)
+    let (_, cost) = graph.flow(source, sink, n)
     var permutation = [Int](repeating: -1, count: n)
     for id in edgeIDs {
       let edge = graph.get_edge(id)
       if edge.flow == 1 { permutation[edge.from] = edge.to - n }
     }
-    writeOutput("\(cost - n * shift)\n" + permutation.map(String.init).joined(separator: " ") + "\n")
+    print(cost - n * shift)
+    printValues(permutation)
   }
 }

@@ -11,6 +11,7 @@ let problems = [
   "Assignment",
   "TwoSAT",
   "BinomialCoefficientPrimeMod",
+  "BinomialCoefficientPrimeModPow",
   "ConvolutionMod1000000007",
 ]
 

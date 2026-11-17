@@ -17,6 +17,7 @@ case "$1" in
   Verification/TwoSAT/two_sat.test.swift) product=TwoSAT ;;
   Verification/BinomialCoefficientPrimeMod/binomial_coefficient_prime_mod.test.swift) product=BinomialCoefficientPrimeMod ;;
   Verification/ConvolutionMod1000000007/convolution_mod_1000000007.test.swift) product=ConvolutionMod1000000007 ;;
+  Verification/BinomialCoefficientPrimeModPow/binomial_coefficient_prime_mod.test.swift) product=BinomialCoefficientPrimeModPow ;;
   *) echo "Unknown verification source: $1" >&2; exit 1 ;;
 esac
 swift build --package-path Verification -c release --product "$product"

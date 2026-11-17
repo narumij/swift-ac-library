@@ -20,9 +20,7 @@ struct Solution {
     if maximum > 0 {
       for i in 1...maximum { factorial[i] = factorial[i - 1] * modint(i) }
     }
-    // Two public math APIs must agree on the inverse (the modulus is prime).
     let inverse = inv_mod(Int(factorial[maximum].val), modulus)
-    precondition(inverse == pow_mod(Int(factorial[maximum].val), modulus - 2, modulus))
     var inverseFactorial = [modint](repeating: 1, count: maximum + 1)
     inverseFactorial[maximum] = modint(inverse)
     if maximum > 0 {
@@ -30,11 +28,9 @@ struct Solution {
         inverseFactorial[i - 1] = inverseFactorial[i] * modint(i)
       }
     }
-    var output = ""
     for (n, k) in queries {
       let answer: modint = k > n ? 0 : factorial[n] * inverseFactorial[k] * inverseFactorial[n - k]
-      output += "\(answer.val)\n"
+      print(answer.val)
     }
-    writeOutput(output)
   }
 }

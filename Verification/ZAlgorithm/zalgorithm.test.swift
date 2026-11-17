@@ -8,6 +8,6 @@ struct Solution {
   static func main() {
     var input = Input()
     let s = input.token()
-    writeOutput(z_algorithm(s).map(String.init).joined(separator: " ") + "\n")
+    printValues(z_algorithm(s))
   }
 }

@@ -28,16 +28,14 @@ struct RangeAffineRangeSum {
     let n = input.int(), q = input.int()
     let values = (0..<n).map { _ in AffineSum.S(sum: Mint(input.int()), count: 1) }
     var tree = LazySegTree<AffineSum>(values)
-    var output = ""
     for _ in 0..<q {
       let t = input.int(), l = input.int(), r = input.int()
       if t == 0 {
         let b = input.int(), c = input.int()
         tree.apply(l, r, AffineSum.F(a: Mint(b), b: Mint(c)))
       } else {
-        output += "\(tree.prod(l, r).sum.val)\n"
+        print(tree.prod(l, r).sum.val)
       }
     }
-    writeOutput(output)
   }
 }

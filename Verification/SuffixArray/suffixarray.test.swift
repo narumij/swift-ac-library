@@ -8,6 +8,6 @@ struct Solution {
   static func main() {
     var input = Input()
     let s = input.token()
-    writeOutput(suffix_array(s).map(String.init).joined(separator: " ") + "\n")
+    printValues(suffix_array(s))
   }
 }

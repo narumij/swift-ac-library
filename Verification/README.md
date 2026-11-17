@@ -14,7 +14,7 @@
 | `MCFGraph` | [Assignment Problem](https://judge.yosupo.jp/problem/assignment) | 最小費用流から順列を復元 |
 | `SCCGraph` | [Strongly Connected Components](https://judge.yosupo.jp/problem/scc) | 成分とトポロジカル順 |
 | `TwoSAT` | [Two Sat](https://judge.yosupo.jp/problem/two_sat) | 充足判定と割当の復元 |
-| `pow_mod` | [Binomial Coefficient (Prime Mod)](https://judge.yosupo.jp/problem/binomial_coefficient_prime_mod) | 階乗の逆元をFermatの小定理で照合 |
+| `pow_mod` | [Binomial Coefficient (Prime Mod)](https://judge.yosupo.jp/problem/binomial_coefficient_prime_mod) | 階乗の逆元をFermatの小定理で計算 |
 | `inv_mod` | 同上 | 逆階乗の起点を計算 |
 | `floor_sum` | [Sum of Floor of Linear](https://judge.yosupo.jp/problem/sum_of_floor_of_linear) | 各ケースを直接計算 |
 | `crt` | [Convolution (Mod 1000000007)](https://judge.yosupo.jp/problem/convolution_mod_1000000007) | 2つの素数の剰余から係数を復元 |
@@ -32,7 +32,7 @@
 
 - Assignmentの負の費用には共通の定数を足します。どの解も行列の辺をちょうどN本使うので最適解は変わらず、`MCFGraph`の非負費用という前提を守れます。出力時にN倍を引きます。
 - 1000000007での畳み込みは係数を15ビットずつに分割します。分割後の畳み込み係数はInt64に収まり、低位部分は2素数の積未満なので`crt`で一意に復元できます。`convolution_ll`に範囲外の巨大係数を渡しません。
-- 二項係数は問題の制約`n < m`と素数の法を使います。`inv_mod`で逆階乗を作り、`pow_mod`の結果との一致も要求します。合成数・非互いに素な入力等まで網羅する試験ではありません。
+- 二項係数は問題の制約`n < m`と素数の法を使います。逆階乗の起点を`inv_mod`で求める解答と、`pow_mod`で求める解答を別々に用意しています（15問題・16解答）。どちらも通常の解答として公式チェッカーで判定します。合成数・非互いに素な入力等まで網羅する試験ではありません。
 - 解の表現が複数あるグラフ問題は、文字列一致ではなくLibrary Checkerの専用チェッカーで判定します。
 
 ### practice2との対応
