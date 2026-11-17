@@ -15,3 +15,9 @@ Package.resolved
 
 # Local CI artifacts and diagnostic downloads.
 /artifacts/
+
+# verification-helper rewrites its own ignore file; do not version it.
+/.verify-helper/.gitignore
+/.verify-helper/cache/
+/.verify-helper/logs/
+/.verify-helper/timestamps.*.json
