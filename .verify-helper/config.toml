@@ -1,0 +1,4 @@
+[languages.swift]
+verification_file_suffix = ".test.swift"
+compile = "bash Verification/build.sh '{path}' '{tempdir}'"
+execute = "{tempdir}/a.out"

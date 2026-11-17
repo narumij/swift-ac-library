@@ -1,0 +1,4 @@
+online-judge-verify-helper==5.6.0
+online-judge-tools==11.5.1
+# verification-helper 5.6.0 imports pkg_resources, removed in setuptools 81.
+setuptools==80.9.0
