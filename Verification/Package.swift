@@ -4,6 +4,14 @@ import PackageDescription
 let problems = [
   "UnionFind", "PointAddRangeSum", "SumOfFloorOfLinear", "Convolution",
   "StronglyConnectedComponents", "NumberOfSubstrings", "RangeAffineRangeSum",
+  "SuffixArray",
+  "ZAlgorithm",
+  "PointSetRangeComposite",
+  "BipartiteMatching",
+  "Assignment",
+  "TwoSAT",
+  "BinomialCoefficientPrimeMod",
+  "ConvolutionMod1000000007",
 ]
 
 let package = Package(

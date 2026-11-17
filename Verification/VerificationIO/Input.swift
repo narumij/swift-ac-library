@@ -15,12 +15,14 @@ public struct Input {
 
   public mutating func int() -> Int {
     skipWhitespace()
+    let negative = bytes[index] == 45
+    if negative { index += 1 }
     var value = 0
     while bytes[index] >= 48 && bytes[index] <= 57 {
       value = value * 10 + Int(bytes[index] - 48)
       index += 1
     }
-    return value
+    return negative ? -value : value
   }
 
   public mutating func token() -> [UInt8] {
