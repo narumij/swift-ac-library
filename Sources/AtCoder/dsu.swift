@@ -1,8 +1,3 @@
-// TODO: TSanのコンパイラ停止解消後に除外を解除する（OPS-011）。
-// Swift 6.4.2 Linux Debug+TSanでdsu.swift.oのLLVM verifyが
-// Invalid bitcastで停止（macOSでも再現）。実装と対応テストを一時除外。
-// 通常・ASanでは有効。TSAN_TESTではDSU API自体が存在しない。
-#if !TSAN_TEST
 /// Implement (union by size) + (path compression)
 /// Reference:
 /// Zvi Galil and Giuseppe F. Italiano,
@@ -49,7 +44,7 @@ extension DSU {
     var (x, y) = (leader(a), leader(b))
     if x == y { return x }
     if -parent_or_size[x] < -parent_or_size[y] { swap(&x, &y) }
-    parent_or_size[x] += parent_or_size[y]
+    parent_or_size[x] = parent_or_size[x] + parent_or_size[y]
     parent_or_size[y] = x
     return x
   }
@@ -61,7 +56,7 @@ extension DSU {
     var (x, y) = (leader(a), leader(b))
     if x == y { return false }
     if -parent_or_size[x] < -parent_or_size[y] { swap(&x, &y) }
-    parent_or_size[x] += parent_or_size[y]
+    parent_or_size[x] = parent_or_size[x] + parent_or_size[y]
     parent_or_size[y] = x
     return true
   }
@@ -145,5 +140,3 @@ extension DSU {
 }
 
 extension DSU: @unchecked Sendable {}
-
-#endif

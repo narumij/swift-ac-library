@@ -1,8 +1,3 @@
-// TODO: TSanのコンパイラ停止解消後にこの条件を外す。重み付きDSUの
-// noncopyable型とbuffer経由の更新でInvalid bitcastが発生する。
-// Linux Swift 6.4.2のCI、macOS Swift 6.4の単独コンパイルで観測。
-// 通常・ASanでは引き続き実装とテストを有効にする（OPS-011）。
-#if !TSAN_TEST
 // 重み付き
 // https://atcoder.jp/contests/abc328/submissions/76866930
 
@@ -59,7 +54,7 @@ extension DSU {
       var d = d + (da - db)
       if x == y { return x }
       if -parent_or_size[x] < -parent_or_size[y] { swap(&x, &y); d *= -1 }
-      parent_or_size[x] += parent_or_size[y]
+      parent_or_size[x] = parent_or_size[x] + parent_or_size[y]
       parent_or_size[y] = x
       v[y] = d
       return x
@@ -110,7 +105,7 @@ extension DSU {
       if parent_or_size[a] < 0 { return (a,0) }
       let (x,d) = leader(parent_or_size[a])
       parent_or_size[a] = x
-      v[a] += d
+      v[a] = v[a] + d
       return (parent_or_size[a], v[a])
   }
 }
@@ -133,5 +128,3 @@ extension DSU {
 }
 
 extension DSU: @unchecked Sendable {}
-
-#endif
