@@ -28,7 +28,7 @@ struct Solution {
       let edge = graph.get_edge(id)
       if edge.flow == 1 { permutation[edge.from] = edge.to - n }
     }
-    print(cost - n * shift)
+    fastPrint(cost - n * shift)
     printValues(permutation)
   }
 }

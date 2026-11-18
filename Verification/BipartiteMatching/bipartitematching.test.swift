@@ -18,10 +18,10 @@ struct Solution {
       edgeIDs.append(graph.add_edge(u, l + v, 1))
     }
     let count = graph.flow(source, sink)
-    print(count)
+    fastPrint(count)
     for id in edgeIDs {
       let edge = graph.get_edge(id)
-      if edge.flow == 1 { print(edge.from, edge.to - l) }
+      if edge.flow == 1 { fastPrint(edge.from, terminator: 32); fastPrint(edge.to - l) }
     }
   }
 }

@@ -33,7 +33,7 @@ struct Solution {
       let low = crt([low1[i], low2[i]], [Int(Prime1.umod), Int(Prime2.umod)]).rem
       let cross = combined[i] - low - high[i]
       let answer = (low % modulus + (cross % modulus) * base + (high[i] % modulus) * baseSquared) % modulus
-      print(answer, terminator: i == n + m - 2 ? "\n" : " ")
+      fastPrint(answer, terminator: i == n + m - 2 ? 10 : 32)
     }
   }
 }

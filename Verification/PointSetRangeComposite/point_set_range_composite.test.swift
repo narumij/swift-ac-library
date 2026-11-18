@@ -28,7 +28,7 @@ struct Solution {
       } else {
         let l = input.int(), r = input.int(), x = input.int()
         let f = tree.prod(l, r)
-        print((f.a * Mint(x) + f.b).val)
+        fastPrint((f.a * Mint(x) + f.b).val)
       }
     }
   }

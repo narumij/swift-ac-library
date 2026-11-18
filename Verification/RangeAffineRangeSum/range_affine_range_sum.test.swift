@@ -34,7 +34,7 @@ struct RangeAffineRangeSum {
         let b = input.int(), c = input.int()
         tree.apply(l, r, AffineSum.F(a: Mint(b), b: Mint(c)))
       } else {
-        print(tree.prod(l, r).sum.val)
+        fastPrint(tree.prod(l, r).sum.val)
       }
     }
   }

@@ -32,14 +32,3 @@ public struct Input {
     return Array(bytes[start..<index])
   }
 }
-
-// Print a computed sequence without making an output string or a second array.
-public func printValues<S: Sequence>(_ values: S) {
-  var separator = ""
-  for value in values {
-    Swift.print(separator, terminator: "")
-    Swift.print(value, terminator: "")
-    separator = " "
-  }
-  Swift.print()
-}

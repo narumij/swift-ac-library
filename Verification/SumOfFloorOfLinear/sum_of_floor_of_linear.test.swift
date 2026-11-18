@@ -9,7 +9,7 @@ struct SumOfFloorOfLinear {
     let t = input.int()
     for _ in 0..<t {
       let n = input.int(), m = input.int(), a = input.int(), b = input.int()
-      print(floor_sum(n, m, a, b))
+      fastPrint(floor_sum(n, m, a, b))
     }
   }
 }

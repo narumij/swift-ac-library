@@ -16,7 +16,7 @@ struct UnionFind {
       if t == 0 {
         _ = dsu.merge(u, v)
       } else {
-        print(dsu.same(u, v) ? 1 : 0)
+        fastPrint(dsu.same(u, v) ? 1 : 0)
       }
     }
   }

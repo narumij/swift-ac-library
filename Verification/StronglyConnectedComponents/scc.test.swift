@@ -13,9 +13,9 @@ struct StronglyConnectedComponents {
       graph.add_edge(from, to)
     }
     let groups = graph.scc()
-    print(groups.count)
+    fastPrint(groups.count)
     for group in groups {
-      print(group.count, terminator: " ")
+      fastPrint(group.count, terminator: 32)
       printValues(group)
     }
   }

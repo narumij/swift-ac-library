@@ -30,7 +30,7 @@ struct Solution {
     }
     for (n, k) in queries {
       let answer: modint = k > n ? 0 : factorial[n] * inverseFactorial[k] * inverseFactorial[n - k]
-      print(answer.val)
+      fastPrint(answer.val)
     }
   }
 }
