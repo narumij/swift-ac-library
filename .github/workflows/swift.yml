@@ -57,9 +57,7 @@ jobs:
           uname -a | tee -a sanitizer-logs/environment.log
           set -o pipefail
           extra_args=(--skip 'DeathTests')
-          if [[ "${{ matrix.sanitizer }}" == "thread" ]]; then
-            extra_args+=(--traits TSAN_TEST)
-          else
+          if [[ "${{ matrix.sanitizer }}" == "address" ]]; then
             extra_args+=(--traits ASAN_TEST)
           fi
           echo 'All available tests except DeathTests (child processes)' > sanitizer-logs/selected-tests.txt

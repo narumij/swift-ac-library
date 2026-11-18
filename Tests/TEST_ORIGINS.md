@@ -258,9 +258,10 @@ AtCoder DocC build. Pull requests targeting `main` or `compatible/AtCoder/2025`,
 pushes to those branches, and manual dispatches run these checks.
 Sanitizer failures are not allowed to pass silently; logs are uploaded even on
 failure. ASan leak detection is disabled, matching the collections CI, so this is
-not a leak-checking job. `TSAN_TEST` excludes the additional weighted DSU implementation and its tests
-from TSan builds because they trigger a compiler crash (Invalid bitcast).
-Normal and ASan builds retain them. The additional Fenwick tree remains enabled. A successful
+not a leak-checking job. Both DSU implementations and minimum-cost flow are
+included in sanitizer builds. Buffer-element compound assignments in the DSUs
+are written as ordinary assignments to avoid Swift's TSan Invalid bitcast failure
+while retaining the existing buffer accesses and arithmetic checks. A successful
 serial test run does not establish that shared library state is thread-safe.
 
 Documentation archives are available as workflow artifacts. Only a push to
@@ -277,33 +278,29 @@ To build the same static documentation locally (requires Python 3 and the toolch
 bash Scripts/build-documentation.sh
 ```
 
-TSAN_TEST also temporarily excludes MCFGraph and its corresponding ACL and Swift-specific tests: Linux Swift 6.4.2 Debug+TSan aborts while verifying mincostflow.swift.o (Invalid bitcast). This test-only trait removes that API from the build; normal and ASan builds retain it. Passing the reduced TSan suite does not cover minimum-cost flow.
-
-The ordinary DSU implementation and its ACL/Swift-specific tests are also excluded by TSAN_TEST: the same compiler failure occurs in dsu.swift.o on Linux Swift 6.4.2 and locally on macOS. Normal and ASan builds retain DSU. The reduced TSan suite does not cover either DSU implementation.
-
-ASan CI still enables `ASAN_TEST`, but it no longer reduces measurement repetitions. `measureRepeated` executes each body ten times in every configuration. Input sizes, inner stress loops and assertions are unchanged. The restored ASan workload is awaiting CI confirmation.
-
 ## Current sanitizer coverage
 
 ASan and TSan Debug and Release run all available in-process tests, including stress and
 performance cases, with `--skip 'DeathTests'`. All child-process tests, including
 the successful-startup probe and inventory probes, are in suites whose names
-contain `DeathTests`. Existing disabled tests and the TSAN_TEST compiler-crash
-exclusions (both DSU implementations and minimum-cost flow) remain unchanged.
+contain `DeathTests`. Existing disabled tests remain unchanged. No product API
+is removed from TSan builds.
 
 Both sanitizers check for a nonempty successful test run and record their
-selection and full output in diagnostic artifacts. TSan Debug and Release
-completed successfully in CI according to the user's report. Expanded ASan
-coverage is awaiting CI; local tests are not run at the user's request.
-ASan includes both DSU implementations and minimum-cost flow, which remain
-excluded only from TSan. ASan measurement repetitions have also been restored to ten.
+selection and full output in diagnostic artifacts. Measurement bodies execute
+ten iterations in every configuration.
 
-The first and second exit-test trials did not establish successful sanitizer
-coverage. Separate sanitizer exit jobs have been removed; normal Debug CI still
-runs these tests. This exclusion does not establish the cause of each CI failure.
+On Apple Swift 6.4.2, an empty successful child-process test still aborts under
+ASan and TSan, independently of AtCoder. The ASan child reports that its
+interceptors are not installed because the runtime was loaded too late.
+Failure-expecting exit tests can pass because of this startup failure, so they
+must not be used as evidence of correct traps until a successful-startup probe
+passes. Runtime preloading through swift test did not resolve the local issue.
+Child-process sanitizer tests remain excluded; Linux restoration is unverified.
+
 Normal Debug/Release CI retains its full available suite.
 
 The documentation script uses a normal target build and explicit symbol extraction.
 The SwiftPM plugin symbol-graph path enables all traits on the observed toolchain,
-which accidentally removes DSU and MCFGraph through TSAN_TEST. The script checks
+which previously removed DSU and MCFGraph through TSAN_TEST. The script checks
 that both types are present and treats DocC warnings as errors.

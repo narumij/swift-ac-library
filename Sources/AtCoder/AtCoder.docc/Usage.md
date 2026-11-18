@@ -91,10 +91,9 @@ on the same graph.
 
 Mutable shared moduli and convolution caches require care; sanitizer success
 does not certify arbitrary concurrent use. Current sanitizer CI excludes
-child-process exit tests. TSan additionally excludes both DSU implementations
-and minimum-cost flow because of compiler failures; normal and ASan builds
-retain them. Measurement bodies run ten iterations again. These are test
-coverage limits, not new algorithm guarantees.
+child-process exit tests. Both DSU implementations and minimum-cost flow
+are included in sanitizer builds. Measurement bodies run ten iterations again.
+These are test coverage limits, not new algorithm guarantees.
 
 ## Version-specific fixes
 

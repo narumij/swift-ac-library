@@ -1,8 +1,3 @@
-// TODO: TSanのコンパイラ停止解消後にこの条件を外す。重み付きDSUの
-// noncopyable型とbuffer経由の更新でInvalid bitcastが発生する。
-// Linux Swift 6.4.2のCI、macOS Swift 6.4の単独コンパイルで観測。
-// 通常・ASanでは引き続き実装とテストを有効にする（OPS-011）。
-#if !TSAN_TEST
 import Testing
 
 @Suite(.tags(.swiftSpecific))
@@ -102,5 +97,3 @@ final class weightedDSUTests {
     #expect(cloned.same(0, 2).1 == 4)
   }
 }
-
-#endif
