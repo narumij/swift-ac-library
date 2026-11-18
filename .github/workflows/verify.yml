@@ -1,0 +1,42 @@
+name: Library Checker
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Public API verification (Release)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Swift
+        uses: SwiftyLab/setup-swift@latest
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install verification tools
+        run: python -m pip install -r Verification/requirements.txt
+      - name: Verify against Library Checker
+        shell: bash
+        run: |
+          mkdir -p .verify-helper/logs
+          swift --version | tee .verify-helper/logs/environment.log
+          python --version | tee -a .verify-helper/logs/environment.log
+          python -m pip freeze >> .verify-helper/logs/environment.log
+          set -o pipefail
+          bash Verification/run.sh 2>&1 | tee .verify-helper/logs/verify.log
+      - name: Upload verification diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: library-checker-diagnostics
+          path: .verify-helper/logs
+          if-no-files-found: warn
