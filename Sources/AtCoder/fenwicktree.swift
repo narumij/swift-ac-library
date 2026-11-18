@@ -23,7 +23,7 @@ where T: AdditiveArithmetic & ToUnsignedType {
     assert(n >= 0)
     _n = n
     data = .allocate(capacity: n)
-    data.initialize(repeating: -1, count: n)
+    data.initialize(repeating: .zero, count: n)
   }
 
   deinit {
